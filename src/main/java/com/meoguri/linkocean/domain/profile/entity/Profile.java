@@ -1,11 +1,8 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.meoguri.linkocean.domain.common.Preconditions.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
-import static org.springframework.util.StringUtils.*;
-
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +43,7 @@ public class Profile extends BaseIdEntity {
 	 * 회원 가입시 사용하는 생성자
 	 */
 	public Profile(final User user, final String username) {
-		checkUsername(username);
+		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
 		this.user = user;
 		this.username = username;
@@ -56,20 +53,13 @@ public class Profile extends BaseIdEntity {
 	 * 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다
 	 */
 	public void update(final String username, final String bio, final String imageUrl) {
-		checkUsername(username);
-		checkArgument(Objects.nonNull(bio) && bio.length() <= MAX_PROFILE_BIO_LENGTH,
-			String.format("사용자 이름의 길이는 %d 보다 작아야 합니다.", MAX_PROFILE_BIO_LENGTH));
-		checkArgument(Objects.nonNull(imageUrl) && imageUrl.length() <= MAX_PROFILE_IMAGE_URL_LENGTH,
-			String.format("프로필 이미지 주소의 길이는 %d보다 작아야 합니다.", MAX_PROFILE_IMAGE_URL_LENGTH));
+		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
+		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
+		checkNullableStringLength(imageUrl, MAX_PROFILE_BIO_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
 
 		this.username = username;
 		this.bio = bio;
 		this.imageUrl = imageUrl;
 	}
 
-	private void checkUsername(final String username) {
-		checkArgument(hasText(username), "사용자 이름은 공백이 될 수 없습니다.");
-		checkArgument(username.length() <= MAX_PROFILE_USERNAME_LENGTH,
-			String.format("사용자 이름의 길이는 %d보다 작아야 합니다.", MAX_PROFILE_USERNAME_LENGTH));
-	}
 }
