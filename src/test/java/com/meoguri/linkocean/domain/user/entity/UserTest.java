@@ -9,7 +9,7 @@ class UserTest {
 	@Test
 	void 사용자_생성_성공() {
 		//given
-		final Email email = new Email("haha@papa.com");
+		final String email = "haha@papa.com";
 		final OAuthType oAuthType = OAuthType.GOOGLE;
 
 		//when
@@ -21,7 +21,7 @@ class UserTest {
 				User::getEmail,
 				User::getOAuthType
 			).containsExactly(
-				email,
+				new Email(email),
 				oAuthType
 			);
 	}
