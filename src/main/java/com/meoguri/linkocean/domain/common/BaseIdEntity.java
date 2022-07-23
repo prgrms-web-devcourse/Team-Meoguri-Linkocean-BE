@@ -1,14 +1,14 @@
 package com.meoguri.linkocean.domain.common;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import static lombok.AccessLevel.*;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import static lombok.AccessLevel.PROTECTED;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @MappedSuperclass
 public class BaseIdEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 }

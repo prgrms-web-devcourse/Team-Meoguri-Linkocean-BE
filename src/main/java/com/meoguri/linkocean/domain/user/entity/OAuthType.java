@@ -5,5 +5,5 @@ package com.meoguri.linkocean.domain.user.entity;
  */
 public enum OAuthType {
 
-    GOOGLE
+	GOOGLE
 }
