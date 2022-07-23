@@ -23,16 +23,16 @@ public class User extends BaseIdEntity {
 	@Embedded
 	private Email email;
 
-	@Column(length = 50)
+	@Column(name = "oauth_type", nullable = false, length = 50)
 	@Enumerated(STRING)
 	private OAuthType oAuthType;
 
 	/**
 	 * 회원 가입시 사용하는 생성자
 	 */
-	public User(final Email email, final OAuthType oAuthType) {
+	public User(final String email, final OAuthType oAuthType) {
 
-		this.email = email;
+		this.email = new Email(email);
 		this.oAuthType = oAuthType;
 	}
 }

@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import com.meoguri.linkocean.domain.common.BaseIdEntity;
 import com.meoguri.linkocean.domain.user.entity.User;
@@ -22,7 +21,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(name = "profile")
 public class Profile extends BaseIdEntity {
 
 	public static final int MAX_PROFILE_USERNAME_LENGTH = 50;
