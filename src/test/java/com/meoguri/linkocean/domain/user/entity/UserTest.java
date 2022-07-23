@@ -9,20 +9,20 @@ class UserTest {
 	@Test
 	void 사용자_생성_성공() {
 		//given
-		OAuthType oAuthType = OAuthType.GOOGLE;
-		Email email = new Email("haha@papa.com");
+		final Email email = new Email("haha@papa.com");
+		final OAuthType oAuthType = OAuthType.GOOGLE;
 
 		//when
-		User user = new User(oAuthType, email);
+		final User user = new User(email, oAuthType);
 
 		//then
 		assertThat(user).isNotNull()
 			.extracting(
-				User::getOAuthType,
-				User::getEmail
+				User::getEmail,
+				User::getOAuthType
 			).containsExactly(
-				oAuthType,
-				email
+				email,
+				oAuthType
 			);
 	}
 }

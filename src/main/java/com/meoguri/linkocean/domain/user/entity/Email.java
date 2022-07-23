@@ -1,6 +1,9 @@
 package com.meoguri.linkocean.domain.user.entity;
 
+import static com.google.common.base.Preconditions.*;
 import static lombok.AccessLevel.*;
+
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -15,11 +18,17 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Email {
 
-	@Column(name = "email")
+	private static final String EMAIL_REGEX
+		= "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"
+		+ "@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)"
+		+ "+[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]";
+	private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+	@Column(name = "email", length = 255, unique = true)
 	private String email;
 
-	public Email(String email) {
-		//TODO validate email - 추가하면 테스트도 추가하세요 안하면 죽음
+	public Email(final String email) {
+		checkArgument(EMAIL_PATTERN.matcher(email).find(), "이메일 형식이 잘못 되었습니다.");
 
 		this.email = email;
 	}
