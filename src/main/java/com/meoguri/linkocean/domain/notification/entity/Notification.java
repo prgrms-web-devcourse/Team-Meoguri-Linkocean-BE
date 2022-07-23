@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.follow.entity;
+package com.meoguri.linkocean.domain.profile.entity;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -8,8 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

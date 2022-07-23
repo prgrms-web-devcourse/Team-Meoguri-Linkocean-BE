@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.util;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;

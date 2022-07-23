@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.common;
+package com.meoguri.linkocean.domain;
 
 import static lombok.AccessLevel.*;
 

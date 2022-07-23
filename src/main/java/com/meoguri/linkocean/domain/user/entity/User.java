@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
+import com.meoguri.linkocean.domain.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

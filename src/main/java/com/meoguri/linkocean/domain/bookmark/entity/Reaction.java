@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.reaction.entity;
+package com.meoguri.linkocean.domain.bookmark.entity;
 
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
@@ -8,8 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
+import com.meoguri.linkocean.domain.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

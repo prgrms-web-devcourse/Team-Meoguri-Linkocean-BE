@@ -1,6 +1,6 @@
-package com.meoguri.linkocean.domain.bookmark.entity;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
-import static com.meoguri.linkocean.domain.common.Preconditions.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;
 
 import java.util.regex.Pattern;
@@ -30,7 +30,7 @@ public class Url {
 	@Column(nullable = false)
 	private String url;
 
-	Url(final String url) {
+	public Url(final String url) {
 		checkArgument(
 			URL_PATTERN_WITH_HTTP_OR_HTTPS.matcher(url).matches()
 				|| URL_PATTERN_WITHOUT_HTTP_OR_HTTPS.matcher(url).matches(),
