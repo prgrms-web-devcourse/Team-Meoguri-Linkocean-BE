@@ -1,7 +1,9 @@
 package com.meoguri.linkocean.domain.util;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.OpenType.*;
+
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.OAuthType;
 import com.meoguri.linkocean.domain.user.entity.User;
 
@@ -11,7 +13,7 @@ public final class Fixture {
 
 		return new User(
 
-			new Email("haha@papa.com"),
+			"haha@papa.com",
 			OAuthType.GOOGLE
 		);
 	}
@@ -23,5 +25,16 @@ public final class Fixture {
 			createUser(),
 			"haha"
 		);
+	}
+
+	public static Bookmark createBookmark() {
+
+		return Bookmark.builder()
+			.profile(createProfile())
+			.title("title")
+			.url("www.google.com")
+			.memo("dream company")
+			.openType(ALL)
+			.build();
 	}
 }
