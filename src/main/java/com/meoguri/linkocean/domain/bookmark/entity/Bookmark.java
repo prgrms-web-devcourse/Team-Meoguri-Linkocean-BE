@@ -1,10 +1,9 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.meoguri.linkocean.domain.common.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
-import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDateTime;
 
@@ -61,7 +60,7 @@ public class Bookmark extends BaseIdEntity {
 	@Builder
 	private Bookmark(final Profile profile, final String title, final String url, final String memo,
 		final OpenType openType) {
-		checkTitle(title);
+		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
 		this.title = title;
@@ -76,21 +75,12 @@ public class Bookmark extends BaseIdEntity {
 	 * 북마크 제목, 메모, 공개 범위를 변경할 수 있다.
 	 */
 	public void update(final String title, final String memo, final OpenType openType) {
-		checkTitle(title);
+		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
 		this.memo = memo;
 		this.openType = openType;
 
 		this.updatedAt = LocalDateTime.now();
-	}
-
-	private void checkTitle(final String title) {
-		if (hasText(title)) {
-			checkArgument(
-				title.length() <= MAX_BOOKMARK_TITLE_LENGTH,
-				String.format("제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH)
-			);
-		}
 	}
 }

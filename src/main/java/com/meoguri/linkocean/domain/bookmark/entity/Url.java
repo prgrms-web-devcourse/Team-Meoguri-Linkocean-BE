@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.meoguri.linkocean.domain.common.Preconditions.*;
 import static lombok.AccessLevel.*;
 
 import java.util.regex.Pattern;
