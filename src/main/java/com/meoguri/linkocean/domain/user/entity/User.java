@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

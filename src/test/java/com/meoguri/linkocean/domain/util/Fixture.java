@@ -5,8 +5,8 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.OAuthType;
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 public final class Fixture {
 
