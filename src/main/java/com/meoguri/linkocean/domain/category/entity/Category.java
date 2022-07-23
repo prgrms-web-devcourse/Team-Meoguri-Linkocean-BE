@@ -5,7 +5,7 @@ import static lombok.AccessLevel.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
+import com.meoguri.linkocean.domain.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

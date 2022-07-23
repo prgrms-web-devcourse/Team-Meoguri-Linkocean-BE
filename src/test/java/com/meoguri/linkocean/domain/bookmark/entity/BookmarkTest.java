@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Url;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 class BookmarkTest {

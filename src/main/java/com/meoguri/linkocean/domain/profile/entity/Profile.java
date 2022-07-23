@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
-import static com.meoguri.linkocean.domain.common.Preconditions.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
+import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;

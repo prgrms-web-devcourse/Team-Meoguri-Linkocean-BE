@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.meoguri.linkocean.domain.common.Preconditions.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -14,7 +14,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import com.meoguri.linkocean.domain.common.BaseIdEntity;
+import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Url;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.Builder;

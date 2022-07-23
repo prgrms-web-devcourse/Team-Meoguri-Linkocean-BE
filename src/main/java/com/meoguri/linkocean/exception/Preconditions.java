@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.common;
+package com.meoguri.linkocean.exception;
 
 import static lombok.AccessLevel.*;
 import static org.springframework.util.StringUtils.*;

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.entity;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
 import static org.assertj.core.api.Assertions.*;
 
