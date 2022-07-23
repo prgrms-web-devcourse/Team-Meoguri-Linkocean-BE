@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Email {
 
-	@Column(name = "email")
+	@Column(name = "email", length = 255, unique = true)
 	private String email;
 
-	public Email(String email) {
+	public Email(final String email) {
 		//TODO validate email - 추가하면 테스트도 추가하세요 안하면 죽음
 
 		this.email = email;
