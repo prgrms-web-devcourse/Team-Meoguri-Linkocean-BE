@@ -3,39 +3,33 @@ package com.meoguri.linkocean.exception;
 import static lombok.AccessLevel.*;
 import static org.springframework.util.StringUtils.*;
 
-import javax.annotation.CheckForNull;
-
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class Preconditions {
 
-	public static void checkNullableStringLength(final String target, final int maxLength, final String message,
-		Object... args) {
+	public static void checkNullableStringLength(
+		final String target, final int maxLength, final String errorMessage, final Object... args) {
 		if (hasText(target)) {
-			checkArgument(
-				target.length() <= maxLength,
-				String.format(message, args)
-			);
+			checkArgument(target.length() <= maxLength, String.format(errorMessage, args));
 		}
 	}
 
-	public static void checkNotNullStringLength(final String target, final int maxLength, final String message,
-		Object... args) {
-		checkArgument(hasText(target), message);
-		checkArgument(target.length() <= maxLength,
-			String.format(message, args));
+	public static void checkNotNullStringLength(
+		final String target, final int maxLength, final String errorMessage, final Object... args) {
+		checkArgument(hasText(target), errorMessage);
+		checkArgument(target.length() <= maxLength, String.format(errorMessage, args));
 	}
 
-	public static void checkArgument(boolean expression, @CheckForNull Object errorMessage) {
+	public static void checkArgument(final boolean expression, final String errorMessage) {
 		if (!expression) {
-			throw new IllegalArgumentException(String.valueOf(errorMessage));
+			throw new IllegalArgumentException(errorMessage);
 		}
 	}
 
-	public static void checkState(boolean expression, @CheckForNull Object errorMessage) {
+	public static void checkState(final boolean expression, final String errorMessage) {
 		if (!expression) {
-			throw new IllegalStateException(String.valueOf(errorMessage));
+			throw new IllegalStateException(errorMessage);
 		}
 	}
 }
