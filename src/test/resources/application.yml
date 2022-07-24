@@ -2,9 +2,9 @@ spring:
   #원격 데이터소스
   datasource:
     driver-class-name: "com.mysql.cj.jdbc.Driver"
-    url: ${db.url}
-    username: ${db.username:root}
-    password: ${db.password}
+    url: "jdbc:mysql://218.145.103.213:3306/mysql?serverTimezone=UTC&characterEncoding=UTF-8"
+    username: "root"
+    password: "idb1004#"
 
   jpa:
     database: mysql
