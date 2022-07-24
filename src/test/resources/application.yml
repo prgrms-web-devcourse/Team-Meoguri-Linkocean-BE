@@ -1,0 +1,17 @@
+spring:
+  #원격 데이터소스
+  datasource:
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    url: ${db.url}
+    username: ${db.username:root}
+    password: ${db.password}
+
+  jpa:
+    database: mysql
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
