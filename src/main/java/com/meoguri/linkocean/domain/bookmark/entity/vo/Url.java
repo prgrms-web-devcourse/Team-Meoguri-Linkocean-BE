@@ -9,10 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 @Embeddable
@@ -27,7 +25,7 @@ public class Url {
 	private static final Pattern URL_PATTERN_WITH_HTTP_OR_HTTPS = Pattern.compile(URL_REGEX_WITH_HTTP_OR_HTTPS);
 	private static final Pattern URL_PATTERN_WITHOUT_HTTP_OR_HTTPS = Pattern.compile(URL_REGEX_WITHOUT_HTTP_OR_HTTPS);
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String url;
 
 	public Url(final String url) {
@@ -38,5 +36,9 @@ public class Url {
 		);
 
 		this.url = url;
+	}
+
+	public static String toString(final Url url) {
+		return url.url;
 	}
 }
