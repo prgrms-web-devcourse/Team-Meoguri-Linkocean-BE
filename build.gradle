@@ -63,6 +63,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.h2database:h2:2.1.212'
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.jsoup:jsoup:1.14.3'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
