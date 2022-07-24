@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Url;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 class BookmarkTest {
@@ -23,13 +22,13 @@ class BookmarkTest {
 	void 북마크_생성_성공(final String memo, final String title) {
 		//given
 		final Profile profile = createProfile();
-		final String textUrl = "https://www.linkocean.com";
+		final LinkMetadata linkMetadata = createLinkMetadata();
 
 		//when
 		final Bookmark bookmark = Bookmark.builder()
 			.profile(profile)
 			.title(title)
-			.url(textUrl)
+			.linkMetadata(linkMetadata)
 			.memo(memo)
 			.openType(ALL)
 			.build();
@@ -39,10 +38,10 @@ class BookmarkTest {
 			.extracting(
 				Bookmark::getProfile,
 				Bookmark::getTitle,
-				Bookmark::getUrl,
+				Bookmark::getLinkMetadata,
 				Bookmark::getMemo,
 				Bookmark::getOpenType
-			).containsExactly(profile, title, new Url(textUrl), memo, ALL);
+			).containsExactly(profile, title, linkMetadata, memo, ALL);
 
 		assertThat(bookmark)
 			.extracting(
@@ -56,7 +55,7 @@ class BookmarkTest {
 		//given
 		final Profile profile = createProfile();
 		final String title = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
-		final String textUrl = "https://www.linkocean.com";
+		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String memo = "memo";
 
 		//when then
@@ -64,7 +63,7 @@ class BookmarkTest {
 			.isThrownBy(() -> Bookmark.builder()
 				.profile(profile)
 				.title(title)
-				.url(textUrl)
+				.linkMetadata(linkMetadata)
 				.memo(memo)
 				.openType(ALL)
 				.build());
