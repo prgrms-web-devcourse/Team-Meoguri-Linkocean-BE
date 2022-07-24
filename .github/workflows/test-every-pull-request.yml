@@ -36,7 +36,9 @@ jobs:
 
       ## gradle build
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification
