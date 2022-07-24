@@ -15,6 +15,8 @@ import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+// TODO
+// 타이틀 조회 후 삽입 할때 검색(jsoupLinkMetadataService.search) 두번 발생하지 않도록 최적화 c.f. Redis
 @Slf4j
 @Service
 @Transactional
