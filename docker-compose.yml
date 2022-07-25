@@ -22,7 +22,7 @@ services:
     build: .
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
     container_name: app
     env_file:
       - env/app.env
