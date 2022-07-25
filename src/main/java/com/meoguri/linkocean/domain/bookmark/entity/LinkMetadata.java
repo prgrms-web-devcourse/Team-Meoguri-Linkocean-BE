@@ -32,4 +32,13 @@ public class LinkMetadata extends BaseIdEntity {
 		this.title = title;
 		this.imageUrl = imageUrl;
 	}
+
+	/**
+	 * 링크 메타 데이터 업데이트를 위한 API
+	 */
+	public void update(final String title, final String imageUrl) {
+
+		this.title = title;
+		this.imageUrl = imageUrl;
+	}
 }
