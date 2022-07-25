@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  db-mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    container_name: mysql
+    env_file:
+      - env/mysql.env
+
+  migration:
+    image: flyway/flyway:7.5.1
+    command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    container_name: migration
+    volumes:
+      - ${PWD}/src/main/resources/db/migration:/flyway/sql
+      - ${PWD}/env/flyway_main.conf:/flyway/conf/flyway.config
+    depends_on:
+      - db-mysql
+
+  application:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    container_name: app
+    env_file:
+      - env/app.env
+    depends_on:
+      - db-mysql
+      - migration
+
