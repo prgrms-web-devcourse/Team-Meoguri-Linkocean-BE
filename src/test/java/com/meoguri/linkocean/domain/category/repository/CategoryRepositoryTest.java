@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.category.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +17,6 @@ class CategoryRepositoryTest {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-
-	@Test
-	void 이름으로_조회_성공() {
-		//given
-		final String name = "자기계발";
-
-		//when
-		final Optional<Category> oCategory = categoryRepository.findByName(name);
-
-		//then
-		assertThat(oCategory).isPresent();
-		assertThat(oCategory.get().getName()).isEqualTo(name);
-	}
 
 	@Test
 	void 이름_목록으로_조회_성공() {
