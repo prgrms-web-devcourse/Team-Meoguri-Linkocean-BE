@@ -8,4 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 class GetProfileByUserIdQueryTest {
+
 }
