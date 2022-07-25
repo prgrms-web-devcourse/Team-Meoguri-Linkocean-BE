@@ -32,4 +32,10 @@ public final class Preconditions {
 			throw new IllegalStateException(errorMessage);
 		}
 	}
+
+	public static void checkCondition(final boolean expression) {
+		if (!expression) {
+			throw new LinkoceanRuntimeException();
+		}
+	}
 }
