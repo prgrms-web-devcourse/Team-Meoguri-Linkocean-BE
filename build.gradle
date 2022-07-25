@@ -65,6 +65,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'com.h2database:h2:2.1.212'
     implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
