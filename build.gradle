@@ -64,12 +64,18 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'com.h2database:h2:2.1.212'
+    implementation 'mysql:mysql-connector-java:8.0.29'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'junit' // excluding junit 4
     }
-    implementation 'mysql:mysql-connector-java:8.0.29'
+
+    testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
+    testImplementation 'com.tngtech.archunit:archunit:0.23.1'
+
 }
 
 tasks.named('test') {

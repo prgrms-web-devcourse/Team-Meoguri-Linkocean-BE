@@ -8,3 +8,4 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
