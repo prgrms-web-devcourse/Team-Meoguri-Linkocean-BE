@@ -72,7 +72,10 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'junit' // excluding junit 4
     }
+
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
+    testImplementation 'com.tngtech.archunit:archunit:0.23.1'
+
 }
 
 tasks.named('test') {
