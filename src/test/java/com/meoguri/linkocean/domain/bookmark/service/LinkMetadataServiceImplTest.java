@@ -1,8 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.bookmark.repository.LinkMetadataRepository;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 
@@ -20,6 +25,9 @@ class LinkMetadataServiceImplTest {
 
 	@Autowired
 	private LinkMetadataService linkMetadataService;
+
+	@Autowired
+	private LinkMetadataRepository linkMetadataRepository;
 
 	@MockBean
 	private JsoupLinkMetadataService jsoupLinkMetadataService;
@@ -55,5 +63,37 @@ class LinkMetadataServiceImplTest {
 				linkMetadataService.putLinkMetadataByLink("http://www.naver.com");
 				linkMetadataService.putLinkMetadataByLink("https://www.naver.com");
 			});
+	}
+
+	@Test
+	void 전체_업데이트_성공() {
+		//given
+		List<LinkMetadata> linkMetadataList = new ArrayList<>();
+		for (int i = 0; i < 5; ++i) {
+			linkMetadataList.add(new LinkMetadata(
+					String.format("www.naver%d.com", i),
+					String.format("title%d", i),
+					String.format("imageUrl%d", i)
+				)
+			);
+		}
+
+		linkMetadataRepository.saveAllAndFlush(linkMetadataList);
+
+		final String newTitle = "newTitle";
+		final String newImageUrl = "newImageUrl";
+		given(jsoupLinkMetadataService.search(anyString()))
+			.willReturn(new SearchLinkMetadataResult(newTitle, newImageUrl));
+
+		//when
+		linkMetadataService.synchronizeAllData(3);
+
+		//then
+		linkMetadataRepository.findAll()
+			.forEach(linkMetadata ->
+				assertThat(linkMetadata)
+					.extracting(LinkMetadata::getTitle, LinkMetadata::getImageUrl)
+					.containsExactly(newTitle, newImageUrl)
+			);
 	}
 }

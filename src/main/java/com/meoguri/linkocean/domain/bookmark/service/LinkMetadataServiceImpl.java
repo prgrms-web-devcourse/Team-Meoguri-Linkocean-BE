@@ -1,7 +1,14 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static java.util.Objects.*;
+
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +32,7 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 
 	private final LinkMetadataRepository linkMetadataRepository;
 	private final JsoupLinkMetadataService jsoupLinkMetadataService;
+	private final EntityManager entityManager;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -64,10 +72,6 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		}
 	}
 
-	private String addSchemaAndWww(final String reducedLink) {
-		return "https://www." + reducedLink;
-	}
-
 	private String removeSchemaAndWwwIfExists(final String url) {
 		return url.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
 	}
@@ -76,4 +80,30 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		return new PutLinkMetadataResult(linkMetadata.getTitle(), linkMetadata.getTitle());
 	}
 
+	@Override
+	public void synchronizeAllData(int batchSize) {
+
+		Pageable pageable = PageRequest.of(0, batchSize);
+
+		// batchSize 단위로 데이터 업데이트
+		do {
+			final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
+			slice.getContent()
+				.forEach(linkMetadata -> {
+					final SearchLinkMetadataResult result =
+						jsoupLinkMetadataService.search(addSchemaAndWww(linkMetadata.getUrl().toString()));
+					linkMetadata.update(result.getTitle(), result.getImageUrl());
+				});
+
+			// 페이지 단위로 DB에 업데이트하고 1차 캐쉬 비우기
+			entityManager.flush();
+			entityManager.clear();
+
+			pageable = slice.hasNext() ? slice.nextPageable() : null;
+		} while (nonNull(pageable));
+	}
+
+	private String addSchemaAndWww(final String reducedLink) {
+		return "https://www." + reducedLink;
+	}
 }
