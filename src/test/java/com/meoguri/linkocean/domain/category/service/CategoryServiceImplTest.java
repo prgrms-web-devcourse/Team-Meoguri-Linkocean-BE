@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
 
-@Sql("classpath:sql/InsertCategories.sql")
+@Sql("classpath:db/sql/InsertCategories.sql")
 @Transactional
 @SpringBootTest(webEnvironment = NONE)
 class CategoryServiceImplTest {

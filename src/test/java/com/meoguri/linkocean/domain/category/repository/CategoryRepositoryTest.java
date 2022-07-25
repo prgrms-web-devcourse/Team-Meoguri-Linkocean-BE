@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
 
-@Sql("classpath:sql/InsertCategories.sql")
+@Sql("classpath:db/sql/InsertCategories.sql")
 @DataJpaTest
 class CategoryRepositoryTest {
 
