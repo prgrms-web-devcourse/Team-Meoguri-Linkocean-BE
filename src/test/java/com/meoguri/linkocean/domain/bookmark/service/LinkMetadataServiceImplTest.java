@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 
 @Transactional
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class LinkMetadataServiceImplTest {
 
 	@Autowired

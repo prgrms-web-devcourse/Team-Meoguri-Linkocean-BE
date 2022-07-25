@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.domain.category.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import com.meoguri.linkocean.domain.category.entity.Category;
 
 @Sql("classpath:db/sql/InsertCategories.sql")
 @Transactional
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class CategoryServiceImplTest {
 
 	@Autowired

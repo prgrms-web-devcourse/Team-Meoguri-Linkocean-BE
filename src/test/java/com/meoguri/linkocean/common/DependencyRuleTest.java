@@ -4,7 +4,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.*;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Service;
 
+import com.tngtech.archunit.base.DescribedPredicate;
+import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 
@@ -23,12 +26,12 @@ class DependencyRuleTest {
 	void 계층형_아키텍처_의존성_테스트() {
 
 		layeredArchitecture()
+			.layer("Configuration").definedBy("..configuration..")
 			// .layer("Controller").definedBy("..controller..")
-			.layer("Service").definedBy("..service..")
+			.layer("Service").definedBy(serviceDescribe())
 			.layer("Persistence").definedBy("..repository..")
 			// .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-			// .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller")
-			.whereLayer("Service").mayNotBeAccessedByAnyLayer()
+			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration"/*, "Controller"*/)
 			.whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
 			.check(importPackages);
 	}
@@ -53,5 +56,22 @@ class DependencyRuleTest {
 
 	private String matchAllClassesInPackage(String packageName) {
 		return packageName + "..";
+	}
+
+	/**
+	 * 서비스 계층
+	 * - @Service
+	 * - service 패키지
+	 * - 클래스 이름에 Service 포함 된 경우
+	 */
+	private DescribedPredicate<JavaClass> serviceDescribe() {
+		return new DescribedPredicate<>("have annotation @Service") {
+			@Override
+			public boolean apply(JavaClass input) {
+				return input.isAnnotatedWith(Service.class)
+					|| input.getPackage().getName().equals("service")
+					|| input.getName().contains("Service");
+			}
+		};
 	}
 }
