@@ -8,9 +8,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
 
+@Sql("classpath:sql/InsertCategories.sql")
 @DataJpaTest
 class CategoryRepositoryTest {
 
@@ -20,8 +22,7 @@ class CategoryRepositoryTest {
 	@Test
 	void 이름으로_조회_성공() {
 		//given
-		final String name = "카테고리";
-		categoryRepository.save(new Category(name));
+		final String name = "자기계발";
 
 		//when
 		final Optional<Category> oCategory = categoryRepository.findByName(name);
@@ -33,16 +34,16 @@ class CategoryRepositoryTest {
 
 	@Test
 	void 이름_목록으로_조회_성공() {
-		final String name1 = "카테고리1";
-		final String name2 = "카테고리2";
-		categoryRepository.save(new Category(name1));
-		categoryRepository.save(new Category(name2));
+		//given
+		final String name1 = "자기계발";
+		final String name2 = "인문";
 
+		//when
 		final List<Category> categories = categoryRepository.findByNameIn(List.of(name1, name2));
 
+		//then
 		assertThat(categories)
 			.extracting(Category::getName)
-			.containsExactly(name1, name2);
-
+			.containsExactlyInAnyOrder(name1, name2);
 	}
 }
