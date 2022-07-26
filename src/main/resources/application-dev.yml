@@ -16,6 +16,3 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    url: "jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/linkocean?serverTimezone=UTC&characterEncoding=UTF-8"
-    user: root
-    password: root1234
