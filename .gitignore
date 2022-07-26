@@ -41,3 +41,6 @@ out/
 
 ### P6spy long ###
 spy.log
+
+### oauth client config ###
+application-oauth.yml

@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.category.service;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
-
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +13,7 @@ import com.meoguri.linkocean.domain.category.service.dto.AddFavoriteCategoriesCo
 
 @Sql("classpath:db/sql/InsertCategories.sql")
 @Transactional
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class FavoriteCategoryServiceImplTest {
 
 	@Autowired

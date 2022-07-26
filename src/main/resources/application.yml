@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: oauth
   jpa:
     generate-ddl: false
     hibernate:
