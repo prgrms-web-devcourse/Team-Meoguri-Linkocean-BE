@@ -57,13 +57,13 @@ class ReactionRepositoryTest {
 	}
 
 	@Test
-	void 프로필_북마크_리액션타입_조합은_유니크하다() {
+	void 프로필_북마크_조합은_유니크하다() {
 		//given
 		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));
 
 		//when then
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
-			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE)));
+			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, ReactionType.HATE)));
 	}
 
 	@Test

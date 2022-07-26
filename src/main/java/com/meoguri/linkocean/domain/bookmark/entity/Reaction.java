@@ -16,11 +16,16 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 북마크에 대한 리액션
+ * - 한 사용자가 한 북마크에 가질 수 있는 리액션은 유일하다
+ * - LIKE/HATE 중 택 1
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "bookmark_id", "type"})
+	uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "bookmark_id"})
 )
 public class Reaction extends BaseIdEntity {
 
