@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.infrastructure.scheduler;
+package com.meoguri.linkocean.domain.linkmetadata.scheduler;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
@@ -31,6 +31,6 @@ class LinkMetadataSynchronizeSchedulerTest {
 	private boolean isMyScheduler(CronTask cronTask) {
 		return cronTask.getExpression().equals("0 0 0 * * MON")
 			&& cronTask.toString().equals(
-			"com.meoguri.linkocean.infrastructure.scheduler.LinkMetadataSynchronizeScheduler.synchronizeAllData");
+			"com.meoguri.linkocean.domain.linkmetadata.scheduler.LinkMetadataSynchronizeScheduler.synchronizeAllData");
 	}
 }

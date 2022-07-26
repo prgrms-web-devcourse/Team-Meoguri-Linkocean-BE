@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.linkmetadata.service;
 
 import static java.util.Objects.*;
 
@@ -12,10 +12,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Url;
-import com.meoguri.linkocean.domain.bookmark.repository.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PutLinkMetadataResult;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
+import com.meoguri.linkocean.domain.linkmetadata.repository.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.PutLinkMetadataResult;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 

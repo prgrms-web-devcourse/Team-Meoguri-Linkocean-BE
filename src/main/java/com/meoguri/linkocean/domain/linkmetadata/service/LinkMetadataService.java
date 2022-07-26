@@ -1,6 +1,6 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.linkmetadata.service;
 
-import com.meoguri.linkocean.domain.bookmark.service.dto.PutLinkMetadataResult;
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.PutLinkMetadataResult;
 
 public interface LinkMetadataService {
 

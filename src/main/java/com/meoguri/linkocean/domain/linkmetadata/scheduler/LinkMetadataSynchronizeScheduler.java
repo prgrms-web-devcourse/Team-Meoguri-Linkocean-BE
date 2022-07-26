@@ -1,9 +1,9 @@
-package com.meoguri.linkocean.infrastructure.scheduler;
+package com.meoguri.linkocean.domain.linkmetadata.scheduler;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.meoguri.linkocean.domain.bookmark.service.LinkMetadataService;
+import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 
 import lombok.RequiredArgsConstructor;
 
