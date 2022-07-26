@@ -6,7 +6,7 @@ import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 
 public interface ProfileService {
 
-	void registerProfile(RegisterProfileCommand command);
+	long registerProfile(RegisterProfileCommand command);
 
 	ProfileResult getProfileByUserId(long userId);
 

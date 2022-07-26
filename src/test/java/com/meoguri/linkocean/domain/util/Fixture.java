@@ -21,10 +21,14 @@ public final class Fixture {
 	}
 
 	public static Profile createProfile() {
+		return createProfile(createUser());
+	}
+
+	public static Profile createProfile(User user) {
 
 		return new Profile(
 
-			createUser(),
+			user,
 			"haha"
 		);
 	}

@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 public class ProfileResult {
 
 	private final long profileId;
-	private final String imageUrl;
 	private final String username;
+	private final String imageUrl;
 	private final String bio;
 	private final List<String> categories;
 	private final int followerCount;

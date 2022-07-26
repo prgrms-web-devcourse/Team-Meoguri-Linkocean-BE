@@ -23,7 +23,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private final ProfileRepository profileRepository;
 
 	@Override
-	public void registerProfile(final RegisterProfileCommand command) {
+	public long registerProfile(final RegisterProfileCommand command) {
 
 		final User user = findUserByIdQuery.findById(command.getUserId());
 
@@ -31,6 +31,8 @@ public class ProfileServiceImpl implements ProfileService {
 		profileRepository.save(profile);
 
 		//TODO - 선호 카테고리 등록 : 처리 어떻게?
+
+		return profile.getId();
 	}
 
 	@Transactional(readOnly = true)
@@ -41,8 +43,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 		return new ProfileResult(
 			profile.getId(),
-			profile.getImageUrl(),
 			profile.getUsername(),
+			profile.getImageUrl(),
 			profile.getBio(),
 
 			null, // TODO - 선호 카테고리 조회 : 처리 어떻게?
