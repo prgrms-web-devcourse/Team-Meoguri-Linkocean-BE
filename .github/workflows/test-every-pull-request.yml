@@ -38,7 +38,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build
+          ./gradlew clean build --stacktrace
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification
