@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
+import com.meoguri.linkocean.domain.category.persistence.CategoryRepository;
 import com.meoguri.linkocean.domain.category.service.dto.AddFavoriteCategoriesCommand;
 
 @Disabled
