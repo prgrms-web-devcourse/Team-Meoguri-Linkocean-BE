@@ -43,4 +43,4 @@ out/
 spy.log
 
 ### oauth client config ###
-application-oauth.yml
+#application-oauth.yml
