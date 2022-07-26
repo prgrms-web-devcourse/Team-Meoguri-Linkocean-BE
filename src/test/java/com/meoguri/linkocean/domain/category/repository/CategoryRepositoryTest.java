@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql("classpath:db/sql/InsertCategories.sql")
 @DataJpaTest
@@ -21,7 +23,7 @@ class CategoryRepositoryTest {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-	@BeforeEach
+	@AfterAll
 	void setUp() {
 		categoryRepository.deleteAllInBatch();
 	}
