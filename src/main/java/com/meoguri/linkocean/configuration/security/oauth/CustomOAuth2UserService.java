@@ -16,28 +16,29 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
 	private final UserRepository userRepository;
 	private final HttpSession httpSession;
+	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
+
+	public CustomOAuth2UserService(final UserRepository userRepository, final HttpSession httpSession) {
+		this.userRepository = userRepository;
+		this.httpSession = httpSession;
+		this.delegate = new DefaultOAuth2UserService();
+	}
 
 	@Override
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-		final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
-
 		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-		final OAuthAttributes attributes
-			= OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
-
+		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
 		final User user = save(attributes);
 
 		httpSession.setAttribute("user", new SessionUser(user));
