@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
+import com.meoguri.linkocean.domain.linkmetadata.repository.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.repository.ProfileRepository;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
