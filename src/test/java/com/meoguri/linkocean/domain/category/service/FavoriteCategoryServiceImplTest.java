@@ -4,15 +4,22 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
 import com.meoguri.linkocean.domain.category.service.dto.AddFavoriteCategoriesCommand;
 
+@Disabled
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql("classpath:db/sql/InsertCategories.sql")
 @Transactional
 @SpringBootTest(webEnvironment = NONE)
@@ -21,8 +28,13 @@ class FavoriteCategoryServiceImplTest {
 	@Autowired
 	private FavoriteCategoryService favoriteCategoryService;
 
-	@BeforeEach
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@AfterAll
 	void setUp() {
+		categoryRepository.deleteAllInBatch();
+
 		//TODO - User, Profile 하나씩 추가
 	}
 
