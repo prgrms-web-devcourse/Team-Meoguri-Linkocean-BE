@@ -1,11 +1,4 @@
 spring:
-#  #원격 데이터소스
-#  datasource:
-#    driver-class-name: "com.mysql.cj.jdbc.Driver"
-#    url: "jdbc:mysql://218.145.103.213:3306/mysql?serverTimezone=UTC&characterEncoding=UTF-8"
-#    username: "root"
-#    password: "idb1004#"
-
   jpa:
     database: H2
     generate-ddl: false
@@ -15,3 +8,4 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+

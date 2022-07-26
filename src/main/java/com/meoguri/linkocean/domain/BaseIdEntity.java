@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain;
 import static lombok.AccessLevel.*;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -17,6 +18,6 @@ import lombok.NoArgsConstructor;
 public class BaseIdEntity {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 }
