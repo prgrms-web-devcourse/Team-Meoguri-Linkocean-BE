@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.ProfileCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -106,5 +105,17 @@ class ProfileServiceImplTest {
 		);
 		assertThat(result.getCategories()).isNull();
 		// assertThat(result.getCategories()).containsExactly("it", "science"); // <- 카테고리 구현 후 주석 풀기
+	}
+
+	static final class ProfileCommand {
+
+		public static RegisterProfileCommand ofRegister(Profile profile, List<String> categories) {
+
+			return new RegisterProfileCommand(
+				profile.getUser().getId(),
+				profile.getUsername(),
+				categories
+			);
+		}
 	}
 }
