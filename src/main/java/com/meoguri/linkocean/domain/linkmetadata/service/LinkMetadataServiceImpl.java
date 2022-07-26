@@ -81,7 +81,7 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		slice.getContent()
 			.forEach(linkMetadata -> {
 				final SearchLinkMetadataResult result =
-					jsoupLinkMetadataService.search(addSchemaAndWww(linkMetadata.getUrl().toString()));
+					jsoupLinkMetadataService.search(addSchemaAndWww(Url.toString(linkMetadata.getUrl())));
 				linkMetadata.update(result.getTitle(), result.getImageUrl());
 			});
 		return slice.hasNext() ? slice.nextPageable() : null;
