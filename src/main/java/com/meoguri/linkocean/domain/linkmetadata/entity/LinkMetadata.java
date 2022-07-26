@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.entity;
+package com.meoguri.linkocean.domain.linkmetadata.entity;
 
 import static lombok.AccessLevel.*;
 
@@ -7,7 +7,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Url;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +29,15 @@ public class LinkMetadata extends BaseIdEntity {
 	public LinkMetadata(final String link, final String title, final String imageUrl) {
 
 		this.url = new Url(link);
+		this.title = title;
+		this.imageUrl = imageUrl;
+	}
+
+	/**
+	 * 링크 메타 데이터 업데이트를 위한 API
+	 */
+	public void update(final String title, final String imageUrl) {
+
 		this.title = title;
 		this.imageUrl = imageUrl;
 	}

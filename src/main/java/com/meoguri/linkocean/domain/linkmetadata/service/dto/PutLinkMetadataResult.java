@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service.dto;
+package com.meoguri.linkocean.domain.linkmetadata.service.dto;
 
 import lombok.RequiredArgsConstructor;
 

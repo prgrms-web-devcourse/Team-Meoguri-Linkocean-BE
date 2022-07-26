@@ -3,6 +3,7 @@ package com.meoguri.linkocean.common;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.*;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -19,6 +20,7 @@ class DependencyRuleTest {
 	/**
 	 * TODO - 컨트롤러 계층 도입 시 코멘트 수정
 	 */
+	@Disabled
 	@Test
 	void 계층형_아키텍처_의존성_테스트() {
 
