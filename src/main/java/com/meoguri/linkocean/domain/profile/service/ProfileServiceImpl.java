@@ -66,6 +66,8 @@ public class ProfileServiceImpl implements ProfileService {
 			command.getBio(),
 			command.getImageUrl()
 		);
+
+		//TODO - 선호 카테고리 업데이트 : 처리 어떻게?
 	}
 
 	private Profile findProfileBy(final long userId) {
