@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
-import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
+import com.meoguri.linkocean.domain.category.persistence.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 

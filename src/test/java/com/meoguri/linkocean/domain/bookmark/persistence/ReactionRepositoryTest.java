@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.repository;
+package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
@@ -15,9 +15,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
-import com.meoguri.linkocean.domain.linkmetadata.repository.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.repository.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @DataJpaTest

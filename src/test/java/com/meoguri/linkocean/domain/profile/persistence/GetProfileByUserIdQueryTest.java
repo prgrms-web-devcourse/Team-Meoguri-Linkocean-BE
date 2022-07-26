@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.persistence;
 
 import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.test.context.SpringBootTest;

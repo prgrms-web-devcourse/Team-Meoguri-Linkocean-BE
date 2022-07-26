@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.repository;
+package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

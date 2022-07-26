@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.category.entity.FavoriteCategory;
-import com.meoguri.linkocean.domain.category.repository.FavoriteCategoryRepository;
+import com.meoguri.linkocean.domain.category.persistence.FavoriteCategoryRepository;
 import com.meoguri.linkocean.domain.category.service.dto.AddFavoriteCategoriesCommand;
 
 import lombok.RequiredArgsConstructor;

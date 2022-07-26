@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
-import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
+import com.meoguri.linkocean.domain.category.persistence.CategoryRepository;
 
 @Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
