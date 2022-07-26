@@ -39,6 +39,12 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean build --stacktrace
+          
+      ## upload test report
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: Team-Meoguri-Linkocean-BE/build/reports/tests/test/index.html
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification
