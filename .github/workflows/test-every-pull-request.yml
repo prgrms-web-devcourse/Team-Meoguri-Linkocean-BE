@@ -45,7 +45,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-report
-          path: file:///home/runner/work/Team-Meoguri-Linkocean-BE/Team-Meoguri-Linkocean-BE/build/reports/tests/test/index.html
+          path: Team-Meoguri-Linkocean-BE/build/reports/tests/test/**
+          if-no-files-found: error
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification
