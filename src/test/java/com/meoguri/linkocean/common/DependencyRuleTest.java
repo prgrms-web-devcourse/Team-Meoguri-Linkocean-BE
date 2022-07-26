@@ -3,7 +3,6 @@ package com.meoguri.linkocean.common;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ class DependencyRuleTest {
 	/**
 	 * TODO - 컨트롤러 계층 도입 시 코멘트 수정
 	 */
-	@Disabled
+	// @Disabled
 	@Test
 	void 계층형_아키텍처_의존성_테스트() {
 
@@ -31,7 +30,7 @@ class DependencyRuleTest {
 			.layer("Configuration").definedBy("..configuration..")
 			// .layer("Controller").definedBy("..controller..")
 			.layer("Service").definedBy(serviceDescribe())
-			.layer("Persistence").definedBy("..repository..")
+			.layer("Persistence").definedBy("..persistence..")
 			// .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
 			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration"/*, "Controller"*/)
 			.whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
@@ -65,6 +64,7 @@ class DependencyRuleTest {
 	 * - @Service
 	 * - service 패키지
 	 * - 클래스 이름에 Service 포함 된 경우
+	 * - 클래스 이름에 Scheduler 포함 된 경우
 	 */
 	private DescribedPredicate<JavaClass> serviceDescribe() {
 		return new DescribedPredicate<>("have annotation @Service") {
@@ -72,7 +72,8 @@ class DependencyRuleTest {
 			public boolean apply(JavaClass input) {
 				return input.isAnnotatedWith(Service.class)
 					|| input.getPackage().getName().equals("service")
-					|| input.getName().contains("Service");
+					|| input.getName().contains("Service")
+					|| input.getName().contains("Scheduler");
 			}
 		};
 	}
