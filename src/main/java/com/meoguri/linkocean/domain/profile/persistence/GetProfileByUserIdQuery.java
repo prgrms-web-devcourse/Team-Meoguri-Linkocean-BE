@@ -1,14 +1,14 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Query
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetProfileByUserIdQuery {
