@@ -42,7 +42,7 @@ jobs:
           
       ## upload test report
       - name: test-report-upload
-      - uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: test-report
           path: file:///home/runner/work/Team-Meoguri-Linkocean-BE/Team-Meoguri-Linkocean-BE/build/reports/tests/test/index.html
