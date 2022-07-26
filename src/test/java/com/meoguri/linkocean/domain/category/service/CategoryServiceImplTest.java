@@ -5,6 +5,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.category.entity.Category;
+import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql("classpath:db/sql/InsertCategories.sql")
@@ -22,6 +24,14 @@ class CategoryServiceImplTest {
 
 	@Autowired
 	private CategoryService categoryService;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@BeforeEach
+	void setUp() {
+		categoryRepository.deleteAllInBatch();
+	}
 
 	@Test
 	void 이름_목록으로_조회_성공() {

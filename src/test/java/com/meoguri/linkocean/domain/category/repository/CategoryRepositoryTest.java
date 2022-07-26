@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,6 +20,11 @@ class CategoryRepositoryTest {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	@BeforeEach
+	void setUp() {
+		categoryRepository.deleteAllInBatch();
+	}
 
 	@Test
 	void 이름_목록으로_조회_성공() {

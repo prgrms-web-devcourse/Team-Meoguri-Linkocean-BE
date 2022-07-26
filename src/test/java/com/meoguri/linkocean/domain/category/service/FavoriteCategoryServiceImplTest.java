@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.category.repository.CategoryRepository;
 import com.meoguri.linkocean.domain.category.service.dto.AddFavoriteCategoriesCommand;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -23,9 +24,15 @@ class FavoriteCategoryServiceImplTest {
 	@Autowired
 	private FavoriteCategoryService favoriteCategoryService;
 
+	@Autowired
+	private CategoryRepository categoryRepository;
+
 	@BeforeEach
 	void setUp() {
+		categoryRepository.deleteAllInBatch();
+
 		//TODO - User, Profile 하나씩 추가
+
 	}
 
 	// TODO - 프로필 서비스 구현 이후 완성
