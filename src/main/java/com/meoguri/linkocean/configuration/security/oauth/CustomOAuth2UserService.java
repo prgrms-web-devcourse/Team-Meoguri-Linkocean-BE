@@ -17,7 +17,9 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -55,6 +57,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		final User user = userRepository.findByEmail(new Email(attributes.getEmail()))
 			.orElse(attributes.toEntity());
 
+		log.info("새로운 사용자 저장 email : {}, oauth type : {}", Email.toString(user.getEmail()), user.getOAuthType());
 		return userRepository.save(user);
 	}
 }
