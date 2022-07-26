@@ -1,5 +1,9 @@
 package com.meoguri.linkocean.domain.linkmetadata.scheduler;
 
+import static java.util.Objects.*;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +23,15 @@ public class LinkMetadataSynchronizeScheduler {
 	private final LinkMetadataService linkMetadataService;
 
 	/**
-	 *	매주 월요일 0시 0분 0초에 링크 메타 데이터 동기화
+	 *	매주 월요일 0시 0분 0초에 모든 링크 메타 데이터 동기화
 	 */
 	@Scheduled(cron = "0 0 0 * * MON")
 	public void synchronizeAllData() {
-		linkMetadataService.synchronizeAllData(BATCH_SIZE);
+
+		Pageable pageable = PageRequest.of(0, BATCH_SIZE);
+
+		do {
+			pageable = linkMetadataService.synchronizeDataAndReturnNextPageable(pageable);
+		} while (nonNull(pageable));
 	}
 }

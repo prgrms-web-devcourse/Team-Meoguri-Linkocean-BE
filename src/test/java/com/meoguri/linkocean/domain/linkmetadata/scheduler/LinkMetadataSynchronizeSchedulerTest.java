@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.scheduler;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskHolder;
 
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class LinkMetadataSynchronizeSchedulerTest {
 
 	@Autowired

@@ -6,8 +6,7 @@ on:
       - develop
       - main
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   test:
@@ -38,7 +37,13 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build
+          ./gradlew clean build --stacktrace
+          
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}  # 테스트가 실패하여도 Report를 보기 위해 `always`로 설정
+        with:
+          files: build/test-results/**/*.xml
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification

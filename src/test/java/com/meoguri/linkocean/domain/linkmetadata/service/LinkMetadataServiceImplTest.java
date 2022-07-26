@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.linkmetadata.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -20,7 +20,7 @@ import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 
 @Transactional
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class LinkMetadataServiceImplTest {
 
 	@Autowired
@@ -86,14 +86,14 @@ class LinkMetadataServiceImplTest {
 			.willReturn(new SearchLinkMetadataResult(newTitle, newImageUrl));
 
 		//when
-		linkMetadataService.synchronizeAllData(3);
+		final int batchSize = 3;
+		linkMetadataService.synchronizeDataAndReturnNextPageable(PageRequest.of(0, batchSize));
 
 		//then
-		linkMetadataRepository.findAll()
-			.forEach(linkMetadata ->
-				assertThat(linkMetadata)
-					.extracting(LinkMetadata::getTitle, LinkMetadata::getImageUrl)
-					.containsExactly(newTitle, newImageUrl)
-			);
+		final List<LinkMetadata> linkMetaDatas = linkMetadataRepository.findAll();
+		assertThat(linkMetaDatas)
+			.filteredOn("title", newTitle)
+			.filteredOn("imageUrl", newImageUrl)
+			.hasSize(batchSize);
 	}
 }
