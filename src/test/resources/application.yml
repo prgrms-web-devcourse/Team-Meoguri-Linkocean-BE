@@ -1,11 +1,9 @@
 spring:
+  profiles:
+    include: oauth
   jpa:
     database: H2
     generate-ddl: false
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: true
 

@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.linkmetadata.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 
 @Transactional
-@SpringBootTest(webEnvironment = NONE)
+@SpringBootTest
 class LinkMetadataServiceImplTest {
 
 	@Autowired

@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<ul>
+    <li><a sec:authorize="isAnonymous()" href="/oauth2/authorization/google" role="button">구글 연동 로그인</a></li>
+    <li><a sec:authorize="isAuthenticated()" href="/logout" role="button">로그아웃</a></li>
+</ul>
+
+<div sec:authorize="isAuthenticated()" th:if="${#response.status<300 and #response.status>=200}">
+    <div th:text="${#authentication.getName()}"></div>
+    <br>
+    <div th:text="${#authentication.getPrincipal()}"></div>
+</div>
