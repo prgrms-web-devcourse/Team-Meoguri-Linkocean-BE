@@ -1,12 +1,9 @@
 spring:
-
-  #원격 데이터소스
   datasource:
     driver-class-name: "com.mysql.cj.jdbc.Driver"
-    url: "jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/mysql?serverTimezone=UTC&characterEncoding=UTF-8"
+    url: "jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/linkocean?serverTimezone=UTC&characterEncoding=UTF-8"
     username: "root"
     password: "root1234"
-
   jpa:
     database: mysql
     generate-ddl: false
@@ -20,6 +17,6 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    url: "jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/mysql?serverTimezone=UTC&characterEncoding=UTF-8"
+    url: "jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/linkocean?serverTimezone=UTC&characterEncoding=UTF-8"
     user: root
     password: root1234
