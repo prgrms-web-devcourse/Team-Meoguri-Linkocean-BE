@@ -11,9 +11,9 @@ public class ProfileResult {
 
 	private final long profileId;
 	private final String imageUrl;
-	private final List<String> categories;
 	private final String username;
 	private final String bio;
+	private final List<String> categories;
 	private final int followerCount;
 	private final int followeeCount;
 	private final boolean isFollow;

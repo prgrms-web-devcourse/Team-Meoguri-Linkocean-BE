@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UpdateProfileCommand {
 
+	private final long userID;
 	private final String username;
-	private final List<String> categories;
-	private final String bio;
 	private final String imageUrl;
+	private final String bio;
+	private final List<String> categories;
 }
