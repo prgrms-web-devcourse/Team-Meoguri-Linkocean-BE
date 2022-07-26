@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.linkmetadata.repository;
+package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
 import static org.assertj.core.api.Assertions.*;
 

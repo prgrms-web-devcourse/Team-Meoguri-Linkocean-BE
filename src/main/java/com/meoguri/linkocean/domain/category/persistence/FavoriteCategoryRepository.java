@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.category.repository;
+package com.meoguri.linkocean.domain.category.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

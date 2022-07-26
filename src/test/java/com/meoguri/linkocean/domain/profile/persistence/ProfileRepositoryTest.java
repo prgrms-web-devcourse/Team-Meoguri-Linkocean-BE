@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.repository;
+package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;

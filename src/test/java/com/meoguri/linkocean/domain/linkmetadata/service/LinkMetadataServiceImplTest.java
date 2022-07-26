@@ -15,7 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.repository.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 

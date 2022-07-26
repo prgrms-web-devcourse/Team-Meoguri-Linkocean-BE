@@ -1,10 +1,9 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.persistence;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.repository.ProfileRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.category.repository;
+package com.meoguri.linkocean.domain.category.persistence;
 
 import java.util.List;
 
