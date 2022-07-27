@@ -18,15 +18,3 @@ services:
     depends_on:
       - db-mysql
 
-  application:
-    build: .
-    restart: always
-    ports:
-      - "8080:8080"
-    container_name: app
-    env_file:
-      - env/app.env
-    depends_on:
-      - db-mysql
-      - migration
-
