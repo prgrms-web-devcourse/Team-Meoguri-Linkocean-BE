@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyBookmarksResult;
@@ -21,5 +21,5 @@ public interface BookmarkService {
 	List<GetMyBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond);
 
 	/* 피드 북마크 목록 */
-	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarkSearchCond searchCond);
+	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
 }
