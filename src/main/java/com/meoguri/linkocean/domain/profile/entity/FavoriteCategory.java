@@ -10,9 +10,10 @@ import javax.persistence.ManyToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class FavoriteCategory extends BaseIdEntity {
@@ -28,15 +29,10 @@ public class FavoriteCategory extends BaseIdEntity {
 		this.category = Category.of(categoryName);
 	}
 
-	public Profile getProfile() {
-		return profile;
-	}
-
 	public String getCategory() {
 		return category.getName();
 	}
 
-	@RequiredArgsConstructor
 	enum Category {
 
 		SELF_DEVELOPMENT, //자기계발
