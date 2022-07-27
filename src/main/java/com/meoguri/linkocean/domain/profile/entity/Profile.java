@@ -1,12 +1,17 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.util.stream.Collectors.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
@@ -27,6 +32,9 @@ public class Profile extends BaseIdEntity {
 	@OneToOne(fetch = LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@OneToMany(mappedBy = "profile")
+	private List<FavoriteCategory> favoriteCategories = new ArrayList<>();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_BIO_LENGTH)
 	private String username;
@@ -62,4 +70,28 @@ public class Profile extends BaseIdEntity {
 		this.imageUrl = imageUrl;
 	}
 
+	/**
+	 * 프로필 - 선호 카테고리의 연관관계 편의 메서드
+	 */
+	public void addToFavoriteCategory(String category) {
+		this.favoriteCategories.add(new FavoriteCategory(this, category));
+	}
+
+	/**
+	 * 선호카테고리 목록 조회
+	 */
+	public List<String> getMyFavoriteCategories() {
+		return this.favoriteCategories.stream()
+			.map(FavoriteCategory::getCategory)
+			.collect(toList());
+	}
+
+	/**
+	 * 선호 카테고리 목록 업데이트
+	 */
+	public void updateFavoriteCategories(final List<String> categories) {
+		this.favoriteCategories = categories.stream()
+			.map(c -> new FavoriteCategory(this, c))
+			.collect(toList());
+	}
 }
