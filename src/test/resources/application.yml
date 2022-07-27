@@ -6,4 +6,6 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: create-drop
+  flyway:
+    enabled: false
 
