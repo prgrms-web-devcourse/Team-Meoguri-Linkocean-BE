@@ -17,7 +17,8 @@ jobs:
       ## checkout github repo
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
+          token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
+          submodules: true
 
       ## jdk setting
       - name: Set up JDK 11
