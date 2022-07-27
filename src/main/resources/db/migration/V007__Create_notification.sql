@@ -1,7 +1,7 @@
 create table notification (
-   id bigint not null,
-    created_at timestamp,
-    bookmark_id bigint,
-    target_id bigint,
-    primary key (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+       id bigint not null auto_increment,
+        created_at datetime(6),
+        bookmark_id bigint,
+        target_id bigint,
+        primary key (id)
+) engine=InnoDB;

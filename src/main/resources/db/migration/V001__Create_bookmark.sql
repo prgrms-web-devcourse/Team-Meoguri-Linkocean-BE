@@ -1,11 +1,11 @@
 create table bookmark (
-   id bigint not null,
-    created_at timestamp not null,
-    memo LONGTEXT,
+   id bigint not null auto_increment,
+    created_at datetime(6) not null,
+    memo longtext,
     open_type varchar(50) not null,
     title varchar(50),
-    updated_at timestamp not null,
+    updated_at datetime(6) not null,
     link_metadata_id bigint,
     profile_id bigint,
     primary key (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) engine=InnoDB;
