@@ -88,3 +88,13 @@ tasks.named('test') {
 
     finalizedBy 'jacocoTestReport'
 }
+
+
+task copyDev(type: Copy) {
+    from './config'
+    into './src/main/resources'
+}
+
+build {
+    dependsOn copyDev
+}
