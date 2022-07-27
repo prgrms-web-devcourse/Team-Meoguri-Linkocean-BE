@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 
 @Query
 @RequiredArgsConstructor
-public class GetProfileByUserIdQuery {
+public class FindProfileByIdQuery {
 
 	private final ProfileRepository profileRepository;
 
-	public Profile getByUserId(long userId) {
-		return profileRepository.findByUserId(userId).orElseThrow(LinkoceanRuntimeException::new);
+	public Profile findById(long id) {
+		return profileRepository.findById(id).orElseThrow(LinkoceanRuntimeException::new);
 	}
 }
