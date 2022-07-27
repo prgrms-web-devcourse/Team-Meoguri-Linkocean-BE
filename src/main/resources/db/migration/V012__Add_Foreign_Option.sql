@@ -1,21 +1,48 @@
-alter table category add constraint uk_category_name unique (name);
-alter table follow add constraint uk_follow_follwerId_followee_id unique (follower_id, followee_id);
-alter table link_metadata add constraint uk_link_metadata_url unique (url);
-alter table profile add constraint uk_profile_username unique (username);
-alter table reaction add constraint uk_reaction_profileId_bookmarkId unique (profile_id, bookmark_id);
-alter table tag add constraint uk_tag_name unique (name);
-alter table users add constraint uk_users_email unique (email);
-
-alter table bookmark add constraint fk_bookmark_link_metadata foreign key (link_metadata_id) references link_metadata (id);
-alter table bookmark add constraint fk_bookmark_profile foreign key (profile_id) references profile (id);
-alter table bookmark_tag add constraint fk_bookmarkTag_bookmark foreign key (bookmark_id) references bookmark (id);
-alter table bookmark_tag add constraint fk_bookmarkTag_tag foreign key (tag_id) references tag (id);
-alter table favorite_category add constraint fk_favoriteCategory_category foreign key (category_id) references category (id);
-alter table favorite_category add constraint fk_favoriteCategory_profile foreign key (profile_id) references profile (id);
-alter table follow add constraint fk_follow_followee foreign key (followee_id) references profile (id);
-alter table follow add constraint fk_follow_follower foreign key (follower_id) references profile (id);
-alter table notification add constraint fk_notification_bookmark foreign key (bookmark_id) references bookmark (id);
-alter table notification add constraint fk_notification_target foreign key (target_id) references profile (id);
-alter table profile add constraint fk_profile_users foreign key (user_id) references users (id);
-alter table reaction add constraint fk_reaction_bookmark foreign key (bookmark_id) references bookmark (id);
-alter table reaction add constraint fk_reaction_profile foreign key (profile_id) references profile (id);
+    alter table bookmark 
+       add constraint FKnt6vka9qrm9uxencik3dtn2qj 
+       foreign key (link_metadata_id) 
+       references link_metadata (id);
+    alter table bookmark
+       add constraint FKbrwfrudp6lu69r0ah11u0taqn 
+       foreign key (profile_id) 
+       references profile (id);
+    alter table bookmark_tag
+       add constraint FKpfa5mq9fkkjmv9jmu4hk9igpw 
+       foreign key (bookmark_id) 
+       references bookmark (id);
+    alter table bookmark_tag
+       add constraint FKhq7j2vott6kem0g51hhgq5nfl 
+       foreign key (tag_id) 
+       references tag (id);
+    alter table favorite_category
+       add constraint FK8i0gnp1e44cb97q8ldpnqaayt 
+       foreign key (profile_id) 
+       references profile (id);
+    alter table follow
+       add constraint FK3d25odnplkedd4fh6fbeqiduy 
+       foreign key (followee_id) 
+       references profile (id);
+    alter table follow
+       add constraint FK28jq0hbsgm4tqch6co05usp2i 
+       foreign key (follower_id) 
+       references profile (id);
+    alter table notification
+       add constraint FK2eau6vfc9hs4fehb83ll1xduf 
+       foreign key (bookmark_id) 
+       references bookmark (id);
+    alter table notification
+       add constraint FK2soayv75bmfojpwdy45siai88 
+       foreign key (target_id) 
+       references profile (id);
+    alter table profile
+       add constraint FKs14jvsf9tqrcnly0afsv0ngwv 
+       foreign key (user_id) 
+       references users (id);
+    alter table reaction
+       add constraint FKmlvtl9s0vxym1gr8b861706vu 
+       foreign key (bookmark_id) 
+       references bookmark (id);
+    alter table reaction
+       add constraint FKfqn92ef8p353gogf99q7wo8u3 
+       foreign key (profile_id) 
+       references profile (id);
