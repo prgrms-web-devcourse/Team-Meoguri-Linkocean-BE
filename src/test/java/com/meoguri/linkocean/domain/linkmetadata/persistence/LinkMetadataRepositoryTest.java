@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 @DataJpaTest
 class LinkMetadataRepositoryTest {
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired

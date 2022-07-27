@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import com.meoguri.linkocean.domain.user.repository.UserRepository;
 @DataJpaTest
 class ReactionRepositoryTest {
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired
