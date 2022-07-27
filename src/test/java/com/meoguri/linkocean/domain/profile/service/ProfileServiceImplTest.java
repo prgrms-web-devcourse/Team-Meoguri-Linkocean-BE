@@ -71,8 +71,7 @@ class ProfileServiceImplTest {
 			false
 		);
 
-		assertThat(result.getCategories()).isNull();
-		// assertThat(result.getCategories()).containsExactly("it", "self_development"); // <- 카테고리 구현 후 주석 풀기
+		assertThat(result.getCategories()).containsExactly("it", "self_development");
 	}
 
 	@Test
@@ -103,8 +102,8 @@ class ProfileServiceImplTest {
 			"updated image url",
 			"updated bio"
 		);
-		assertThat(result.getCategories()).isNull();
-		// assertThat(result.getCategories()).containsExactly("it", "science"); // <- 카테고리 구현 후 주석 풀기
+
+		assertThat(result.getCategories()).containsExactly("it", "science");
 	}
 
 	static final class ProfileCommand {

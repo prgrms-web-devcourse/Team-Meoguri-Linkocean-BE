@@ -27,10 +27,12 @@ public class ProfileServiceImpl implements ProfileService {
 
 		final User user = findUserByIdQuery.findById(command.getUserId());
 
+		// 프로필 등록
 		final Profile profile = new Profile(user, command.getUsername());
 		profileRepository.save(profile);
 
-		//TODO - 선호 카테고리 등록 : 처리 어떻게?
+		// 선호 카테고리 등록
+		command.getCategories().forEach(profile::addToFavoriteCategory);
 
 		return profile.getId();
 	}
@@ -46,8 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getUsername(),
 			profile.getImageUrl(),
 			profile.getBio(),
-
-			null, // TODO - 선호 카테고리 조회 : 처리 어떻게?
+			profile.getMyFavoriteCategories(),
 
 			//TODO - Follow 구현후 더미 값들 바꾸기
 			0,
@@ -61,13 +62,15 @@ public class ProfileServiceImpl implements ProfileService {
 
 		final Profile profile = findProfileBy(command.getUserID());
 
+		// 프로필 업데이트
 		profile.update(
 			command.getUsername(),
 			command.getBio(),
 			command.getImageUrl()
 		);
 
-		//TODO - 선호 카테고리 업데이트 : 처리 어떻게?
+		// 선호 카테고리 업데이트
+		profile.updateFavoriteCategories(command.getCategories());
 	}
 
 	private Profile findProfileBy(final long userId) {
