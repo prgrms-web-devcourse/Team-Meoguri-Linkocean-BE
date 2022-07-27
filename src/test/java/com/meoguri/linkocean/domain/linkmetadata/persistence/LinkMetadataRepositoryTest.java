@@ -4,22 +4,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 
 @DataJpaTest
 class LinkMetadataRepositoryTest {
-
-	@PersistenceContext
-	private EntityManager em;
 
 	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
@@ -58,9 +52,8 @@ class LinkMetadataRepositoryTest {
 	void 같은_링크_중복_삽입_실패() {
 		//given
 		linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png"));
-		linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png"));
 
-		assertThatExceptionOfType(PersistenceException.class)
-			.isThrownBy(() -> em.flush());
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+			.isThrownBy(() -> linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png")));
 	}
 }
