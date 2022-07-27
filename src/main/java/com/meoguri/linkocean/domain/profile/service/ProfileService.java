@@ -8,7 +8,7 @@ public interface ProfileService {
 
 	long registerProfile(RegisterProfileCommand command);
 
-	ProfileResult getProfileByUserId(long userId);
+	ProfileResult getMyProfile(long userId);
 
 	void updateProfile(UpdateProfileCommand command);
 }
