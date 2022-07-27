@@ -12,7 +12,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.GetBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.GetProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,14 +21,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
-	private final GetProfileByUserIdQuery getProfileByUserIdQuery;
+	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final GetBookmarkByIdQuery getBookmarkByIdQuery;
 	private final ReactionRepository reactionRepository;
 
 	@Override
 	public void addReaction(final ReactionCommand command) {
 
-		final Profile profile = getProfileByUserIdQuery.getByUserId(command.getUserId());
+		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Bookmark bookmark = getBookmarkByIdQuery.GetById(command.getBookmarkId());
 		final ReactionType reactionType = ReactionType.valueOf(command.getReactionType());
 
@@ -38,7 +38,7 @@ public class ReactionServiceImpl implements ReactionService {
 	@Override
 	public void cancelReaction(final ReactionCommand command) {
 
-		final Profile profile = getProfileByUserIdQuery.getByUserId(command.getUserId());
+		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Bookmark bookmark = getBookmarkByIdQuery.GetById(command.getBookmarkId());
 		final ReactionType reactionType = ReactionType.valueOf(command.getReactionType());
 
