@@ -1,9 +1,13 @@
 spring:
+  profiles:
+    include: oauth
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/linkocean
     username: root
     password: root1234
+
   jpa:
     generate-ddl: false
     hibernate:
@@ -19,3 +23,4 @@ spring:
     url: jdbc:mysql://linkocean-dev-rds.czvbgr7hie3i.ap-northeast-2.rds.amazonaws.com:3306/linkocean
     user: root
     password: root1234
+
