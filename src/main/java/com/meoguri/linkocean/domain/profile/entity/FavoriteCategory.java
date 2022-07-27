@@ -25,7 +25,7 @@ public class FavoriteCategory extends BaseIdEntity {
 
 	public FavoriteCategory(final Profile profile, final String categoryName) {
 		this.profile = profile;
-		this.category = Category.valueOf(categoryName.toUpperCase());
+		this.category = Category.of(categoryName);
 	}
 
 	public Profile getProfile() {
@@ -33,28 +33,31 @@ public class FavoriteCategory extends BaseIdEntity {
 	}
 
 	public String getCategory() {
-		return category.lowerCase();
+		return category.getName();
 	}
 
 	@RequiredArgsConstructor
 	enum Category {
-		SELF_DEVELOPMENT("자기계발"),
-		HUMANITIES("인문"),
-		POLITICES("정치"),
-		SOCIAL("사회"),
-		ART("예술"),
-		SCIENCE("과학"),
-		TECHNOLOGY("기술"),
-		IT("IT"),
-		HOME("가정"),
-		HEALTH("건강"),
-		TRAVEL("여행"),
-		COOKING("요리");
 
-		private final String name;
+		SELF_DEVELOPMENT, //자기계발
+		HUMANITIES, //인문
+		POLITICS, //정치
+		SOCIAL, //사회
+		ART, //예술
+		SCIENCE, //과학
+		TECHNOLOGY, //기술
+		IT, //IT
+		HOME, //가정
+		HEALTH, //건강
+		TRAVEL, //여행
+		COOKING; //요리
 
-		String lowerCase() {
+		String getName() {
 			return name().toLowerCase();
+		}
+
+		static Category of(String arg) {
+			return Category.valueOf(arg.toUpperCase());
 		}
 	}
 
