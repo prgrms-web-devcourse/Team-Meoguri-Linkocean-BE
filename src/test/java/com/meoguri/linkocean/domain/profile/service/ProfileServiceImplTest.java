@@ -22,17 +22,17 @@ import com.meoguri.linkocean.domain.user.repository.UserRepository;
 @SpringBootTest
 class ProfileServiceImplTest {
 
-	private long userId;
-
-	private Profile profile;
-
-	private List<String> categories;
-
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private ProfileService profileService;
+
+	private long userId;
+
+	private Profile profile;
+
+	private List<String> categories;
 
 	@BeforeEach
 	void setUp() {
@@ -50,7 +50,7 @@ class ProfileServiceImplTest {
 		final long profileId = profileService.registerProfile(command);
 
 		//when
-		final ProfileResult result = profileService.getProfileByUserId(userId);
+		final ProfileResult result = profileService.getMyProfile(userId);
 
 		//then
 		assertThat(result).extracting(
@@ -92,7 +92,7 @@ class ProfileServiceImplTest {
 		profileService.updateProfile(updateCommand);
 
 		//then
-		final ProfileResult result = profileService.getProfileByUserId(userId);
+		final ProfileResult result = profileService.getMyProfile(userId);
 		assertThat(result).extracting(
 			ProfileResult::getUsername,
 			ProfileResult::getImageUrl,
