@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -54,24 +53,24 @@ class ReactionRepositoryTest {
 				.linkMetadata(linkMetadataRepository.save(createLinkMetadata()))
 				.title("title")
 				.memo("memo")
-				.openType(ALL)
+				.openType("all")
 				.build());
 	}
 
 	@Test
 	void 프로필_북마크_조합은_유니크하다() {
 		//given
-		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));
+		reactionRepository.save(new Reaction(profile, bookmark, "like"));
 
 		//when then
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
-			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, ReactionType.HATE)));
+			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, "hate")));
 	}
 
 	@Test
 	void 프로필_북마크_리액션타입_조합으로_삭제할수_있다() {
 		//given
-		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));
+		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, "like"));
 		em.flush();
 		em.clear();
 

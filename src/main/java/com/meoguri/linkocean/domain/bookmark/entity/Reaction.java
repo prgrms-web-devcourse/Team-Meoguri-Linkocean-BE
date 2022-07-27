@@ -38,11 +38,15 @@ public class Reaction extends BaseIdEntity {
 	@Enumerated(STRING)
 	private ReactionType type;
 
-	public Reaction(final Profile profile, final Bookmark bookmark, final ReactionType type) {
+	public Reaction(final Profile profile, final Bookmark bookmark, final String type) {
 
 		this.profile = profile;
 		this.bookmark = bookmark;
-		this.type = type;
+		this.type = ReactionType.of(type);
+	}
+
+	public String getType() {
+		return type.getName();
 	}
 
 	public enum ReactionType {
@@ -51,6 +55,14 @@ public class Reaction extends BaseIdEntity {
 		LIKE,
 
 		/* 싫어요 👎 */
-		HATE
+		HATE;
+
+		String getName() {
+			return name().toLowerCase();
+		}
+
+		public static ReactionType of(String arg) {
+			return ReactionType.valueOf(arg.toUpperCase());
+		}
 	}
 }

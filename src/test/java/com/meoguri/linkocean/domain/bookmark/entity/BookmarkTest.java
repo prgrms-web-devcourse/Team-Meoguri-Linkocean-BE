@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -24,6 +23,7 @@ class BookmarkTest {
 		//given
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
+		final String openType = "all";
 
 		//when
 		final Bookmark bookmark = Bookmark.builder()
@@ -31,7 +31,7 @@ class BookmarkTest {
 			.title(title)
 			.linkMetadata(linkMetadata)
 			.memo(memo)
-			.openType(ALL)
+			.openType(openType)
 			.build();
 
 		//then
@@ -42,7 +42,7 @@ class BookmarkTest {
 				Bookmark::getLinkMetadata,
 				Bookmark::getMemo,
 				Bookmark::getOpenType
-			).containsExactly(profile, title, linkMetadata, memo, ALL);
+			).containsExactly(profile, title, linkMetadata, memo, openType);
 
 		assertThat(bookmark)
 			.extracting(
@@ -58,6 +58,7 @@ class BookmarkTest {
 		final String title = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String memo = "memo";
+		final String openType = "all";
 
 		//when then
 		assertThatIllegalArgumentException()
@@ -66,7 +67,7 @@ class BookmarkTest {
 				.title(title)
 				.linkMetadata(linkMetadata)
 				.memo(memo)
-				.openType(ALL)
+				.openType(openType)
 				.build());
 	}
 
@@ -76,9 +77,10 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
+		final String openType = "partial";
 
 		//when
-		bookmark.update(updatedTitle, updatedMemo, PARTIAL);
+		bookmark.update(updatedTitle, updatedMemo, openType);
 
 		//then
 		assertThat(bookmark)
@@ -86,7 +88,7 @@ class BookmarkTest {
 				Bookmark::getTitle,
 				Bookmark::getMemo,
 				Bookmark::getOpenType
-			).containsExactly(updatedTitle, updatedMemo, PARTIAL);
+			).containsExactly(updatedTitle, updatedMemo, openType);
 	}
 
 	@Test
@@ -95,9 +97,10 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String invalidTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final String updatedMemo = "updatedMemo";
+		final String openType = "partial";
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, ALL));
+			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, openType));
 	}
 }

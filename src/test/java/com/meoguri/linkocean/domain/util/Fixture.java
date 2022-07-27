@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.util;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -40,7 +38,7 @@ public final class Fixture {
 			.title("title")
 			.linkMetadata(createLinkMetadata())
 			.memo("dream company")
-			.openType(ALL)
+			.openType("all")
 			.build();
 	}
 

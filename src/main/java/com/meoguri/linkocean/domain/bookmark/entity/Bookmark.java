@@ -15,7 +15,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
@@ -61,27 +60,54 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	@Builder
 	private Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
-		final OpenType openType) {
+		final String openType) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
 		this.linkMetadata = linkMetadata;
 		this.title = title;
 		this.memo = memo;
-		this.openType = openType;
+		this.openType = OpenType.of(openType);
 		this.createdAt = now();
 		this.updatedAt = now();
+	}
+
+	public String getOpenType() {
+		return openType.getName();
 	}
 
 	/**
 	 * 북마크 제목, 메모, 공개 범위를 변경할 수 있다.
 	 */
-	public void update(final String title, final String memo, final OpenType openType) {
+	public void update(final String title, final String memo, final String openType) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
 		this.memo = memo;
-		this.openType = openType;
+		this.openType = OpenType.of(openType);
 		this.updatedAt = now();
 	}
+
+	/**
+	 * 북마크의 공개 범위
+	 */
+	enum OpenType {
+		/* 전체공개 */
+		ALL,
+
+		/* 팔로워 대상 공개 */
+		PARTIAL,
+
+		/* 개인 공개 */
+		PRIVATE;
+
+		String getName() {
+			return name().toLowerCase();
+		}
+
+		static OpenType of(String arg) {
+			return OpenType.valueOf(arg.toUpperCase());
+		}
+	}
+
 }
