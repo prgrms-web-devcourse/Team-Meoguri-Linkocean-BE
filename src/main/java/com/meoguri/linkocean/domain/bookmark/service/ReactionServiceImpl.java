@@ -30,7 +30,7 @@ public class ReactionServiceImpl implements ReactionService {
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Bookmark bookmark = getBookmarkByIdQuery.GetById(command.getBookmarkId());
-		final ReactionType reactionType = ReactionType.valueOf(command.getReactionType());
+		final String reactionType = command.getReactionType();
 
 		reactionRepository.save(new Reaction(profile, bookmark, reactionType));
 	}
@@ -40,7 +40,7 @@ public class ReactionServiceImpl implements ReactionService {
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Bookmark bookmark = getBookmarkByIdQuery.GetById(command.getBookmarkId());
-		final ReactionType reactionType = ReactionType.valueOf(command.getReactionType());
+		final ReactionType reactionType = ReactionType.of(command.getReactionType());
 
 		final boolean isDeleted
 			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;

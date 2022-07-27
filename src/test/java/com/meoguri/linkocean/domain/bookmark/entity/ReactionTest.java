@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,14 +14,14 @@ class ReactionTest {
 		//given
 		final Profile profile = createProfile();
 		final Bookmark bookmark = createBookmark();
-		final ReactionType type = ReactionType.LIKE;
+		final String reactionType = "like";
 
 		//when
-		final Reaction reaction = new Reaction(profile, bookmark, type);
+		final Reaction reaction = new Reaction(profile, bookmark, reactionType);
 
 		//then
 		assertThat(reaction).isNotNull()
 			.extracting(Reaction::getBookmark, Reaction::getType)
-			.containsExactly(bookmark, type);
+			.containsExactly(bookmark, reactionType);
 	}
 }
