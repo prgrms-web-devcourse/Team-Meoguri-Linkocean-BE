@@ -19,20 +19,16 @@ class DependencyRuleTest {
 
 	JavaClasses importPackages = new ClassFileImporter().importPackages("com.meoguri.linkocean..");
 
-	/**
-	 * TODO - 컨트롤러 계층 도입 시 코멘트 수정
-	 */
-	// @Disabled
 	@Test
 	void 계층형_아키텍처_의존성_테스트() {
 
 		layeredArchitecture()
 			.layer("Configuration").definedBy("..configuration..")
-			// .layer("Controller").definedBy("..controller..")
+			.layer("Controller").definedBy("..controller..")
 			.layer("Service").definedBy(serviceDescribe())
 			.layer("Persistence").definedBy("..persistence..")
-			// .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration"/*, "Controller"*/)
+			.whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration", "Controller")
 			.whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
 			.check(importPackages);
 	}
