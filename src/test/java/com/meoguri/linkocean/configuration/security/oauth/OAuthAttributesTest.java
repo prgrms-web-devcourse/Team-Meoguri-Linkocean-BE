@@ -17,7 +17,7 @@ class OAuthAttributesTest {
 	final Map<String, Object> kakaoAttributes = Map.of("kakao_account", Map.of("email", "haha@kakao.com"));
 
 	@Test
-	void GOOGLE_OAuth_속성_생성_성공() {
+	void Google_OAuth_속성_생성_성공() {
 		//given
 		final String registrationId = "google";
 
@@ -31,7 +31,7 @@ class OAuthAttributesTest {
 	}
 
 	@Test
-	void NAVER_OAuth_속성_생성_성공() {
+	void Naver_OAuth_속성_생성_성공() {
 		//given
 		final String registrationId = "naver";
 
@@ -45,7 +45,7 @@ class OAuthAttributesTest {
 	}
 
 	@Test
-	void KAKAO_OAuth_속성_생성_성공() {
+	void Kakao_OAuth_속성_생성_성공() {
 		//given
 		final String registrationId = "kakao";
 
@@ -68,7 +68,7 @@ class OAuthAttributesTest {
 	}
 
 	@Test
-	void GOOGLE_OAuth_속성으로_사용자_생성_성공() {
+	void Google_OAuth_속성으로_사용자_생성_성공() {
 		//given
 		final String registrationId = "google";
 		final OAuthAttributes oAuthAttributes = OAuthAttributes.of(registrationId, googleAttributes);
@@ -83,7 +83,7 @@ class OAuthAttributesTest {
 	}
 
 	@Test
-	void NAVER_OAuth_속성으로_사용자_생성_성공() {
+	void Naver_OAuth_속성으로_사용자_생성_성공() {
 		//given
 		final String registrationId = "naver";
 		final OAuthAttributes oAuthAttributes = OAuthAttributes.of(registrationId, naverAttributes);
@@ -98,7 +98,7 @@ class OAuthAttributesTest {
 	}
 
 	@Test
-	void KAKAO_OAuth_속성으로_사용자_생성_성공() {
+	void Kakao_OAuth_속성으로_사용자_생성_성공() {
 		//given
 		final String registrationId = "kakao";
 		final OAuthAttributes oAuthAttributes = OAuthAttributes.of(registrationId, kakaoAttributes);
