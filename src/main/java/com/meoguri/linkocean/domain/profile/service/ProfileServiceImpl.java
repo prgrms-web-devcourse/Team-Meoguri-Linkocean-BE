@@ -88,6 +88,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		final List<Profile> profiles = profileRepository.findFollowerProfilesBy(
 			new FindProfileCond(
+				searchCond.getUserId(),
 				searchCond.getPage(),
 				searchCond.getSize(),
 				searchCond.getUsername()
@@ -108,6 +109,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		final List<Profile> profiles = profileRepository.findFolloweeProfilesBy(
 			new FindProfileCond(
+				searchCond.getUserId(),
 				searchCond.getPage(),
 				searchCond.getSize(),
 				searchCond.getUsername()

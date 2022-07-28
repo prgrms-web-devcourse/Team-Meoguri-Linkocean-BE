@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FindProfileCond {
 
+	private final long userId;
 	private final int page;
 	private final int size;
 	private final String username;
