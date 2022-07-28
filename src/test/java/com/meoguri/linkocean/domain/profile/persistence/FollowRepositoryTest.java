@@ -27,11 +27,11 @@ class FollowRepositoryTest {
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	User user1;
-	User user2;
+	private User user1;
+	private User user2;
 
-	Profile profile1;
-	Profile profile2;
+	private Profile profile1;
+	private Profile profile2;
 
 	@BeforeEach
 	void setUp() {
