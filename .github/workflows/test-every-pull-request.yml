@@ -27,6 +27,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      ## set mysql docker container
+      - name: build docker-compose
+        run: docker-compose up -d
+
       ## gradle caching
       - name: Gradle Caching
         uses: actions/cache@v3
