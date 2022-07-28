@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UpdateProfileCommand {
 
-	private final long userID;
+	private final long userId;
 	private final String username;
 	private final String imageUrl;
 	private final String bio;

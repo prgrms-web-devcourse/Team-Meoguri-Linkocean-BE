@@ -4,13 +4,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.FindUserByIdQuery;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-	private final FindUserByIdQuery findUserByIdQuery;
 	private final ProfileRepository profileRepository;
+	private final FollowRepository followRepository;
+
+	private final FindUserByIdQuery findUserByIdQuery;
+	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
@@ -39,9 +43,9 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public ProfileResult getProfileByUserId(final long userId) {
+	public ProfileResult getMyProfile(final long userId) {
 
-		final Profile profile = findProfileBy(userId);
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 
 		return new ProfileResult(
 			profile.getId(),
@@ -49,10 +53,8 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getImageUrl(),
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
-
-			//TODO - Follow 구현후 더미 값들 바꾸기
-			0,
-			0,
+			followRepository.countFollowerByUserId(userId),
+			followRepository.countFolloweeByUserId(userId),
 			false
 		);
 	}
@@ -60,7 +62,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
 
-		final Profile profile = findProfileBy(command.getUserID());
+		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 
 		// 프로필 업데이트
 		profile.update(
@@ -73,7 +75,4 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.updateFavoriteCategories(command.getCategories());
 	}
 
-	private Profile findProfileBy(final long userId) {
-		return profileRepository.findByUserId(userId).orElseThrow(LinkoceanRuntimeException::new);
-	}
 }
