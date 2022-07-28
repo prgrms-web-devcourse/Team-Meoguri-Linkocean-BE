@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.service.dto.ProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
@@ -50,17 +50,17 @@ class ProfileServiceImplTest {
 		final long profileId = profileService.registerProfile(command);
 
 		//when
-		final ProfileResult result = profileService.getMyProfile(userId);
+		final GetMyProfileResult result = profileService.getMyProfile(userId);
 
 		//then
 		assertThat(result).extracting(
-			ProfileResult::getProfileId,
-			ProfileResult::getUsername,
-			ProfileResult::getImageUrl,
-			ProfileResult::getBio,
-			ProfileResult::getFollowerCount,
-			ProfileResult::getFolloweeCount,
-			ProfileResult::isFollow
+			GetMyProfileResult::getProfileId,
+			GetMyProfileResult::getUsername,
+			GetMyProfileResult::getImageUrl,
+			GetMyProfileResult::getBio,
+			GetMyProfileResult::getFollowerCount,
+			GetMyProfileResult::getFolloweeCount,
+			GetMyProfileResult::isFollow
 		).containsExactly(
 			profileId,
 			profile.getUsername(),
@@ -92,11 +92,11 @@ class ProfileServiceImplTest {
 		profileService.updateProfile(updateCommand);
 
 		//then
-		final ProfileResult result = profileService.getMyProfile(userId);
+		final GetMyProfileResult result = profileService.getMyProfile(userId);
 		assertThat(result).extracting(
-			ProfileResult::getUsername,
-			ProfileResult::getImageUrl,
-			ProfileResult::getBio
+			GetMyProfileResult::getUsername,
+			GetMyProfileResult::getImageUrl,
+			GetMyProfileResult::getBio
 		).containsExactly(
 			"papa",
 			"updated image url",
