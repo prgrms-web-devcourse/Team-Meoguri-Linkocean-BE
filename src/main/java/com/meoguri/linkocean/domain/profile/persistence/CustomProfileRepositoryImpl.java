@@ -32,7 +32,6 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			.selectFrom(profile)
 			.where(
 				followerOfUsername(findCond.getProfileId(), findCond.getUsername())
-				// targetNameEq(follow.follower, findCond.getUsername())
 			)
 			.offset(findCond.getOffset())
 			.limit(findCond.getLimit())
@@ -45,7 +44,6 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			.selectFrom(profile)
 			.where(
 				followeeOfUsername(findCond.getProfileId(), findCond.getUsername())
-				// followeeNameEq(findCond.getUsername())
 			)
 			.offset(findCond.getOffset())
 			.limit(findCond.getLimit())
@@ -63,8 +61,8 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			).where(
 				follow.followee.id.eq(profileId),
 				nullSafeBuilder(() -> profile.username.eq(username))
-			)
-		));
+			))
+		);
 	}
 
 	private BooleanBuilder followeeOfUsername(long profileId, String username) {
@@ -78,7 +76,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			).where(
 				follow.follower.id.eq(profileId),
 				nullSafeBuilder(() -> profile.username.eq(username))
-			)
-		));
+			))
+		);
 	}
 }
