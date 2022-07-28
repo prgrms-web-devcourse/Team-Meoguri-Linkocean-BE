@@ -1,13 +1,35 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<ul>
-    <li><a sec:authorize="isAnonymous()" href="/oauth2/authorization/google" role="button">구글 연동 로그인</a></li>
-    <li><a sec:authorize="isAuthenticated()" href="/logout" role="button">로그아웃</a></li>
-</ul>
+<head>
+    <title>Login Service Project</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
 
-<div sec:authorize="isAuthenticated()" th:if="${#response.status<300 and #response.status>=200}">
-    <div th:text="${#authentication.getName()}"></div>
-    <br>
-    <div th:text="${#authentication.getPrincipal()}"></div>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<h1>Login Test Page</h1>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">
+            <a sec:authorize="isAuthenticated()" href="/logout" class="btn btn-info active" role="button">Logout</a>
+            <a sec:authorize="isAnonymous()" href="/oauth2/authorization/google" class="btn btn-success active"
+               role="button">Google
+                Login</a>
+            <a sec:authorize="isAnonymous()" href="/oauth2/authorization/naver" class="btn btn-secondary active"
+               role="button">Naver
+                Login</a>
+            <a sec:authorize="isAnonymous()" href="/oauth2/authorization/kakao" class="btn btn-secondary active"
+               role="button">Kakao
+                Login</a>
+        </div>
+    </div>
+    <br><br>
+    <div sec:authorize="isAuthenticated()" th:if="${#response.status<300 and #response.status>=200}">
+        <div th:text="${#authentication.getName()}"></div>
+        <br>
+        <div th:text="${#authentication.getPrincipal()}"></div>
+    </div>
+
 </div>
