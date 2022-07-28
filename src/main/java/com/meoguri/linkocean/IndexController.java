@@ -8,6 +8,6 @@ public class IndexController {
 
 	@GetMapping("/api/v1/health")
 	public String test() {
-		return "develop server 진짜 성공이야 ㅁㅊ";
+		return "develop server";
 	}
 }
