@@ -29,10 +29,10 @@ public final class QueryDslUtil {
 	/**
 	 * 동적 join 을 지원하기 위한 유틸리티 메서드
 	 */
-	public static <T, P> JPQLQuery<T> joinIf(final Boolean expression, JPQLQuery<T> base,
-		final JoinEntityPathStore<P> join, final List<Predicate> on) {
+	public static <T, P> JPQLQuery<T> joinIf(JPQLQuery<T> base,
+		final JoinEntityPathStore<P> join, final Boolean when, final List<Predicate> on) {
 
-		if (expression) {
+		if (when) {
 			base = base.join(join.entityPath, join.path)
 				.on(on.toArray(Predicate[]::new));
 		}
@@ -42,6 +42,10 @@ public final class QueryDslUtil {
 	public static <P> JoinEntityPathStore<P> join(final EntityPath<P> target, final Path<P> alias) {
 
 		return new JoinEntityPathStore<>(target, alias);
+	}
+
+	public static boolean when(final boolean cond) {
+		return cond;
 	}
 
 	public static List<Predicate> on(final Predicate... condition) {
