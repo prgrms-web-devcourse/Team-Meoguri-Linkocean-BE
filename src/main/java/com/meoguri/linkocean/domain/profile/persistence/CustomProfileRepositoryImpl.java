@@ -6,20 +6,24 @@ import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 @Repository
 public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 
 	private final JPQLQueryFactory query;
+
+	public CustomProfileRepositoryImpl(final EntityManager em) {
+		this.query = new JPAQueryFactory(em);
+	}
 
 	@Override
 	public List<Profile> findFollowerProfilesBy(final FindProfileCond findCond) {

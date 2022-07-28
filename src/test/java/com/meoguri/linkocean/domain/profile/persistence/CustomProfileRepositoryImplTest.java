@@ -7,15 +7,15 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.meoguri.linkocean.common.QueryDslTest;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
-@QueryDslTest
+@DataJpaTest
 class CustomProfileRepositoryImplTest {
 
 	@Autowired
