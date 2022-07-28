@@ -1,17 +1,52 @@
 package com.meoguri.linkocean.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
+
+import lombok.AllArgsConstructor;
 
 public final class QueryDslUtil {
 
-	public static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
+	public static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> f) {
 		try {
 			return new BooleanBuilder(f.get());
 		} catch (IllegalArgumentException | NullPointerException e) {
 			return new BooleanBuilder();
 		}
+	}
+
+	public static <T, P> JPQLQuery<T> joinIf(final Boolean expression, JPQLQuery<T> base,
+		final JoinEntityPathStore<P> join, final List<Predicate> on) {
+
+		if (expression) {
+			base = base.join(join.entityPath, join.path)
+				.on(on.toArray(Predicate[]::new));
+		}
+		return base;
+	}
+
+	public static List<Predicate> on(final Predicate... condition) {
+
+		return Arrays.asList(condition);
+	}
+
+	public static <P> JoinEntityPathStore<P> join(final EntityPath<P> target, final Path<P> alias) {
+
+		return new JoinEntityPathStore<>(target, alias);
+	}
+
+	@AllArgsConstructor
+	private static class JoinEntityPathStore<P> {
+
+		final EntityPath<P> entityPath;
+		final Path<P> path;
 	}
 }
