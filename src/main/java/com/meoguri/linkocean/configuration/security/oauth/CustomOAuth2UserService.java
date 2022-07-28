@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.configuration.security.oauth;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
 import java.util.Collections;
 
 import javax.servlet.http.HttpSession;
@@ -76,10 +78,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return userRepository.save(user);
 		});
 
-		// 기존에 회원가입 했던 Vendor사가 아닌 다른 Vendor 사에서 요청이 들어온다면 막기
-		if (findUser.getOAuthType() != attributes.getOAuthType()) {
-			throw new IllegalArgumentException("이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
-		}
+		checkArgument(findUser.getOAuthType() != attributes.getOAuthType(), "이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
 
 		return findUser;
 	}
