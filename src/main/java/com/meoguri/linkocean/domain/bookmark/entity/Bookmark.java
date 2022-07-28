@@ -49,6 +49,10 @@ public class Bookmark extends BaseIdEntity {
 	@Enumerated(STRING)
 	private OpenType openType;
 
+	@Column(nullable = true, length = 20)
+	@Enumerated(STRING)
+	private Category category;
+
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
@@ -91,7 +95,7 @@ public class Bookmark extends BaseIdEntity {
 	/**
 	 * 북마크의 공개 범위
 	 */
-	enum OpenType {
+	public enum OpenType {
 		/* 전체공개 */
 		ALL,
 
@@ -110,4 +114,30 @@ public class Bookmark extends BaseIdEntity {
 		}
 	}
 
+	/**
+	 * 북마크의 카테고리
+	 */
+	public enum Category {
+
+		SELF_DEVELOPMENT, //자기계발
+		HUMANITIES, //인문
+		POLITICS, //정치
+		SOCIAL, //사회
+		ART, //예술
+		SCIENCE, //과학
+		TECHNOLOGY, //기술
+		IT, //IT
+		HOME, //가정
+		HEALTH, //건강
+		TRAVEL, //여행
+		COOKING; //요리
+
+		public String getName() {
+			return name().toLowerCase();
+		}
+
+		public static Category of(String arg) {
+			return Category.valueOf(arg.toUpperCase());
+		}
+	}
 }

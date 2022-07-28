@@ -1,7 +1,7 @@
-create table bookmark_tag
+create table favorite_category
 (
     id          bigint not null auto_increment,
-    bookmark_id bigint,
-    tag_id      bigint,
+    category_id bigint,
+    profile_id  bigint,
     primary key (id)
 ) engine=InnoDB;
