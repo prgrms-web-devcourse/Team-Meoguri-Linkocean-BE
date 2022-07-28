@@ -48,7 +48,7 @@ public class OAuthAttributes {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 
 		return new OAuthAttributes(
-			attributes,
+			kakaoAccount,
 			(String)kakaoAccount.get("email"),
 			OAuthType.KAKAO
 		);
