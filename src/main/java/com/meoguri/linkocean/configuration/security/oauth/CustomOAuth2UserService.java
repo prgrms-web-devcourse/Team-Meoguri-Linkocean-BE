@@ -79,7 +79,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return userRepository.save(user);
 		});
 
-		checkArgument(findUser.getOAuthType() != OAuthType.of(attributes.getOAuthType()),
+		checkArgument(findUser.getOAuthType() == OAuthType.of(attributes.getOAuthType()),
 			"이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
 
 		return findUser;
