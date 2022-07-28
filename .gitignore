@@ -42,8 +42,5 @@ out/
 ### P6spy long ###
 spy.log
 
-### oauth client config ###
-#application-oauth.yml
-
 ### 설정 파일
 /src/main/resources/*.yml
