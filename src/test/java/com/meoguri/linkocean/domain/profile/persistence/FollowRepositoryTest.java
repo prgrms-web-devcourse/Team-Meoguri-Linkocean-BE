@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @DataJpaTest
@@ -35,8 +34,8 @@ class FollowRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		user1 = userRepository.save(new User("haha@gmail.com", OAuthType.GOOGLE));
-		user2 = userRepository.save(new User("papa@gmail.com", OAuthType.GOOGLE));
+		user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
+		user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
 
 		profile1 = profileRepository.save(new Profile(user1, "haha"));
 		profile2 = profileRepository.save(new Profile(user2, "papa"));

@@ -27,7 +27,7 @@ class OAuthAttributesTest {
 		//then
 		assertThat(oAuthAttributes).isNotNull()
 			.extracting(OAuthAttributes::getEmail, OAuthAttributes::getOAuthType)
-			.containsExactly("haha@gmail.com", OAuthType.GOOGLE);
+			.containsExactly("haha@gmail.com", "GOOGLE");
 	}
 
 	@Test
@@ -41,7 +41,7 @@ class OAuthAttributesTest {
 		//then
 		assertThat(oAuthAttributes).isNotNull()
 			.extracting(OAuthAttributes::getEmail, OAuthAttributes::getOAuthType)
-			.containsExactly("haha@naver.com", OAuthType.NAVER);
+			.containsExactly("haha@naver.com", "NAVER");
 	}
 
 	@Test
@@ -55,7 +55,7 @@ class OAuthAttributesTest {
 		//then
 		assertThat(oAuthAttributes).isNotNull()
 			.extracting(OAuthAttributes::getEmail, OAuthAttributes::getOAuthType)
-			.containsExactly("haha@kakao.com", OAuthType.KAKAO);
+			.containsExactly("haha@kakao.com", "KAKAO");
 	}
 
 	void OAuth_속성_생성_실패() {
