@@ -5,7 +5,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 public final class Fixture {
 
@@ -13,9 +12,7 @@ public final class Fixture {
 
 		return new User(
 
-			"haha@papa.com",
-			OAuthType.GOOGLE
-		);
+			"haha@papa.com", "GOOGLE");
 	}
 
 	public static Profile createProfile() {
@@ -26,9 +23,7 @@ public final class Fixture {
 
 		return new Profile(
 
-			user,
-			"haha"
-		);
+			user, "haha");
 	}
 
 	public static Bookmark createBookmark() {
@@ -46,10 +41,7 @@ public final class Fixture {
 
 		return new LinkMetadata(
 
-			"www.google.com",
-			"구글",
-			"google.png"
-		);
+			"www.google.com", "구글", "google.png");
 	}
 
 	public static Tag createTag() {

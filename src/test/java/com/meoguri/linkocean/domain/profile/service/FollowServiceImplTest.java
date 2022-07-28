@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.profile.service;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,8 +37,8 @@ class FollowServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		user1Id = userRepository.save(new User("haha@gmail.com", GOOGLE)).getId();
-		user2Id = userRepository.save(new User("papa@gmail.com", GOOGLE)).getId();
+		user1Id = userRepository.save(new User("haha@gmail.com", "GOOGLE")).getId();
+		user2Id = userRepository.save(new User("papa@gmail.com", "GOOGLE")).getId();
 
 		final RegisterProfileCommand command1 = new RegisterProfileCommand(user1Id, "haha", emptyList());
 		final RegisterProfileCommand command2 = new RegisterProfileCommand(user2Id, "papa", emptyList());
