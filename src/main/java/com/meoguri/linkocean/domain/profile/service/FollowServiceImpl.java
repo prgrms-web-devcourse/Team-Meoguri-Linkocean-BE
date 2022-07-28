@@ -41,4 +41,5 @@ public class FollowServiceImpl implements FollowService {
 
 		followRepository.delete(follow);
 	}
+
 }
