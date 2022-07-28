@@ -50,7 +50,7 @@ public class Bookmark extends BaseIdEntity {
 	private OpenType openType;
 
 	@Column(nullable = true, length = 20)
-	@Enumerated
+	@Enumerated(STRING)
 	private Category category;
 
 	@Column(nullable = false)
