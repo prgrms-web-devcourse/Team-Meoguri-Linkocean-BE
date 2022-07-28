@@ -32,9 +32,9 @@ public class User extends BaseIdEntity {
 	/**
 	 * 회원 가입시 사용하는 생성자
 	 */
-	public User(final String email, final OAuthType oAuthType) {
+	public User(final String email, final String oAuthType) {
 
 		this.email = new Email(email);
-		this.oAuthType = oAuthType;
+		this.oAuthType = OAuthType.of(oAuthType);
 	}
 }

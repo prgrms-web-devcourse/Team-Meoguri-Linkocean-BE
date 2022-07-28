@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return userRepository.save(user);
 		});
 
-		checkArgument(findUser.getOAuthType() != attributes.getOAuthType(), "이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
+		checkArgument(findUser.getOAuthType() != OAuthType.of(attributes.getOAuthType()),
+			"이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
 
 		return findUser;
 	}
