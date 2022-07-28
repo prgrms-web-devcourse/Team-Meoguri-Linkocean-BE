@@ -15,9 +15,9 @@ import lombok.AllArgsConstructor;
 
 public final class QueryDslUtil {
 
-	public static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> f) {
+	public static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
 		try {
-			return new BooleanBuilder(f.get());
+			return new BooleanBuilder(cond.get());
 		} catch (IllegalArgumentException | NullPointerException e) {
 			return new BooleanBuilder();
 		}
