@@ -19,10 +19,10 @@ public class LinkoceanApplication {
 		return flyway -> {
 			/*이런 에러 로그가 나오면 아래 주석을 푸세요
 			Please remove any half-completed changes then run repair to fix the schema history.*/
-			// flyway.repair();
+			flyway.repair();
 
 			/* 마이그레이션을 하고 싶으면 아래 주석을 푸세요 */
-			// flyway.migrate();
+			flyway.migrate();
 			//
 		};
 	}
