@@ -2,11 +2,14 @@ package com.meoguri.linkocean.domain.bookmark.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.time.LocalDateTime.*;
+import static java.util.stream.Collectors.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -131,6 +134,10 @@ public class Bookmark extends BaseIdEntity {
 		HEALTH, //건강
 		TRAVEL, //여행
 		COOKING; //요리
+
+		public static List<String> getAll() {
+			return Arrays.stream(Category.values()).map(Category::getName).collect(toList());
+		}
 
 		public String getName() {
 			return name().toLowerCase();
