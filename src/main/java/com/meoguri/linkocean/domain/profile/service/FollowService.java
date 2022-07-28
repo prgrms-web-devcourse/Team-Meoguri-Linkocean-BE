@@ -7,4 +7,5 @@ public interface FollowService {
 	void follow(FollowCommand command);
 
 	void unfollow(FollowCommand command);
+
 }
