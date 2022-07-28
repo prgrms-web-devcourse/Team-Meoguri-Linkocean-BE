@@ -22,7 +22,18 @@ public class OAuthAttributes {
 	private final OAuthType oAuthType;
 
 	public static OAuthAttributes of(final String registrationId, final Map<String, Object> attributes) {
-		return ofGoogle(attributes);
+		if ("kakao".equals(registrationId)) {
+			return ofKakao(attributes);
+		}
+		if ("naver".equals(registrationId)) {
+			return ofNaver(attributes);
+		}
+		if ("google".equals(registrationId)) {
+			return ofGoogle(attributes);
+		}
+
+		throw new IllegalStateException();
+
 	}
 
 	private static OAuthAttributes ofGoogle(final Map<String, Object> attributes) {
@@ -30,6 +41,26 @@ public class OAuthAttributes {
 			attributes,
 			(String)attributes.get("email"),
 			OAuthType.GOOGLE
+		);
+	}
+
+	private static OAuthAttributes ofKakao(Map<String, Object> attributes) {
+		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
+
+		return new OAuthAttributes(
+			attributes,
+			(String)kakaoAccount.get("email"),
+			OAuthType.KAKAO
+		);
+	}
+
+	private static OAuthAttributes ofNaver(Map<String, Object> attributes) {
+		Map<String, Object> response = (Map<String, Object>)attributes.get("response");
+
+		return new OAuthAttributes(
+			response,
+			(String)response.get("email"),
+			OAuthType.NAVER
 		);
 	}
 
