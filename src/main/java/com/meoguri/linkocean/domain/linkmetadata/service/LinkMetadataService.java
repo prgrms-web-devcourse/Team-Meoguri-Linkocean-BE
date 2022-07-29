@@ -6,6 +6,11 @@ import com.meoguri.linkocean.domain.linkmetadata.service.dto.PutLinkMetadataResu
 
 public interface LinkMetadataService {
 
+	//TODO : getTitleByLink, putLinkMetadataByLink API가 따로 존재할 이유 없는 것 같습니다.
+	//현재 비지니스 로직에서는 링크메타데이터 조회 API를 호출할때 링크메타데이터가 존재하면 반환해주고, 존재하지 않으면
+	//데이터를 web에서 가져와 db에 저정하고 반환합니다.
+	//따라서 하나의 API로 합치는게 맞다는 생각이 듭니다.
+
 	/**
 	 * 링크를 등록하면 타이틀을 자동완성(?) 해주기 위해 필요한 메서드
 	 */
