@@ -123,4 +123,10 @@ public class ProfileServiceImpl implements ProfileService {
 			false
 		)).collect(toList());
 	}
+
+	@Override
+	public boolean existsByUserId(final long userId) {
+		return profileRepository.findByUserId(userId).isPresent();
+	}
+
 }
