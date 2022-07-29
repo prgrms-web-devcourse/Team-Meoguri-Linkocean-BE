@@ -18,7 +18,7 @@ import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 @AutoConfigureMockMvc
 @SpringBootTest
 @Import(P6spyLogMessageFormatConfiguration.class)
-class BaseControllerTest {
+public class BaseControllerTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
