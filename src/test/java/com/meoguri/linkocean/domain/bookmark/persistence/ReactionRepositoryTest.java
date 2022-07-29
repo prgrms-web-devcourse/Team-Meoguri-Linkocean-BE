@@ -53,6 +53,7 @@ class ReactionRepositoryTest {
 				.linkMetadata(linkMetadataRepository.save(createLinkMetadata()))
 				.title("title")
 				.memo("memo")
+				.category("it")
 				.openType("all")
 				.build());
 	}
