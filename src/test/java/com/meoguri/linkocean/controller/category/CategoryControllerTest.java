@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller;
+package com.meoguri.linkocean.controller.category;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark.Category;
 
 class CategoryControllerTest extends BaseControllerTest {
