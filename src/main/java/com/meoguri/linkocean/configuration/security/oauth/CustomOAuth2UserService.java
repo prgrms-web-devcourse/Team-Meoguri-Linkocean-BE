@@ -79,8 +79,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return userRepository.save(user);
 		});
 
-		checkArgument(findUser.getOAuthType() == OAuthType.of(attributes.getOAuthType()),
-			"이미 다른 소셜 로그인 서비스에서 회원가입을 하셨습니다!");
+		final boolean isDuplicatedEmailWithAnotherOAuthType =
+			findUser.getOAuthType() != OAuthType.of(attributes.getOAuthType());
+
+		checkArgument(!isDuplicatedEmailWithAnotherOAuthType,
+			String.format("이미%s에서 회원가입을 하셨습니다!", findUser.getOAuthType()));
 
 		return findUser;
 	}

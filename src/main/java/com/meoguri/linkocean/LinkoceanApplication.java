@@ -22,7 +22,7 @@ public class LinkoceanApplication {
 			flyway.repair();
 
 			/* 마이그레이션을 하고 싶으면 아래 주석을 푸세요 */
-			flyway.migrate();
+			// flyway.migrate();
 			//
 		};
 	}

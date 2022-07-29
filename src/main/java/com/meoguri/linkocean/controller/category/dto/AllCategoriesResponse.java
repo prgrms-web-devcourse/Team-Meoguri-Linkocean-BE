@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.dto.category;
+package com.meoguri.linkocean.controller.category.dto;
 
 import java.util.List;
 
