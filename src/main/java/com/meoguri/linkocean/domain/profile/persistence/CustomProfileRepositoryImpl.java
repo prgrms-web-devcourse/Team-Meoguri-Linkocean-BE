@@ -52,12 +52,13 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 
 	private BooleanBuilder followerOfUsername(long profileId, String username) {
 
-		return nullSafeBuilder(() -> profile.id.in(
+		return nullSafeBuilder(() -> profile.in(
 			joinIf(query
-					.select(follow.follower.id)
+					.select(follow.follower)
 					.from(follow),
-				join(follow.follower, profile), when(username != null),
-				on(follow.follower.id.eq(profile.id))
+				join(follow.follower, profile),
+				on(follow.follower.id.eq(profile.id)),
+				when(username != null)
 			).where(
 				follow.followee.id.eq(profileId),
 				nullSafeBuilder(() -> profile.username.eq(username))
@@ -67,12 +68,13 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 
 	private BooleanBuilder followeeOfUsername(long profileId, String username) {
 
-		return nullSafeBuilder(() -> profile.id.in(
+		return nullSafeBuilder(() -> profile.in(
 			joinIf(query
-					.select(follow.followee.id)
+					.select(follow.followee)
 					.from(follow),
-				join(follow.followee, profile), when(username != null),
-				on(follow.followee.id.eq(profile.id))
+				join(follow.followee, profile),
+				on(follow.followee.id.eq(profile.id)),
+				when(username != null)
 			).where(
 				follow.follower.id.eq(profileId),
 				nullSafeBuilder(() -> profile.username.eq(username))

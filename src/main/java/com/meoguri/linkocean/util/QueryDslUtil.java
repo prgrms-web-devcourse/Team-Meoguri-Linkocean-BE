@@ -30,7 +30,7 @@ public final class QueryDslUtil {
 	 * 동적 join 을 지원하기 위한 유틸리티 메서드
 	 */
 	public static <T, P> JPQLQuery<T> joinIf(JPQLQuery<T> base,
-		final JoinEntityPathStore<P> join, final Boolean when, final List<Predicate> on) {
+		final JoinEntityPathStore<P> join, final List<Predicate> on, final Boolean when) {
 
 		if (when) {
 			base = base.join(join.entityPath, join.path)
