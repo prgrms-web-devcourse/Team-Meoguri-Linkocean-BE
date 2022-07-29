@@ -51,5 +51,4 @@ class BookmarkRepositoryTest {
 		//then
 		assertThat(retrievedBookmark).isNotNull();
 	}
-
 }
