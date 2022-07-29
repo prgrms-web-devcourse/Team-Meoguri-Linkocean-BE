@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.service;
 
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -39,30 +40,41 @@ class LinkMetadataServiceImplTest {
 	}
 
 	@Test
-	void 하나_넣고_하나_조회_성공() {
+	void db에_있는_url_링크메타데이터_타이틀_조회_성공() {
 		//given
-		linkMetadataService.putLinkMetadataByLink("www.naver.com");
+		final String link = "https://www.naver.com";
+		linkMetadataRepository.save(new LinkMetadata(link, "네이버", "naver.png"));
 
 		//when
-		final String title = linkMetadataService.getTitleByLink("www.naver.com");
+		final String title = linkMetadataService.getTitleByLink(link);
 
 		//then
 		assertThat(title).isEqualTo("네이버");
 	}
 
-	/**
-	 * See LinkMetadataRepositoryTest.같은_링크_중복_삽입_실패
-	 */
 	@Test
-	void 같은거_여러번_넣어도_저장은_한번만() {
+	void 새로_저장된_url_링크메타데이터_타이틀_조회_성공() {
+		//given
+		final String link = "https://www.naver.com";
+
+		//when
+		final String title = linkMetadataService.getTitleByLink(link);
+
+		//then
+		assertThat(title).isEqualTo("네이버");
+		assertThat(linkMetadataRepository.count()).isEqualTo(1L);
+	}
+
+	@Test
+	void 유효하지_않은_url_링크메타데이터_조회() {
+		//given
+		final String invalidLink = "https://www.invalid.com";
+		given(jsoupLinkMetadataService.search(invalidLink))
+			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
+
 		//when then
-		assertThatNoException()
-			.isThrownBy(() -> {
-				linkMetadataService.putLinkMetadataByLink("www.naver.com");
-				linkMetadataService.putLinkMetadataByLink("www.naver.com");
-				linkMetadataService.putLinkMetadataByLink("http://www.naver.com");
-				linkMetadataService.putLinkMetadataByLink("https://www.naver.com");
-			});
+		assertThatExceptionOfType(IllegalArgumentException.class)
+			.isThrownBy(() -> linkMetadataService.getTitleByLink(invalidLink));
 	}
 
 	@Test
@@ -71,9 +83,9 @@ class LinkMetadataServiceImplTest {
 		List<LinkMetadata> linkMetadataList = new ArrayList<>();
 		for (int i = 0; i < 5; ++i) {
 			linkMetadataList.add(new LinkMetadata(
-					String.format("www.naver%d.com", i),
-					String.format("title%d", i),
-					String.format("imageUrl%d", i)
+				String.format("www.naver%d.com", i),
+				String.format("title%d", i),
+				String.format("imageUrl%d", i)
 				)
 			);
 		}
