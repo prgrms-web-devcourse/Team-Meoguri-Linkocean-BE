@@ -58,7 +58,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/**
 		 * bookmarkTag를 저장한다.
-		 * 만약 존재하지 않는 tag가 있다면, 새로 만들어 저장하고 bookmarkTag를 만든다. (고민 - tag service를 만들 필요가 있을까 ?)
+		 * 만약 존재하지 않는 tag가 있다면, 새로 만들어 저장하고 bookmarkTag를 만든다.
 		 */
 		command.getTagNames().stream()
 			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
