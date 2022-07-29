@@ -32,6 +32,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
+	//TODO : 쿼리 튜닝
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
 
