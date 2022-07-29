@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ import com.meoguri.linkocean.domain.user.repository.UserRepository;
 @Transactional
 @SpringBootTest
 class ProfileServiceImplTest {
+
+	@PersistenceContext
+	private EntityManager em;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -48,6 +54,9 @@ class ProfileServiceImplTest {
 		//given
 		final RegisterProfileCommand command = ProfileCommand.ofRegister(profile, categories);
 		final long profileId = profileService.registerProfile(command);
+
+		em.flush();
+		em.clear();
 
 		//when
 		final GetMyProfileResult result = profileService.getMyProfile(userId);
@@ -80,6 +89,10 @@ class ProfileServiceImplTest {
 		final RegisterProfileCommand registerCommand = ProfileCommand.ofRegister(profile, categories);
 		profileService.registerProfile(registerCommand);
 
+		em.flush();
+		em.clear();
+
+		//when
 		final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
 			userId,
 			"papa",
@@ -88,8 +101,10 @@ class ProfileServiceImplTest {
 			List.of("it", "science")
 		);
 
-		//when
 		profileService.updateProfile(updateCommand);
+
+		em.flush();
+		em.clear();
 
 		//then
 		final GetMyProfileResult result = profileService.getMyProfile(userId);
