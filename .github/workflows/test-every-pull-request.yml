@@ -15,7 +15,6 @@ jobs:
 
     steps:
       ## checkout github repo
-      - run: ls -al
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
