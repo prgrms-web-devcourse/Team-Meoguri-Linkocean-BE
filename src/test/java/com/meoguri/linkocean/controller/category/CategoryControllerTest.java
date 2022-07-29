@@ -16,7 +16,7 @@ class CategoryControllerTest extends BaseControllerTest {
 	private final String basePath = getBaseUrl(CategoryController.class);
 
 	@Test
-	void 카테고리_전체_조회_API_성공() throws Exception {
+	void 카테고리_전체_조회_Api_성공() throws Exception {
 		//when
 		mockMvc.perform(get(basePath)
 				.contentType(MediaType.APPLICATION_JSON))
