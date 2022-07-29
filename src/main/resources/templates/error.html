@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div>
+    <img th:src="@{|https://http.cat/${#response.status}|}">
+    <div th:text="${timestamp}"></div>
+    <br>
+    <div th:text="${status}"></div>
+    <br>
+    <div th:text="${error}"></div>
+    <br>
+    <div th:text="${message}"></div>
+    <br>
+    <div th:text="${path}"></div>
+    <br>
+    <div th:text="${trace}"></div>
+    <br>
+</div>
+</html>
