@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
@@ -20,7 +21,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CustomControllerAdvice {
+@RestControllerAdvice
+public class CustomRestControllerAdvice {
 
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
