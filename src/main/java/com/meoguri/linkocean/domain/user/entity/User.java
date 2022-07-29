@@ -8,18 +8,24 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(name = "users")
+@Table(
+	name = "users",
+	uniqueConstraints = @UniqueConstraint(columnNames = {"email", "oauth_type"})
+)
+@AllArgsConstructor
 public class User extends BaseIdEntity {
 
 	@Embedded
