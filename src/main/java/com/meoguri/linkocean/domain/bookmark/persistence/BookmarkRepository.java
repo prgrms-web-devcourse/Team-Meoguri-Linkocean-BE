@@ -11,4 +11,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
 	Optional<Bookmark> findByProfileAndLinkMetadata(Profile profile, LinkMetadata linkMetadata);
+
+	Optional<Bookmark> findByProfileAndId(Profile profile, long id);
 }

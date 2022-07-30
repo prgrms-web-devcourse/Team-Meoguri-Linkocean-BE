@@ -51,4 +51,24 @@ class BookmarkRepositoryTest {
 		//then
 		assertThat(retrievedBookmark).isNotNull();
 	}
+
+	@Test
+	void 프로필_북마크_아이디_이용한_북마크_조회() {
+		//given
+		final Bookmark bookmark = createBookmark();
+
+		userRepository.save(bookmark.getProfile().getUser());
+		profileRepository.save(bookmark.getProfile());
+		linkMetadataRepository.save(bookmark.getLinkMetadata());
+
+		final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
+
+		//when
+		final Optional<Bookmark> retrievedBookmark =
+			bookmarkRepository.findByProfileAndId(bookmark.getProfile(), bookmark.getId());
+
+		//then
+		assertThat(retrievedBookmark).isNotNull();
+		assertThat(retrievedBookmark.get()).isEqualTo(savedBookmark);
+	}
 }
