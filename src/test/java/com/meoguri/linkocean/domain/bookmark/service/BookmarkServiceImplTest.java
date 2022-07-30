@@ -1,10 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +20,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -47,42 +47,40 @@ class BookmarkServiceImplTest {
 	private BookmarkRepository bookmarkRepository;
 
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager em;
 
-	private User user;
+	private long userId;
 	private Profile profile;
 	private LinkMetadata linkMetadata;
+	private String url;
 
 	@BeforeEach
 	void setUp() {
-		user = userRepository.save(createUser());
+		// 사용자, 프로필, 링크 메타 데이터 셋업
+		User user = userRepository.save(createUser());
+		userId = user.getId();
+
 		profile = profileRepository.save(createProfile(user));
 		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
+
+		url = linkMetadata.getSavedUrl(); // 조회를 위해서는 저장된 url 이 필요하다
 	}
 
 	@Test
 	void 북마크_등록_성공() {
 		//given
-		final RegisterBookmarkCommand registerBookmarkCommand = new RegisterBookmarkCommand(
-			user.getId(),
-			Url.toString(linkMetadata.getUrl()),
-			"title",
-			"memo",
-			"it",
-			List.of("tag1", "tag2"),
-			"all"
-		);
+		final RegisterBookmarkCommand command =
+			new RegisterBookmarkCommand(userId, url, "title", "memo", "it", List.of("tag1", "tag2"), "all");
 
 		//when
-		final long savedBookmarkId = bookmarkService.registerBookmark(registerBookmarkCommand);
+		final long savedBookmarkId = bookmarkService.registerBookmark(command);
+
+		em.flush();
+		em.clear();
 
 		//then
-
-		entityManager.flush();
-		entityManager.clear();
-
-		final Bookmark retrievedBookmark = bookmarkRepository.findById(savedBookmarkId).get();
-		assertThat(retrievedBookmark).isNotNull()
+		final Optional<Bookmark> oBookmark = bookmarkRepository.findById(savedBookmarkId);
+		assertThat(oBookmark).isPresent().get()
 			.extracting(
 				Bookmark::getProfile,
 				Bookmark::getLinkMetadata,
@@ -93,55 +91,31 @@ class BookmarkServiceImplTest {
 			).containsExactly(
 				profile,
 				linkMetadata,
-				registerBookmarkCommand.getTitle(),
-				registerBookmarkCommand.getMemo(),
-				registerBookmarkCommand.getCategory(),
-				registerBookmarkCommand.getOpenType()
+				command.getTitle(),
+				command.getMemo(),
+				command.getCategory(),
+				command.getOpenType()
 			);
-
-		final List<String> tagNameList = retrievedBookmark.getBookmarkTags().stream()
-			.map(bookmarkTag -> bookmarkTag.getTag().getName())
-			.collect(Collectors.toList());
-
-		assertThat(tagNameList)
-			.containsExactlyInAnyOrder(
-				registerBookmarkCommand.getTagNames().get(0),
-				registerBookmarkCommand.getTagNames().get(1)
-			);
+		assertThat(oBookmark.get().getTagNames())
+			.hasSameElementsAs(command.getTagNames());
 	}
 
 	@Test
 	void 북마크_생성_실패_유효하지_않은_사용자() {
 		//given
 		final long invalidId = 10L;
-		final RegisterBookmarkCommand registerBookmarkCommand = new RegisterBookmarkCommand(
-			invalidId,
-			Url.toString(linkMetadata.getUrl()),
-			"title",
-			"memo",
-			"it",
-			List.of("tag1", "tag2"),
-			"all"
-		);
+		final RegisterBookmarkCommand command = command(invalidId, url);
 
 		//when then
 		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
+			.isThrownBy(() -> bookmarkService.registerBookmark(command));
 	}
 
 	@Test
 	void 북마크_생성_실패_유효하지_않은_url() {
 		//given
-		final String invalidUrl = "www.invalid.com";
-		final RegisterBookmarkCommand registerBookmarkCommand = new RegisterBookmarkCommand(
-			user.getId(),
-			invalidUrl,
-			"title",
-			"memo",
-			"it",
-			List.of("tag1", "tag2"),
-			"all"
-		);
+		final String invalidUrl = "i am invalid url";
+		final RegisterBookmarkCommand registerBookmarkCommand = command(userId, invalidUrl);
 
 		//when then
 		assertThatExceptionOfType(LinkoceanRuntimeException.class)
@@ -151,29 +125,19 @@ class BookmarkServiceImplTest {
 	@Test
 	void 중복_url_북마크_생성_요청에_따라_실패() {
 		//given
-		final Bookmark bookmark = Bookmark.builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata)
-			.title("title")
-			.memo("memo")
-			.category("it")
-			.openType("all")
-			.build();
+		final Bookmark bookmark = createBookmark(profile, linkMetadata);
 		bookmarkRepository.save(bookmark);
 
 		/* 중복 url 생성 요청 */
-		final RegisterBookmarkCommand registerBookmarkCommand = new RegisterBookmarkCommand(
-			user.getId(),
-			Url.toString(linkMetadata.getUrl()),
-			"title",
-			"memo",
-			"it",
-			List.of("tag1", "tag2"),
-			"all"
-		);
+		final RegisterBookmarkCommand registerBookmarkCommand = command(userId, url);
 
 		//when then
 		assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
 	}
+
+	private RegisterBookmarkCommand command(long userId, final String url) {
+		return new RegisterBookmarkCommand(userId, url, null, null, null, emptyList(), "all");
+	}
+
 }
