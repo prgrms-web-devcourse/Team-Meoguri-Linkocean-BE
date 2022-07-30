@@ -5,30 +5,35 @@ import static lombok.AccessLevel.*;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자가 북마크를 대상으로 지정하는 즐겨찾기
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class BookmarkTag extends BaseIdEntity {
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"bookmark_id", "owner_id"})
+)
+public class Favorite extends BaseIdEntity {
 
 	@ManyToOne(fetch = LAZY)
 	private Bookmark bookmark;
 
 	@ManyToOne(fetch = LAZY)
-	private Tag tag;
+	private Profile owner;
 
-	public BookmarkTag(final Bookmark bookmark, final Tag tag) {
+	public Favorite(final Bookmark bookmark, final Profile owner) {
 
 		this.bookmark = bookmark;
-		this.tag = tag;
-	}
-
-	public String getTagName() {
-		return tag.getName();
+		this.owner = owner;
 	}
 }

@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.entity;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -46,7 +46,7 @@ public class Bookmark extends BaseIdEntity {
 	private LinkMetadata linkMetadata;
 
 	/* BookmarkTag의 생명주기는 Bookmark 엔티티가 관리 */
-	@OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "bookmark", cascade = PERSIST, orphanRemoval = true)
 	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
@@ -125,6 +125,10 @@ public class Bookmark extends BaseIdEntity {
 		if (this.bookmarkTags.size() >= 5) {
 			throw new LinkoceanRuntimeException();
 		}
+	}
+
+	public List<String> getTagNames() {
+		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
 
 	public String getCategory() {
