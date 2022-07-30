@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.service;
 
 import static java.util.stream.Collectors.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -82,11 +83,12 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.updateFavoriteCategories(command.getCategories());
 	}
 
-	// TODO - 팔로우 여부 조회 쿼리 도입하고 isFollow 채우기 (for loop 사용 불가피함)
 	@Override
 	public List<SearchProfileResult> searchFollowerProfiles(final ProfileSearchCond searchCond) {
 
-		final List<Profile> profiles = profileRepository.findFollowerProfilesBy(
+		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
+
+		final List<Profile> followerProfiles = profileRepository.findFollowerProfilesBy(
 			new FindProfileCond(
 				searchCond.getUserId(),
 				searchCond.getPage(),
@@ -95,32 +97,64 @@ public class ProfileServiceImpl implements ProfileService {
 			)
 		);
 
-		return profiles.stream().map(p -> new SearchProfileResult(
-			p.getId(),
-			p.getUsername(),
-			p.getImageUrl(),
-			false
-		)).collect(toList());
+		final List<Long> followeeProfileIds = followerProfiles.stream().map(Profile::getId).collect(toList());
+		final List<Boolean> isFollows = checkIsFollows(currentUserProfileId, followeeProfileIds);
+
+		return getResult(followerProfiles, isFollows);
 	}
 
-	// TODO - 팔로우 여부 조회 쿼리 도입하고 isFollow 채우기 (for loop 사용 불가피함)
 	@Override
 	public List<SearchProfileResult> searchFolloweeProfiles(final ProfileSearchCond searchCond) {
 
-		final List<Profile> profiles = profileRepository.findFolloweeProfilesBy(
+		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
+
+		final List<Profile> followeeProfiles = profileRepository.findFolloweeProfilesBy(
 			new FindProfileCond(
-				searchCond.getUserId(),
+				currentUserProfileId,
 				searchCond.getPage(),
 				searchCond.getSize(),
 				searchCond.getUsername()
 			)
 		);
 
-		return profiles.stream().map(p -> new SearchProfileResult(
+		return followeeProfiles.stream().map(p -> new SearchProfileResult(
 			p.getId(),
 			p.getUsername(),
 			p.getImageUrl(),
-			false
+			true // 현재 사용자가 팔로워인 상황이므로 팔로우 여부는 항상 true
 		)).collect(toList());
+	}
+
+	/**
+	 * 두 배열을 결과 배열로 변환하는 메서드
+	 */
+	private List<SearchProfileResult> getResult(final List<Profile> followerProfiles, final List<Boolean> isFollows) {
+		int numFollower = followerProfiles.size();
+		List<SearchProfileResult> result = new ArrayList<>();
+		for (int i = 0; i < numFollower; i++) {
+			final Profile followerProfile = followerProfiles.get(i);
+			final boolean isFollow = isFollows.get(i);
+
+			result.add(new SearchProfileResult(
+				followerProfile.getId(),
+				followerProfile.getUsername(),
+				followerProfile.getImageUrl(),
+				isFollow
+			));
+		}
+		return result;
+	}
+
+	/**
+	 * 팔로우 여부 조회
+	 * @param profileId - 조회 하는 사용자의 프로필 아이디
+	 * @param checkProfileIds - 조회 대상 사용자 들의 프로필 아이디 목록
+	 * @return - 전달 받은 순서대로 팔로우 여부 반환
+	 */
+	private List<Boolean> checkIsFollows(Long profileId, List<Long> checkProfileIds) {
+
+		final List<Long> followeeProfileIds = followRepository.findAllFolloweeIdByFollowerId(profileId);
+
+		return checkProfileIds.stream().map(followeeProfileIds::contains).collect(toList());
 	}
 }
