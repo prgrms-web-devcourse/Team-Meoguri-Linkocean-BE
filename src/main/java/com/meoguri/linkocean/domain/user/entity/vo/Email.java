@@ -24,7 +24,7 @@ public class Email {
 		+ "+[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]";
 	private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-	@Column(name = "email", length = 255, unique = true)
+	@Column(name = "email", length = 255)
 	private String email;
 
 	public Email(final String email) {

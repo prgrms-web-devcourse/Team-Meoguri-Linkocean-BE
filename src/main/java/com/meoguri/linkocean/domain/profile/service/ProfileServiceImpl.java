@@ -125,6 +125,11 @@ public class ProfileServiceImpl implements ProfileService {
 		)).collect(toList());
 	}
 
+	@Override
+	public boolean existsByUserId(final long userId) {
+		return profileRepository.findByUserId(userId).isPresent();
+	}
+
 	/**
 	 * 두 배열을 결과 배열로 변환하는 메서드
 	 */
