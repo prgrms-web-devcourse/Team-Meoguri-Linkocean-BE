@@ -28,10 +28,20 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 
+		return createBookmark(createProfile(), createLinkMetadata());
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata) {
+
+		return createBookmark(profile, linkMetadata, "title");
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title) {
+
 		return Bookmark.builder()
-			.profile(createProfile())
-			.title("title")
-			.linkMetadata(createLinkMetadata())
+			.profile(profile)
+			.title(title)
+			.linkMetadata(linkMetadata)
 			.memo("dream company")
 			.category("it")
 			.openType("all")
