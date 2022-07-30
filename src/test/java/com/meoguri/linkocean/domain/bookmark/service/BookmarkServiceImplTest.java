@@ -112,17 +112,6 @@ class BookmarkServiceImplTest {
 	}
 
 	@Test
-	void 북마크_생성_실패_유효하지_않은_url() {
-		//given
-		final String invalidUrl = "i am invalid url";
-		final RegisterBookmarkCommand registerBookmarkCommand = command(userId, invalidUrl);
-
-		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
-	}
-
-	@Test
 	void 중복_url_북마크_생성_요청에_따라_실패() {
 		//given
 		final Bookmark bookmark = createBookmark(profile, linkMetadata);
