@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 
 @Query
 @RequiredArgsConstructor
-public class GetBookmarkByIdQuery {
+public class FindBookmarkByIdQuery {
 
 	private final BookmarkRepository bookmarkRepository;
 
-	public Bookmark GetById(final Long id) {
+	public Bookmark findById(final Long id) {
 		return bookmarkRepository.findById(id).orElseThrow(LinkoceanRuntimeException::new);
 	}
 }
