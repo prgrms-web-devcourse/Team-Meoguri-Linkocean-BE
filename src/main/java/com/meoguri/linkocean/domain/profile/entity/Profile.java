@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
@@ -33,7 +34,7 @@ public class Profile extends BaseIdEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "profile")
+	@OneToMany(mappedBy = "profile", cascade = PERSIST, orphanRemoval = true)
 	private List<FavoriteCategory> favoriteCategories = new ArrayList<>();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_BIO_LENGTH)
@@ -90,8 +91,12 @@ public class Profile extends BaseIdEntity {
 	 * 선호 카테고리 목록 업데이트
 	 */
 	public void updateFavoriteCategories(final List<String> categories) {
-		this.favoriteCategories = categories.stream()
-			.map(c -> new FavoriteCategory(this, c))
-			.collect(toList());
+		// 기존 목록 중 업데이트 목록에 없다면 삭제
+		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory()));
+
+		// 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가
+		categories.stream()
+			.filter(c -> !favoriteCategories.stream().map(FavoriteCategory::getCategory).collect(toList()).contains(c))
+			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
 	}
 }

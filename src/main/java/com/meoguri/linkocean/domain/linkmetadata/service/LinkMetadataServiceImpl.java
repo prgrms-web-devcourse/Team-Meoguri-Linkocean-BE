@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.linkmetadata.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -10,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.linkmetadata.service.dto.PutLinkMetadataResult;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 
@@ -29,49 +26,22 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 	private final JsoupLinkMetadataService jsoupLinkMetadataService;
 
 	@Override
-	@Transactional(readOnly = true)
 	public String getTitleByLink(final String link) {
-		final String reducedLink = removeSchemaAndWwwIfExists(link);
-
-		// 1. 기존에 존재하는 link metadata 인지 확인
 		return linkMetadataRepository.findTitleByUrl(new Url(link))
-			.orElseGet(() ->
-				// 2. 아니라면 검색해서 반환
-				jsoupLinkMetadataService.search(addSchemaAndWww(reducedLink)).getTitle()
-			);
-	}
+			.orElseGet(() -> {
+				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
 
-	@Override
-	public PutLinkMetadataResult putLinkMetadataByLink(final String link) {
-		final String reducedLink = removeSchemaAndWwwIfExists(link);
+				if (result.isInvalid()) {
+					throw new IllegalArgumentException("존재하지 않는 url 입니다.");
+				}
 
-		final Optional<LinkMetadata> oLinkMetadata = linkMetadataRepository.findByUrl(new Url(reducedLink));
+				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImageUrl());
+				linkMetadataRepository.save(linkMetadata);
+				log.info("save link metadata - url : {}, title : {}",
+					Url.toString(linkMetadata.getUrl()), linkMetadata.getTitle());
 
-		// 1. 기존에 존재하는 link metadata 인지 확인
-		if (oLinkMetadata.isPresent()) {
-			// 2. 존재 한다면 반환
-			return convert(oLinkMetadata.get());
-		} else {
-			// 3. 새로운 link metadata 검색
-			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(addSchemaAndWww(reducedLink));
-			final LinkMetadata linkMetadata = new LinkMetadata(reducedLink, result.getTitle(), result.getImageUrl());
-
-			// 4. 데이터 베이스에 저장
-			linkMetadataRepository.save(linkMetadata);
-			log.info("save link metadata - url : {}, title : {}",
-				Url.toString(linkMetadata.getUrl()), linkMetadata.getTitle());
-
-			// 5. 반환
-			return convert(linkMetadata);
-		}
-	}
-
-	private String removeSchemaAndWwwIfExists(final String url) {
-		return url.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
-	}
-
-	private PutLinkMetadataResult convert(final LinkMetadata linkMetadata) {
-		return new PutLinkMetadataResult(linkMetadata.getTitle(), linkMetadata.getTitle());
+				return result.getTitle();
+			});
 	}
 
 	@Override

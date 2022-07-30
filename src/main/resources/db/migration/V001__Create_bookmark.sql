@@ -1,4 +1,4 @@
-create table bookmark
+create table if not exists bookmark
 (
     id               bigint      not null auto_increment,
     category         varchar(20),

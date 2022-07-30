@@ -9,4 +9,4 @@ alter table reaction
 alter table tag
     add constraint uk_tag_name unique (name);
 alter table users
-    add constraint uk_users_email unique (email);
+    add constraint uk_users_email_oauthtype unique (email, oauth_type);

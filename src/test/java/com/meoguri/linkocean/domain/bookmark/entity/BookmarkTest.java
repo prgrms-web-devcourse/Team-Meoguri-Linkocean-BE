@@ -24,6 +24,7 @@ class BookmarkTest {
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String openType = "all";
+		final String category = "it";
 
 		//when
 		final Bookmark bookmark = Bookmark.builder()
@@ -31,6 +32,7 @@ class BookmarkTest {
 			.title(title)
 			.linkMetadata(linkMetadata)
 			.memo(memo)
+			.category(category)
 			.openType(openType)
 			.build();
 
@@ -41,8 +43,9 @@ class BookmarkTest {
 				Bookmark::getTitle,
 				Bookmark::getLinkMetadata,
 				Bookmark::getMemo,
+				Bookmark::getCategory,
 				Bookmark::getOpenType
-			).containsExactly(profile, title, linkMetadata, memo, openType);
+			).containsExactly(profile, title, linkMetadata, memo, category, openType);
 
 		assertThat(bookmark)
 			.extracting(
@@ -58,6 +61,7 @@ class BookmarkTest {
 		final String title = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String memo = "memo";
+		final String category = "it";
 		final String openType = "all";
 
 		//when then
@@ -67,6 +71,7 @@ class BookmarkTest {
 				.title(title)
 				.linkMetadata(linkMetadata)
 				.memo(memo)
+				.category(category)
 				.openType(openType)
 				.build());
 	}
@@ -102,5 +107,19 @@ class BookmarkTest {
 		//when then
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, openType));
+	}
+
+	@Test
+	void 북마크_태그_추가_성공() {
+		//given
+		final Bookmark bookmark = createBookmark();
+
+		final Tag tag = createTag();
+
+		//when
+		bookmark.addBookmarkTag(tag);
+
+		//then
+		assertThat(bookmark.getBookmarkTags()).hasSize(1);
 	}
 }

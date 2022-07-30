@@ -1,4 +1,4 @@
-create table bookmark_tag
+create table if not exists bookmark_tag
 (
     id          bigint not null auto_increment,
     bookmark_id bigint,

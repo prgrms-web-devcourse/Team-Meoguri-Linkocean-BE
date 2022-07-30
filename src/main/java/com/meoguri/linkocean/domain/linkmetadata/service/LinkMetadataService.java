@@ -2,20 +2,15 @@ package com.meoguri.linkocean.domain.linkmetadata.service;
 
 import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.domain.linkmetadata.service.dto.PutLinkMetadataResult;
-
 public interface LinkMetadataService {
 
 	/**
-	 * 링크를 등록하면 타이틀을 자동완성(?) 해주기 위해 필요한 메서드
+	 * 링크의 메타 데이터 조회
+	 * 1. 메타 데이터가 db에 존재하면 바로 반환
+	 * 2. 메타 데이터가 db에 없다면 웹에서 링크 메타데이터를 가져와 db에 저장 후 반환
+	 * @throws IllegalArgumentException 유효하지 않은 Link
 	 */
 	String getTitleByLink(String link);
-
-	/**
-	 * 링크로 링크 메타 데이터 등록 후 결과 조회
-	 * 이미 존재 한다면 기존 결과를 조회함
-	 */
-	PutLinkMetadataResult putLinkMetadataByLink(String link);
 
 	/**
 	 * 페이지 단위로 링크 메타 데이터를 주기적으로 업데이트 한다.

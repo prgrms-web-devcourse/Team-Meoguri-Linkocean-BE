@@ -1,4 +1,4 @@
-create table reaction
+create table if not exists reaction
 (
     id          bigint not null auto_increment,
     type        varchar(255),

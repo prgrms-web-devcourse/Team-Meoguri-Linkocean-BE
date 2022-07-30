@@ -1,4 +1,4 @@
-create table notification
+create table if not exists notification
 (
     id          bigint not null auto_increment,
     created_at  datetime(6),

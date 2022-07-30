@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegisterBookmarkCommand {
 
+	private final long userId;
 	private final String url;
 	private final String title;
 	private final String memo;
 	private final String category;
-	private final List<String> tags;
+	private final List<String> tagNames;
 	private final String openType;
 }

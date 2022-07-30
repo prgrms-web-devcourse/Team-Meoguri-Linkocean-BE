@@ -1,4 +1,4 @@
-create table profile
+create table if not exists profile
 (
     id        bigint      not null auto_increment,
     bio       varchar(50),

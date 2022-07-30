@@ -1,4 +1,4 @@
-create table favorite_category
+create table if not exists favorite_category
 (
     id         bigint not null auto_increment,
     category   varchar(20),

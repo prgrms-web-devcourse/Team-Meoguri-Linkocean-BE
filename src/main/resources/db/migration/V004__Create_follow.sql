@@ -1,4 +1,4 @@
-create table follow
+create table if not exists follow
 (
     id          bigint not null auto_increment,
     followee_id bigint,

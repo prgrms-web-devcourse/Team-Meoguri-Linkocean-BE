@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import javax.persistence.Entity;
@@ -15,10 +16,10 @@ import lombok.NoArgsConstructor;
 @Entity
 public class BookmarkTag extends BaseIdEntity {
 
-	@ManyToOne
+	@ManyToOne(fetch = LAZY)
 	private Bookmark bookmark;
 
-	@ManyToOne
+	@ManyToOne(fetch = LAZY)
 	private Tag tag;
 
 	public BookmarkTag(final Bookmark bookmark, final Tag tag) {
