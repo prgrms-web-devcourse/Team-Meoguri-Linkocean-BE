@@ -16,7 +16,7 @@ public interface BookmarkService {
 	long registerBookmark(RegisterBookmarkCommand command);
 
 	/* 북마크 수정 */
-	long updateBookmark(UpdateBookmarkCommand command);
+	void updateBookmark(UpdateBookmarkCommand command);
 
 	/* 북마크 상세 조회 */
 	GetBookmarkResult getBookmark(long userId, long bookmarkId);

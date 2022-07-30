@@ -203,13 +203,13 @@ class BookmarkServiceImplTest {
 			);
 
 			//when
-			final long updatedBookmarkId = bookmarkService.updateBookmark(command);
+			bookmarkService.updateBookmark(command);
 
 			//then
 			entityManager.flush();
 			entityManager.clear();
 
-			final Bookmark updatedBookmark = bookmarkRepository.findById(updatedBookmarkId).get();
+			final Bookmark updatedBookmark = bookmarkRepository.findById(command.getBookmarkId()).get();
 			assertThat(updatedBookmark).isNotNull()
 				.extracting(
 					Bookmark::getTitle,

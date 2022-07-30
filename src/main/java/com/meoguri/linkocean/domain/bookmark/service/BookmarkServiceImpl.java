@@ -66,7 +66,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public long updateBookmark(final UpdateBookmarkCommand command) {
+	public void updateBookmark(final UpdateBookmarkCommand command) {
 
 		//userId, bookmarkId 유효성 검사
 		Bookmark bookmark = bookmarkRepository
@@ -81,8 +81,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 			command.getOpenType(),
 			convertTagNamesToTags(command.getTagNames())
 		);
-
-		return bookmark.getId();
 	}
 
 	/**

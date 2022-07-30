@@ -23,7 +23,6 @@ import javax.persistence.OneToMany;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -93,7 +92,7 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	public void addBookmarkTag(Tag tag) {
 		this.bookmarkTags.add(new BookmarkTag(this, tag));
-		checkBookmarkTagsSize();
+		checkCondition(this.bookmarkTags.size() <= 5);
 	}
 
 	/**
@@ -115,18 +114,9 @@ public class Bookmark extends BaseIdEntity {
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
 			.collect(toList());
-		checkBookmarkTagsSize();
+		checkCondition(this.bookmarkTags.size() <= 5);
 	}
-
-	/**
-	 * bookmark에는 최대 5개의 태그만 존재한다.
-	 */
-	private void checkBookmarkTagsSize() {
-		if (this.bookmarkTags.size() > 5) {
-			throw new LinkoceanRuntimeException();
-		}
-	}
-
+	
 	public List<String> getTagNames() {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
