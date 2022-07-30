@@ -12,13 +12,16 @@ import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/login")
 @RestController
-public class UserController {
+public class LoginController {
 
 	private final ProfileService profileService;
 
-	@GetMapping("/login/success")
+	/**
+	 * OAuthLogin의 Default Success Url 로 등록된다
+	 */
+	@GetMapping("/success")
 	public LoginSuccessResponse loginSuccess(@LoginUser SessionUser sessionUser) {
 
 		final boolean hasProfile = profileService.existsByUserId(sessionUser.getId());
