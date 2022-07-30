@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -91,7 +92,39 @@ public class Bookmark extends BaseIdEntity {
 	 * Bookmark - BookmarkTag의 연관관계 편의 메서드
 	 */
 	public void addBookmarkTag(Tag tag) {
+		checkBookmarkTagsSize();
+
 		this.bookmarkTags.add(new BookmarkTag(this, tag));
+	}
+
+	/**
+	 * 북마크 제목, 메모, 카테고리, 공개 범위를 변경할 수 있다.
+	 */
+	public void update(final String title, final String memo, final String category, final String openType) {
+		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
+
+		this.title = title;
+		this.memo = memo;
+		this.category = Category.of(category);
+		this.openType = OpenType.of(openType);
+		this.updatedAt = now();
+	}
+
+	public void updateBookmarkTags(List<Tag> tags) {
+		checkBookmarkTagsSize();
+
+		this.bookmarkTags = tags.stream()
+			.map(tag -> new BookmarkTag(this, tag))
+			.collect(toList());
+	}
+
+	/**
+	 * bookmark에는 최대 5개의 태그만 존재한다.
+	 */
+	private void checkBookmarkTagsSize() {
+		if (this.bookmarkTags.size() >= 5) {
+			throw new LinkoceanRuntimeException();
+		}
 	}
 
 	public String getCategory() {
@@ -100,18 +133,6 @@ public class Bookmark extends BaseIdEntity {
 
 	public String getOpenType() {
 		return openType.getName();
-	}
-
-	/**
-	 * 북마크 제목, 메모, 공개 범위를 변경할 수 있다.
-	 */
-	public void update(final String title, final String memo, final String openType) {
-		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
-
-		this.title = title;
-		this.memo = memo;
-		this.openType = OpenType.of(openType);
-		this.updatedAt = now();
 	}
 
 	/**

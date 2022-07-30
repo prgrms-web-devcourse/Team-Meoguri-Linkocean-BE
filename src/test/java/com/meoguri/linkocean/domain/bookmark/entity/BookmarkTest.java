@@ -82,18 +82,20 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
+		final String category = "it";
 		final String openType = "partial";
 
 		//when
-		bookmark.update(updatedTitle, updatedMemo, openType);
+		bookmark.update(updatedTitle, updatedMemo, category, openType);
 
 		//then
 		assertThat(bookmark)
 			.extracting(
 				Bookmark::getTitle,
 				Bookmark::getMemo,
+				Bookmark::getCategory,
 				Bookmark::getOpenType
-			).containsExactly(updatedTitle, updatedMemo, openType);
+			).containsExactly(updatedTitle, updatedMemo, category, openType);
 	}
 
 	@Test
@@ -102,11 +104,12 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String invalidTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final String updatedMemo = "updatedMemo";
+		final String category = "it";
 		final String openType = "partial";
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, openType));
+			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, category, openType));
 	}
 
 	@Test
