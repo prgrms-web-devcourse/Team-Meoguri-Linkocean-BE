@@ -107,6 +107,5 @@ class TagServiceImplTest {
 				tuple("tag2", 2),
 				tuple("tag1", 1)
 			);
-
 	}
 }
