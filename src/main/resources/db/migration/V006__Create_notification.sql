@@ -5,4 +5,4 @@ create table if not exists notification
     bookmark_id bigint,
     target_id   bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

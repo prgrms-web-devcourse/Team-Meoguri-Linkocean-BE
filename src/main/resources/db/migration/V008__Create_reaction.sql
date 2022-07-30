@@ -5,4 +5,4 @@ create table if not exists reaction
     bookmark_id bigint,
     profile_id  bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

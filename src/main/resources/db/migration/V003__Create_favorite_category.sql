@@ -4,4 +4,4 @@ create table if not exists favorite_category
     category   varchar(20),
     profile_id bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

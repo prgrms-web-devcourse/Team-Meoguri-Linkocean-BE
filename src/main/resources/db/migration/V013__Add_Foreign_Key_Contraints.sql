@@ -22,3 +22,7 @@ alter table reaction
     add constraint fk_reaction_bookmark foreign key (bookmark_id) references bookmark (id);
 alter table reaction
     add constraint fk_reaction_profile foreign key (profile_id) references profile (id);
+alter table favorite
+    add constraint fk_favorite_bookmark foreign key (boomark_id) references bookmark (id);
+alter table favorite
+    add constraint fk_favorite_owner foreign key (owner_id) references profile (id);

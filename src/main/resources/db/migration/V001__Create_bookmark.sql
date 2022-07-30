@@ -10,4 +10,4 @@ create table if not exists bookmark
     link_metadata_id bigint,
     profile_id       bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

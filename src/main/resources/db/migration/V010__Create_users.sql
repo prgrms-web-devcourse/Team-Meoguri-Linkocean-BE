@@ -4,4 +4,4 @@ create table if not exists users
     email      varchar(255),
     oauth_type varchar(50) not null,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

@@ -4,4 +4,4 @@ create table if not exists follow
     followee_id bigint,
     follower_id bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

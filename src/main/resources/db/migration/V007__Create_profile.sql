@@ -6,4 +6,4 @@ create table if not exists profile
     username  varchar(50) not null,
     user_id   bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;
