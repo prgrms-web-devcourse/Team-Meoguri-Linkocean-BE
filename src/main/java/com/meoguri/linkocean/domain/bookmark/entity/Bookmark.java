@@ -98,19 +98,21 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	/**
-	 * 북마크 제목, 메모, 카테고리, 공개 범위를 변경할 수 있다.
+	 * 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다.
 	 */
-	public void update(final String title, final String memo, final String category, final String openType) {
+	public void update(final String title, final String memo, final String category, final String openType,
+		final List<Tag> tags) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
 		this.memo = memo;
 		this.category = Category.of(category);
 		this.openType = OpenType.of(openType);
+		updateBookmarkTags(tags);
 		this.updatedAt = now();
 	}
 
-	public void updateBookmarkTags(List<Tag> tags) {
+	private void updateBookmarkTags(List<Tag> tags) {
 		checkBookmarkTagsSize();
 
 		this.bookmarkTags = tags.stream()

@@ -4,6 +4,8 @@ import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -84,9 +86,10 @@ class BookmarkTest {
 		final String updatedMemo = "updatedMemo";
 		final String category = "it";
 		final String openType = "partial";
+		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
 		//when
-		bookmark.update(updatedTitle, updatedMemo, category, openType);
+		bookmark.update(updatedTitle, updatedMemo, category, openType, tags);
 
 		//then
 		assertThat(bookmark)
@@ -96,6 +99,8 @@ class BookmarkTest {
 				Bookmark::getCategory,
 				Bookmark::getOpenType
 			).containsExactly(updatedTitle, updatedMemo, category, openType);
+		assertThat(bookmark.getTagNames())
+			.containsExactly(tags.get(0).getName(), tags.get(1).getName());
 	}
 
 	@Test
@@ -106,10 +111,11 @@ class BookmarkTest {
 		final String updatedMemo = "updatedMemo";
 		final String category = "it";
 		final String openType = "partial";
+		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, category, openType));
+			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, category, openType, tags));
 	}
 
 	@Test
