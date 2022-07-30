@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
+import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -32,7 +33,9 @@ class FavoriteServiceImplTest {
 	@Autowired
 	private BookmarkService bookmarkService;
 
-	User user;
+	@Autowired
+	private LinkMetadataService linkMetadataService;
+
 	long userId;
 	long profileId;
 	long bookmarkId;
@@ -40,9 +43,13 @@ class FavoriteServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자, 프로필, 북마크 셋업
-		user = userRepository.save(createUser());
-		profileId = profileService.registerProfile(registerCommandOf(createProfile(user)));
-		bookmarkId = bookmarkService.registerBookmark(defaultBookmarkRegisterCommand(user));
+		User user = userRepository.save(createUser());
+		userId = user.getId();
+
+		profileId = profileService.registerProfile(command(createProfile(user)));
+
+		linkMetadataService.getTitleByLink("https://www.naver.com");
+		bookmarkId = bookmarkService.registerBookmark(command(user, "www.naver.com"));
 	}
 
 	@Test
@@ -64,11 +71,11 @@ class FavoriteServiceImplTest {
 		// assertThat(result2.isFavorite()).isFalse();
 	}
 
-	private RegisterBookmarkCommand defaultBookmarkRegisterCommand(final User user) {
-		return new RegisterBookmarkCommand(user.getId(), "www.naver.com", null, null, null, emptyList(), "public");
+	private RegisterBookmarkCommand command(final User user, final String url) {
+		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, emptyList(), "all");
 	}
 
-	public static RegisterProfileCommand registerCommandOf(Profile profile) {
+	private RegisterProfileCommand command(Profile profile) {
 
 		return new RegisterProfileCommand(
 			profile.getUser().getId(),
