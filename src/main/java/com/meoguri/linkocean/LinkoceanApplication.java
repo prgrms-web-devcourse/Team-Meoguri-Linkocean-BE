@@ -3,7 +3,6 @@ package com.meoguri.linkocean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
@@ -14,7 +13,7 @@ public class LinkoceanApplication {
 		SpringApplication.run(LinkoceanApplication.class, args);
 	}
 
-	@Bean
+	// @Bean
 	public FlywayMigrationStrategy flywayMigrationStrategy() {
 		return flyway -> {
 			// flyway.clean();
