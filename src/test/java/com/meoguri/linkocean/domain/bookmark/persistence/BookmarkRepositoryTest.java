@@ -86,6 +86,21 @@ class BookmarkRepositoryTest {
 	}
 
 	@Test
+	void 프로필_북마크_아이디_이용한_북마크_조회() {
+		//given
+		final Bookmark bookmark = createBookmark(profile, link);
+		final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
+
+		//when
+		final Optional<Bookmark> retrievedBookmark =
+			bookmarkRepository.findByProfileAndId(bookmark.getProfile(), bookmark.getId());
+
+		//then
+		assertThat(retrievedBookmark).isNotNull();
+		assertThat(retrievedBookmark.get()).isEqualTo(savedBookmark);
+	}
+
+	@Test
 	void 사용자의_전체_북마크조회_태그_까지_페치_성공() {
 		//given
 		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1");
@@ -123,5 +138,4 @@ class BookmarkRepositoryTest {
 				tuple("bookmark3", List.of("tag3"))
 			);
 	}
-
 }
