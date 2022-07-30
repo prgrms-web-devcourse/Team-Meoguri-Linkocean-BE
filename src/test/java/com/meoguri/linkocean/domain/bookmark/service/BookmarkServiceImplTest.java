@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -178,58 +179,114 @@ class BookmarkServiceImplTest {
 			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
 	}
 
-	@Test
-	void 북마크_업데이트_성공() {
-		//given
-		final Bookmark bookmark = Bookmark.builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata)
-			.title("title")
-			.memo("memo")
-			.category("it")
-			.openType("all")
-			.build();
-		final Bookmark saveBookmark = bookmarkRepository.save(bookmark);
+	@Nested
+	class 북마크_업데이트_테스트 {
 
-		final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
-			user.getId(),
-			saveBookmark.getId(),
-			"updatedTitle",
-			"updatedMemo",
-			"home",
-			List.of("tag1", "tag2"),
-			"private"
-		);
+		private Bookmark bookmark;
 
-		//when
-		final long updatedBookmarkId = bookmarkService.updateBookmark(command);
+		@BeforeEach
+		void setUp() {
+			bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
+		}
 
-		//then
-		entityManager.flush();
-		entityManager.clear();
-
-		final Bookmark updatedBookmark = bookmarkRepository.findById(updatedBookmarkId).get();
-		assertThat(updatedBookmark).isNotNull()
-			.extracting(
-				Bookmark::getTitle,
-				Bookmark::getMemo,
-				Bookmark::getCategory,
-				Bookmark::getOpenType
-			).containsExactly(
-				command.getTitle(),
-				command.getMemo(),
-				command.getCategory(),
-				command.getOpenType()
+		@Test
+		void 북마크_업데이트_성공() {
+			//given
+			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
+				user.getId(),
+				bookmark.getId(),
+				"updatedTitle",
+				"updatedMemo",
+				"home",
+				List.of("tag1", "tag2"),
+				"private"
 			);
 
-		final List<String> tagNameList = updatedBookmark.getBookmarkTags().stream()
-			.map(bookmarkTag -> bookmarkTag.getTag().getName())
-			.collect(Collectors.toList());
+			//when
+			final long updatedBookmarkId = bookmarkService.updateBookmark(command);
 
-		assertThat(tagNameList)
-			.containsExactly(
-				command.getTagNames().get(0),
-				command.getTagNames().get(1)
+			//then
+			entityManager.flush();
+			entityManager.clear();
+
+			final Bookmark updatedBookmark = bookmarkRepository.findById(updatedBookmarkId).get();
+			assertThat(updatedBookmark).isNotNull()
+				.extracting(
+					Bookmark::getTitle,
+					Bookmark::getMemo,
+					Bookmark::getCategory,
+					Bookmark::getOpenType
+				).containsExactly(
+					command.getTitle(),
+					command.getMemo(),
+					command.getCategory(),
+					command.getOpenType()
+				);
+
+			assertThat(bookmark.getTagNames()).hasSize(2)
+				.containsExactly(command.getTagNames().get(0), command.getTagNames().get(1));
+		}
+
+		@Test
+		void 북마크_업데이트_실패_존재하지_않는_사용자() {
+			//given
+			final long invalidId = 10L;
+			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
+				invalidId,
+				bookmark.getId(),
+				"updatedTitle",
+				"updatedMemo",
+				"home",
+				List.of("tag1", "tag2"),
+				"private"
 			);
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.updateBookmark(command));
+		}
+
+		@Test
+		void 북마크_업데이트_실패_존재하지_않는_북마크() {
+			//given
+			final long invalidBookmarkId = 10L;
+			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
+				user.getId(),
+				invalidBookmarkId,
+				"updatedTitle",
+				"updatedMemo",
+				"home",
+				List.of("tag1", "tag2"),
+				"private"
+			);
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.updateBookmark(command));
+		}
+
+		@Test
+		void 북마크_업데이트_실패_다른_사용자의_북마크_조회() {
+			//given
+			final User anotherUser = createUser("crush@mail.com", "NAVER");
+			userRepository.save(anotherUser);
+
+			final Profile anotherProfile = createProfile(anotherUser, "crush");
+			profileRepository.save(anotherProfile);
+
+			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
+				anotherUser.getId(),
+				bookmark.getId(),
+				"updatedTitle",
+				"updatedMemo",
+				"home",
+				List.of("tag1", "tag2"),
+				"private"
+			);
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.updateBookmark(command));
+		}
 	}
 }
