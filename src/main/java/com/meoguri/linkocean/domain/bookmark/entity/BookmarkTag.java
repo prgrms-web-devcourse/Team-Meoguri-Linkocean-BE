@@ -27,4 +27,8 @@ public class BookmarkTag extends BaseIdEntity {
 		this.bookmark = bookmark;
 		this.tag = tag;
 	}
+
+	public String getTagName() {
+		return tag.getName();
+	}
 }
