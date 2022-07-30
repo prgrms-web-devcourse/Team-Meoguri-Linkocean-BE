@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 class BookmarkTest {
 
@@ -79,6 +80,38 @@ class BookmarkTest {
 	}
 
 	@Test
+	void 북마크_태그_추가_성공() {
+		//given
+		final Bookmark bookmark = createBookmark();
+
+		final Tag tag = createTag();
+
+		//when
+		bookmark.addBookmarkTag(tag);
+
+		//then
+		assertThat(bookmark.getBookmarkTags()).hasSize(1);
+	}
+
+	@Test
+	void 북마크_태그_추가_실패_태그_개수_한도_초과() {
+		//given
+		final Bookmark bookmark = createBookmark();
+		List<Tag> tags = List.of(
+			new Tag("tag1"),
+			new Tag("tag2"),
+			new Tag("tag3"),
+			new Tag("tag4"),
+			new Tag("tag5"));
+
+		tags.forEach(bookmark::addBookmarkTag);
+
+		//when then
+		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			.isThrownBy(() -> bookmark.addBookmarkTag(new Tag("tag6")));
+	}
+
+	@Test
 	void 북마크_업데이트_성공() {
 		//given
 		final Bookmark bookmark = createBookmark();
@@ -119,16 +152,23 @@ class BookmarkTest {
 	}
 
 	@Test
-	void 북마크_태그_추가_성공() {
+	void 북마크_업데이트_실패_태그_개수_초과() {
 		//given
 		final Bookmark bookmark = createBookmark();
+		final String updatedTitle = "updatedTitle";
+		final String updatedMemo = "updatedMemo";
+		final String category = "it";
+		final String openType = "partial";
+		final List<Tag> tags = List.of(
+			new Tag("tag1"),
+			new Tag("tag2"),
+			new Tag("tag3"),
+			new Tag("tag4"),
+			new Tag("tag5"),
+			new Tag("tag6"));
 
-		final Tag tag = createTag();
-
-		//when
-		bookmark.addBookmarkTag(tag);
-
-		//then
-		assertThat(bookmark.getBookmarkTags()).hasSize(1);
+		//when then
+		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			.isThrownBy(() -> bookmark.update(updatedTitle, updatedMemo, category, openType, tags));
 	}
 }

@@ -92,9 +92,8 @@ public class Bookmark extends BaseIdEntity {
 	 * Bookmark - BookmarkTag의 연관관계 편의 메서드
 	 */
 	public void addBookmarkTag(Tag tag) {
-		checkBookmarkTagsSize();
-
 		this.bookmarkTags.add(new BookmarkTag(this, tag));
+		checkBookmarkTagsSize();
 	}
 
 	/**
@@ -113,18 +112,17 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	private void updateBookmarkTags(List<Tag> tags) {
-		checkBookmarkTagsSize();
-
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
 			.collect(toList());
+		checkBookmarkTagsSize();
 	}
 
 	/**
 	 * bookmark에는 최대 5개의 태그만 존재한다.
 	 */
 	private void checkBookmarkTagsSize() {
-		if (this.bookmarkTags.size() >= 5) {
+		if (this.bookmarkTags.size() > 5) {
 			throw new LinkoceanRuntimeException();
 		}
 	}
