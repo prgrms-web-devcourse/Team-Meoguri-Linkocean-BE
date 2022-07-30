@@ -1,4 +1,4 @@
-create table bookmark
+create table if not exists bookmark
 (
     id               bigint      not null auto_increment,
     category         varchar(20),
@@ -10,4 +10,4 @@ create table bookmark
     link_metadata_id bigint,
     profile_id       bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;

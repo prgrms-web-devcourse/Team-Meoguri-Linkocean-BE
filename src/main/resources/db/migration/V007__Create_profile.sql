@@ -1,4 +1,4 @@
-create table profile
+create table if not exists profile
 (
     id        bigint      not null auto_increment,
     bio       varchar(50),
@@ -6,4 +6,4 @@ create table profile
     username  varchar(50) not null,
     user_id   bigint,
     primary key (id)
-) engine=InnoDB;
+) engine = InnoDB;
