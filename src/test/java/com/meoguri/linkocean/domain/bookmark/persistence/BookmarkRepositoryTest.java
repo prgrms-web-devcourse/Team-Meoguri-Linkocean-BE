@@ -54,7 +54,9 @@ class BookmarkRepositoryTest {
 
 	private Profile profile;
 	private LinkMetadata link;
-	private Tag tag1, tag2, tag3;
+	private Tag tag1;
+	private Tag tag2;
+	private Tag tag3;
 
 	@BeforeEach
 	void setUp() {
