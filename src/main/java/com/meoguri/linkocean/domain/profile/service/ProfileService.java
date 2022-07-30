@@ -21,4 +21,6 @@ public interface ProfileService {
 
 	/* 팔로이 프로필 목록 조회 */
 	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond);
+
+	boolean existsByUserId(long userId);
 }

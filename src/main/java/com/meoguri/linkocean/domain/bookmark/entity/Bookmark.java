@@ -8,14 +8,17 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -40,6 +43,10 @@ public class Bookmark extends BaseIdEntity {
 
 	@ManyToOne(fetch = LAZY)
 	private LinkMetadata linkMetadata;
+
+	/* BookmarkTag의 생명주기는 Bookmark 엔티티가 관리 */
+	@OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
 	private String title;
@@ -67,16 +74,28 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	@Builder
 	private Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
-		final String openType) {
+		final String category, final String openType) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
 		this.linkMetadata = linkMetadata;
 		this.title = title;
 		this.memo = memo;
+		this.category = Category.of(category);
 		this.openType = OpenType.of(openType);
 		this.createdAt = now();
 		this.updatedAt = now();
+	}
+
+	/**
+	 * Bookmark - BookmarkTag의 연관관계 편의 메서드
+	 */
+	public void addBookmarkTag(Tag tag) {
+		this.bookmarkTags.add(new BookmarkTag(this, tag));
+	}
+
+	public String getCategory() {
+		return category.getName();
 	}
 
 	public String getOpenType() {

@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.persistence;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -77,5 +78,21 @@ class FollowRepositoryTest {
 
 		assertThat(countProfile2Follower).isEqualTo(1);
 		assertThat(countProfile2Followee).isEqualTo(0);
+	}
+
+	@Test
+	void 팔로이_아이디_목록_조회_성공() {
+		//given
+		Profile follower = profile1;
+		Profile followee = profile2;
+		followRepository.save(new Follow(follower, followee));
+
+		//when
+		final List<Long> followeeIdsOfUser1 = followRepository.findAllFolloweeIdByFollowerId(profile1.getId());
+		final List<Long> followeeIdsOfUser2 = followRepository.findAllFolloweeIdByFollowerId(profile2.getId());
+
+		//then
+		assertThat(followeeIdsOfUser1).containsExactly(profile2.getId());
+		assertThat(followeeIdsOfUser2).isEmpty();
 	}
 }

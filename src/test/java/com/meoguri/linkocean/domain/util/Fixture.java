@@ -33,6 +33,7 @@ public final class Fixture {
 			.title("title")
 			.linkMetadata(createLinkMetadata())
 			.memo("dream company")
+			.category("it")
 			.openType("all")
 			.build();
 	}
@@ -41,7 +42,7 @@ public final class Fixture {
 
 		return new LinkMetadata(
 
-			"www.google.com", "구글", "google.png");
+			"google.com", "구글", "google.png");
 	}
 
 	public static Tag createTag() {

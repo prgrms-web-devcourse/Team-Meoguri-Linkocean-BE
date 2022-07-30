@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,9 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	@Query("select count(f) from Follow f join f.follower p join p.user u where u.id = :userId")
 	int countFolloweeByUserId(long userId);
 
+	/**
+	 * 팔로우중인 대상의 프로필 아이디 목록 조회
+	 */
+	@Query("select f.followee.id from Follow f where f.follower.id = :followerId")
+	List<Long> findAllFolloweeIdByFollowerId(long followerId);
 }
