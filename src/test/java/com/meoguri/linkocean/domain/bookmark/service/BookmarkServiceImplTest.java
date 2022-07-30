@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
+import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -175,5 +176,60 @@ class BookmarkServiceImplTest {
 		//when then
 		assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
+	}
+
+	@Test
+	void 북마크_업데이트_성공() {
+		//given
+		final Bookmark bookmark = Bookmark.builder()
+			.profile(profile)
+			.linkMetadata(linkMetadata)
+			.title("title")
+			.memo("memo")
+			.category("it")
+			.openType("all")
+			.build();
+		final Bookmark saveBookmark = bookmarkRepository.save(bookmark);
+
+		final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
+			user.getId(),
+			saveBookmark.getId(),
+			"updatedTitle",
+			"updatedMemo",
+			"home",
+			List.of("tag1", "tag2"),
+			"private"
+		);
+
+		//when
+		final long updatedBookmarkId = bookmarkService.updateBookmark(command);
+
+		//then
+		entityManager.flush();
+		entityManager.clear();
+
+		final Bookmark updatedBookmark = bookmarkRepository.findById(updatedBookmarkId).get();
+		assertThat(updatedBookmark).isNotNull()
+			.extracting(
+				Bookmark::getTitle,
+				Bookmark::getMemo,
+				Bookmark::getCategory,
+				Bookmark::getOpenType
+			).containsExactly(
+				command.getTitle(),
+				command.getMemo(),
+				command.getCategory(),
+				command.getOpenType()
+			);
+
+		final List<String> tagNameList = updatedBookmark.getBookmarkTags().stream()
+			.map(bookmarkTag -> bookmarkTag.getTag().getName())
+			.collect(Collectors.toList());
+
+		assertThat(tagNameList)
+			.containsExactly(
+				command.getTagNames().get(0),
+				command.getTagNames().get(1)
+			);
 	}
 }
