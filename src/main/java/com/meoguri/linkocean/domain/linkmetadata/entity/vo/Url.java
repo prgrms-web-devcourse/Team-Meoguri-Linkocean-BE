@@ -35,7 +35,22 @@ public class Url {
 			"url 형식이 잘못 되었습니다."
 		);
 
-		this.url = url;
+		this.url = removeSchemaAndWwwIfExists(url);
+	}
+
+	private String removeSchemaAndWwwIfExists(final String url) {
+		return url.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
+	}
+
+	/**
+	 * https와 www를 prefix로 추가해 url의 문자열을 반환하는 API
+	 */
+	public String getUrlWithSchemaAndWww() {
+		return addSchemaAndWww(this.url);
+	}
+
+	private String addSchemaAndWww(final String reducedLink) {
+		return "https://www." + reducedLink;
 	}
 
 	public static String toString(final Url url) {
