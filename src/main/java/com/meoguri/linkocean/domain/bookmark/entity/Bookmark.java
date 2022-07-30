@@ -116,7 +116,7 @@ public class Bookmark extends BaseIdEntity {
 			.collect(toList());
 		checkCondition(this.bookmarkTags.size() <= 5);
 	}
-	
+
 	public List<String> getTagNames() {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
