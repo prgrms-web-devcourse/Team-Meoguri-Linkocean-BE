@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.meoguri.linkocean.configuration.security.oauth.CustomOAuth2UserService;
-import com.meoguri.linkocean.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
-	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,7 +30,7 @@ public class SecurityConfiguration {
 			.oauth2Login(oauth2 ->
 				oauth2.userInfoEndpoint().userService(customOAuth2UserService)
 					.and()
-					.successHandler(oAuth2AuthenticationSuccessHandler)
+					.defaultSuccessUrl("/api/v1/login/success")
 			)
 			.build();
 	}
