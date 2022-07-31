@@ -33,7 +33,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		//when
 		mockMvc.perform(post(basePath).session(session)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(createProfileRequest)))
+				.content(createJson(createProfileRequest)))
 
 			//then
 			.andExpect(status().isOk())
