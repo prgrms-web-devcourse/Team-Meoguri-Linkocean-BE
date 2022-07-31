@@ -89,6 +89,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.flywaydb:flyway-mysql'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.239'
 
     // Query DSL
     implementation "com.querydsl:querydsl-jpa"
