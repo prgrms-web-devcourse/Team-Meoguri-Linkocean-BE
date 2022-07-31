@@ -41,4 +41,12 @@ public class LinkMetadata extends BaseIdEntity {
 		this.title = title;
 		this.imageUrl = imageUrl;
 	}
+
+	public String getFullUrl() {
+		return url.getUrlWithSchemaAndWww();
+	}
+
+	public String getSavedUrl() {
+		return Url.toString(url);
+	}
 }

@@ -178,7 +178,7 @@ public class Bookmark extends BaseIdEntity {
 		}
 
 		public static Category of(String arg) {
-			return Category.valueOf(arg.toUpperCase());
+			return arg == null ? null : Category.valueOf(arg.toUpperCase());
 		}
 	}
 }

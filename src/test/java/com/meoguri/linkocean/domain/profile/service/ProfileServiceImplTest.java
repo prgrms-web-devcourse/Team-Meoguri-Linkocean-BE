@@ -60,7 +60,7 @@ class ProfileServiceImplTest {
 		@Test
 		void 프로필_등록하고_조회_성공() {
 			//given
-			final RegisterProfileCommand command = RegisterCommandOf(profile, categories);
+			final RegisterProfileCommand command = registerCommandOf(profile, categories);
 			final long profileId = profileService.registerProfile(command);
 
 			em.flush();
@@ -94,7 +94,7 @@ class ProfileServiceImplTest {
 		@Test
 		void 프로필_등록하고_수정하고_조회_성공() {
 			//given
-			final RegisterProfileCommand registerCommand = RegisterCommandOf(profile, categories);
+			final RegisterProfileCommand registerCommand = registerCommandOf(profile, categories);
 			profileService.registerProfile(registerCommand);
 
 			em.flush();
@@ -159,9 +159,9 @@ class ProfileServiceImplTest {
 			Profile profile2 = new Profile(user2, "user2");
 			Profile profile3 = new Profile(user3, "user3");
 
-			profile1Id = profileService.registerProfile(RegisterCommandOf(profile1, emptyList()));
-			profile2Id = profileService.registerProfile(RegisterCommandOf(profile2, emptyList()));
-			profile3Id = profileService.registerProfile(RegisterCommandOf(profile3, emptyList()));
+			profile1Id = profileService.registerProfile(registerCommandOf(profile1, emptyList()));
+			profile2Id = profileService.registerProfile(registerCommandOf(profile2, emptyList()));
+			profile3Id = profileService.registerProfile(registerCommandOf(profile3, emptyList()));
 		}
 
 		@Test
@@ -252,7 +252,7 @@ class ProfileServiceImplTest {
 		}
 	}
 
-	static RegisterProfileCommand RegisterCommandOf(Profile profile, List<String> categories) {
+	public static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
 
 		return new RegisterProfileCommand(
 			profile.getUser().getId(),

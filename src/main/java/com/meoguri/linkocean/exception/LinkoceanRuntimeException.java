@@ -10,11 +10,4 @@ public class LinkoceanRuntimeException extends RuntimeException {
 		super();
 	}
 
-	public LinkoceanRuntimeException(final String message) {
-		super(message);
-	}
-
-	public LinkoceanRuntimeException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
 }

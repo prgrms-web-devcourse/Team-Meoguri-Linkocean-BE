@@ -26,6 +26,7 @@ jacoco {
     toolVersion = '0.8.7'
 }
 
+
 jacocoTestReport {
     reports {
         html.enabled(true)
@@ -34,9 +35,30 @@ jacocoTestReport {
     }
 
     finalizedBy 'jacocoTestCoverageVerification'
+
+    dependsOn test
+
+    def Qdomains = []
+    for (qPattern in "QA".."QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
+        Qdomains.add("com/meoguri/**/" + qPattern + "*.*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/meoguri/**/*Request.*",
+                    "com/meoguri/**/*Response.*",
+                    "com/meoguri/**/*Command.*",
+                    "com/meoguri/**/*Result.*",
+                    "com/meoguri/**/*Cond.*",
+                    "com/meoguri/**/SearchTab.*",
+            ] + Qdomains)
+        }))
+    }
 }
 
 jacocoTestCoverageVerification {
+
     violationRules {
         rule {
             enabled = false

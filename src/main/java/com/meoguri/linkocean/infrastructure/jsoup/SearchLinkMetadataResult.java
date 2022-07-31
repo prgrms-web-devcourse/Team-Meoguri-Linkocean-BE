@@ -12,7 +12,7 @@ public class SearchLinkMetadataResult {
 	private final String title;
 	private final String imageUrl;
 
-	public boolean isInvalid() {
-		return title.equals(DEFAULT_TITLE) && imageUrl.equals(DEFAULT_IMAGE);
+	public boolean isValid() {
+		return !(title.equals(DEFAULT_TITLE) && imageUrl.equals(DEFAULT_IMAGE));
 	}
 }
