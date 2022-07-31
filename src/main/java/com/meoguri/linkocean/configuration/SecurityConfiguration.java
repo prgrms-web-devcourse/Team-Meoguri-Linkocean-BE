@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.configuration.security;
+package com.meoguri.linkocean.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

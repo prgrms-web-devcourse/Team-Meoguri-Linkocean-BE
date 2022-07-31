@@ -90,7 +90,7 @@ class BookmarkTest {
 		bookmark.addBookmarkTag(tag);
 
 		//then
-		assertThat(bookmark.getBookmarkTags()).hasSize(1);
+		assertThat(bookmark.getTagNames()).hasSize(1);
 	}
 
 	@Test

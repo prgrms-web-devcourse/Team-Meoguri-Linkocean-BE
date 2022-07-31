@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MyTagsResponse {
+public final class MyTagsResponse {
 
 	private final String name;
 	private final int count;

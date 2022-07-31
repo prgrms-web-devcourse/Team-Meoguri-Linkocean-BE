@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.profile.persistence.dto;
 import lombok.Getter;
 
 @Getter
-public class FindProfileCond {
+public final class FindProfileCond {
 
 	private final long profileId;
 	private final int offset;

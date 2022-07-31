@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class UpdateBookmarkCommand {
+public final class UpdateBookmarkCommand {
 
 	private final long userId;
 	private final long bookmarkId;

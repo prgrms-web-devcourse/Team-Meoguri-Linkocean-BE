@@ -7,8 +7,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 class OAuthAttributesTest {
 
@@ -58,6 +58,7 @@ class OAuthAttributesTest {
 			.containsExactly("haha@kakao.com", "KAKAO");
 	}
 
+	@Test
 	void OAuth_속성_생성_실패() {
 		//given
 		final String wrongRegistrationId = "wrongVendor";
