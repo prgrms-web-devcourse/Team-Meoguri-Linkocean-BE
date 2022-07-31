@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: oauth
+    include: oauth, aws
   jpa:
     database: H2
     generate-ddl: false
