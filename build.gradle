@@ -34,9 +34,30 @@ jacocoTestReport {
     }
 
     finalizedBy 'jacocoTestCoverageVerification'
+
+    dependsOn test
+
+    def Qdomains = []
+    for (qPattern in "QA".."QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
+        Qdomains.add("com/meoguri/**/" + qPattern + "*.*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/meoguri/**/*Request.*",
+                    "com/meoguri/**/*Response.*",
+                    "com/meoguri/**/*Command.*",
+                    "com/meoguri/**/*Result.*",
+                    "com/meoguri/**/*Cond.*",
+                    "com/meoguri/**/SearchTab.*",
+            ] + Qdomains)
+        }))
+    }
 }
 
 jacocoTestCoverageVerification {
+
     violationRules {
         rule {
             enabled = false
@@ -63,6 +84,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.239'
 
     // Database
     implementation 'mysql:mysql-connector-java'
@@ -89,6 +111,7 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 
     testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

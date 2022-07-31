@@ -21,7 +21,7 @@ class UrlTest {
 	@Test
 	void url_형식이_잘못되면_생성_실패() {
 		//given
-		final String invalidUrl = "invalidUrl";
+		final String invalidUrl = "i do not have a dot";
 
 		//when then
 		assertThatIllegalArgumentException()

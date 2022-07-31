@@ -27,12 +27,6 @@ public final class Preconditions {
 		}
 	}
 
-	public static void checkState(final boolean expression, final String errorMessage) {
-		if (!expression) {
-			throw new IllegalStateException(errorMessage);
-		}
-	}
-
 	public static void checkCondition(final boolean expression) {
 		if (!expression) {
 			throw new LinkoceanRuntimeException();

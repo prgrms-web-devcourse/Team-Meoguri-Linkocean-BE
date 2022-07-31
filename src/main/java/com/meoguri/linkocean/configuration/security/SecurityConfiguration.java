@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.meoguri.linkocean.configuration.security.oauth.CustomAuthenticationEntryPoint;
 import com.meoguri.linkocean.configuration.security.oauth.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -21,11 +23,15 @@ public class SecurityConfiguration {
 			.csrf().disable()
 			.headers().frameOptions().disable()
 			.and()
+			.formLogin().disable()
 			.authorizeRequests()
-			.anyRequest().permitAll()
+			.anyRequest().hasRole("USER")
 			.and()
 			.logout()
 			.logoutSuccessUrl("/")
+			.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(customAuthenticationEntryPoint)
 			.and()
 			.oauth2Login(oauth2 ->
 				oauth2.userInfoEndpoint().userService(customOAuth2UserService)

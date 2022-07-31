@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.linkmetadata.service;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -30,16 +32,13 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		return linkMetadataRepository.findTitleByUrl(new Url(link))
 			.orElseGet(() -> {
 				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
-
-				if (result.isInvalid()) {
-					throw new IllegalArgumentException("존재하지 않는 url 입니다.");
-				}
+				checkArgument(result.isValid(), "존재하지 않는 url 입니다");
 
 				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImageUrl());
 				linkMetadataRepository.save(linkMetadata);
-				log.info("save link metadata - url : {}, title : {}",
-					Url.toString(linkMetadata.getUrl()), linkMetadata.getTitle());
 
+				log.info("save link metadata - url : {}, title : {}", linkMetadata.getSavedUrl(),
+					linkMetadata.getTitle());
 				return result.getTitle();
 			});
 	}
@@ -50,14 +49,10 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
 		slice.getContent()
 			.forEach(linkMetadata -> {
-				final SearchLinkMetadataResult result =
-					jsoupLinkMetadataService.search(addSchemaAndWww(Url.toString(linkMetadata.getUrl())));
+				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(linkMetadata.getFullUrl());
 				linkMetadata.update(result.getTitle(), result.getImageUrl());
 			});
 		return slice.hasNext() ? slice.nextPageable() : null;
 	}
 
-	private String addSchemaAndWww(final String reducedLink) {
-		return "https://www." + reducedLink;
-	}
 }
