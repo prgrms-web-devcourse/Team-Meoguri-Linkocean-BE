@@ -88,4 +88,28 @@ class ReactionRepositoryTest {
 		em.flush();
 		em.clear();
 	}
+	
+	@Test
+	void 북마크_좋아요_개수를_조회할수_있다() {
+		//given
+		reactionRepository.save(new Reaction(profile, bookmark, "like"));
+
+		//when
+		final long likeCnt = reactionRepository.countLikeByBookmark(bookmark);
+
+		//then
+		assertThat(likeCnt).isEqualTo(1L);
+	}
+
+	@Test
+	void 북마크_싫어요_개수를_조회할수_있다() {
+		//given
+		reactionRepository.save(new Reaction(profile, bookmark, "hate"));
+
+		//when
+		final long hateCnt = reactionRepository.countHateByBookmark(bookmark);
+
+		//then
+		assertThat(hateCnt).isEqualTo(1L);
+	}
 }
