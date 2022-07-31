@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoginSuccessResponse {
 
-	private final Long id;
 	private final boolean hasProfile;
 
 }
