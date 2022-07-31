@@ -103,11 +103,13 @@ public class BookmarkController {
 		return ok().build();
 	}
 
+	/* 북마크 삭제 */
 	@DeleteMapping("/{bookmarkId}")
 	public ResponseEntity<?> deleteBookmark(
 		final @LoginUser SessionUser user,
 		final @PathVariable long bookmarkId
 	) {
+		// TODO - 구현
 		// bookmarkService.deleteBookmark(user.getId(), bookmarkId);
 		return ok().build();
 	}
