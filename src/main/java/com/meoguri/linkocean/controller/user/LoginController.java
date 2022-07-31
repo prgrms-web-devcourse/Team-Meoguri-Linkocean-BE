@@ -23,10 +23,7 @@ public class LoginController {
 	 */
 	@GetMapping("/success")
 	public LoginSuccessResponse loginSuccess(@LoginUser SessionUser sessionUser) {
-
-		final boolean hasProfile = profileService.existsByUserId(sessionUser.getId());
-
-		return new LoginSuccessResponse(sessionUser.getId(), hasProfile);
+		return new LoginSuccessResponse(profileService.existsByUserId(sessionUser.getId()));
 	}
 
 }
