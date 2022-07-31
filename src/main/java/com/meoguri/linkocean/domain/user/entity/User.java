@@ -12,7 +12,6 @@ import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,4 +42,18 @@ public class User extends BaseIdEntity {
 		this.email = new Email(email);
 		this.oAuthType = OAuthType.of(oAuthType);
 	}
+
+	/**
+	 * OAuth 지원 벤더 종류
+	 * GOOGLE, NAVER, KAKAO
+	 */
+	public enum OAuthType {
+
+		GOOGLE, NAVER, KAKAO;
+
+		public static OAuthType of(final String type) {
+			return OAuthType.valueOf(type);
+		}
+	}
+
 }
