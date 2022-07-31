@@ -71,7 +71,7 @@ public class BookmarkController {
 	 * 피드 북마크 목록 조회
 	 * - 북마크 정보와 함께 작성자 프로필 정보를 반환한다
 	 */
-	@GetMapping
+	@GetMapping("/feed")
 	public ListResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @LoginUser SessionUser user,
 		final GetBookmarkQueryParams queryParams
@@ -83,6 +83,16 @@ public class BookmarkController {
 	}
 
 	/* 북마크 상세 조회 */
+	@GetMapping("/{bookmarkId}")
+	public GetBookmarkResponse getBookmark(
+		final @LoginUser SessionUser user,
+		final @PathVariable long bookmarkId
+	) {
+		final GetBookmarkResult result = bookmarkService.getBookmark(user.getId(), bookmarkId);
+		return GetBookmarkResponse.of(result);
+	}
+
+	/* 북마크 업데이트 */
 	@PutMapping("/{bookmarkId}")
 	public ResponseEntity<?> updateBookmark(
 		final @LoginUser SessionUser user,
@@ -91,16 +101,6 @@ public class BookmarkController {
 	) {
 		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
 		return ok().build();
-	}
-
-	/* 북마크 업데이트 */
-	@GetMapping("/{bookmarkId}")
-	public GetBookmarkResponse getBookmark(
-		final @LoginUser SessionUser user,
-		final @PathVariable long bookmarkId
-	) {
-		final GetBookmarkResult result = bookmarkService.getBookmark(user.getId(), bookmarkId);
-		return GetBookmarkResponse.of(result);
 	}
 
 	@DeleteMapping("/{bookmarkId}")
