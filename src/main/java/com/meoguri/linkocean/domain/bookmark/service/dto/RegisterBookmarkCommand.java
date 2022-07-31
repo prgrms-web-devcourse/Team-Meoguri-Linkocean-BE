@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class RegisterBookmarkCommand {
+public final class RegisterBookmarkCommand {
 
 	private final long userId;
 	private final String url;

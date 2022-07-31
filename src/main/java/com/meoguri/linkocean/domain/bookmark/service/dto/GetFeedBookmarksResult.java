@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class GetFeedBookmarksResult {
+public final class GetFeedBookmarksResult {
 
 	private final long id;
 	private final String url;

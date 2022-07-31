@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class LoginSuccessResponse {
+public final class LoginSuccessResponse {
 
 	private final Long id;
 	private final boolean hasProfile;

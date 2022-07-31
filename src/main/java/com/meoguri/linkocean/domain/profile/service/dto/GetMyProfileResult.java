@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class GetMyProfileResult {
+public final class GetMyProfileResult {
 
 	private final long profileId;
 	private final String username;

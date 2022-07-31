@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class GetMyBookmarksResult {
+public final class GetMyBookmarksResult {
 
 	private final long id;
 	private final String url;

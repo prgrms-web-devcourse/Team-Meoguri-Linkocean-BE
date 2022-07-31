@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class FollowCommand {
+public final class FollowCommand {
 
 	private final long userId;
 	private final long targetProfileId;
