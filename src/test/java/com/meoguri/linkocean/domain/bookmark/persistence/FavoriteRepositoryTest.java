@@ -59,4 +59,13 @@ class FavoriteRepositoryTest {
 		assertThat(deletedCount).isEqualTo(1);
 		assertThat(favoriteRepository.findAll()).isEmpty();
 	}
+
+	@Test
+	void 즐겨찾기_여부_조회() {
+		//when
+		final boolean isFavorite = favoriteRepository.findByOwnerAndBookmark(owner, bookmark).isPresent();
+
+		//then
+		assertThat(isFavorite).isFalse();
+	}
 }
