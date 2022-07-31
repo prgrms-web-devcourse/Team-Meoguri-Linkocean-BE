@@ -50,6 +50,7 @@ jacocoTestReport {
                     "com/meoguri/**/*Command.*",
                     "com/meoguri/**/*Result.*",
                     "com/meoguri/**/*Cond.*",
+                    "com/meoguri/**/*Properties.*",
                     "com/meoguri/**/SearchTab.*",
             ] + Qdomains)
         }))
