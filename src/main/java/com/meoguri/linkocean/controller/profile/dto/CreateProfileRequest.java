@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreateProfileRequest {
+public final class CreateProfileRequest {
 
 	private String username;
 	private List<String> categories;

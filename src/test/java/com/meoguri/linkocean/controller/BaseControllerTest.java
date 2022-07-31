@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -49,7 +48,6 @@ public class BaseControllerTest {
 		session.setAttribute("user", new SessionUser(savedUser));
 	}
 
-	@WithMockUser(roles = "USER")
 	protected void 프로필_등록(final String username, final List<String> categories) throws Exception {
 		mockMvc.perform(post("/api/v1/profiles").session(session)
 				.contentType(MediaType.APPLICATION_JSON)
