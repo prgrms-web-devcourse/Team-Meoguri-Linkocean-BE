@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.configuration.security.oauth;
 
+import java.io.Serializable;
+
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -9,9 +11,9 @@ import lombok.Getter;
  * - 일단 최소한의 정보인 id 만 포함
  */
 @Getter
-public class SessionUser {
+public class SessionUser implements Serializable {
 
-	private final long id;
+	private Long id;
 
 	public SessionUser(final User user) {
 		this.id = user.getId();
