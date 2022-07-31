@@ -3,22 +3,18 @@ package com.meoguri.linkocean.domain.bookmark.service.dto;
 import java.util.List;
 import java.util.Optional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * 내 북마크 검색 조건 - 쿼리 파라미터의 값을 전달하기 위한 dto
  */
 @Getter
-@RequiredArgsConstructor
 public final class MyBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 10;
 	private static final String DEFAULT_ORDER = "upload";
-	private static final String DEFAULT_OPENTYPE = Bookmark.OpenType.ALL.name();
+	private static final String DEFAULT_OPENTYPE = "all";
 
 	private final int page;
 	private final int size;

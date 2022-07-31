@@ -14,6 +14,6 @@ public final class RegisterBookmarkCommand {
 	private final String title;
 	private final String memo;
 	private final String category;
-	private final List<String> tagNames;
 	private final String openType;
+	private final List<String> tagNames;
 }

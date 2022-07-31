@@ -15,8 +15,9 @@ import lombok.RequiredArgsConstructor;
 public final class GetBookmarkResult {
 
 	private final long id;
-	private final String url;
 	private final String title;
+	private final String url;
+	private final String imageUrl;
 	private final String memo;
 	private final String openType;
 	private final String category;
@@ -24,7 +25,17 @@ public final class GetBookmarkResult {
 	private final LocalDateTime updatedAt;
 
 	private final boolean isFavorite;
-	private List<String> tags;
+	private final List<String> tags;
 	private final LinkMetadataResult linkMetadata;
-	private Map<String, Integer> reactionCount;
+	private final Map<String, Integer> reactionCount;
+	private final GetBookmarkProfileResult profile;
+
+	@Getter
+	@RequiredArgsConstructor
+	public static class GetBookmarkProfileResult {
+		private final long profileId;
+		private final String username;
+		private final String imageUrl;
+		private final boolean isFollow;
+	}
 }
