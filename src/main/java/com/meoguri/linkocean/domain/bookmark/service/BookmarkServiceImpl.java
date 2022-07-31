@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
@@ -21,6 +25,7 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final BookmarkRepository bookmarkRepository;
 	private final TagRepository tagRepository;
+	private final FavoriteRepository favoriteRepository;
+	private final ReactionRepository reactionRepository;
+	private final FollowRepository followRepository;
+
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
@@ -94,10 +103,54 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.collect(Collectors.toList());
 	}
 
-	//TODO
+	//TODO : 쿼리 튜닝
+	@Transactional(readOnly = true)
 	@Override
 	public GetBookmarkResult getBookmark(final long userId, final long bookmarkId) {
-		return null;
+
+		final Bookmark bookmark = bookmarkRepository.findByIdWithProfileAndLinkMetadataAndTags(bookmarkId)
+			.orElseThrow(LinkoceanRuntimeException::new);
+
+		boolean isFavorite = favoriteRepository.findByOwnerAndBookmark(bookmark.getProfile(), bookmark)
+			.isPresent();
+
+		final long likeCnt = reactionRepository.countLikeByBookmark(bookmark);
+		final long hateCnt = reactionRepository.countHateByBookmark(bookmark);
+
+		final boolean isFollow = followRepository.findByProfiles(
+			bookmark.getProfile(),
+			findProfileByUserIdQuery.findByUserId(userId)
+		).isPresent();
+
+		return GetBookmarkResult.builder()
+			.title(bookmark.getTitle())
+			.url(bookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww())
+			.imageUrl(bookmark.getLinkMetadata().getImageUrl())
+			.category(bookmark.getCategory())
+			.memo(bookmark.getMemo())
+			.openType(bookmark.getOpenType())
+			.isFavorite(isFavorite)
+			.updatedAt(bookmark.getUpdatedAt())
+			.tags(bookmark.getTagNames())
+			.reactionCount(convertToReactionMap(likeCnt, hateCnt))
+			.profile(convertToProfileMap(bookmark.getProfile(), isFollow))
+			.build();
+	}
+
+	private Map<String, Long> convertToReactionMap(final long likeCnt, final long hateCnt) {
+		final Map<String, Long> map = new HashMap<>();
+		map.put("like", likeCnt);
+		map.put("hate", hateCnt);
+		return map;
+	}
+
+	private Map<String, Object> convertToProfileMap(final Profile profile, boolean isFollow) {
+		final HashMap<String, Object> map = new HashMap<>();
+		map.put("profileId", profile.getId());
+		map.put("username", profile.getUsername());
+		map.put("imageUrl", profile.getImageUrl());
+		map.put("isFollow", isFollow);
+		return map;
 	}
 
 	//TODO

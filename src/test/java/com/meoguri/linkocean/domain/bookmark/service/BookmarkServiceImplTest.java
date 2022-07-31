@@ -18,7 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -47,6 +50,9 @@ class BookmarkServiceImplTest {
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
+
+	@Autowired
+	private TagRepository tagRepository;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -240,5 +246,68 @@ class BookmarkServiceImplTest {
 			assertThatExceptionOfType(LinkoceanRuntimeException.class)
 				.isThrownBy(() -> bookmarkService.updateBookmark(command));
 		}
+	}
+
+	@Test
+	void 북마크_상세_조회_성공() {
+		//given
+		final Bookmark bookmark = Bookmark.builder()
+			.profile(profile)
+			.title("title")
+			.linkMetadata(linkMetadata)
+			.memo("dream company")
+			.category("it")
+			.openType("all")
+			.build();
+
+		final Tag tag = tagRepository.save(new Tag("tag1"));
+		bookmark.addBookmarkTag(tag);
+
+		final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
+
+		em.flush();
+		em.clear();
+
+		//when
+		final GetBookmarkResult result = bookmarkService.getBookmark(userId, savedBookmark.getId());
+
+		//then
+		assertThat(result).extracting(
+			GetBookmarkResult::getTitle,
+			GetBookmarkResult::getUrl,
+			GetBookmarkResult::getImageUrl,
+			GetBookmarkResult::getCategory,
+			GetBookmarkResult::getMemo,
+			GetBookmarkResult::getOpenType,
+			GetBookmarkResult::isFavorite,
+			GetBookmarkResult::getUpdatedAt
+		).containsExactly(
+			savedBookmark.getTitle(),
+			savedBookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww(),
+			savedBookmark.getLinkMetadata().getImageUrl(),
+			savedBookmark.getCategory(),
+			savedBookmark.getMemo(),
+			savedBookmark.getOpenType(),
+			false,
+			savedBookmark.getUpdatedAt()
+		);
+		assertThat(result.getTags())
+			.contains("tag1");
+
+		assertThat(result.getReactionCount().get("like")).isZero();
+		assertThat(result.getReactionCount().get("hate")).isZero();
+
+		assertThat(result.getProfile().values())
+			.containsExactlyInAnyOrder(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
+	}
+
+	@Test
+	void 북마크_조회_실패_존재하지_않는_북마크() {
+		//given
+		final long invalidBookmarkId = 10L;
+
+		//when then
+		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			.isThrownBy(() -> bookmarkService.getBookmark(userId, invalidBookmarkId));
 	}
 }
