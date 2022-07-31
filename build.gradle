@@ -110,6 +110,9 @@ dependencies {
     // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 
+    // 프로퍼티 주입을 위해 사용
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     testImplementation 'com.h2database:h2'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
