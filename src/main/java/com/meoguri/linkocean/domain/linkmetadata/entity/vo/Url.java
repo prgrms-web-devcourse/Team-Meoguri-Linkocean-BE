@@ -36,7 +36,7 @@ public class Url {
 		return "https://www." + this.url;
 	}
 
-	public static String toString(final Url url) {
-		return url.url;
+	public String getSavedUrl() {
+		return this.url;
 	}
 }

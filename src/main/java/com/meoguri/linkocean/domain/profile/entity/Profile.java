@@ -34,6 +34,8 @@ public class Profile extends BaseIdEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	/* FavoriteCategory 의 생명주기는 Profile 엔티티가 관리 */
+	@Getter(NONE)
 	@OneToMany(mappedBy = "profile", cascade = PERSIST, orphanRemoval = true)
 	private List<FavoriteCategory> favoriteCategories = new ArrayList<>();
 
