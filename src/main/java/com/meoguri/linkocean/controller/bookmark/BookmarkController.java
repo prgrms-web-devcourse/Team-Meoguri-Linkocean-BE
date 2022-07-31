@@ -77,6 +77,7 @@ public class BookmarkController {
 		final GetBookmarkQueryParams queryParams
 	) {
 		final List<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(queryParams.toFeedSearchCond());
+
 		final List<GetFeedBookmarksResponse> response =
 			result.stream().map(GetFeedBookmarksResponse::of).collect(toList());
 		return ListResponse.of("bookmarks", response);
