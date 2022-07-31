@@ -2,12 +2,9 @@ package com.meoguri.linkocean.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.nio.file.AccessDeniedException;
-
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,14 +27,6 @@ public class CustomRestControllerAdvice {
 		return ErrorResponse.of(BAD_REQUEST, ex.getMessage());
 	}
 
-	@ResponseStatus(UNAUTHORIZED)
-	@ExceptionHandler({AuthenticationException.class, AccessDeniedException.class})
-	public ErrorResponse handleAuthroizationException(RuntimeException ex) {
-		log.debug(ex.getMessage(), ex);
-
-		return ErrorResponse.of(BAD_REQUEST, "페이지에 접근할 권한이 없습니다.");
-	}
-
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler({LinkoceanRuntimeException.class,
 		TypeMismatchException.class, HttpMessageNotReadableException.class,
@@ -58,12 +47,12 @@ public class CustomRestControllerAdvice {
 
 	@Getter
 	@AllArgsConstructor
-	private static class ErrorResponse {
+	public static class ErrorResponse {
 
 		private int code;
 		private String message;
 
-		static ErrorResponse of(HttpStatus status, String message) {
+		public static ErrorResponse of(HttpStatus status, String message) {
 			return new ErrorResponse(status.value(), message);
 		}
 	}
