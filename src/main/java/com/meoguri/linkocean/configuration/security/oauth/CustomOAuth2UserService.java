@@ -60,12 +60,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	}
 
 	private User userOf(final OAuthAttributes attributes) {
-
 		return userRepository.findByEmailAndOAuthType(
 				new Email(attributes.getEmail()), OAuthType.of(attributes.getOAuthType()))
 			.orElseGet(() -> {
-				final User user = attributes.toEntity();
-				userRepository.save(user);
+				final User user = userRepository.save(attributes.toEntity());
 
 				log.info("새로운 사용자 저장 email : {}, oauth type : {}",
 					Email.toString(user.getEmail()), user.getOAuthType());
