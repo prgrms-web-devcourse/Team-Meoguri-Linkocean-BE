@@ -88,7 +88,7 @@ class ReactionRepositoryTest {
 		em.flush();
 		em.clear();
 	}
-	
+
 	@Test
 	void 북마크_좋아요_개수를_조회할수_있다() {
 		//given
