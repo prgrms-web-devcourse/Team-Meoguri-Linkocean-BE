@@ -47,6 +47,6 @@ public class LinkMetadata extends BaseIdEntity {
 	}
 
 	public String getSavedUrl() {
-		return Url.toString(url);
+		return url.getSavedUrl();
 	}
 }

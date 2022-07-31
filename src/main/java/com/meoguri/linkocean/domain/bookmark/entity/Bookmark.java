@@ -44,7 +44,8 @@ public class Bookmark extends BaseIdEntity {
 	@ManyToOne(fetch = LAZY)
 	private LinkMetadata linkMetadata;
 
-	/* BookmarkTag의 생명주기는 Bookmark 엔티티가 관리 */
+	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
+	@Getter(NONE)
 	@OneToMany(mappedBy = "bookmark", cascade = PERSIST, orphanRemoval = true)
 	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
@@ -106,15 +107,16 @@ public class Bookmark extends BaseIdEntity {
 		this.memo = memo;
 		this.category = Category.of(category);
 		this.openType = OpenType.of(openType);
-		updateBookmarkTags(tags);
 		this.updatedAt = now();
+		updateBookmarkTags(tags);
 	}
 
 	private void updateBookmarkTags(List<Tag> tags) {
+		checkCondition(tags.size() <= 5);
+
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
 			.collect(toList());
-		checkCondition(this.bookmarkTags.size() <= 5);
 	}
 
 	public List<String> getTagNames() {

@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;

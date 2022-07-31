@@ -7,7 +7,7 @@ import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import lombok.Getter;
 
 @Getter
-public class ProfileSearchCond {
+public final class ProfileSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 10;

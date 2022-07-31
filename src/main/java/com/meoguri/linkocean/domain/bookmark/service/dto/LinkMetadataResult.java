@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class LinkMetadataResult {
+public final class LinkMetadataResult {
 
 	private final String imageUrl;
 	private final String title;

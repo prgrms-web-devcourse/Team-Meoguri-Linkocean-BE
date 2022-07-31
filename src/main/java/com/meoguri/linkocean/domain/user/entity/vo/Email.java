@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 @Embeddable
-public class Email {
+public final class Email {
 
 	private static final String EMAIL_REGEX
 		= "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"

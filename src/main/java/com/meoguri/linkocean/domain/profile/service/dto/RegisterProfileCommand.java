@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class RegisterProfileCommand {
+public final class RegisterProfileCommand {
 
 	private final long userId;
 	private final String username;

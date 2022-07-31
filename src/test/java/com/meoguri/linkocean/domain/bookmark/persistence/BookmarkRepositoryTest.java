@@ -161,8 +161,7 @@ class BookmarkRepositoryTest {
 		assertAll(
 			() -> assertThat(oRetrievedBookmark).isPresent(),
 			() -> assertThat(isLoaded(oRetrievedBookmark.get().getProfile())).isTrue(),
-			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue(),
-			() -> assertThat(isLoaded(oRetrievedBookmark.get().getBookmarkTags())).isTrue()
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue()
 		);
 	}
 

@@ -1,8 +1,56 @@
 package com.meoguri.linkocean.controller.user;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.meoguri.linkocean.controller.BaseControllerTest;
 
-//TODO - 로그인 통합 테스트 구현 -> 프로필 API를 만든 다음 작성하겠습니다 - by hani
+@Transactional
 class LoginControllerTest extends BaseControllerTest {
+
+	private final String basePath = getBaseUrl(LoginController.class);
+
+	@WithMockUser(roles = "USER")
+	@Test
+	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_true() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("ART", "SOCIAL", "IT"));
+
+		//when
+		mockMvc.perform(get(basePath + "/success").session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.hasProfile").value(true))
+			.andDo(print());
+
+	}
+
+	@WithMockUser(roles = "USER")
+	@Test
+	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_false() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+
+		//when
+		mockMvc.perform(get(basePath + "/success").session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.hasProfile").value(false))
+			.andDo(print());
+
+	}
 
 }

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class ReactionCommand {
+public final class ReactionCommand {
 
 	/* 리액션을 추가/취소 한 사용자의 아이디 */
 	private final long userId;

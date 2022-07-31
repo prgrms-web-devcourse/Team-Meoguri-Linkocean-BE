@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class GetMyTagsResult {
+public final class GetMyTagsResult {
 
 	private final String tag;
 	private final int count;

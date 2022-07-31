@@ -1,5 +1,9 @@
 package com.meoguri.linkocean.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -8,12 +12,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
+import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -25,6 +35,25 @@ public class BaseControllerTest {
 
 	@Autowired
 	protected ObjectMapper objectMapper;
+
+	protected MockHttpSession session;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	protected void 유저_등록_로그인(final String email, final String oAuthType) {
+		final User savedUser = userRepository.save(new User(email, oAuthType));
+
+		session = new MockHttpSession();
+		session.setAttribute("user", new SessionUser(savedUser));
+	}
+
+	protected void 프로필_등록(final String username, final List<String> categories) throws Exception {
+		mockMvc.perform(post("/api/v1/profiles").session(session)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createJson(new CreateProfileRequest(username, categories))))
+			.andExpect(status().isOk());
+	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(dto);

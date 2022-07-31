@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 @Embeddable
-public class Url {
+public final class Url {
 
 	@Column(nullable = false, unique = true, length = 255)
 	private String url;
@@ -36,7 +36,7 @@ public class Url {
 		return "https://www." + this.url;
 	}
 
-	public static String toString(final Url url) {
-		return url.url;
+	public String getSavedUrl() {
+		return this.url;
 	}
 }

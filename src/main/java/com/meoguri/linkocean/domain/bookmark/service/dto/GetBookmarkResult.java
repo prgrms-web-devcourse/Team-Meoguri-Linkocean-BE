@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
-public class GetBookmarkResult {
+public final class GetBookmarkResult {
 
 	private final String title;
 	private final String url;
