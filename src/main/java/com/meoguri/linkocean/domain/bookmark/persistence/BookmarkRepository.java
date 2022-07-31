@@ -22,4 +22,12 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 		+ "join fetch bt.tag "
 		+ "where b.profile = :profile")
 	List<Bookmark> findByProfileFetchTags(Profile profile);
+
+	@Query("select distinct b "
+		+ "from Bookmark b "
+		+ "join fetch b.profile "
+		+ "join fetch b.linkMetadata "
+		+ "left join fetch b.bookmarkTags "
+		+ "where b.id = :id")
+	Optional<Bookmark> findByIdWithProfileAndLinkMetadataAndTags(long id);
 }
