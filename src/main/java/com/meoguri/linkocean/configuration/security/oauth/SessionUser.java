@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 public class SessionUser implements Serializable {
 
-	private final long id;
+	private Long id;
 
 	public SessionUser(final User user) {
 		this.id = user.getId();

@@ -26,7 +26,6 @@ public class S3Uploader {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-
 	public String upload(MultipartFile multipartFile, String dirName) throws IOException {
 		File uploadFile = convert(multipartFile)
 			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
