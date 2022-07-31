@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.user.entity.vo;
 
-import static com.google.common.base.Preconditions.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;
 
 import java.util.regex.Pattern;

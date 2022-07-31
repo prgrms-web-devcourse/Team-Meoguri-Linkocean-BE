@@ -9,10 +9,11 @@ import com.meoguri.linkocean.domain.user.entity.User;
 public final class Fixture {
 
 	public static User createUser() {
+		return createUser("haha@crush.com", "GOOGLE");
+	}
 
-		return new User(
-
-			"haha@papa.com", "GOOGLE");
+	public static User createUser(String email, String oauthType) {
+		return new User(email, oauthType);
 	}
 
 	public static Profile createProfile() {
@@ -20,10 +21,11 @@ public final class Fixture {
 	}
 
 	public static Profile createProfile(User user) {
+		return createProfile(user, "haha");
+	}
 
-		return new Profile(
-
-			user, "haha");
+	public static Profile createProfile(User user, String username) {
+		return new Profile(user, username);
 	}
 
 	public static Bookmark createBookmark() {
