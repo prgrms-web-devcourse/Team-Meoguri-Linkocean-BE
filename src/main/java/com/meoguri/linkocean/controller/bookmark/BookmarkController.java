@@ -58,9 +58,9 @@ public class BookmarkController {
 		final GetBookmarkQueryParams queryParams
 	) {
 		final String username = queryParams.getUsername();
-		final List<GetBookmarksResult> result = username == null ?
-			bookmarkService.getMyBookmarks(queryParams.toMySearchCond(user.getId())) :
-			bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
+		final List<GetBookmarksResult> result = username == null
+			? bookmarkService.getMyBookmarks(queryParams.toMySearchCond(user.getId()))
+			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
 
 		final List<GetBookmarksResponse> response =
 			result.stream().map(GetBookmarksResponse::of).collect(toList());
