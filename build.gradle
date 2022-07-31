@@ -60,7 +60,7 @@ jacocoTestCoverageVerification {
 
     violationRules {
         rule {
-            enabled = false
+            enabled = true
             element = 'BUNDLE'
 
             limit {
@@ -89,7 +89,7 @@ dependencies {
     // Database
     implementation 'mysql:mysql-connector-java'
     implementation 'org.flywaydb:flyway-mysql'
-    implementation 'org.springframework.session:spring-session-jdbc'
+    compileOnly 'org.springframework.session:spring-session-jdbc'
 
     // Query DSL
     implementation "com.querydsl:querydsl-jpa"
