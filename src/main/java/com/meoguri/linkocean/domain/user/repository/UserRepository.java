@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

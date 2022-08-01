@@ -11,7 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
