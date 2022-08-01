@@ -76,9 +76,9 @@ class TagServiceImplTest {
 	@Test
 	void 태그_목록_조회_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1");
-		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2");
-		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3");
+		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문");
+		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문");
+		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문");
 
 		bookmark1.addBookmarkTag(tag1);
 		bookmark1.addBookmarkTag(tag2);

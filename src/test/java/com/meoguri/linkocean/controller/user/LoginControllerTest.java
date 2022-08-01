@@ -9,11 +9,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 
-@Transactional
 class LoginControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(LoginController.class);

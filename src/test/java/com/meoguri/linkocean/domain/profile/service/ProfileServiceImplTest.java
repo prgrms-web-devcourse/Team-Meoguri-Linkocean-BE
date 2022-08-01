@@ -88,7 +88,7 @@ class ProfileServiceImplTest {
 				false
 			);
 
-			assertThat(result.getCategories()).containsExactly("인문", "정치");
+			assertThat(result.getFavoriteCategories()).containsExactly("인문", "정치");
 		}
 
 		@Test
@@ -126,7 +126,7 @@ class ProfileServiceImplTest {
 				"updated bio"
 			);
 
-			assertThat(result.getCategories()).containsExactly("인문", "과학");
+			assertThat(result.getFavoriteCategories()).containsExactly("인문", "과학");
 		}
 	}
 

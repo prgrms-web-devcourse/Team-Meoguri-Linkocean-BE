@@ -15,6 +15,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +27,7 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @AutoConfigureMockMvc
+@Transactional
 @SpringBootTest
 @Import(P6spyLogMessageFormatConfiguration.class)
 public class BaseControllerTest {
