@@ -20,7 +20,10 @@ public class ProfileController {
 	private final ProfileService profileService;
 
 	@PostMapping
-	public void createProfile(@LoginUser SessionUser user, @RequestBody CreateProfileRequest request) {
+	public void createProfile(
+		@LoginUser SessionUser user,
+		@RequestBody CreateProfileRequest request
+	) {
 		profileService.registerProfile(request.toCommand(user.getId()));
 	}
 }

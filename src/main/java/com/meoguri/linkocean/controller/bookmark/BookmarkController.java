@@ -1,16 +1,15 @@
 package com.meoguri.linkocean.controller.bookmark;
 
 import static java.util.stream.Collectors.*;
-import static org.springframework.http.ResponseEntity.*;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,12 +38,11 @@ public class BookmarkController {
 
 	/* 북마크 등록 */
 	@PostMapping
-	public ResponseEntity<?> registerBookmark(
+	public void registerBookmark(
 		final @LoginUser SessionUser user,
-		final RegisterBookmarkRequest request
+		final @RequestBody RegisterBookmarkRequest request
 	) {
 		bookmarkService.registerBookmark(request.toCommand(user.getId()));
-		return ok().build();
 	}
 
 	/**
@@ -74,7 +72,7 @@ public class BookmarkController {
 	@GetMapping("/feed")
 	public ListResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @LoginUser SessionUser user,
-		final GetBookmarkQueryParams queryParams
+		final @RequestBody GetBookmarkQueryParams queryParams
 	) {
 		final List<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(queryParams.toFeedSearchCond());
 
@@ -95,23 +93,21 @@ public class BookmarkController {
 
 	/* 북마크 업데이트 */
 	@PutMapping("/{bookmarkId}")
-	public ResponseEntity<?> updateBookmark(
+	public void updateBookmark(
 		final @LoginUser SessionUser user,
-		final UpdateBookmarkRequest request,
+		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
 		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
-		return ok().build();
 	}
 
 	/* 북마크 삭제 */
 	@DeleteMapping("/{bookmarkId}")
-	public ResponseEntity<?> deleteBookmark(
+	public void deleteBookmark(
 		final @LoginUser SessionUser user,
 		final @PathVariable long bookmarkId
 	) {
 		// TODO - 구현
 		// bookmarkService.deleteBookmark(user.getId(), bookmarkId);
-		return ok().build();
 	}
 }
