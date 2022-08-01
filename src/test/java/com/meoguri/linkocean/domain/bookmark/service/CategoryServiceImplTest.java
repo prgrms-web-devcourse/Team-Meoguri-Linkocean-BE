@@ -70,7 +70,7 @@ class CategoryServiceImplTest {
 
 		//then
 		final List<String> expectedCategories
-			= Arrays.stream(Category.values()).map(Category::getName).collect(toList());
+			= Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 		assertThat(allCategories)
 			.containsExactlyElementsOf(expectedCategories);
 	}

@@ -61,7 +61,7 @@ public class BaseControllerTest {
 	}
 
 	protected String 링크_메타데이터_조회(final String link) throws Exception {
-		mockMvc.perform(get(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas")
+		mockMvc.perform(post(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas/obtain")
 				.queryParam("link", link)
 				.build()
 				.toUri())

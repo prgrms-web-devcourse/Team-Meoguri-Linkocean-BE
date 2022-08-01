@@ -26,7 +26,8 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 
 		final String link = "http://www.naver.com";
 		//when
-		mockMvc.perform(get(UriComponentsBuilder.fromUriString(basePath)
+		mockMvc.perform(post(UriComponentsBuilder.fromUriString(basePath)
+				.pathSegment("obtain")
 				.queryParam("link", link)
 				.build()
 				.toUri())

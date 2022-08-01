@@ -36,7 +36,7 @@ public class FavoriteCategory extends BaseIdEntity {
 	}
 
 	public String getCategoryName() {
-		return this.category.getName();
+		return this.category.getKorName();
 	}
 
 }

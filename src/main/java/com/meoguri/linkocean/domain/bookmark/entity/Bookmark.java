@@ -126,7 +126,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	public String getCategory() {
-		return category.getName();
+		return category.getKorName();
 	}
 
 	public String getOpenType() {
@@ -175,19 +175,19 @@ public class Bookmark extends BaseIdEntity {
 		TRAVEL("여행"),
 		COOKING("요리");
 
-		private final String name;
+		private final String korName;
 
 		public static List<String> getEnglishNames() {
-			return Arrays.stream(Category.values()).map(v -> v.name).collect(toList());
+			return Arrays.stream(Category.values()).map(v -> v.korName).collect(toList());
 		}
 
 		public static List<String> getKoreanNames() {
-			return Arrays.stream(Category.values()).map(Category::getName).collect(toList());
+			return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 		}
 
 		public static Category of(String arg) {
 			return arg == null ? null : Arrays.stream(Category.values())
-				.filter(category -> category.name.equals(arg))
+				.filter(category -> category.korName.equals(arg))
 				.findAny()
 				.orElseThrow(() -> new LinkoceanRuntimeException());
 		}

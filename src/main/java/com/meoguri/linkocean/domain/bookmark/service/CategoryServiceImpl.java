@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 		return bookmarkRepository
 			.findCategoryExistsBookmark(writer).stream()
-			.map(name -> Category.valueOf(name).getName())
+			.map(name -> Category.valueOf(name).getKorName())
 			.collect(Collectors.toList());
 	}
 }
