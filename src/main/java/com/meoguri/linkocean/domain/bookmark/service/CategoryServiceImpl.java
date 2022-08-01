@@ -11,6 +11,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public List<String> getAllCategories() {
-		return Bookmark.Category.getAll();
+		return Bookmark.Category.getKoreanNames();
 	}
 }

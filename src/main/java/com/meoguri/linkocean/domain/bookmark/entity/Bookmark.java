@@ -27,6 +27,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 북마크 (인터넷 즐겨찾기)
@@ -156,22 +157,30 @@ public class Bookmark extends BaseIdEntity {
 	/**
 	 * 북마크의 카테고리
 	 */
+	@Getter
+	@RequiredArgsConstructor
 	public enum Category {
 
-		SELF_DEVELOPMENT, //자기계발
-		HUMANITIES, //인문
-		POLITICS, //정치
-		SOCIAL, //사회
-		ART, //예술
-		SCIENCE, //과학
-		TECHNOLOGY, //기술
-		IT, //IT
-		HOME, //가정
-		HEALTH, //건강
-		TRAVEL, //여행
-		COOKING; //요리
+		SELF_DEVELOPMENT("자기계발"),
+		HUMANITIES("인문"),
+		POLITICS("정치"),
+		SOCIAL("사회"),
+		ART("예술"),
+		SCIENCE("과학"),
+		TECHNOLOGY("기술"),
+		IT("IT"),
+		HOME("가정"),
+		HEALTH("건강"),
+		TRAVEL("여행"),
+		COOKING("요리");
 
-		public static List<String> getAll() {
+		private final String name;
+
+		public static List<String> getEnglishNames() {
+			return Arrays.stream(Category.values()).map(v -> v.name).collect(toList());
+		}
+
+		public static List<String> getKoreanNames() {
 			return Arrays.stream(Category.values()).map(Category::getName).collect(toList());
 		}
 
