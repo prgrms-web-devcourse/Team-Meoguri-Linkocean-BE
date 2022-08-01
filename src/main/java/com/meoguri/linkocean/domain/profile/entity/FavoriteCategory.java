@@ -35,4 +35,8 @@ public class FavoriteCategory extends BaseIdEntity {
 		this.category = Category.of(categoryName);
 	}
 
+	public String getCategoryName() {
+		return this.category.getName();
+	}
+
 }
