@@ -304,7 +304,7 @@ class BookmarkServiceImplTest {
 				GetBookmarkProfileResult::getUsername,
 				GetBookmarkProfileResult::getImageUrl,
 				GetBookmarkProfileResult::isFollow
-			).containsExactlyInAnyOrder(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
+			).containsExactly(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
 	}
 
 	@Test
