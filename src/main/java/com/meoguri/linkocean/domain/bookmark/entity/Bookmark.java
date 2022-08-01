@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -188,7 +189,7 @@ public class Bookmark extends BaseIdEntity {
 			return arg == null ? null : Arrays.stream(Category.values())
 				.filter(category -> category.name.equals(arg))
 				.findAny()
-				.orElseThrow(() -> new IllegalArgumentException());
+				.orElseThrow(() -> new LinkoceanRuntimeException());
 		}
 	}
 }

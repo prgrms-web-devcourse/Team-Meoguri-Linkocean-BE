@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 class FavoriteCategoryTest {
 
@@ -31,7 +32,7 @@ class FavoriteCategoryTest {
 		final String category = "undefined category";
 
 		//when then
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new FavoriteCategory(profile, category));
+		assertThatThrownBy(() -> new FavoriteCategory(profile, category))
+			.isInstanceOf(LinkoceanRuntimeException.class);
 	}
 }

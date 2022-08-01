@@ -258,7 +258,7 @@ class BookmarkServiceImplTest {
 			.title("title")
 			.linkMetadata(linkMetadata)
 			.memo("dream company")
-			.category("it")
+			.category("인문")
 			.openType("all")
 			.build();
 
