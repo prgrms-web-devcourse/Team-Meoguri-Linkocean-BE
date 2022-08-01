@@ -57,7 +57,7 @@ public class Reaction extends BaseIdEntity {
 		/* 싫어요 👎 */
 		HATE;
 
-		String getName() {
+		public String getName() {
 			return name().toLowerCase();
 		}
 

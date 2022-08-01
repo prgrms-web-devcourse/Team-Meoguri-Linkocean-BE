@@ -10,4 +10,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
 	int deleteByProfileAndBookmarkAndType(Profile profile, Bookmark bookmark, ReactionType type);
+
+	long countReactionByBookmarkAndType(Bookmark bookmark, ReactionType reactionType);
 }

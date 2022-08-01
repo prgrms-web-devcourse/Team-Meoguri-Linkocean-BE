@@ -23,7 +23,7 @@ public final class GetBookmarkResponse {
 	private final boolean isFavorite;
 	private final LocalDateTime updatedAt;
 	private final List<String> tags;
-	private final Map<String, Integer> reactionCount;
+	private final Map<String, Long> reactionCount;
 	private final GetBookmarkProfileResponse profile;
 
 	public static GetBookmarkResponse of(final GetBookmarkResult result) {
