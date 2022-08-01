@@ -185,10 +185,10 @@ public class Bookmark extends BaseIdEntity {
 		}
 
 		public static Category of(String arg) {
-			return Arrays.stream(Category.values())
+			return arg == null ? null : Arrays.stream(Category.values())
 				.filter(category -> category.name.equals(arg))
 				.findAny()
-				.orElseThrow(() -> new IllegalStateException());
+				.orElseThrow(() -> new IllegalArgumentException());
 		}
 	}
 }

@@ -53,7 +53,7 @@ class ReactionRepositoryTest {
 				.linkMetadata(linkMetadataRepository.save(createLinkMetadata()))
 				.title("title")
 				.memo("memo")
-				.category("it")
+				.category("인문")
 				.openType("all")
 				.build());
 	}

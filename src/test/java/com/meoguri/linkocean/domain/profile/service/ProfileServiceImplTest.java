@@ -106,7 +106,7 @@ class ProfileServiceImplTest {
 				"papa",
 				"updated image url",
 				"updated bio",
-				List.of("it", "science")
+				List.of("인문", "과학")
 			);
 
 			profileService.updateProfile(updateCommand);
@@ -126,7 +126,7 @@ class ProfileServiceImplTest {
 				"updated bio"
 			);
 
-			assertThat(result.getCategories()).containsExactly("it", "science");
+			assertThat(result.getCategories()).containsExactly("인문", "과학");
 		}
 	}
 

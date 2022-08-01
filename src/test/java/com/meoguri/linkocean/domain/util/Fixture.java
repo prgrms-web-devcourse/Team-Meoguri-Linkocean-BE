@@ -45,7 +45,7 @@ public final class Fixture {
 			.title(title)
 			.linkMetadata(linkMetadata)
 			.memo("dream company")
-			.category("it")
+			.category("IT")
 			.openType("all")
 			.build();
 	}
