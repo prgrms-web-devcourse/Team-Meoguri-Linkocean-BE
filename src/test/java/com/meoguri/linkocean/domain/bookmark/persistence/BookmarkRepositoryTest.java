@@ -2,12 +2,15 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +39,9 @@ class BookmarkRepositoryTest {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@PersistenceUnit
+	private EntityManagerFactory emf;
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
@@ -137,5 +143,31 @@ class BookmarkRepositoryTest {
 				tuple("bookmark2", List.of("tag2", "tag3")),
 				tuple("bookmark3", List.of("tag3"))
 			);
+	}
+
+	@Test
+	void 북마크와_연관관계_맺은_엔티티_페치_조인_이용해_같이_조회() {
+		//given
+		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, link));
+		bookmark.addBookmarkTag(tag1);
+
+		em.flush();
+		em.clear();
+
+		//when
+		final Optional<Bookmark> oRetrievedBookmark = bookmarkRepository
+			.findByIdFetchProfileAndLinkMetadataAndTags(bookmark.getId());
+
+		//then
+		assertAll(
+			() -> assertThat(oRetrievedBookmark).isPresent(),
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getProfile())).isTrue(),
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue(),
+			() -> assertThat(oRetrievedBookmark.get().getTagNames()).contains(tag1.getName())
+		);
+	}
+
+	private boolean isLoaded(final Object entity) {
+		return emf.getPersistenceUnitUtil().isLoaded(entity);
 	}
 }

@@ -1,6 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
+import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
@@ -22,6 +29,7 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +41,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final BookmarkRepository bookmarkRepository;
 	private final TagRepository tagRepository;
+	private final FavoriteRepository favoriteRepository;
+	private final ReactionRepository reactionRepository;
+	private final FollowRepository followRepository;
+
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
@@ -95,10 +107,47 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.collect(Collectors.toList());
 	}
 
-	//TODO
+	//TODO : 쿼리 튜닝
+	@Transactional(readOnly = true)
 	@Override
 	public GetBookmarkResult getBookmark(final long userId, final long bookmarkId) {
-		return null;
+
+		final Bookmark bookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
+			.orElseThrow(LinkoceanRuntimeException::new);
+
+		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);
+
+		final boolean isFollow = followRepository.findByProfiles(
+			bookmark.getProfile(),
+			findProfileByUserIdQuery.findByUserId(userId)
+		).isPresent();
+
+		return builder()
+			.title(bookmark.getTitle())
+			.url(bookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww())
+			.imageUrl(bookmark.getLinkMetadata().getImageUrl())
+			.category(bookmark.getCategory())
+			.memo(bookmark.getMemo())
+			.openType(bookmark.getOpenType())
+			.isFavorite(isFavorite)
+			.updatedAt(bookmark.getUpdatedAt())
+			.tags(bookmark.getTagNames())
+			.reactionCount(getReactionCountMap(bookmark))
+			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
+			.build();
+	}
+
+	private Map<String, Long> getReactionCountMap(Bookmark bookmark) {
+		return Arrays.stream(ReactionType.values())
+			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
+				reactionRepository.countReactionByBookmarkAndType(bookmark, reactionType))
+			);
+	}
+
+	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
+		return new GetBookmarkProfileResult(
+			profile.getId(), profile.getUsername(), profile.getImageUrl(), isFollow
+		);
 	}
 
 	//TODO
