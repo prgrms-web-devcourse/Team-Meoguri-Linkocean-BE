@@ -34,6 +34,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private final FindUserByIdQuery findUserByIdQuery;
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 
+	@Transactional()
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
 

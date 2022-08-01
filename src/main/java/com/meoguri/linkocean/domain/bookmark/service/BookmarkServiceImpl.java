@@ -10,10 +10,11 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
@@ -102,13 +103,19 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	//TODO
 	@Override
-	public List<GetMyBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond) {
+	public List<GetBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond) {
 		return null;
 	}
 
 	//TODO
 	@Override
 	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
+		return null;
+	}
+
+	//TODO
+	@Override
+	public List<GetBookmarksResult> getBookmarksByUsername(final BookmarkByUsernameSearchCond searchCond) {
 		return null;
 	}
 }

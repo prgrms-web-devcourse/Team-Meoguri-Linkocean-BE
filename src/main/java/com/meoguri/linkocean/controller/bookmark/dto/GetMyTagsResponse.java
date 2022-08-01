@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public final class MyTagsResponse {
+public final class GetMyTagsResponse {
 
 	private final String name;
 	private final int count;
 
-	public static MyTagsResponse ofResult(final GetMyTagsResult result) {
+	public static GetMyTagsResponse ofResult(final GetMyTagsResult result) {
 
-		return new MyTagsResponse(result.getTag(), result.getCount());
+		return new GetMyTagsResponse(result.getTag(), result.getCount());
 	}
 }
