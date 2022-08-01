@@ -113,8 +113,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Bookmark bookmark = bookmarkRepository.findByIdWithProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		boolean isFavorite = favoriteRepository.findByOwnerAndBookmark(bookmark.getProfile(), bookmark)
-			.isPresent();
+		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);
 
 		final long likeCnt = reactionRepository.countLikeByBookmark(bookmark);
 		final long hateCnt = reactionRepository.countHateByBookmark(bookmark);

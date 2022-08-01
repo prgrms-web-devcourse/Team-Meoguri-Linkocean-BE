@@ -63,7 +63,7 @@ class FavoriteRepositoryTest {
 	@Test
 	void 즐겨찾기_여부_조회() {
 		//when
-		final boolean isFavorite = favoriteRepository.findByOwnerAndBookmark(owner, bookmark).isPresent();
+		final boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
 
 		//then
 		assertThat(isFavorite).isFalse();
