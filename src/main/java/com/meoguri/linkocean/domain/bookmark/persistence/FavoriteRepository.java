@@ -9,4 +9,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
 	int deleteByOwnerAndBookmark(Profile owner, Bookmark bookmark);
+
+	boolean existsByOwnerAndBookmark(Profile owner, Bookmark bookmark);
 }

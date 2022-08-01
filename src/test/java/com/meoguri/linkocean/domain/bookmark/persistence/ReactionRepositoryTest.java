@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -87,5 +88,21 @@ class ReactionRepositoryTest {
 
 		em.flush();
 		em.clear();
+	}
+
+	@Test
+	void 북마크_좋아요_싫어요_개수를_조회할수_있다() {
+		//given
+		reactionRepository.save(new Reaction(profile, bookmark, "like"));
+
+		//when
+		final long likeCnt = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
+		final long hateCnt = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.HATE);
+
+		//then
+		assertAll(
+			() -> assertThat(likeCnt).isEqualTo(1L),
+			() -> assertThat(hateCnt).isZero()
+		);
 	}
 }
