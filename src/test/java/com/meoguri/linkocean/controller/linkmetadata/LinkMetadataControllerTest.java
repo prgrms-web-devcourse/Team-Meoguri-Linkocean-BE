@@ -19,7 +19,7 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 
 	@WithMockUser(roles = "USER")
 	@Test
-	void 링크메타데이터_제목_조회_API() throws Exception {
+	void 링크메타데이터_제목_조회_Api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
