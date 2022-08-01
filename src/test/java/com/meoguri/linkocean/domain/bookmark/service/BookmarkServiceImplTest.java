@@ -79,7 +79,8 @@ class BookmarkServiceImplTest {
 	void 북마크_등록_성공() {
 		//given
 		final RegisterBookmarkCommand command =
-			new RegisterBookmarkCommand(userId, url, "title", "memo", "it", List.of("tag1", "tag2"), "all");
+
+			new RegisterBookmarkCommand(userId, url, "title", "memo", "it", "all", List.of("tag1", "tag2"));
 
 		//when
 		final long savedBookmarkId = bookmarkService.registerBookmark(command);
@@ -135,7 +136,7 @@ class BookmarkServiceImplTest {
 	}
 
 	private RegisterBookmarkCommand command(long userId, final String url) {
-		return new RegisterBookmarkCommand(userId, url, null, null, null, emptyList(), "all");
+		return new RegisterBookmarkCommand(userId, url, null, null, null, "all", emptyList());
 	}
 
 	@Nested
@@ -157,8 +158,8 @@ class BookmarkServiceImplTest {
 				"updatedTitle",
 				"updatedMemo",
 				"home",
-				List.of("tag1", "tag2"),
-				"private"
+				"private",
+				List.of("tag1", "tag2")
 			);
 
 			//when
@@ -196,8 +197,8 @@ class BookmarkServiceImplTest {
 				"updatedTitle",
 				"updatedMemo",
 				"home",
-				List.of("tag1", "tag2"),
-				"private"
+				"private",
+				List.of("tag1", "tag2")
 			);
 
 			//when then
@@ -215,8 +216,8 @@ class BookmarkServiceImplTest {
 				"updatedTitle",
 				"updatedMemo",
 				"home",
-				List.of("tag1", "tag2"),
-				"private"
+				"private",
+				List.of("tag1", "tag2")
 			);
 
 			//when then
@@ -239,8 +240,8 @@ class BookmarkServiceImplTest {
 				"updatedTitle",
 				"updatedMemo",
 				"home",
-				List.of("tag1", "tag2"),
-				"private"
+				"private",
+				List.of("tag1", "tag2")
 			);
 
 			//when then

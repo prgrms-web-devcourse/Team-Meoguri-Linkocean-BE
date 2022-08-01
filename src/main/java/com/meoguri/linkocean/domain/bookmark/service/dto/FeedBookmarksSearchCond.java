@@ -2,8 +2,6 @@ package com.meoguri.linkocean.domain.bookmark.service.dto;
 
 import java.util.Optional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark.OpenType;
-
 import lombok.Getter;
 
 /**
@@ -15,24 +13,23 @@ public final class FeedBookmarksSearchCond {
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 10;
 	private static final String DEFAULT_ORDER = "upload";
-	private static final String DEFAULT_OPENTYPE = OpenType.ALL.name();
 
 	private final int page;
 	private final int size;
 	private final String order;
 	private final String category;
-	private final String openType;
 	private final String searchTitle;
+	private final boolean follow;
 
-	public FeedBookmarksSearchCond(final Integer page, final Integer size, final String order, final String openType,
-		final String category, final String searchTitle) {
+	public FeedBookmarksSearchCond(final Integer page, final Integer size, final String order, final String category,
+		final String searchTitle, final boolean follow) {
 
 		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
 		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
-		this.openType = Optional.ofNullable(openType).orElse(DEFAULT_OPENTYPE);
 
 		this.category = category;
 		this.searchTitle = searchTitle;
+		this.follow = follow;
 	}
 }

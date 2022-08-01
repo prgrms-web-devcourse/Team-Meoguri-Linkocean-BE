@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 내 북마크 목록 조회 결과
+ * 북마크 목록 조회 결과
  */
 @Getter
 @RequiredArgsConstructor
-public final class GetMyBookmarksResult {
+public final class GetBookmarksResult {
 
 	private final long id;
 	private final String url;

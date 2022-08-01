@@ -14,14 +14,15 @@ import lombok.RequiredArgsConstructor;
 public final class GetFeedBookmarksResult {
 
 	private final long id;
-	private final String url;
 	private final String title;
+	private final String url;
 	private final String memo;
 	private final String openType;
 	private final String category;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 
+	private final String imageUrl;
 	private final boolean isFavorite;
 	private final int likeCount;
 	private List<String> tags;
@@ -33,6 +34,7 @@ public final class GetFeedBookmarksResult {
 	public static class ProfileResult {
 
 		private final long id;
+
 		private final String username;
 		private final String imageUrl;
 	}

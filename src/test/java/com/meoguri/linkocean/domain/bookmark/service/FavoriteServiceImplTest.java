@@ -72,7 +72,7 @@ class FavoriteServiceImplTest {
 	}
 
 	private RegisterBookmarkCommand command(final User user, final String url) {
-		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, emptyList(), "all");
+		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, "all", emptyList());
 	}
 
 	private RegisterProfileCommand command(Profile profile) {
