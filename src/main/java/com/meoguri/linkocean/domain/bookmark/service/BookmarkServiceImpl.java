@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +124,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			findProfileByUserIdQuery.findByUserId(userId)
 		).isPresent();
 
-		return GetBookmarkResult.builder()
+		return builder()
 			.title(bookmark.getTitle())
 			.url(bookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww())
 			.imageUrl(bookmark.getLinkMetadata().getImageUrl())
@@ -133,7 +135,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.updatedAt(bookmark.getUpdatedAt())
 			.tags(bookmark.getTagNames())
 			.reactionCount(convertToReactionMap(likeCnt, hateCnt))
-			.profile(convertToProfileMap(bookmark.getProfile(), isFollow))
+			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
 	}
 
@@ -144,13 +146,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return map;
 	}
 
-	private Map<String, Object> convertToProfileMap(final Profile profile, boolean isFollow) {
-		final HashMap<String, Object> map = new HashMap<>();
-		map.put("profileId", profile.getId());
-		map.put("username", profile.getUsername());
-		map.put("imageUrl", profile.getImageUrl());
-		map.put("isFollow", isFollow);
-		return map;
+	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
+		return new GetBookmarkProfileResult(
+			profile.getId(), profile.getUsername(), profile.getImageUrl(), isFollow
+		);
 	}
 
 	//TODO

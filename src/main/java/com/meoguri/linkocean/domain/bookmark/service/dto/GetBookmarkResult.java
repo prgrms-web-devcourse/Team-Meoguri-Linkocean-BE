@@ -6,6 +6,7 @@ import java.util.Map;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 북마크 상세 조회 결과
@@ -20,13 +21,22 @@ public final class GetBookmarkResult {
 	private final String category;
 	private final String memo;
 	private final String openType;
-	private final boolean isFavorite;
 	private final LocalDateTime updatedAt;
+
+	private final boolean isFavorite;
 
 	private List<String> tags;
 
 	private Map<String, Long> reactionCount;
 
-	//Object ? (더 좋은 방법은 없을까?)
-	private Map<String, Object> profile;
+	private final GetBookmarkProfileResult profile;
+
+	@Getter
+	@RequiredArgsConstructor
+	public static class GetBookmarkProfileResult {
+		private final long profileId;
+		private final String username;
+		private final String imageUrl;
+		private final boolean isFollow;
+	}
 }

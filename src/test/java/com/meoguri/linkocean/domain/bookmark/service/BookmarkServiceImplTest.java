@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -297,8 +298,13 @@ class BookmarkServiceImplTest {
 		assertThat(result.getReactionCount().get("like")).isZero();
 		assertThat(result.getReactionCount().get("hate")).isZero();
 
-		assertThat(result.getProfile().values())
-			.containsExactlyInAnyOrder(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
+		assertThat(result.getProfile())
+			.extracting(
+				GetBookmarkProfileResult::getProfileId,
+				GetBookmarkProfileResult::getUsername,
+				GetBookmarkProfileResult::getImageUrl,
+				GetBookmarkProfileResult::isFollow
+			).containsExactlyInAnyOrder(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
 	}
 
 	@Test
