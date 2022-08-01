@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -9,10 +10,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class ProfileControllerTest extends BaseControllerTest {
 
@@ -50,12 +53,10 @@ class ProfileControllerTest extends BaseControllerTest {
 	 */
 	@WithMockUser(roles = "USER")
 	@Test
-	void 내프로필_조회_Api_성공() throws Exception {
+	void 내프로필_조회_단순_프로필_정보_조회() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("인문", "정치", "사회"));
-		final String url = 링크_메타데이터_조회("http://www.naver.com");
-		북마크_등록(url, "인문", null, "private");
 
 		//when
 		mockMvc.perform(get(basePath + "/me").session(session)
@@ -72,9 +73,46 @@ class ProfileControllerTest extends BaseControllerTest {
 				jsonPath("$.followerCount").value(0),
 				jsonPath("$.followeeCount").value(0),
 				jsonPath("$.tags", hasSize(0)),
-				jsonPath("$.categories", hasSize(1))
+				jsonPath("$.categories", hasSize(0))
 
 			)
 			.andDo(print());
+	}
+
+	@WithMockUser(roles = "USER")
+	@Test
+	void 내프로필_조회_사용자가_작성한_카테고리_조회() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+		북마크_등록(링크_메타데이터_조회("http://www.naver.com"), "인문", null, "private");
+		북마크_등록(링크_메타데이터_조회("https://jojoldu.tistory.com"), "사회", null, "all");
+		북마크_등록(링크_메타데이터_조회("https://github.com"), "IT", null, "private");
+
+		//when
+		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpectAll(
+				jsonPath("$.profileId").exists(),
+				jsonPath("$.imageUrl").isEmpty(),
+				jsonPath("$.favoriteCategories", hasSize(4)),
+				jsonPath("$.username").value("hani"),
+				jsonPath("$.bio").isEmpty(),
+				jsonPath("$.followerCount").value(0),
+				jsonPath("$.followeeCount").value(0),
+				jsonPath("$.tags", hasSize(0)),
+				jsonPath("$.categories", hasSize(3))
+			)
+			.andDo(print())
+			.andReturn().getResponse();
+
+		final List<String> userCategories =
+			objectMapper.readValue(response.getContentAsByteArray(), GetMyProfileResponse.class).getCategories();
+
+		assertThat(userCategories).contains("인문", "사회", "IT");
 	}
 }
