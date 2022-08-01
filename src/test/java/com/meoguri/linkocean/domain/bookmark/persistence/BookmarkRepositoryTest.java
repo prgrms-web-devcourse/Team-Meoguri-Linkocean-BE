@@ -149,19 +149,21 @@ class BookmarkRepositoryTest {
 	void 북마크와_연관관계_맺은_엔티티_페치_조인_이용해_같이_조회() {
 		//given
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, link));
+		bookmark.addBookmarkTag(tag1);
 
 		em.flush();
 		em.clear();
 
 		//when
 		final Optional<Bookmark> oRetrievedBookmark = bookmarkRepository
-			.findByIdWithProfileAndLinkMetadataAndTags(bookmark.getId());
+			.findByIdFetchProfileAndLinkMetadataAndTags(bookmark.getId());
 
 		//then
 		assertAll(
 			() -> assertThat(oRetrievedBookmark).isPresent(),
 			() -> assertThat(isLoaded(oRetrievedBookmark.get().getProfile())).isTrue(),
-			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue()
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue(),
+			() -> assertThat(oRetrievedBookmark.get().getTagNames()).contains(tag1.getName())
 		);
 	}
 

@@ -111,7 +111,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public GetBookmarkResult getBookmark(final long userId, final long bookmarkId) {
 
-		final Bookmark bookmark = bookmarkRepository.findByIdWithProfileAndLinkMetadataAndTags(bookmarkId)
+		final Bookmark bookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);

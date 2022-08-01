@@ -27,7 +27,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 		+ "from Bookmark b "
 		+ "join fetch b.profile "
 		+ "join fetch b.linkMetadata "
-		+ "left join fetch b.bookmarkTags "
+		+ "left join fetch b.bookmarkTags bt "
+		+ "left join fetch bt.tag "
 		+ "where b.id = :id")
-	Optional<Bookmark> findByIdWithProfileAndLinkMetadataAndTags(long id);
+	Optional<Bookmark> findByIdFetchProfileAndLinkMetadataAndTags(long id);
 }
