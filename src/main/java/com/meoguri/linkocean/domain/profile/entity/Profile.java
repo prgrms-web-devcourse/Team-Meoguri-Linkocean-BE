@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -86,6 +87,7 @@ public class Profile extends BaseIdEntity {
 	public List<String> getMyFavoriteCategories() {
 		return this.favoriteCategories.stream()
 			.map(FavoriteCategory::getCategory)
+			.map(Bookmark.Category::getName)
 			.collect(toList());
 	}
 

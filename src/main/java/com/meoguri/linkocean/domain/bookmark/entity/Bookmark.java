@@ -184,12 +184,11 @@ public class Bookmark extends BaseIdEntity {
 			return Arrays.stream(Category.values()).map(Category::getName).collect(toList());
 		}
 
-		public String getName() {
-			return name().toLowerCase();
-		}
-
 		public static Category of(String arg) {
-			return arg == null ? null : Category.valueOf(arg.toUpperCase());
+			return Arrays.stream(Category.values())
+				.filter(category -> category.name.equals(arg))
+				.findAny()
+				.orElseThrow(() -> new IllegalStateException());
 		}
 	}
 }
