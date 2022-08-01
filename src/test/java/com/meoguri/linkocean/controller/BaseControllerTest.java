@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,21 @@ public class BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(createJson(new CreateProfileRequest(username, categories))))
 			.andExpect(status().isOk());
+	}
+
+	/*
+	일단 기본적으로 네이버로 설정하였습니다! 필요하다면 변경하세요!
+	 */
+	protected String 링크_메타데이터_조회(final String link) throws Exception {
+		mockMvc.perform(get(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas")
+				.queryParam("link", link)
+				.build()
+				.toUri())
+				.session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		return link;
 	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
