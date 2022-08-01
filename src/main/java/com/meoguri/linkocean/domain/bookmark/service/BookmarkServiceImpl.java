@@ -1,8 +1,9 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -115,9 +116,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);
 
-		final long likeCnt = reactionRepository.countLikeByBookmark(bookmark);
-		final long hateCnt = reactionRepository.countHateByBookmark(bookmark);
-
 		final boolean isFollow = followRepository.findByProfiles(
 			bookmark.getProfile(),
 			findProfileByUserIdQuery.findByUserId(userId)
@@ -133,16 +131,16 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.isFavorite(isFavorite)
 			.updatedAt(bookmark.getUpdatedAt())
 			.tags(bookmark.getTagNames())
-			.reactionCount(convertToReactionMap(likeCnt, hateCnt))
+			.reactionCount(getReactionCountMap(bookmark))
 			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
 	}
 
-	private Map<String, Long> convertToReactionMap(final long likeCnt, final long hateCnt) {
-		final Map<String, Long> map = new HashMap<>();
-		map.put("like", likeCnt);
-		map.put("hate", hateCnt);
-		return map;
+	private Map<String, Long> getReactionCountMap(Bookmark bookmark) {
+		return Arrays.stream(ReactionType.values())
+			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
+				reactionRepository.countReactionByBookmarkAndType(bookmark, reactionType))
+			);
 	}
 
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
