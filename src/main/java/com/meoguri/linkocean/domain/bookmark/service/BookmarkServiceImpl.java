@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkQueryDto;
 import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
@@ -151,9 +153,20 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO
+	@Transactional(readOnly = true)
 	@Override
-	public List<GetBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond) {
-		return null;
+	public List<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
+
+		/* 테그는 최대 3개로만 필터링 가능 */
+		checkCondition(!(searchCond.getTags() != null && searchCond.getTags().size() > 3));
+
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		final List<BookmarkQueryDto> bookmarkQueryDtoList =
+			bookmarkRepository.findMyBookmarksUsingSearchCond(profile, searchCond);
+
+		return bookmarkQueryDtoList.stream()
+			.map(GetBookmarksResult::of)
+			.collect(Collectors.toList());
 	}
 
 	//TODO
