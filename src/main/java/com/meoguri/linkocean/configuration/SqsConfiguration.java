@@ -9,6 +9,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.meoguri.linkocean.infrastructure.sqs.SqsProperties;
+import com.meoguri.linkocean.infrastructure.sqs.SqsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,5 +29,11 @@ public class SqsConfiguration {
 					sqsProperties.getAccessKey(),
 					sqsProperties.getSecretKey())))
 		);
+	}
+
+	@Bean
+	public SqsService sqsService(SQSConnectionFactory factory) {
+
+		return new SqsService(factory, sqsProperties.getQueueName());
 	}
 }
