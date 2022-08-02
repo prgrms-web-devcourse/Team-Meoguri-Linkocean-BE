@@ -45,14 +45,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	@Override
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
+		log.info("CustomOAuth2UserService loadUser start");
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
 		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
 		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
 		final User user = userOf(attributes);
 
+		log.info(
+			String.format("user Session에 등록 email : %s oauthType : %s", user.getEmail(),
+				user.getOAuthType().toString()));
 		httpSession.setAttribute("user", new SessionUser(user));
 
+		log.info("token save");
 		return new DefaultOAuth2User(
 			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
 			attributes.getAttributes(),
