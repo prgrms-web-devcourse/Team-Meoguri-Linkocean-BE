@@ -144,7 +144,7 @@ public class Bookmark extends BaseIdEntity {
 		/* 개인 공개 */
 		PRIVATE;
 
-		String getName() {
+		public String getName() {
 			return name().toLowerCase();
 		}
 
