@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -15,17 +16,21 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @AutoConfigureMockMvc
+@Transactional
 @SpringBootTest
 @Import(P6spyLogMessageFormatConfiguration.class)
 public class BaseControllerTest {
@@ -53,6 +58,37 @@ public class BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(createJson(new CreateProfileRequest(username, categories))))
 			.andExpect(status().isOk());
+	}
+
+	protected String 링크_메타데이터_조회(final String link) throws Exception {
+		mockMvc.perform(post(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas/obtain")
+				.queryParam("link", link)
+				.build()
+				.toUri())
+				.session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		return link;
+	}
+
+	protected void 북마크_등록(
+		final String url,
+		final String category,
+		final List<String> tags,
+		final String openType) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks").session(session)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createJson(new RegisterBookmarkRequest(
+					url,
+					"title",
+					"memo",
+					category,
+					openType,
+					tags
+				))))
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {

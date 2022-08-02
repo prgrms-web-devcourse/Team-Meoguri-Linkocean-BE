@@ -80,7 +80,7 @@ class BookmarkServiceImplTest {
 		//given
 		final RegisterBookmarkCommand command =
 
-			new RegisterBookmarkCommand(userId, url, "title", "memo", "it", "all", List.of("tag1", "tag2"));
+			new RegisterBookmarkCommand(userId, url, "title", "memo", "인문", "all", List.of("tag1", "tag2"));
 
 		//when
 		final long savedBookmarkId = bookmarkService.registerBookmark(command);
@@ -157,7 +157,7 @@ class BookmarkServiceImplTest {
 				bookmark.getId(),
 				"updatedTitle",
 				"updatedMemo",
-				"home",
+				"인문",
 				"private",
 				List.of("tag1", "tag2")
 			);
@@ -258,7 +258,7 @@ class BookmarkServiceImplTest {
 			.title("title")
 			.linkMetadata(linkMetadata)
 			.memo("dream company")
-			.category("it")
+			.category("인문")
 			.openType("all")
 			.build();
 

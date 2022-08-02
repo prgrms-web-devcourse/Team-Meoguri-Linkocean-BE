@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
 import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Url;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;

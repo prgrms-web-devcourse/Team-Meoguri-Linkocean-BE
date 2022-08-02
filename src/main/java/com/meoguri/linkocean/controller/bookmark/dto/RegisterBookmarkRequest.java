@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public final class RegisterBookmarkRequest {
 
 	private String url;
