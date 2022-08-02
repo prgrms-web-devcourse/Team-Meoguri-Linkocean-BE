@@ -32,6 +32,7 @@ public final class MyBookmarkSearchCond {
 
 		this.category = category;
 		this.searchTitle = searchTitle;
+
 		this.tags = tags;
 	}
 }
