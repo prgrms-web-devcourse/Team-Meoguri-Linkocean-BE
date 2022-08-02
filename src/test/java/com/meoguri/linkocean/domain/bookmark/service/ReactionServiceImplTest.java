@@ -19,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -77,18 +79,18 @@ class ReactionServiceImplTest {
 	}
 
 	@Test
-	void 리액션_등록_성공_하나의_북마크에_대해_리액션을_처음_등록하는_사용자() {
-		//given
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
+	void 리액션_등록_성공() {
+
+		//사용자가_하나의_북마크에_대해_리액션을_처음_등록하는_경우
 
 		//when
-		reactionService.addReaction(reactionCommand);
+		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
+		reactionService.requestReaction(reactionCommand);
 
 		em.flush();
 		em.clear();
 
 		//then
-
 		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
@@ -96,34 +98,50 @@ class ReactionServiceImplTest {
 	}
 
 	@Test
-	void 이미_있는_리액션_요청과_상태가_같음() {
-		//given
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
-		reactionService.addReaction(reactionCommand);
+	void 리액션_취소() {
 
+		//이미_있는_리액션이_요청의_리액션_상태가_같음
+
+		//given
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+
+		em.flush();
+		em.clear();
 		//when
-		reactionService.cancelReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "HATE");
+		reactionService.requestReaction(command); //취소됨
 
 		em.flush();
 		em.clear();
 
 		//then
-		final List<Reaction> reactions = reactionRepository.findAll();
-		assertThat(reactions.size()).isEqualTo(0);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
+		assertThat(findReaction).isEmpty();
 	}
 
 	@Test
-	void 이미_있는_리액션_요청과_상태가_다름() {
-		//given
-		final ReactionCommand reactionCommand1 = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
-		reactionService.addReaction(reactionCommand1);
+	void 리액션_취소_후_등록() {
 
+		//이미_있는_리액션이_요청의_리액션_상태가_다름
+
+		//given
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+
+		em.flush();
+		em.clear();
 		//when
-		final ReactionCommand reactionCommand2 = new ReactionCommand(user1.getId(), bookmark2.getId(), "hate");
+		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
+		reactionService.requestReaction(command); //취소 후 등록
+
+		em.flush();
+		em.clear();
 
 		//then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> reactionService.cancelReaction(reactionCommand2));
+		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
+
+		assertThat(findReaction).isPresent().get()
+			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
+			.containsExactly(profile1, bookmark2, "like");
 	}
 
 }
