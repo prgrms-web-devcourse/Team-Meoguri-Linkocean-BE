@@ -2,10 +2,12 @@ package com.meoguri.linkocean.configuration;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUserArgumentResolver;
@@ -13,7 +15,6 @@ import com.meoguri.linkocean.configuration.security.oauth.LoginUserArgumentResol
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableWebMvc
 @RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
 
@@ -24,11 +25,17 @@ public class WebConfiguration implements WebMvcConfigurer {
 		resolvers.add(loginUserArgumentResolver);
 	}
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-			.allowedOrigins("*")
-			.allowedMethods("GET", "POST")
-			.maxAge(3000);
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		// - (3)
+		configuration.addAllowedOrigin("*");
+		configuration.addAllowedMethod("*");
+		configuration.addAllowedHeader("*");
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }
