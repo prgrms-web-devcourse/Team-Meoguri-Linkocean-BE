@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.linkmetadata.entity.vo;
+package com.meoguri.linkocean.domain.linkmetadata.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;

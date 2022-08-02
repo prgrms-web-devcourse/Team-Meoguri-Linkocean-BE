@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Url;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;

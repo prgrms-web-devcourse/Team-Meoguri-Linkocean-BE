@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Url;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Url;
 
 @DataJpaTest
 class LinkMetadataRepositoryTest {
