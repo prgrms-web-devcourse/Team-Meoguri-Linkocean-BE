@@ -23,10 +23,12 @@ import javax.persistence.OneToMany;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 북마크 (인터넷 즐겨찾기)
@@ -124,7 +126,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	public String getCategory() {
-		return category.getName();
+		return category.getKorName();
 	}
 
 	public String getOpenType() {
@@ -156,31 +158,38 @@ public class Bookmark extends BaseIdEntity {
 	/**
 	 * 북마크의 카테고리
 	 */
+	@Getter
+	@RequiredArgsConstructor
 	public enum Category {
 
-		SELF_DEVELOPMENT, //자기계발
-		HUMANITIES, //인문
-		POLITICS, //정치
-		SOCIAL, //사회
-		ART, //예술
-		SCIENCE, //과학
-		TECHNOLOGY, //기술
-		IT, //IT
-		HOME, //가정
-		HEALTH, //건강
-		TRAVEL, //여행
-		COOKING; //요리
+		SELF_DEVELOPMENT("자기계발"),
+		HUMANITIES("인문"),
+		POLITICS("정치"),
+		SOCIAL("사회"),
+		ART("예술"),
+		SCIENCE("과학"),
+		TECHNOLOGY("기술"),
+		IT("IT"),
+		HOME("가정"),
+		HEALTH("건강"),
+		TRAVEL("여행"),
+		COOKING("요리");
 
-		public static List<String> getAll() {
-			return Arrays.stream(Category.values()).map(Category::getName).collect(toList());
+		private final String korName;
+
+		public static List<String> getEnglishNames() {
+			return Arrays.stream(Category.values()).map(v -> v.korName).collect(toList());
 		}
 
-		public String getName() {
-			return name().toLowerCase();
+		public static List<String> getKoreanNames() {
+			return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 		}
 
 		public static Category of(String arg) {
-			return arg == null ? null : Category.valueOf(arg.toUpperCase());
+			return arg == null ? null : Arrays.stream(Category.values())
+				.filter(category -> category.korName.equals(arg))
+				.findAny()
+				.orElseThrow(() -> new LinkoceanRuntimeException());
 		}
 	}
 }

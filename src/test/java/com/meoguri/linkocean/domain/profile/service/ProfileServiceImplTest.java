@@ -54,7 +54,7 @@ class ProfileServiceImplTest {
 			userId = user.getId();
 
 			profile = createProfile(user);
-			categories = List.of("it", "self_development");
+			categories = List.of("인문", "정치");
 		}
 
 		@Test
@@ -88,7 +88,7 @@ class ProfileServiceImplTest {
 				false
 			);
 
-			assertThat(result.getCategories()).containsExactly("it", "self_development");
+			assertThat(result.getFavoriteCategories()).containsExactly("인문", "정치");
 		}
 
 		@Test
@@ -106,7 +106,7 @@ class ProfileServiceImplTest {
 				"papa",
 				"updated image url",
 				"updated bio",
-				List.of("it", "science")
+				List.of("인문", "과학")
 			);
 
 			profileService.updateProfile(updateCommand);
@@ -126,7 +126,7 @@ class ProfileServiceImplTest {
 				"updated bio"
 			);
 
-			assertThat(result.getCategories()).containsExactly("it", "science");
+			assertThat(result.getFavoriteCategories()).containsExactly("인문", "과학");
 		}
 	}
 

@@ -7,6 +7,7 @@ import static com.meoguri.linkocean.exception.Preconditions.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -75,7 +76,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final Bookmark savedBookmark = bookmarkRepository.save(newBookmark);
 
-		convertTagNamesToTags(command.getTagNames()).forEach(savedBookmark::addBookmarkTag);
+		/**
+		 * 태그가 null로 들어올 때 처리가 안되었던 것 같습니다 -> 에러발생
+		 * 임시방편으로 리팩터링 해놨습니다!
+		 */
+		Optional.ofNullable(command.getTagNames()).ifPresent(
+			tagNames -> convertTagNamesToTags(tagNames).forEach(tag -> {
+				savedBookmark.addBookmarkTag(tag);
+			})
+		);
 
 		return savedBookmark.getId();
 	}

@@ -30,22 +30,27 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 
-		return createBookmark(createProfile(), createLinkMetadata());
+		return createBookmark(createProfile(), createLinkMetadata(), "인문");
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata) {
 
-		return createBookmark(profile, linkMetadata, "title");
+		return createBookmark(profile, linkMetadata, "title", "인문");
 	}
 
-	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title) {
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String category) {
+
+		return createBookmark(profile, linkMetadata, "title", category);
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category) {
 
 		return Bookmark.builder()
 			.profile(profile)
 			.title(title)
 			.linkMetadata(linkMetadata)
 			.memo("dream company")
-			.category("it")
+			.category(category)
 			.openType("all")
 			.build();
 	}

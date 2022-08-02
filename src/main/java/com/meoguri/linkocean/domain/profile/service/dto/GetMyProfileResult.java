@@ -13,7 +13,7 @@ public final class GetMyProfileResult {
 	private final String username;
 	private final String imageUrl;
 	private final String bio;
-	private final List<String> categories;
+	private final List<String> favoriteCategories;
 	private final int followerCount;
 	private final int followeeCount;
 	private final boolean isFollow;

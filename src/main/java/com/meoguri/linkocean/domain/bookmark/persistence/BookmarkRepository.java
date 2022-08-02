@@ -31,4 +31,13 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "left join fetch bt.tag "
 		+ "where b.id = :id")
 	Optional<Bookmark> findByIdFetchProfileAndLinkMetadataAndTags(long id);
+
+	/**
+	 * 사용자가 작성한 북마크들의 카테고리 조회
+	 * @param profile
+	 * @return
+	 */
+	@Query("select distinct b.category from Bookmark b "
+		+ "where b.profile = :profile ")
+	List<String> findCategoryExistsBookmark(Profile profile);
 }
