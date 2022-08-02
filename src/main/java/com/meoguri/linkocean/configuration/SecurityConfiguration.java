@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 			.and()
 			.formLogin().disable()
 			.authorizeRequests()
-			.antMatchers("/", "/error", "api/v1/healthCheck").permitAll()
+			.antMatchers("/", "/error", "/api/v1/healthCheck").permitAll()
 			.anyRequest().hasRole("USER")
 			.and()
 			.logout()
