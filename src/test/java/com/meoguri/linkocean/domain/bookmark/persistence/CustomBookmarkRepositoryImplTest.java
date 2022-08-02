@@ -77,7 +77,7 @@ class CustomBookmarkRepositoryImplTest {
 			.linkMetadata(linkMetadata1)
 			.title("title1")
 			.memo("memo1")
-			.category("it")
+			.category("IT")
 			.openType("all")
 			.build();
 		bookmark1.addBookmarkTag(tag1);
@@ -89,7 +89,7 @@ class CustomBookmarkRepositoryImplTest {
 			.linkMetadata(linkMetadata2)
 			.title("title2")
 			.memo("memo2")
-			.category("home")
+			.category("가정")
 			.openType("partial")
 			.build();
 		bookmark2.addBookmarkTag(tag1);
@@ -100,7 +100,7 @@ class CustomBookmarkRepositoryImplTest {
 			.linkMetadata(linkMetadata3)
 			.title("title3")
 			.memo("memo3")
-			.category("it")
+			.category("IT")
 			.openType("private")
 			.build();
 		savedBookmark3 = bookmarkRepository.save(bookmark3);
@@ -142,15 +142,15 @@ class CustomBookmarkRepositoryImplTest {
 		assertThat(result).hasSize(3)
 			.extracting(BookmarkQueryDto::getLikeCount, BookmarkQueryDto::getCategory)
 			.containsExactly(
-				new Tuple(1L, "it"),
-				new Tuple(0L, "it"),
-				new Tuple(0L, "home"));
+				new Tuple(1L, "IT"),
+				new Tuple(0L, "IT"),
+				new Tuple(0L, "가정"));
 	}
 
 	@Test
 	void 내_북마크_조회_카테고리_필터링() {
 		//given
-		final MyBookmarkSearchCond cond = cond(null, "it", null, null);
+		final MyBookmarkSearchCond cond = cond(null, "IT", null, null);
 
 		//when
 		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
@@ -197,11 +197,6 @@ class CustomBookmarkRepositoryImplTest {
 			.containsExactly(savedBookmark1.getTitle(), savedBookmark1.getTagNames());
 	}
 
-	private MyBookmarkSearchCond cond(final String order, final String category, final String searchTitle,
-		final List<String> tags) {
-		return new MyBookmarkSearchCond(null, null, order, category, searchTitle, tags);
-	}
-
 	@Test
 	void 내_북마크_조회_테그_필터링_1() {
 		//given
@@ -237,7 +232,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리_검색어_필터링() {
 		//given
-		final MyBookmarkSearchCond cond = cond(null, "it", "2", null);
+		final MyBookmarkSearchCond cond = cond(null, "IT", "2", null);
 
 		//when
 		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
@@ -264,5 +259,10 @@ class CustomBookmarkRepositoryImplTest {
 			new Tuple(savedBookmark1.getId(), savedBookmark1.getTitle(), 1L, savedBookmark1.getTagNames()),
 			new Tuple(savedBookmark2.getId(), savedBookmark2.getTitle(), 0L, savedBookmark2.getTagNames())
 		);
+	}
+
+	private MyBookmarkSearchCond cond(final String order, final String category, final String searchTitle,
+		final List<String> tags) {
+		return new MyBookmarkSearchCond(null, null, order, category, searchTitle, tags);
 	}
 }

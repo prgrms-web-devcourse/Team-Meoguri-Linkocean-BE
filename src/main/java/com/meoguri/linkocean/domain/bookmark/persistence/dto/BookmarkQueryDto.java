@@ -31,7 +31,7 @@ public class BookmarkQueryDto {
 	}
 
 	public String getCategory() {
-		return category.getName();
+		return category.getKorName();
 	}
 
 	public List<String> getTagNames() {
