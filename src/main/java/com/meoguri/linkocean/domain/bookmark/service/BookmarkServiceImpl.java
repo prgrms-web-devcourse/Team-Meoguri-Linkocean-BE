@@ -152,7 +152,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		);
 	}
 
-	//TODO
 	@Transactional(readOnly = true)
 	@Override
 	public List<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
