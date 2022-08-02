@@ -25,6 +25,7 @@ public class SecurityConfiguration {
 			.and()
 			.formLogin().disable()
 			.authorizeRequests()
+			.antMatchers("/", "/error").permitAll()
 			.anyRequest().hasRole("USER")
 			.and()
 			.logout()
