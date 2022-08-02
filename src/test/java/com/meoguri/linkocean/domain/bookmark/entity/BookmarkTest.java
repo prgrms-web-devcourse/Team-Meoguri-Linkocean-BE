@@ -27,7 +27,7 @@ class BookmarkTest {
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String openType = "all";
-		final String category = "it";
+		final String category = "인문";
 
 		//when
 		final Bookmark bookmark = Bookmark.builder()
@@ -64,7 +64,7 @@ class BookmarkTest {
 		final String title = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final String memo = "memo";
-		final String category = "it";
+		final String category = "인문";
 		final String openType = "all";
 
 		//when then
@@ -117,7 +117,7 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
-		final String category = "it";
+		final String category = "인문";
 		final String openType = "partial";
 		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
@@ -142,7 +142,7 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String invalidTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 		final String updatedMemo = "updatedMemo";
-		final String category = "it";
+		final String category = "인문";
 		final String openType = "partial";
 		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
@@ -157,7 +157,7 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
-		final String category = "it";
+		final String category = "인문";
 		final String openType = "partial";
 		final List<Tag> tags = List.of(
 			new Tag("tag1"),

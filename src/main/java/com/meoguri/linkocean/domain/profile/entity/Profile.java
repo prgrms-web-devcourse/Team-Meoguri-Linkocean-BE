@@ -85,7 +85,7 @@ public class Profile extends BaseIdEntity {
 	 */
 	public List<String> getMyFavoriteCategories() {
 		return this.favoriteCategories.stream()
-			.map(FavoriteCategory::getCategory)
+			.map(FavoriteCategory::getCategoryName)
 			.collect(toList());
 	}
 
@@ -94,11 +94,12 @@ public class Profile extends BaseIdEntity {
 	 */
 	public void updateFavoriteCategories(final List<String> categories) {
 		// 기존 목록 중 업데이트 목록에 없다면 삭제
-		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory()));
+		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategoryName()));
 
 		// 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가
 		categories.stream()
-			.filter(c -> !favoriteCategories.stream().map(FavoriteCategory::getCategory).collect(toList()).contains(c))
+			.filter(c ->
+				!favoriteCategories.stream().map(FavoriteCategory::getCategoryName).collect(toList()).contains(c))
 			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
 	}
 }
