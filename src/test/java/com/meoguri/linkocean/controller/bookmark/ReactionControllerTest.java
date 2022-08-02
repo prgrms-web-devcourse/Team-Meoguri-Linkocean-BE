@@ -61,7 +61,7 @@ class ReactionControllerTest extends BaseControllerTest {
 		session = new MockHttpSession();
 		session.setAttribute("user", new SessionUser(user1));
 
-		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/{reactionType}",bookmark2.getId(),"like")
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/{reactionType}", bookmark2.getId(), "like")
 			.session(session)
 			.contentType(MediaType.APPLICATION_JSON))
 
