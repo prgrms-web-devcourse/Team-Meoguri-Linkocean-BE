@@ -13,4 +13,6 @@ spring:
 
   flyway:
     enabled: false
-
+  mongodb:
+    embedded:
+      version: 3.5.5

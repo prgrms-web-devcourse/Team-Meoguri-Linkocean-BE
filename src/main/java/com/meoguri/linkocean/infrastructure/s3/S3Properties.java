@@ -13,10 +13,7 @@ import lombok.Setter;
 public class S3Properties {
 
 	private String accessKey;
-
 	private String secretKey;
-
 	private String region;
-
 	private String bucket;
 }
