@@ -18,11 +18,11 @@ public final class GetBookmarksResult {
 	private final String title;
 	private final String openType;
 	private final String category;
-	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 
 	private final boolean isFavorite;
-	private int likeCount;
-	private List<String> tags;
-	private final LinkMetadataResult linkMetadata;
+	private final long likeCount;
+	private final String imageUrl;
+	private boolean isWriter;
+	private final List<String> tags;
 }

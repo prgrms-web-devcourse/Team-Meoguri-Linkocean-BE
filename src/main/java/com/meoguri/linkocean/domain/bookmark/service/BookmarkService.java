@@ -23,7 +23,7 @@ public interface BookmarkService {
 	GetBookmarkResult getBookmark(long userId, long bookmarkId);
 
 	/* 내 북마크 목록 */
-	List<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond);
+	List<GetBookmarksResult> getMyBookmarks(long userId, MyBookmarkSearchCond searchCond);
 
 	/* 피드 북마크 목록 */
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
