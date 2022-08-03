@@ -19,12 +19,6 @@ alter table follow
 alter table follow
     add constraint fk_follow_follower foreign key (follower_id) references profile (id);
 
-alter table notification
-    add constraint fk_notification_bookmark foreign key (bookmark_id) references bookmark (id);
-
-alter table notification
-    add constraint fk_notification_target foreign key (target_id) references profile (id);
-
 alter table profile
     add constraint fk_profile_users foreign key (user_id) references users (id);
 
