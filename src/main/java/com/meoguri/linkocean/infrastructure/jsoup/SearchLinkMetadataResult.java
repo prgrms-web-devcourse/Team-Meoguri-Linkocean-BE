@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 public class SearchLinkMetadataResult {
 
 	private final String title;
-	private final String imageUrl;
+	private final String image;
 
 	public boolean isValid() {
-		return !(title.equals(DEFAULT_TITLE) && imageUrl.equals(DEFAULT_IMAGE));
+		return !(title.equals(DEFAULT_TITLE) && image.equals(DEFAULT_IMAGE));
 	}
 }

@@ -17,7 +17,7 @@ public final class GetBookmarkResult {
 
 	private final String title;
 	private final String url;
-	private final String imageUrl;
+	private final String image;
 	private final String category;
 	private final String memo;
 	private final String openType;
@@ -36,7 +36,7 @@ public final class GetBookmarkResult {
 	public static class GetBookmarkProfileResult {
 		private final long profileId;
 		private final String username;
-		private final String imageUrl;
+		private final String image;
 		private final boolean isFollow;
 	}
 }

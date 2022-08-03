@@ -109,9 +109,9 @@ class BookmarkRepositoryTest {
 	@Test
 	void 사용자의_전체_북마크조회_태그_까지_페치_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문");
-		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문");
-		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문");
+		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문", "www.naver.com");
+		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문", "www.google.com");
+		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문", "www.haha.com");
 
 		bookmark1.addBookmarkTag(tag1);
 		bookmark1.addBookmarkTag(tag2);
@@ -174,12 +174,12 @@ class BookmarkRepositoryTest {
 	@Test
 	void 게시글이_존재하는_카테고리이름_반환() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "사회"));
-		bookmarkRepository.save(createBookmark(profile, link, "사회"));
-		bookmarkRepository.save(createBookmark(profile, link, "과학"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.google.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.naver.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.prgrms.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.daum.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.hello.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "과학", "www.linkocean.com"));
 
 		//when
 		final List<String> categories = bookmarkRepository.findCategoryExistsBookmark(profile);

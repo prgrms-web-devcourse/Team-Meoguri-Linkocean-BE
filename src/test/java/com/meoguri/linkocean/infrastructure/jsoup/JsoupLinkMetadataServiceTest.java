@@ -22,7 +22,7 @@ class JsoupLinkMetadataServiceTest {
 
 		//then
 		assertThat(result.getTitle()).isEqualTo(expectedTitle);
-		assertThat(result.getImageUrl()).isNotNull();
+		assertThat(result.getImage()).isNotNull();
 	}
 
 	@ParameterizedTest
@@ -36,7 +36,7 @@ class JsoupLinkMetadataServiceTest {
 
 		//then
 		assertThat(result.getTitle()).isEqualTo(DEFAULT_TITLE);
-		assertThat(result.getImageUrl()).isEqualTo(DEFAULT_IMAGE);
+		assertThat(result.getImage()).isEqualTo(DEFAULT_IMAGE);
 	}
 
 }

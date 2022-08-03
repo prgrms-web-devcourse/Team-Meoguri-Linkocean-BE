@@ -62,7 +62,7 @@ public class ProfileServiceImpl implements ProfileService {
 		return new GetMyProfileResult(
 			profile.getId(),
 			profile.getUsername(),
-			profile.getImageUrl(),
+			profile.getImage(),
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
 			followRepository.countFollowerByUserId(userId),
@@ -80,7 +80,7 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.update(
 			command.getUsername(),
 			command.getBio(),
-			command.getImageUrl()
+			command.getImage()
 		);
 
 		// 선호 카테고리 업데이트
@@ -124,7 +124,7 @@ public class ProfileServiceImpl implements ProfileService {
 		return followeeProfiles.stream().map(p -> new SearchProfileResult(
 			p.getId(),
 			p.getUsername(),
-			p.getImageUrl(),
+			p.getImage(),
 			true // 현재 사용자가 팔로워인 상황이므로 팔로우 여부는 항상 true
 		)).collect(toList());
 	}
@@ -147,7 +147,7 @@ public class ProfileServiceImpl implements ProfileService {
 			result.add(new SearchProfileResult(
 				followerProfile.getId(),
 				followerProfile.getUsername(),
-				followerProfile.getImageUrl(),
+				followerProfile.getImage(),
 				isFollow
 			));
 		}

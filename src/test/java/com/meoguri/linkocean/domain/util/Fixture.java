@@ -45,21 +45,33 @@ public final class Fixture {
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category) {
 
+		return createBookmark(profile, linkMetadata, category, category, "https://www.google.com");
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category,
+		String url) {
+
 		return Bookmark.builder()
 			.profile(profile)
 			.title(title)
 			.linkMetadata(linkMetadata)
 			.memo("dream company")
-			.category(category)
 			.openType("all")
+			.category(category)
+			.url(url)
 			.build();
 	}
 
 	public static LinkMetadata createLinkMetadata() {
 
+		return createLinkMetadata("google.com");
+	}
+
+	public static LinkMetadata createLinkMetadata(String link) {
+
 		return new LinkMetadata(
 
-			"google.com", "구글", "google.png");
+			link, "구글", "google.png");
 	}
 
 	public static Tag createTag() {

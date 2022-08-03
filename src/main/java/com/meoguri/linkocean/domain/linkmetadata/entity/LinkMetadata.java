@@ -17,35 +17,35 @@ import lombok.NoArgsConstructor;
 public class LinkMetadata extends BaseIdEntity {
 
 	@Embedded
-	private Url url;
+	private Link link;
 
 	@Column(nullable = false)
 	private String title;
 
 	@Column(nullable = false)
-	private String imageUrl;
+	private String image;
 
-	public LinkMetadata(final String link, final String title, final String imageUrl) {
+	public LinkMetadata(final String link, final String title, final String image) {
 
-		this.url = new Url(link);
+		this.link = new Link(link);
 		this.title = title;
-		this.imageUrl = imageUrl;
+		this.image = image;
 	}
 
 	/**
 	 * 링크 메타 데이터 업데이트를 위한 API
 	 */
-	public void update(final String title, final String imageUrl) {
+	public void update(final String title, final String image) {
 
 		this.title = title;
-		this.imageUrl = imageUrl;
+		this.image = image;
 	}
 
-	public String getFullUrl() {
-		return url.getUrlWithSchemaAndWww();
+	public String getFullLink() {
+		return link.getFullLink();
 	}
 
-	public String getSavedUrl() {
-		return url.getSavedUrl();
+	public String getSavedLink() {
+		return link.getSavedLink();
 	}
 }

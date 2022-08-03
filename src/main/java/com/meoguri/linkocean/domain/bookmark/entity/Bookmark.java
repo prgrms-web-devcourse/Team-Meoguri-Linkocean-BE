@@ -19,6 +19,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -36,6 +40,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "url"})
+)
 public class Bookmark extends BaseIdEntity {
 
 	public static final int MAX_BOOKMARK_TITLE_LENGTH = 50;
@@ -67,6 +74,14 @@ public class Bookmark extends BaseIdEntity {
 	private Category category;
 
 	@Column(nullable = false)
+	@ColumnDefault("0")
+	private long likeCount;
+
+	/* 사용자가 입력한 url */
+	@Column(nullable = false)
+	private String url;
+
+	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
 	@Column(nullable = false)
@@ -77,15 +92,18 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	@Builder
 	private Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
-		final String category, final String openType) {
+		final String openType, final String category, final String url) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
 		this.linkMetadata = linkMetadata;
 		this.title = title;
 		this.memo = memo;
-		this.category = Category.of(category);
 		this.openType = OpenType.of(openType);
+		this.category = Category.of(category);
+		this.url = url;
+
+		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
 	}

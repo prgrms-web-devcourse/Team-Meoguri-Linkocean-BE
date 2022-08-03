@@ -48,7 +48,7 @@ public class Profile extends BaseIdEntity {
 
 	/* 프로필 사진 주소 */
 	@Column(nullable = true, length = 255)
-	private String imageUrl;
+	private String image;
 
 	/**
 	 * 회원 가입시 사용하는 생성자
@@ -63,14 +63,14 @@ public class Profile extends BaseIdEntity {
 	/**
 	 * 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다
 	 */
-	public void update(final String username, final String bio, final String imageUrl) {
+	public void update(final String username, final String bio, final String image) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
-		checkNullableStringLength(imageUrl, MAX_PROFILE_BIO_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
+		checkNullableStringLength(image, MAX_PROFILE_BIO_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
 
 		this.username = username;
 		this.bio = bio;
-		this.imageUrl = imageUrl;
+		this.image = image;
 	}
 
 	/**

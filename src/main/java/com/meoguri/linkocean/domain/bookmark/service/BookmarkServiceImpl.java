@@ -72,8 +72,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.linkMetadata(linkMetadata)
 			.title(command.getTitle())
 			.memo(command.getMemo())
-			.category(command.getCategory())
 			.openType(command.getOpenType())
+			.category(command.getCategory())
+			.url(command.getUrl())
 			.build();
 
 		final Bookmark savedBookmark = bookmarkRepository.save(newBookmark);
@@ -82,11 +83,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		 * 태그가 null로 들어올 때 처리가 안되었던 것 같습니다 -> 에러발생
 		 * 임시방편으로 리팩터링 해놨습니다!
 		 */
-		Optional.ofNullable(command.getTagNames()).ifPresent(
-			tagNames -> convertTagNamesToTags(tagNames).forEach(tag -> {
-				savedBookmark.addBookmarkTag(tag);
-			})
-		);
+		Optional.ofNullable(command.getTagNames())
+			.ifPresent(tagNames -> convertTagNamesToTags(tagNames).forEach(savedBookmark::addBookmarkTag));
 
 		return savedBookmark.getId();
 	}
@@ -137,8 +135,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		return GetBookmarkResult.builder()
 			.title(bookmark.getTitle())
-			.url(bookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww())
-			.imageUrl(bookmark.getLinkMetadata().getImageUrl())
+			.url(bookmark.getLinkMetadata().getLink().getFullLink())
+			.image(bookmark.getLinkMetadata().getImage())
 			.category(bookmark.getCategory())
 			.memo(bookmark.getMemo())
 			.openType(bookmark.getOpenType())
@@ -159,7 +157,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
 		return new GetBookmarkProfileResult(
-			profile.getId(), profile.getUsername(), profile.getImageUrl(), isFollow
+			profile.getId(), profile.getUsername(), profile.getImage(), isFollow
 		);
 	}
 

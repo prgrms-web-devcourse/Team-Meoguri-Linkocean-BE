@@ -22,7 +22,7 @@ public final class GetFeedBookmarksResult {
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 
-	private final String imageUrl;
+	private final String image;
 	private final boolean isFavorite;
 	private final int likeCount;
 	private List<String> tags;
@@ -36,6 +36,6 @@ public final class GetFeedBookmarksResult {
 		private final long id;
 
 		private final String username;
-		private final String imageUrl;
+		private final String image;
 	}
 }

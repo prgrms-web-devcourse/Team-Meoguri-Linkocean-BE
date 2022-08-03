@@ -56,6 +56,7 @@ class ReactionRepositoryTest {
 				.memo("memo")
 				.category("인문")
 				.openType("all")
+				.url("www.google.com")
 				.build());
 	}
 

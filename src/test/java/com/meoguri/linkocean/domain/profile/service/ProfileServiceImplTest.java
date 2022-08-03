@@ -73,7 +73,7 @@ class ProfileServiceImplTest {
 			assertThat(result).extracting(
 				GetMyProfileResult::getProfileId,
 				GetMyProfileResult::getUsername,
-				GetMyProfileResult::getImageUrl,
+				GetMyProfileResult::getImage,
 				GetMyProfileResult::getBio,
 				GetMyProfileResult::getFollowerCount,
 				GetMyProfileResult::getFolloweeCount,
@@ -81,7 +81,7 @@ class ProfileServiceImplTest {
 			).containsExactly(
 				profileId,
 				profile.getUsername(),
-				profile.getImageUrl(),
+				profile.getImage(),
 				profile.getBio(),
 				0,
 				0,
@@ -118,7 +118,7 @@ class ProfileServiceImplTest {
 			final GetMyProfileResult result = profileService.getMyProfile(userId);
 			assertThat(result).extracting(
 				GetMyProfileResult::getUsername,
-				GetMyProfileResult::getImageUrl,
+				GetMyProfileResult::getImage,
 				GetMyProfileResult::getBio
 			).containsExactly(
 				"papa",
@@ -186,7 +186,7 @@ class ProfileServiceImplTest {
 				.extracting(
 					SearchProfileResult::getId,
 					SearchProfileResult::getUsername,
-					SearchProfileResult::getImageUrl,
+					SearchProfileResult::getImage,
 					SearchProfileResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
@@ -196,7 +196,7 @@ class ProfileServiceImplTest {
 				.extracting(
 					SearchProfileResult::getId,
 					SearchProfileResult::getUsername,
-					SearchProfileResult::getImageUrl,
+					SearchProfileResult::getImage,
 					SearchProfileResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
@@ -225,7 +225,7 @@ class ProfileServiceImplTest {
 				.extracting(
 					SearchProfileResult::getId,
 					SearchProfileResult::getUsername,
-					SearchProfileResult::getImageUrl,
+					SearchProfileResult::getImage,
 					SearchProfileResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true),
@@ -235,7 +235,7 @@ class ProfileServiceImplTest {
 				.extracting(
 					SearchProfileResult::getId,
 					SearchProfileResult::getUsername,
-					SearchProfileResult::getImageUrl,
+					SearchProfileResult::getImage,
 					SearchProfileResult::isFollow
 				).containsExactly(
 					tuple(user3Id, "user3", null, true)
@@ -244,7 +244,7 @@ class ProfileServiceImplTest {
 				.extracting(
 					SearchProfileResult::getId,
 					SearchProfileResult::getUsername,
-					SearchProfileResult::getImageUrl,
+					SearchProfileResult::getImage,
 					SearchProfileResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true)
