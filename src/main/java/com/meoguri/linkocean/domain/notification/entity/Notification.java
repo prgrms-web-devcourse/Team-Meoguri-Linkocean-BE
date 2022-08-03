@@ -34,6 +34,7 @@ public class Notification {
 	/* 알람에 필요한 추가 정보들 */
 	private Map<String, Noti> info;
 
+	/* 알림 생성자 - 타입별 info 의 검증은 하지 않았습니다 */
 	public Notification(final NotificationType type, final long targetProfileId, final Map<String, Noti> info) {
 
 		this.type = type;
