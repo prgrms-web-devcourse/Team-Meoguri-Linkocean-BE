@@ -11,34 +11,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
-import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
+import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
+import com.meoguri.linkocean.domain.profile.service.ProfileService;
 
 class ReactionControllerTest extends BaseControllerTest {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
+	private BookmarkService bookmarkService;
 
 	@BeforeEach
 	void setUp() {
@@ -47,24 +31,26 @@ class ReactionControllerTest extends BaseControllerTest {
 
 	@WithMockUser(roles = "USER")
 	@Test
-	void 리액션_Api_성공() throws Exception {
+	void 리액션_추가() throws Exception {
 
-		User user1 = userRepository.save( createUser("hani@gmail.com", "GOOGLE") );
-		User user2 = userRepository.save( createUser("haha@naver.com", "NAVER") );
+		//given
+		String email = "haha@gmail.com";
+		String oAuthType = "NAVER";
+		유저_등록_로그인(email, oAuthType);
+		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 
-		Profile profile1 = profileRepository.save(createProfile(user1, "hani"));
-		Profile profile2 = profileRepository.save(createProfile(user2, "gaga"));
+		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
+		final String url = 링크_메타데이터_조회("http://www.naver.com");
+		final long savedBookmarkId = bookmarkService.registerBookmark(
+			new RegisterBookmarkCommand(userId, url, "title", "memo", "인문", "all", List.of("tag1", "tag2"))
+		);
 
-		LinkMetadata link = linkMetadataRepository.save(createLinkMetadata());
-		Bookmark bookmark2 = bookmarkRepository.save(createBookmark(profile2, link));
-
-		session = new MockHttpSession();
-		session.setAttribute("user", new SessionUser(user1));
-
-		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/{reactionType}", bookmark2.getId(), "like")
+		//when
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/{reactionType}", savedBookmarkId, "like")
 			.session(session)
 			.contentType(MediaType.APPLICATION_JSON))
 
+			//then
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
