@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
@@ -17,8 +16,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
-	@WithMockUser(roles = "USER")
-	@Test
+		@Test
 	void 북마크_등록_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");

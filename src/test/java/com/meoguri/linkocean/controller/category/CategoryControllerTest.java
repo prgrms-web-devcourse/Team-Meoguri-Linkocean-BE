@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark.Category;
@@ -16,8 +15,7 @@ class CategoryControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(CategoryController.class);
 
-	@WithMockUser(roles = "USER")
-	@Test
+		@Test
 	void 카테고리_전체_조회_Api_성공() throws Exception {
 		//when
 		mockMvc.perform(get(basePath)

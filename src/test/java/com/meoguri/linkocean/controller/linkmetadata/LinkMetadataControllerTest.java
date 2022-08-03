@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
@@ -17,7 +16,6 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(LinkMetadataController.class);
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 링크메타데이터_제목_조회_Api() throws Exception {
 		//given

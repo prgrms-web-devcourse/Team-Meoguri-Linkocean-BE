@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 
@@ -18,8 +17,7 @@ class LoginControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(LoginController.class);
 
-	@WithMockUser(roles = "USER")
-	@Test
+		@Test
 	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_true() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
@@ -36,7 +34,6 @@ class LoginControllerTest extends BaseControllerTest {
 
 	}
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_false() throws Exception {
 		//given
