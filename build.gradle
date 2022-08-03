@@ -91,7 +91,7 @@ dependencies {
     // Database
     implementation 'mysql:mysql-connector-java'
     implementation 'org.flywaydb:flyway-mysql'
-    compileOnly 'org.springframework.session:spring-session-jdbc'
+//    compileOnly 'org.springframework.session:spring-session-jdbc'
 
     // Query DSL
     implementation "com.querydsl:querydsl-jpa"

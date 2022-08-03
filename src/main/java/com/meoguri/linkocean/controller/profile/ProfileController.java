@@ -15,7 +15,9 @@ import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/profiles")
 @RestController
@@ -30,6 +32,7 @@ public class ProfileController {
 		@LoginUser SessionUser user,
 		@RequestBody CreateProfileRequest request
 	) {
+		log.info("session user id {}", user.getId());
 		profileService.registerProfile(request.toCommand(user.getId()));
 	}
 

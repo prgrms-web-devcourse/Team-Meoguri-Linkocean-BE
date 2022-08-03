@@ -25,8 +25,8 @@ public class SecurityConfiguration {
 			.and()
 			.formLogin().disable()
 			.authorizeRequests()
-			.antMatchers("/", "/error").permitAll()
-			.anyRequest().hasRole("USER")
+			// .antMatchers("/", "/error", "/api/v1/healthCheck", "/api/v1/login").permitAll()
+			.anyRequest().permitAll()
 			.and()
 			.logout()
 			.logoutSuccessUrl("/")
@@ -35,9 +35,9 @@ public class SecurityConfiguration {
 			.authenticationEntryPoint(customAuthenticationEntryPoint)
 			.and()
 			.oauth2Login(oauth2 ->
-				oauth2.userInfoEndpoint().userService(customOAuth2UserService)
-					.and()
-					.defaultSuccessUrl("/api/v1/login/success")
+					oauth2.userInfoEndpoint().userService(customOAuth2UserService)
+				// .and()
+				// .defaultSuccessUrl("/api/v1/login/success")
 			)
 			.build();
 	}
