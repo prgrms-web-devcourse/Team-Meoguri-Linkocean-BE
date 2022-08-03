@@ -57,7 +57,7 @@ public class BookmarkController {
 	) {
 		final String username = queryParams.getUsername();
 		final List<GetBookmarksResult> result = username == null
-			? bookmarkService.getMyBookmarks(queryParams.toMySearchCond(user.getId()))
+			? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
 			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
 
 		final List<GetBookmarksResponse> response =

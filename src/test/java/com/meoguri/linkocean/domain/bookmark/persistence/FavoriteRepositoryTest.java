@@ -3,6 +3,9 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ class FavoriteRepositoryTest {
 	private LinkMetadataRepository linkMetadataRepository;
 
 	private Bookmark bookmark;
+	private LinkMetadata linkMetadata;
 	private Profile owner;
 
 	@BeforeEach
@@ -44,7 +48,7 @@ class FavoriteRepositoryTest {
 		final User user = userRepository.save(createUser());
 		owner = profileRepository.save(createProfile(user));
 
-		final LinkMetadata linkMetadata = linkMetadataRepository.save(createLinkMetadata());
+		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
 		bookmark = bookmarkRepository.save(createBookmark(owner, linkMetadata));
 	}
 
@@ -67,5 +71,23 @@ class FavoriteRepositoryTest {
 
 		//then
 		assertThat(isFavorite).isFalse();
+	}
+
+	@Test
+	void 여러_북마크에_대해_즐겨찾기_PK를_조회() {
+		//given
+		final User user2 = userRepository.save(createUser("crush@mail.com", "GOOGLE"));
+		final Profile profile2 = profileRepository.save(createProfile(user2, "crush"));
+		final Bookmark bookmark2 = bookmarkRepository.save(createBookmark(profile2, linkMetadata));
+
+		final Favorite saveFavorite = favoriteRepository.save(new Favorite(bookmark, owner));
+
+		//when
+		final Set<Long> favoriteIds = favoriteRepository
+			.findAllFavoriteByProfileAndBookmarks(owner, List.of(bookmark, bookmark2));
+
+		//then
+		assertThat(favoriteIds).hasSize(1)
+			.containsExactly(saveFavorite.getId());
 	}
 }
