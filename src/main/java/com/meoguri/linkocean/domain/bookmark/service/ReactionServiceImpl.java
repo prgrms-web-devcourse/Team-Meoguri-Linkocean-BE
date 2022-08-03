@@ -35,22 +35,26 @@ public class ReactionServiceImpl implements ReactionService {
 
 		final Optional<Reaction> oReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
 
-		//리액션이 존재하지 않은 경우
-		if (oReaction.isEmpty()) {
-			addReaction(profile, bookmark, requestReactionType);
+		oReaction.ifPresentOrElse(
+			/* 리액션이 존재하는 경우 */
+			reaction -> {
+				ReactionType existedReactionType = ReactionType.of(reaction.getType());
 
-		//리액션이 존재하는 경우
-		} else {
-			ReactionType reactionType = ReactionType.of(oReaction.get().getType());
+				/* 기존의 리액션 타입이 요청 리액션 타입과 같은경우 */
+				if (existedReactionType == requestReactionType) {
+					cancelReaction(profile, bookmark, existedReactionType);
 
-			//기존의 리액션 타입이 요청 리액션 타입과 같은경우
-			if (reactionType.toString().equals(requestReactionType.toString())) {
-				cancelReaction(profile, bookmark, reactionType);
-			//기존의 리액션이 요청과 다른경우
-			} else {
-				oReaction.get().changeTypeTo(requestReactionType);
+				/* 기존의 리액션이 요청과 다른경우 */
+				} else {
+					reaction.changeTypeTo(requestReactionType);
+				}
+			},
+
+			/* 리액션이 존재하지 않은 경우 */
+			() -> {
+				addReaction(profile, bookmark, requestReactionType);
 			}
-		}
+		);
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
@@ -62,11 +66,5 @@ public class ReactionServiceImpl implements ReactionService {
 		final boolean isDeleted
 			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;
 		checkCondition(isDeleted);
-	}
-
-
-	private void addReactionAfterCancelReaction(final Profile profile, final Bookmark bookmark,
-		final ReactionType reactionType, final ReactionType requestReactionType) {
-		reactionRepository.findByProfileAndBookmark(profile, bookmark);
 	}
 }
