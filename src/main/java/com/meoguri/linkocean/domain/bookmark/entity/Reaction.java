@@ -49,6 +49,10 @@ public class Reaction extends BaseIdEntity {
 		return type.getName();
 	}
 
+	public void changeTypeTo(ReactionType reactionType) {
+		this.type = reactionType;
+	}
+
 	public enum ReactionType {
 
 		/* 좋아요 👍 */
