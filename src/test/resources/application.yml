@@ -1,11 +1,16 @@
 spring:
   profiles:
     include: oauth, aws
+
   jpa:
     database: H2
     generate-ddl: false
     hibernate:
       ddl-auto: create-drop
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
   flyway:
     enabled: false
   mongodb:

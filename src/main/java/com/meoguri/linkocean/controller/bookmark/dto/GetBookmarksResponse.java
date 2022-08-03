@@ -15,11 +15,13 @@ public final class GetBookmarksResponse {
 	private final long id;
 	private final String title;
 	private final String url;
-	private final LocalDateTime updatedAt;
 	private final String openType;
 	private final String category;
-	private final int likeCount;
+	private final LocalDateTime updatedAt;
+
+	private final long likeCount;
 	private final boolean isFavorite;
+	private final String imageUrl;
 	private final List<String> tags;
 
 	public static GetBookmarksResponse of(GetBookmarksResult result) {
@@ -28,11 +30,12 @@ public final class GetBookmarksResponse {
 			result.getId(),
 			result.getTitle(),
 			result.getUrl(),
-			result.getUpdatedAt(),
 			result.getOpenType(),
 			result.getCategory(),
+			result.getUpdatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),
+			result.getImageUrl(),
 			result.getTags()
 		);
 	}

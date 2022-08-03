@@ -146,7 +146,7 @@ public class Bookmark extends BaseIdEntity {
 		/* 개인 공개 */
 		PRIVATE;
 
-		String getName() {
+		public String getName() {
 			return name().toLowerCase();
 		}
 
@@ -185,11 +185,15 @@ public class Bookmark extends BaseIdEntity {
 			return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 		}
 
+		public String getKorName() {
+			return this.korName;
+		}
+
 		public static Category of(String arg) {
 			return arg == null ? null : Arrays.stream(Category.values())
 				.filter(category -> category.korName.equals(arg))
 				.findAny()
-				.orElseThrow(() -> new LinkoceanRuntimeException());
+				.orElseThrow(LinkoceanRuntimeException::new);
 		}
 	}
 }

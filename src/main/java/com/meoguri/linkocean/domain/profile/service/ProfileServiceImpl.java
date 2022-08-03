@@ -22,7 +22,9 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.FindUserByIdQuery;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -44,6 +46,7 @@ public class ProfileServiceImpl implements ProfileService {
 		final Profile profile = new Profile(user, command.getUsername());
 		profileRepository.save(profile);
 
+		log.info("save Profile 완료");
 		// 선호 카테고리 등록
 		command.getCategories().forEach(profile::addToFavoriteCategory);
 

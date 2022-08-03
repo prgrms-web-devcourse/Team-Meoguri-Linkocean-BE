@@ -2,6 +2,8 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,24 +28,45 @@ public class ReactionServiceImpl implements ReactionService {
 	private final ReactionRepository reactionRepository;
 
 	@Override
-	public void addReaction(final ReactionCommand command) {
-
+	public void requestReaction(ReactionCommand command) {
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
-		final String reactionType = command.getReactionType();
+		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 
-		reactionRepository.save(new Reaction(profile, bookmark, reactionType));
+		final Optional<Reaction> oReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
+
+		//리액션이 존재하지 않은 경우
+		if (oReaction.isEmpty()) {
+			addReaction(profile, bookmark, requestReactionType);
+
+		//리액션이 존재하는 경우
+		} else {
+			ReactionType reactionType = ReactionType.of(oReaction.get().getType());
+
+			//기존의 리액션 타입이 요청 리액션 타입과 같은경우
+			if (reactionType.toString().equals(requestReactionType.toString())) {
+				cancelReaction(profile, bookmark, reactionType);
+			//기존의 리액션이 요청과 다른경우
+			} else {
+				oReaction.get().changeTypeTo(requestReactionType);
+			}
+		}
 	}
 
-	@Override
-	public void cancelReaction(final ReactionCommand command) {
+	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
+		reactionRepository.save(new Reaction(profile, bookmark, reactionType.toString()));
+	}
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
-		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
-		final ReactionType reactionType = ReactionType.of(command.getReactionType());
 
+	private void cancelReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
 		final boolean isDeleted
 			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;
 		checkCondition(isDeleted);
+	}
+
+
+	private void addReactionAfterCancelReaction(final Profile profile, final Bookmark bookmark,
+		final ReactionType reactionType, final ReactionType requestReactionType) {
+		reactionRepository.findByProfileAndBookmark(profile, bookmark);
 	}
 }
