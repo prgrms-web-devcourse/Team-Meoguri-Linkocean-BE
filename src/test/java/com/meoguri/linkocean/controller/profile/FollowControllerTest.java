@@ -9,7 +9,7 @@ import com.meoguri.linkocean.controller.BaseControllerTest;
 class FollowControllerTest extends BaseControllerTest {
 
 	@Test
-	void 팔로우_API_성공() throws Exception {
+	void 팔로우_Api_성공() throws Exception {
 
 		유저_등록_로그인("haha@gmail.com", "GOOGLE");
 		프로필_등록("haha", List.of("IT"));

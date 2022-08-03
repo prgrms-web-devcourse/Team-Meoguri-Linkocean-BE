@@ -16,7 +16,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
-		@Test
+	@Test
 	void 북마크_등록_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
@@ -38,6 +38,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
 	}
 

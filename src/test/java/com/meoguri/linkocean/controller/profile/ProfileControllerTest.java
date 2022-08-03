@@ -20,7 +20,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(ProfileController.class);
 
-		@Test
+	@Test
 	void 프로필_등록_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
@@ -37,6 +37,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
 	}
 
