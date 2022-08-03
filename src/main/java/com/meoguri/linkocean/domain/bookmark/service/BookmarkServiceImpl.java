@@ -1,13 +1,16 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.util.Objects.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +22,6 @@ import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkQueryDto;
 import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
@@ -133,7 +135,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			findProfileByUserIdQuery.findByUserId(userId)
 		).isPresent();
 
-		return builder()
+		return GetBookmarkResult.builder()
 			.title(bookmark.getTitle())
 			.url(bookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww())
 			.imageUrl(bookmark.getLinkMetadata().getImageUrl())
@@ -165,16 +167,104 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public List<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
 
-		/* 테그는 최대 3개로만 필터링 가능 */
-		checkCondition(!(searchCond.getTags() != null && searchCond.getTags().size() > 3));
-
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
-		final List<BookmarkQueryDto> bookmarkQueryDtoList =
-			bookmarkRepository.findMyBookmarksUsingSearchCond(profile, searchCond);
 
-		return bookmarkQueryDtoList.stream()
-			.map(GetBookmarksResult::of)
+		// 검색 조건 검증하기
+		if (nonNull(searchCond.getCategory())) {
+			//카테고리 필터링이 들어오면 즐겨찾기와 테그 필터링은 없어야한다.
+			checkCondition(!searchCond.isFavorite() && isNull(searchCond.getTags()));
+
+			//전체 개수 조회
+			long totalCount = bookmarkRepository.countByCategory(
+				profile,
+				Category.of(searchCond.getCategory()),
+				searchCond.getSearchTitle()
+			);
+
+			//페이지에 맞게 조회
+			final List<Bookmark> bookmarks = bookmarkRepository.searchByCategory(
+				profile,
+				Category.of(searchCond.getCategory()),
+				searchCond.getSearchTitle(),
+				searchCond.getOrder(),
+				searchCond.getPage(),
+				searchCond.getSize()
+			);
+
+			//즐겨 찾기 여부 리스트 한번에 가져오기.
+			final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+
+			return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		} else if (searchCond.isFavorite()) {
+			//즐겨찾기 필터링이 들어오면 카테고리와 테그 필터링은 없어야한다.
+			checkCondition(isNull(searchCond.getTags()));
+
+			long totalCount = bookmarkRepository.countByFavorite(profile, searchCond.isFavorite(),
+				searchCond.getSearchTitle());
+
+			final List<Bookmark> bookmarks = bookmarkRepository.searchByFavorite(
+				profile,
+				searchCond.isFavorite(),
+				searchCond.getSearchTitle(),
+				searchCond.getOrder(),
+				searchCond.getPage(),
+				searchCond.getSize()
+			);
+
+			final List<Boolean> isFavorites = bookmarks.stream().map(bookmark -> true).collect(Collectors.toList());
+
+			return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		} else if (nonNull(searchCond.getTags())) {
+			checkCondition(searchCond.getTags().size() <= 3);
+
+			long totalCount = bookmarkRepository.countByTags(
+				profile,
+				searchCond.getTags(),
+				searchCond.getSearchTitle());
+
+			final List<Bookmark> bookmarks = bookmarkRepository.searchByTags(
+				profile,
+				searchCond.getTags(),
+				searchCond.getSearchTitle(),
+				searchCond.getOrder(),
+				searchCond.getPage(),
+				searchCond.getSize()
+			);
+
+			//즐겨 찾기 여부 리스트 한번에 가져오기.
+			final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+
+			return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		} else {
+			final long totalCount = bookmarkRepository.countByProfile(profile, searchCond.getSearchTitle());
+
+			final List<Bookmark> bookmarks = bookmarkRepository.searchByProfile(
+				profile,
+				searchCond.getSearchTitle(),
+				searchCond.getOrder(),
+				searchCond.getPage(),
+				searchCond.getSize()
+			);
+
+			final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+
+			return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		}
+	}
+
+	private List<Boolean> checkIsFavorite(final Profile profile, final List<Bookmark> bookmarks) {
+		final Set<Long> favoriteBookmarkIds = favoriteRepository
+			.findAllFavoriteByProfileAndBookmarks(profile, bookmarks);
+
+		return bookmarks.stream()
+			.map(bookmark -> favoriteBookmarkIds.contains(bookmark.getId()))
 			.collect(Collectors.toList());
+	}
+
+	//TODO: Service Dto 변화 필요. 페이징 처리하기 위해선 totalCount 필요.
+	private List<GetBookmarksResult> getBookmarksResult(final long totalCount, final List<Bookmark> bookmarks,
+		final Profile profile, final List<Boolean> isFavorites) {
+		return null;
 	}
 
 	//TODO
