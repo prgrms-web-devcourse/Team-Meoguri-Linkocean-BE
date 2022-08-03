@@ -38,6 +38,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	 * @return
 	 */
 	@Query("select distinct b.category from Bookmark b "
-		+ "where b.profile = :profile ")
+		+ "where b.profile = :profile and b.category is not null")
 	List<String> findCategoryExistsBookmark(Profile profile);
 }

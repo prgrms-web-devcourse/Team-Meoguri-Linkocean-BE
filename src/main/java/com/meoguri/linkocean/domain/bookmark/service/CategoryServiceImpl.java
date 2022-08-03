@@ -30,9 +30,10 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public List<String> getUsedCategories(final long userId) {
 		final Profile writer = findProfileByUserIdQuery.findByUserId(userId);
+		List<String> categories = bookmarkRepository
+			.findCategoryExistsBookmark(writer);
 
-		return bookmarkRepository
-			.findCategoryExistsBookmark(writer).stream()
+		return categories.stream()
 			.map(name -> Category.valueOf(name).getKorName())
 			.collect(Collectors.toList());
 	}
