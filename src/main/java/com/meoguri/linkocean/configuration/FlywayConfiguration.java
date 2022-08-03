@@ -2,8 +2,9 @@ package com.meoguri.linkocean.configuration;
 
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-// @Configuration
+@Configuration
 public class FlywayConfiguration {
 
 	/**
@@ -12,9 +13,9 @@ public class FlywayConfiguration {
 	@Bean
 	public FlywayMigrationStrategy flywayMigrationStrategy() {
 		return flyway -> {
-			// flyway.clean();
-			// flyway.repair();
-			// flyway.migrate();
+			flyway.clean();
+			flyway.repair();
+			flyway.migrate();
 			flyway.validate();
 		};
 	}

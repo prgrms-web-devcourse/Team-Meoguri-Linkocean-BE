@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class UrlTest {
+class LinkTest {
 
 	@ParameterizedTest
 	@ValueSource(strings = {"http://www.naver.com", "www.naver.com"})
 	void url_생성_성공(final String textUrl) {
 		//when
-		final Url url = new Url(textUrl);
+		final Link link = new Link(textUrl);
 
 		//then
-		assertThat(url).isEqualTo(new Url(textUrl));
+		assertThat(link).isEqualTo(new Link(textUrl));
 	}
 
 	@Test
@@ -25,6 +25,6 @@ class UrlTest {
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new Url(invalidUrl));
+			.isThrownBy(() -> new Link(invalidUrl));
 	}
 }

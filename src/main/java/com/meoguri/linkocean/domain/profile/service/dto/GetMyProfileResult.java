@@ -11,7 +11,7 @@ public final class GetMyProfileResult {
 
 	private final long profileId;
 	private final String username;
-	private final String imageUrl;
+	private final String image;
 	private final String bio;
 	private final List<String> favoriteCategories;
 	private final int followerCount;

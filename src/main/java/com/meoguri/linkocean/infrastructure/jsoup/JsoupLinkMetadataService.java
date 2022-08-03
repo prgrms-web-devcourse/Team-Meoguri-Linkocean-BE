@@ -19,7 +19,7 @@ public class JsoupLinkMetadataService {
 	 */
 	public SearchLinkMetadataResult search(String url) {
 		String title = DEFAULT_TITLE;
-		String imageUrl = DEFAULT_IMAGE;
+		String image = DEFAULT_IMAGE;
 
 		try {
 			Document document = Jsoup.connect(url).get();
@@ -28,12 +28,12 @@ public class JsoupLinkMetadataService {
 			final Element imageElement = document.select("meta[property=og:image]").first();
 
 			title = titleElement == null ? DEFAULT_TITLE : titleElement.attr("content");
-			imageUrl = imageElement == null ? DEFAULT_IMAGE : imageElement.attr("content");
+			image = imageElement == null ? DEFAULT_IMAGE : imageElement.attr("content");
 
-			return new SearchLinkMetadataResult(title, imageUrl);
+			return new SearchLinkMetadataResult(title, image);
 		} catch (IOException | IllegalArgumentException e) {
 			// url 이 올바르지 않은 경우 기본 값으로 결과 반환
-			return new SearchLinkMetadataResult(title, imageUrl);
+			return new SearchLinkMetadataResult(title, image);
 		}
 	}
 }

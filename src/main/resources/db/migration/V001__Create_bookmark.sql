@@ -8,7 +8,7 @@ create table if not exists bookmark
     title            varchar(50),
     updated_at       datetime(6)  not null,
     link_metadata_id bigint,
-    like_count       bigint default 0,
+    like_count       bigint,
     url              varchar(255) not null,
     profile_id       bigint,
     primary key (id)

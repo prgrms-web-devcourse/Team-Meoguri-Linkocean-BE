@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Url;
 
 @DataJpaTest
 class LinkMetadataRepositoryTest {
@@ -24,8 +24,8 @@ class LinkMetadataRepositoryTest {
 		linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png"));
 
 		//when
-		final Optional<String> naver = linkMetadataRepository.findTitleByUrl(new Url("naver.com"));
-		final Optional<String> github = linkMetadataRepository.findTitleByUrl(new Url("github.com"));
+		final Optional<String> naver = linkMetadataRepository.findTitleByLink(new Link("naver.com"));
+		final Optional<String> github = linkMetadataRepository.findTitleByLink(new Link("github.com"));
 
 		//then
 		assertThat(naver).isPresent().get().isEqualTo("네이버");
@@ -38,13 +38,13 @@ class LinkMetadataRepositoryTest {
 		linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png"));
 
 		//when
-		final Optional<LinkMetadata> naver = linkMetadataRepository.findByUrl(new Url("naver.com"));
-		final Optional<LinkMetadata> github = linkMetadataRepository.findByUrl(new Url("github.com"));
+		final Optional<LinkMetadata> naver = linkMetadataRepository.findByLink(new Link("naver.com"));
+		final Optional<LinkMetadata> github = linkMetadataRepository.findByLink(new Link("github.com"));
 
 		//then
 		assertThat(naver).isPresent().get()
-			.extracting(LinkMetadata::getUrl, LinkMetadata::getTitle, LinkMetadata::getImageUrl)
-			.containsExactly(new Url("naver.com"), "네이버", "naver.png");
+			.extracting(LinkMetadata::getLink, LinkMetadata::getTitle, LinkMetadata::getImage)
+			.containsExactly(new Link("naver.com"), "네이버", "naver.png");
 		assertThat(github).isEmpty();
 	}
 

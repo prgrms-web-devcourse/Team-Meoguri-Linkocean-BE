@@ -7,8 +7,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Url;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
@@ -29,15 +29,15 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 
 	@Override
 	public String getTitleByLink(final String link) {
-		return linkMetadataRepository.findTitleByUrl(new Url(link))
+		return linkMetadataRepository.findTitleByLink(new Link(link))
 			.orElseGet(() -> {
 				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
 				checkArgument(result.isValid(), "존재하지 않는 url 입니다");
 
-				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImageUrl());
+				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImage());
 				linkMetadataRepository.save(linkMetadata);
 
-				log.info("save link metadata - url : {}, title : {}", linkMetadata.getSavedUrl(),
+				log.info("save link metadata - url : {}, title : {}", linkMetadata.getSavedLink(),
 					linkMetadata.getTitle());
 				return result.getTitle();
 			});
@@ -49,8 +49,8 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
 		slice.getContent()
 			.forEach(linkMetadata -> {
-				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(linkMetadata.getFullUrl());
-				linkMetadata.update(result.getTitle(), result.getImageUrl());
+				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(linkMetadata.getFullLink());
+				linkMetadata.update(result.getTitle(), result.getImage());
 			});
 		return slice.hasNext() ? slice.nextPageable() : null;
 	}

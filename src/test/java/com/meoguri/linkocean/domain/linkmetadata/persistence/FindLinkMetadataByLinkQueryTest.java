@@ -13,7 +13,7 @@ import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Import(FindLinkMetadataByUrlQuery.class)
 @DataJpaTest
-class FindLinkMetadataByUrlQueryTest {
+class FindLinkMetadataByLinkQueryTest {
 
 	@Autowired
 	private FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
@@ -28,7 +28,7 @@ class FindLinkMetadataByUrlQueryTest {
 
 		//when
 		final LinkMetadata findLinkMetadata =
-			findLinkMetadataByUrlQuery.findByUrl(linkMetadata.getSavedUrl());
+			findLinkMetadataByUrlQuery.findByUrl(linkMetadata.getSavedLink());
 
 		//then
 		assertThat(findLinkMetadata).isEqualTo(linkMetadata);

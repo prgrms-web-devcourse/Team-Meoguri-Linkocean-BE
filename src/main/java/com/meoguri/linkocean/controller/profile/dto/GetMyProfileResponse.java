@@ -2,6 +2,7 @@ package com.meoguri.linkocean.controller.profile.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 public class GetMyProfileResponse {
 
 	private final Long profileId;
-	private final String imageUrl;
+
+	@JsonProperty("imageUrl")
+	private final String image;
 	private final List<String> favoriteCategories;
 	private final String username;
 	private final String bio;
@@ -28,7 +31,7 @@ public class GetMyProfileResponse {
 		final List<String> categories) {
 		return new GetMyProfileResponse(
 			result.getProfileId(),
-			result.getImageUrl(),
+			result.getImage(),
 			result.getFavoriteCategories(),
 			result.getUsername(),
 			result.getBio(),

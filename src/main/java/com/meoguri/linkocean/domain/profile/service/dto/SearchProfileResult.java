@@ -9,6 +9,6 @@ public final class SearchProfileResult {
 
 	private final long id;
 	private final String username;
-	private final String imageUrl;
+	private final String image;
 	private final boolean isFollow;
 }

@@ -17,26 +17,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 @Embeddable
-public final class Url {
+public final class Link {
 
 	@Column(nullable = false, unique = true, length = 255)
-	private String url;
+	private String link;
 
-	public Url(final String url) {
-		checkArgument(url.contains("."), "url 형식이 올바르지 않습니다.");
+	public Link(final String link) {
+		checkArgument(link.contains("."), "link 형식이 올바르지 않습니다.");
 
-		this.url = removeSchemaAndWwwIfExists(url);
+		this.link = removeSchemaAndWwwIfExists(link);
 	}
 
-	private String removeSchemaAndWwwIfExists(final String url) {
-		return url.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
+	private String removeSchemaAndWwwIfExists(final String link) {
+		return link.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
 	}
 
-	public String getUrlWithSchemaAndWww() {
-		return "https://www." + this.url;
+	public String getFullLink() {
+		return "https://www." + this.link;
 	}
 
-	public String getSavedUrl() {
-		return this.url;
+	public String getSavedLink() {
+		return this.link;
 	}
 }

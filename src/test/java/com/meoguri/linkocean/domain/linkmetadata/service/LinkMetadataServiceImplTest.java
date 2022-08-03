@@ -85,7 +85,7 @@ class LinkMetadataServiceImplTest {
 			linkMetadataList.add(new LinkMetadata(
 				String.format("www.naver%d.com", i),
 				String.format("title%d", i),
-				String.format("imageUrl%d", i)
+				String.format("image%d", i)
 				)
 			);
 		}
@@ -93,9 +93,9 @@ class LinkMetadataServiceImplTest {
 		linkMetadataRepository.saveAllAndFlush(linkMetadataList);
 
 		final String newTitle = "newTitle";
-		final String newImageUrl = "newImageUrl";
+		final String newImage = "newImage";
 		given(jsoupLinkMetadataService.search(anyString()))
-			.willReturn(new SearchLinkMetadataResult(newTitle, newImageUrl));
+			.willReturn(new SearchLinkMetadataResult(newTitle, newImage));
 
 		//when
 		final int batchSize = 3;
@@ -105,7 +105,7 @@ class LinkMetadataServiceImplTest {
 		final List<LinkMetadata> linkMetaDatas = linkMetadataRepository.findAll();
 		assertThat(linkMetaDatas)
 			.filteredOn("title", newTitle)
-			.filteredOn("imageUrl", newImageUrl)
+			.filteredOn("image", newImage)
 			.hasSize(batchSize);
 	}
 }

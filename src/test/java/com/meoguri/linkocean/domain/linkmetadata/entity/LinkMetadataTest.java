@@ -20,8 +20,8 @@ class LinkMetadataTest {
 
 		//then
 		assertThat(linkMetadata).isNotNull()
-			.extracting(LinkMetadata::getUrl, LinkMetadata::getTitle, LinkMetadata::getImageUrl)
-			.containsExactly(new Url(link), title, imageUrl);
+			.extracting(LinkMetadata::getLink, LinkMetadata::getTitle, LinkMetadata::getImage)
+			.containsExactly(new Link(link), title, imageUrl);
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class LinkMetadataTest {
 
 		//then
 		assertThat(linkMetadata)
-			.extracting(LinkMetadata::getTitle, LinkMetadata::getImageUrl)
+			.extracting(LinkMetadata::getTitle, LinkMetadata::getImage)
 			.containsExactly(updatedTitle, updatedImageUrl);
 	}
 }

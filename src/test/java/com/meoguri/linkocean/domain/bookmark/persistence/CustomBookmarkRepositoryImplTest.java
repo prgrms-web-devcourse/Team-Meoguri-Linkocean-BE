@@ -84,6 +84,7 @@ class CustomBookmarkRepositoryImplTest {
 			.memo("memo1")
 			.category("IT")
 			.openType("all")
+			.url("www.naver.com")
 			.build();
 		bookmark1.addBookmarkTag(tag1);
 		bookmark1.addBookmarkTag(tag2);
@@ -96,6 +97,7 @@ class CustomBookmarkRepositoryImplTest {
 			.memo("memo2")
 			.category("가정")
 			.openType("partial")
+			.url("www.google.com")
 			.build();
 		bookmark2.addBookmarkTag(tag1);
 		savedBookmark2 = bookmarkRepository.save(bookmark2);
@@ -107,6 +109,7 @@ class CustomBookmarkRepositoryImplTest {
 			.memo("memo3")
 			.category("IT")
 			.openType("private")
+			.url("www.github.com")
 			.build();
 		savedBookmark3 = bookmarkRepository.save(bookmark3);
 

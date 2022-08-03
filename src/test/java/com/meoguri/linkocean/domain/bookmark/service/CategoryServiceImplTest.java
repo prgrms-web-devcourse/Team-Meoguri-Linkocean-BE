@@ -78,12 +78,12 @@ class CategoryServiceImplTest {
 	@Test
 	void 사용자가_작성한_북마크가있는_카테고리_조회_성공() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "인문"));
-		bookmarkRepository.save(createBookmark(profile, link, "사회"));
-		bookmarkRepository.save(createBookmark(profile, link, "사회"));
-		bookmarkRepository.save(createBookmark(profile, link, "과학"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.naver.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.prgrms.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.daum.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.hello.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.linkocean.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "과학", "www.jacob.com"));
 
 		//when
 		final List<String> categories = categoryService.getUsedCategories(user.getId());

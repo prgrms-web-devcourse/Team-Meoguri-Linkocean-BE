@@ -72,7 +72,7 @@ class BookmarkServiceImplTest {
 		profile = profileRepository.save(createProfile(user));
 		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
 
-		url = linkMetadata.getSavedUrl(); // 조회를 위해서는 저장된 url 이 필요하다
+		url = linkMetadata.getSavedLink(); // 조회를 위해서는 저장된 url 이 필요하다
 	}
 
 	@Test
@@ -260,6 +260,7 @@ class BookmarkServiceImplTest {
 			.memo("dream company")
 			.category("인문")
 			.openType("all")
+			.url("www.google.com")
 			.build();
 
 		final Tag tag = tagRepository.save(new Tag("tag1"));
@@ -277,7 +278,7 @@ class BookmarkServiceImplTest {
 		assertThat(result).extracting(
 			GetBookmarkResult::getTitle,
 			GetBookmarkResult::getUrl,
-			GetBookmarkResult::getImageUrl,
+			GetBookmarkResult::getImage,
 			GetBookmarkResult::getCategory,
 			GetBookmarkResult::getMemo,
 			GetBookmarkResult::getOpenType,
@@ -285,8 +286,8 @@ class BookmarkServiceImplTest {
 			GetBookmarkResult::getUpdatedAt
 		).containsExactly(
 			savedBookmark.getTitle(),
-			savedBookmark.getLinkMetadata().getUrl().getUrlWithSchemaAndWww(),
-			savedBookmark.getLinkMetadata().getImageUrl(),
+			savedBookmark.getLinkMetadata().getLink().getFullLink(),
+			savedBookmark.getLinkMetadata().getImage(),
 			savedBookmark.getCategory(),
 			savedBookmark.getMemo(),
 			savedBookmark.getOpenType(),
@@ -303,9 +304,9 @@ class BookmarkServiceImplTest {
 			.extracting(
 				GetBookmarkProfileResult::getProfileId,
 				GetBookmarkProfileResult::getUsername,
-				GetBookmarkProfileResult::getImageUrl,
+				GetBookmarkProfileResult::getImage,
 				GetBookmarkProfileResult::isFollow
-			).containsExactly(profile.getId(), profile.getUsername(), profile.getImageUrl(), false);
+			).containsExactly(profile.getId(), profile.getUsername(), profile.getImage(), false);
 	}
 
 	@Test

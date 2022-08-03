@@ -11,7 +11,7 @@ public final class UpdateProfileCommand {
 
 	private final long userId;
 	private final String username;
-	private final String imageUrl;
+	private final String image;
 	private final String bio;
 	private final List<String> categories;
 }

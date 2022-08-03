@@ -63,7 +63,7 @@ class ProfileTest {
 
 		//then
 		assertThat(profile).isNotNull()
-			.extracting(Profile::getUsername, Profile::getBio, Profile::getImageUrl)
+			.extracting(Profile::getUsername, Profile::getBio, Profile::getImage)
 			.containsExactly(username, bio, imageUrl);
 	}
 

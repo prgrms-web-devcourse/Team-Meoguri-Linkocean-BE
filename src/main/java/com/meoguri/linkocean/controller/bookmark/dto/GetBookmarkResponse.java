@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.GetBookmarkProfileResult;
 
@@ -16,7 +17,9 @@ public final class GetBookmarkResponse {
 
 	private final String title;
 	private final String url;
-	private final String imageUrl;
+
+	@JsonProperty("imageUrl")
+	private final String image;
 	private final String category;
 	private final String memo;
 	private final String openType;
@@ -30,7 +33,7 @@ public final class GetBookmarkResponse {
 		return new GetBookmarkResponse(
 			result.getTitle(),
 			result.getUrl(),
-			result.getImageUrl(),
+			result.getImage(),
 			result.getCategory(),
 			result.getMemo(),
 			result.getOpenType(),
@@ -48,14 +51,14 @@ public final class GetBookmarkResponse {
 
 		private final long profileId;
 		private final String username;
-		private final String imageUrl;
+		private final String image;
 		private final boolean isFollow;
 
 		public static GetBookmarkProfileResponse of(final GetBookmarkProfileResult profile) {
 			return new GetBookmarkProfileResponse(
 				profile.getProfileId(),
 				profile.getUsername(),
-				profile.getImageUrl(),
+				profile.getImage(),
 				profile.isFollow()
 			);
 		}

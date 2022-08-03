@@ -22,7 +22,7 @@ public final class GetBookmarksResult {
 
 	private final boolean isFavorite;
 	private final long likeCount;
-	private final String imageUrl;
+	private final String image;
 	private boolean isWriter;
 	private final List<String> tags;
 }
