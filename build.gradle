@@ -52,6 +52,7 @@ jacocoTestReport {
                     "com/meoguri/**/*Cond.*",
                     "com/meoguri/**/*Properties.*",
                     "com/meoguri/**/SearchTab.*",
+                    "com/meoguri/**/*Noti.*",
             ] + Qdomains)
         }))
     }
