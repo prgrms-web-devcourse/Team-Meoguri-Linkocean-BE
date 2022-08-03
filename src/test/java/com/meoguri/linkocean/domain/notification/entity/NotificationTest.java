@@ -1,28 +1,32 @@
 package com.meoguri.linkocean.domain.notification.entity;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.notification.entity.noti.BookmarkNoti;
+import com.meoguri.linkocean.domain.notification.entity.noti.ProfileNoti;
 
 class NotificationTest {
 
 	@Test
-	void 북마크_공유_알림_생성_성공() {
+	void 공유_알림_생성() {
 		//given
-		final Bookmark bookmark = createBookmark();
-		final Profile profile = createProfile();
+		final NotificationType type = NotificationType.SHARE;
+		final long targetProfileId = 1L;
+		final Map<String, Noti> info = Map.of(
+			"sender", new ProfileNoti(2L, "haha"),
+			"bookmark", new BookmarkNoti(3L, "네이버", "https://www.naver.com")
+		);
 
 		//when
-		final Notification notification = new Notification(bookmark, profile);
+		final Notification notification = new Notification(type, targetProfileId, info);
 
 		//then
 		assertThat(notification).isNotNull()
-			.extracting(Notification::getBookmark, Notification::getTarget)
-			.containsExactly(bookmark, profile);
-		assertThat(notification.getCreatedAt()).isNotNull();
+			.extracting(Notification::getType, Notification::getTargetProfileId, Notification::getInfo)
+			.containsExactly(type, targetProfileId, info);
 	}
 }
