@@ -9,17 +9,18 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
+import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkQueryDto;
-import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -27,6 +28,7 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
+@Import(P6spyLogMessageFormatConfiguration.class)
 @DataJpaTest
 class CustomBookmarkRepositoryImplTest {
 
@@ -47,6 +49,9 @@ class CustomBookmarkRepositoryImplTest {
 
 	@Autowired
 	private ReactionRepository reactionRepository;
+
+	@Autowired
+	private FavoriteRepository favoriteRepository;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -107,162 +112,243 @@ class CustomBookmarkRepositoryImplTest {
 
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
 		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
-	}
 
-	@Test
-	void 내_북마크_조회_조건_없음() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, null, null, null);
+		favoriteRepository.save(new Favorite(savedBookmark1, profile));
+		favoriteRepository.save(new Favorite(savedBookmark2, profile));
 
 		em.flush();
 		em.clear();
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
-
-		//then
-		assertThat(result).hasSize(3)
-			.extracting(BookmarkQueryDto::getId, bookmarkQueryDto -> bookmarkQueryDto.getTagNames().size())
-			.containsExactly(
-				new Tuple(savedBookmark3.getId(), 0),
-				new Tuple(savedBookmark2.getId(), 1),
-				new Tuple(savedBookmark1.getId(), 2)
-			);
 	}
 
 	@Test
-	void 내_북마크_조회_좋아요_순으로_정렬() {
-		//given
-		final MyBookmarkSearchCond cond = cond("like", null, null, null);
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_카테고리로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByCategory(profile, Category.IT, null);
 
 		//then
-		assertThat(result).hasSize(3)
-			.extracting(BookmarkQueryDto::getLikeCount, BookmarkQueryDto::getCategory)
-			.containsExactly(
-				new Tuple(1L, "IT"),
-				new Tuple(0L, "IT"),
-				new Tuple(0L, "가정"));
+		assertThat(totalCount).isEqualTo(2L);
 	}
 
 	@Test
-	void 내_북마크_조회_카테고리_필터링() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, "IT", null, null);
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_카테고리와_검색어로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByCategory(profile, Category.IT, "1");
 
 		//then
-		assertThat(result).hasSize(2);
-		assertThat(result.get(0)).extracting(
-			BookmarkQueryDto::getId,
-			BookmarkQueryDto::getUrl,
-			BookmarkQueryDto::getTitle,
-			BookmarkQueryDto::getOpenType,
-			BookmarkQueryDto::getCategory,
-			BookmarkQueryDto::getUpdatedAt,
-			BookmarkQueryDto::isFavorite,
-			BookmarkQueryDto::getLikeCount,
-			BookmarkQueryDto::getImageUrl,
-			BookmarkQueryDto::getTagNames
-		).containsExactly(
-			savedBookmark3.getId(),
-			savedBookmark3.getLinkMetadata().getSavedUrl(),
-			savedBookmark3.getTitle(),
-			savedBookmark3.getOpenType(),
-			savedBookmark3.getCategory(),
-			savedBookmark3.getUpdatedAt(),
-			false,
-			0L,
-			savedBookmark3.getLinkMetadata().getImageUrl(),
-			savedBookmark3.getTagNames()
+		assertThat(totalCount).isEqualTo(1L);
+	}
+
+	@Test
+	void 내_북마크_조회_카테고리로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByCategory(profile, Category.IT, null, "upload", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId, Bookmark::getCategory)
+			.containsExactly(
+				tuple(savedBookmark3.getId(), savedBookmark3.getCategory()),
+				tuple(savedBookmark1.getId(), savedBookmark3.getCategory()));
+	}
+
+	@Disabled("북마크에 likeCount 추가 후 작업")
+	@Test
+	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByCategory(profile, Category.IT, null, "like", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId, Bookmark::getCategory)
+			.containsExactly(
+				tuple(savedBookmark1.getId(), savedBookmark1.getCategory()),
+				tuple(savedBookmark3.getId(), savedBookmark3.getCategory()));
+	}
+
+	@Test
+	void 내_북마크_조회_카테고리와_제목으로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByCategory(profile, Category.IT, "1", "upload", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(1)
+			.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
+			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getCategory(), savedBookmark1.getTitle()));
+	}
+
+	@Test
+	void 내_북마크_조회_즐겨찾기로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByFavorite(profile, true, null);
+
+		//then
+		assertThat(totalCount).isEqualTo(2L);
+	}
+
+	@Test
+	void 내_북마크_조회_즐겨찾기와_제목으로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByFavorite(profile, true, "1");
+
+		//then
+		assertThat(totalCount).isEqualTo(1L);
+	}
+
+	@Test
+	void 내_북마크_조회_즐겨찾기로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByFavorite(profile, true, null, "upload", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId)
+			.containsExactly(savedBookmark2.getId(), savedBookmark1.getId());
+
+		bookmarks.forEach(
+			bookmark -> assertThat(favoriteRepository.existsByOwnerAndBookmark(profile, bookmark)).isTrue()
 		);
 	}
 
+	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
-	void 내_북마크_조회_제목_필터링() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, null, "1", null);
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByFavorite(profile, true, null, "like", 1, 10);
 
 		//then
-		assertThat(result).hasSize(1);
-		assertThat(result.get(0))
-			.extracting(BookmarkQueryDto::getTitle, BookmarkQueryDto::getTagNames)
-			.containsExactly(savedBookmark1.getTitle(), savedBookmark1.getTagNames());
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId)
+			.containsExactly(savedBookmark1.getId(), savedBookmark2.getId());
 	}
 
 	@Test
-	void 내_북마크_조회_테그_필터링_1() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, null, null, List.of("tag2"));
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_조회_즐겨찾기와_제목으로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByFavorite(profile, true, "1", "upload", 1, 10);
 
 		//then
-		assertThat(result).hasSize(1);
-		assertThat(result.get(0))
-			.extracting(BookmarkQueryDto::getId, BookmarkQueryDto::getTagNames)
-			.containsExactly(savedBookmark1.getId(), savedBookmark1.getTagNames());
+		assertThat(bookmarks).hasSize(1)
+			.extracting(Bookmark::getId, Bookmark::getTitle)
+			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTitle()));
 	}
 
 	@Test
-	void 내_북마크_조회_테그_필터링_2() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, null, null, List.of("tag1", "tag2"));
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_조회_태그_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByTags(profile, List.of("tag1"), null);
 
 		//then
-		assertThat(result).hasSize(2)
-			.extracting(BookmarkQueryDto::getId, BookmarkQueryDto::getTagNames)
+		assertThat(totalCount).isEqualTo(2L);
+	}
+
+	@Test
+	void 내_북마크_조회_태그와_제목으로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByTags(profile, List.of("tag1"), "1");
+
+		//then
+		assertThat(totalCount).isEqualTo(1L);
+	}
+
+	@Test
+	void 내_북마크_조회_태그로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByTags(profile, List.of("tag1"), null, "upload", 1, 100);
+
+		//then
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId, Bookmark::getTagNames)
 			.containsExactly(
-				new Tuple(savedBookmark2.getId(), savedBookmark2.getTagNames()),
-				new Tuple(savedBookmark1.getId(), savedBookmark1.getTagNames())
-			);
+				tuple(savedBookmark2.getId(), savedBookmark2.getTagNames()),
+				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()));
+	}
+
+	@Disabled("북마크에 likeCount 추가 후 작업")
+	@Test
+	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByTags(profile, List.of("tag1"), null, "like", 1, 100);
+
+		//then
+		assertThat(bookmarks).hasSize(2)
+			.extracting(Bookmark::getId, Bookmark::getTagNames)
+			.containsExactly(
+				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()),
+				tuple(savedBookmark2.getId(), savedBookmark2.getTagNames()));
 	}
 
 	@Test
-	void 내_북마크_조회_카테고리_검색어_필터링() {
-		//given
-		final MyBookmarkSearchCond cond = cond(null, "IT", "2", null);
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_조회_태그와_제목으로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByTags(profile, List.of("tag1"), "1", "upload", 1, 100);
 
 		//then
-		assertThat(result).isEmpty();
+		assertThat(bookmarks).hasSize(1)
+			.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
+			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTagNames(), savedBookmark1.getTitle()));
 	}
 
 	@Test
-	void 내_북마크_조회_검색어_태그_좋아요순_정렬() {
-		//given
-		final MyBookmarkSearchCond cond = cond("like", null, "title", List.of("tag1"));
-
-		//when
-		final List<BookmarkQueryDto> result = bookmarkRepository.findMyBookmarksUsingSearchCond(profile, cond);
+	void 내_북마크_조회_총_개수() {
+		//give when
+		final long totalCount = bookmarkRepository.countByProfile(profile, null);
 
 		//then
-		assertThat(result).hasSize(2).extracting(
-			BookmarkQueryDto::getId,
-			BookmarkQueryDto::getTitle,
-			BookmarkQueryDto::getLikeCount,
-			BookmarkQueryDto::getTagNames
-		).containsExactly(
-			new Tuple(savedBookmark1.getId(), savedBookmark1.getTitle(), 1L, savedBookmark1.getTagNames()),
-			new Tuple(savedBookmark2.getId(), savedBookmark2.getTitle(), 0L, savedBookmark2.getTagNames())
-		);
+		assertThat(totalCount).isEqualTo(3L);
 	}
 
-	private MyBookmarkSearchCond cond(final String order, final String category, final String searchTitle,
-		final List<String> tags) {
-		return new MyBookmarkSearchCond(null, null, order, category, searchTitle, tags);
+	@Test
+	void 내_북마크_조회_제목으로_필터링_총_개수() {
+		//given when
+		final long totalCount = bookmarkRepository.countByProfile(profile, "1");
+
+		//then
+		assertThat(totalCount).isEqualTo(1L);
+	}
+
+	@Test
+	void 내_북마크_조회() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByProfile(profile, null, "upload", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(3)
+			.extracting(Bookmark::getId)
+			.containsExactly(savedBookmark3.getId(), savedBookmark2.getId(), savedBookmark1.getId());
+	}
+
+	@Disabled("북마크에 likeCount 추가 후 작업")
+	@Test
+	void 내_북마크_조회_좋아요_정렬() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByProfile(profile, null, "like", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(3)
+			.extracting(Bookmark::getId)
+			.containsExactly(savedBookmark1.getId(), savedBookmark3.getId(), savedBookmark2.getId());
+	}
+
+	@Test
+	void 내_북마크_조회_제목으로_필터링() {
+		//given when
+		final List<Bookmark> bookmarks = bookmarkRepository
+			.searchByProfile(profile, "1", "upload", 1, 10);
+
+		//then
+		assertThat(bookmarks).hasSize(1)
+			.extracting(Bookmark::getId, Bookmark::getTitle)
+			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTitle()));
 	}
 }
