@@ -6,29 +6,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class GetMyProfileResponse {
 
-	private final Long profileId;
+	private Long profileId;
 
 	@JsonProperty("imageUrl")
-	private final String image;
-	private final List<String> favoriteCategories;
-	private final String username;
-	private final String bio;
-	private final int followerCount;
-	private final int followeeCount;
-	private final List<GetMyTagsResult> tags;
-	private final List<String> categories;
+	private String image;
+	private List<String> favoriteCategories;
+	private String username;
+	private String bio;
+	private int followerCount;
+	private int followeeCount;
+	private List<GetMyTagsResult> tags;
+	private List<String> categories;
 
 	public static GetMyProfileResponse of(
 		final GetMyProfileResult result,
 		final List<GetMyTagsResult> tags,
-		final List<String> categories) {
+		final List<String> categories
+	) {
 		return new GetMyProfileResponse(
 			result.getProfileId(),
 			result.getImage(),

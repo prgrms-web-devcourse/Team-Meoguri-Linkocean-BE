@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class FollowControllerTest extends BaseControllerTest {
 
@@ -19,7 +21,7 @@ class FollowControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		//given
+		//given - 두 사용자 haha 와 papa
 		유저_등록_로그인("haha@gmail.com", "GOOGLE");
 		hahaId = 프로필_등록("haha", List.of("IT"));
 
@@ -36,6 +38,16 @@ class FollowControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk());
+
+		// TODO - 프로필 조회 API 구현 후 주석 필기
+		/*final GetMyProfileResponse hahaProfile = 프로필_조회(hahaId);*/
+		final GetMyProfileResponse papaProfile = 내_프로필_조회();
+
+		/*assertThat(hahaProfile.getFollowerCount()).isEqualTo(1L);
+		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);*/
+
+		assertThat(papaProfile.getFollowerCount()).isEqualTo(0L);
+		assertThat(papaProfile.getFolloweeCount()).isEqualTo(1L);
 	}
 
 	@Test
@@ -75,5 +87,15 @@ class FollowControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isBadRequest());
+
+		// TODO - 프로필 조회 API 구현 후 주석 필기
+		/*final GetMyProfileResponse hahaProfile = 프로필_조회(hahaId);*/
+		final GetMyProfileResponse papaProfile = 내_프로필_조회();
+
+		/*assertThat(hahaProfile.getFollowerCount()).isEqualTo(0L);
+		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);*/
+
+		assertThat(papaProfile.getFollowerCount()).isEqualTo(0L);
+		assertThat(papaProfile.getFolloweeCount()).isEqualTo(0L);
 	}
 }

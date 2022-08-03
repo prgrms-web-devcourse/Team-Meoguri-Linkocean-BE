@@ -28,6 +28,7 @@ import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
@@ -97,6 +98,36 @@ public class BaseControllerTest {
 				.contentType(APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andReturn();
+	}
+
+/*
+	protected GetMyProfileResponse 프로필_조회(long profileId) throws Exception {
+
+		final MvcResult mvcResult = mockMvc.perform(get("/api/v1/profiles/" + profileId)
+				.session(session)
+				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
+
+		final String content = mvcResult.getResponse().getContentAsString();
+
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(content, GetMyProfileResponse.class);
+	}
+*/
+
+	protected GetMyProfileResponse 내_프로필_조회() throws Exception {
+
+		final MvcResult mvcResult = mockMvc.perform(get("/api/v1/profiles/me")
+				.session(session)
+				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
+
+		final String content = mvcResult.getResponse().getContentAsString();
+
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(content, GetMyProfileResponse.class);
 	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
