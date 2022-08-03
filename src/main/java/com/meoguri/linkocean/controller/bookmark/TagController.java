@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
-import com.meoguri.linkocean.controller.ListResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetMyTagsResponse;
+import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 
 import lombok.RequiredArgsConstructor;

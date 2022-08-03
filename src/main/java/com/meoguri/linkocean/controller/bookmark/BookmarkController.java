@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
-import com.meoguri.linkocean.controller.ListResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParams;
+import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;

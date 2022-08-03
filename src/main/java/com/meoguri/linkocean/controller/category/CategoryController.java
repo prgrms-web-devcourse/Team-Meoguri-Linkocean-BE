@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.controller.ListResponse;
+import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 
 import lombok.RequiredArgsConstructor;
