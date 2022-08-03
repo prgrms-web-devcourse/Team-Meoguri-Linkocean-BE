@@ -91,6 +91,14 @@ public class BaseControllerTest {
 		return toId(mvcResult);
 	}
 
+	protected void 팔로우(final long followeeId) throws Exception {
+		mockMvc.perform(post("/api/v1/profiles/follow?followeeId=" + followeeId)
+				.session(session)
+				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
+	}
+
 	protected String createJson(Object dto) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(dto);
 	}

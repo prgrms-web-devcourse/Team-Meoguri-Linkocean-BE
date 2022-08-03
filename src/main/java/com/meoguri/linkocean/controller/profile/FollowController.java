@@ -2,6 +2,7 @@ package com.meoguri.linkocean.controller.profile;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
@@ -12,7 +13,7 @@ import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/profiles/")
+@RequestMapping("/api/v1/profiles")
 @RestController
 public class FollowController {
 
@@ -21,7 +22,7 @@ public class FollowController {
 	@PostMapping("/follow")
 	public void follow(
 		@LoginUser SessionUser user,
-		long followeeId
+		@RequestParam long followeeId
 	) {
 		followService.follow(new FollowCommand(user.getId(), followeeId));
 	}
@@ -29,7 +30,7 @@ public class FollowController {
 	@PostMapping("/unfollow")
 	public void unfollow(
 		@LoginUser SessionUser user,
-		long followeeId
+		@RequestParam long followeeId
 	) {
 		followService.unfollow(new FollowCommand(user.getId(), followeeId));
 	}

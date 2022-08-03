@@ -3,6 +3,7 @@ package com.meoguri.linkocean.controller;
 import static org.springframework.http.HttpStatus.*;
 
 import org.hibernate.TypeMismatchException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -34,6 +35,17 @@ public class CustomRestControllerAdvice {
 	public ErrorResponse handleBadRequestException(RuntimeException ex) {
 		log.debug(ex.getMessage(), ex);
 
+		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.");
+	}
+
+	@ResponseStatus(BAD_REQUEST)
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+
+		// 발생 가능 상황
+		// 1. 중복 팔로우 요청
+		// 2. 중복 사용자 이름 삽입 요청
+		//    -> 예외 메시지를 남겨야됨 exception handler 메서드 들이 ResponseEntity 가 ErrorResponse 를 감싸는 변경이 생길 가능성 있음
 		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.");
 	}
 
