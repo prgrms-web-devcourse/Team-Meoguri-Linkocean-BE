@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -139,12 +140,20 @@ public class Bookmark extends BaseIdEntity {
 			.collect(toList());
 	}
 
+	public String getTitle() {
+		return Optional.ofNullable(title).orElse("");
+	}
+
+	public String getMemo() {
+		return Optional.ofNullable(memo).orElse("");
+	}
+
 	public List<String> getTagNames() {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
 
 	public String getCategory() {
-		return category.getKorName();
+		return category == null ? "" : category.getKorName();
 	}
 
 	public String getOpenType() {

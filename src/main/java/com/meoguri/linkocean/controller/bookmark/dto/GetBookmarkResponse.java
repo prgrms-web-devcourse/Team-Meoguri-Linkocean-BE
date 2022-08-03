@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.GetBookmarkProfileResult;
@@ -23,7 +24,10 @@ public final class GetBookmarkResponse {
 	private final String category;
 	private final String memo;
 	private final String openType;
-	private final boolean isFavorite;
+
+	private final Boolean isFavorite;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	private final LocalDateTime updatedAt;
 	private final List<String> tags;
 	private final Map<String, Long> reactionCount;
@@ -51,8 +55,10 @@ public final class GetBookmarkResponse {
 
 		private final long profileId;
 		private final String username;
+
+		@JsonProperty("imageUrl")
 		private final String image;
-		private final boolean isFollow;
+		private final Boolean isFollow;
 
 		public static GetBookmarkProfileResponse of(final GetBookmarkProfileResult profile) {
 			return new GetBookmarkProfileResponse(
