@@ -19,20 +19,24 @@ public final class MyBookmarkSearchCond {
 	private final int page;
 	private final int size;
 	private final String order;
+
 	private final String category;
-	private final String searchTitle;
+	private final boolean favorite;
 	private final List<String> tags;
 
+	private final String searchTitle;
+
 	public MyBookmarkSearchCond(final Integer page, final Integer size, final String order,
-		final String category, final String searchTitle, final List<String> tags) {
+		final boolean favorite, final String category, final List<String> tags, final String searchTitle) {
 
 		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
 		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
 
+		this.favorite = favorite;
 		this.category = category;
-		this.searchTitle = searchTitle;
-
 		this.tags = tags;
+
+		this.searchTitle = searchTitle;
 	}
 }
