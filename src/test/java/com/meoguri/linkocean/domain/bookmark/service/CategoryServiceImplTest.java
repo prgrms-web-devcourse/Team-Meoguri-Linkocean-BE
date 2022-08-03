@@ -92,4 +92,16 @@ class CategoryServiceImplTest {
 		assertThat(categories).contains("인문", "사회", "과학");
 	}
 
+	@Test
+	void 사용자가_작성한_북마크가있는_카테고리_조회_카테고리가_null일때() {
+		//given
+		bookmarkRepository.save(createBookmark(profile, link, "제목", null, "www.naver.com"));
+
+		//when
+		final List<String> categories = categoryService.getUsedCategories(user.getId());
+
+		//then
+		assertThat(categories).isEmpty();
+	}
+
 }

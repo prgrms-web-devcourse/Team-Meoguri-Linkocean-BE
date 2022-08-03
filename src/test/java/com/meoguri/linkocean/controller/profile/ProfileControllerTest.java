@@ -115,4 +115,33 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		assertThat(userCategories).contains("인문", "사회", "IT");
 	}
+
+	@Test
+	void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null일때() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+		북마크_등록(링크_메타데이터_조회("http://www.naver.com"), null, null, "private");
+
+		//when
+		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
+				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpectAll(
+				jsonPath("$.profileId").exists(),
+				jsonPath("$.imageUrl").isEmpty(),
+				jsonPath("$.favoriteCategories", hasSize(4)),
+				jsonPath("$.username").value("hani"),
+				jsonPath("$.bio").isEmpty(),
+				jsonPath("$.followerCount").value(0),
+				jsonPath("$.followeeCount").value(0),
+				jsonPath("$.tags", hasSize(0)),
+				jsonPath("$.categories", hasSize(0))
+			)
+			.andDo(print())
+			.andReturn().getResponse();
+	}
 }

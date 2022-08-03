@@ -31,8 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
 	public List<String> getUsedCategories(final long userId) {
 		final Profile writer = findProfileByUserIdQuery.findByUserId(userId);
 
-		return bookmarkRepository
-			.findCategoryExistsBookmark(writer).stream()
+		return bookmarkRepository.findCategoryExistsBookmark(writer).stream()
 			.map(name -> Category.valueOf(name).getKorName())
 			.collect(Collectors.toList());
 	}
