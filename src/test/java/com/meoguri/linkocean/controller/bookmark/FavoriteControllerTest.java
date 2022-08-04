@@ -39,7 +39,7 @@ class FavoriteControllerTest extends BaseControllerTest {
 
 		/* "bookmarkId" from bookmarkService */
 		final long savedBookmarkId = bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(userId, 링크_메타데이터_조회("http://www.naver.com"), "title", "memo", "인문", "all", List.of("tag1", "tag2"))
+			new RegisterBookmarkCommand(userId, 링크_메타데이터_얻기("http://www.naver.com"), "title", "memo", "인문", "all", List.of("tag1", "tag2"))
 		);
 
 		//when
@@ -63,7 +63,7 @@ class FavoriteControllerTest extends BaseControllerTest {
 
 		/* "bookmarkId" from bookmarkService */
 		final long savedBookmarkId = bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(userId, 링크_메타데이터_조회("http://www.naver.com"), "title", "memo", "인문", "all", List.of("tag1", "tag2"))
+			new RegisterBookmarkCommand(userId, 링크_메타데이터_얻기("http://www.naver.com"), "title", "memo", "인문", "all", List.of("tag1", "tag2"))
 		);
 
 		favoriteService.favorite(userId, savedBookmarkId);
