@@ -6,9 +6,11 @@ import static java.util.stream.Collectors.*;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
@@ -19,6 +21,7 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.support.GetProfileQueryParams;
+import com.meoguri.linkocean.controller.profile.support.ProfileSearchTab;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
@@ -69,5 +72,15 @@ public class ProfileController {
 		final List<GetProfilesResponse> response =
 			results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
+	}
+
+	@GetMapping("/{profileId}")
+	public SliceResponse<GetProfilesResponse> getFollowerFollowee(
+		final @LoginUser SessionUser user,
+		final @PathVariable String profileId,
+		final @RequestParam ProfileSearchTab tab,
+		final GetProfileQueryParams queryParams
+	) {
+		throw new IllegalArgumentException("user " + user.getId() + "tab : " + tab);
 	}
 }

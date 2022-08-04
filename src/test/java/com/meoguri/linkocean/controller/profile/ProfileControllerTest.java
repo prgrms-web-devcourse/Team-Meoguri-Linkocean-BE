@@ -194,6 +194,17 @@ class ProfileControllerTest extends BaseControllerTest {
 		// TODO
 		//2. 팔로워 조회
 
+		@Test
+		void 팔로워_조회_Api_성공() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
+
+			mockMvc.perform(get(basePath + "/" + user1ProfileId + "?tab=follower")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andDo(print());
+		}
+
 		// TODO
 		//3. 팔로이 조회
 	}
