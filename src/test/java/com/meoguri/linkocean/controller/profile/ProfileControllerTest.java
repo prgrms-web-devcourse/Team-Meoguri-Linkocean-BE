@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
@@ -50,7 +51,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 			//when
 			mockMvc.perform(get(basePath + "/me")
-					.session(session)
+					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
 				.andExpect(status().isOk())
@@ -80,7 +81,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 			//when
 			mockMvc.perform(get(basePath + "/me")
-					.session(session)
+					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
 				.andExpect(status().isOk())
@@ -108,7 +109,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 			//when
 			mockMvc.perform(get(basePath + "/me")
-					.session(session)
+					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
 				.andExpect(status().isOk())
@@ -158,7 +159,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			mockMvc.perform(get(basePath + "?username=" + "user")
-					.session(session)
+					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
@@ -178,7 +179,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			mockMvc.perform(get(basePath)
-					.session(session)
+					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 		}

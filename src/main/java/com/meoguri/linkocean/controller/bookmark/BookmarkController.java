@@ -53,7 +53,7 @@ public class BookmarkController {
 	 * - 내 북마크 목록 조회와 다른 사람 북마크 목록 조회로 나뉜다
 	 */
 	@GetMapping
-	public ListResponse<GetBookmarksResponse> getBookmarks(
+	public PageResponse<GetBookmarksResponse> getBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
@@ -72,7 +72,7 @@ public class BookmarkController {
 	 * - 북마크 정보와 함께 작성자 프로필 정보를 반환한다
 	 */
 	@GetMapping("/feed")
-	public ListResponse<GetFeedBookmarksResponse> getFeedBookmarks(
+	public PageResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody GetBookmarkQueryParams queryParams
 	) {

@@ -60,7 +60,7 @@ public class ProfileController {
 	/* 프로필 목록 조회 - 머구리 찾기 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final GetProfileQueryParams queryParams
 	) {
 		final List<SearchProfileResult> results =

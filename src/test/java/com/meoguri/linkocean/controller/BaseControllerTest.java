@@ -68,7 +68,7 @@ public class BaseControllerTest {
 			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
 			.orElseThrow();
 
-		session.setAttribute("user", new SessionUser(user));
+		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
