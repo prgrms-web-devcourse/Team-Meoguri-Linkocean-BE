@@ -86,6 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.updateFavoriteCategories(command.getCategories());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<SearchProfileResult> searchFollowerProfiles(final ProfileSearchCond searchCond) {
 
