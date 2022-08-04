@@ -1,12 +1,11 @@
 package com.meoguri.linkocean.configuration;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
+import org.springframework.boot.web.server.Cookie;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.web.http.CookieSerializer;
-import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -37,12 +36,17 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.allowCredentials(true); //쿠키 요청을 허용한다(다른 도메인 서버에 인증하는 경우에만 사용해야하며, true 설정시 보안상 이슈가 발생할 수 있다)
 	}
 
-	@Bean
+/*	@Bean
 	public CookieSerializer cookieSerializer() throws MalformedURLException {
 		DefaultCookieSerializer serializer = new DefaultCookieSerializer();
 		serializer.setCookieName("JSESSIONID");
 		serializer.setSameSite("");
 		return serializer;
+	}*/
+
+	@Bean
+	public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+		return CookieSameSiteSupplier.of(Cookie.SameSite.valueOf(""));
 	}
 
 }
