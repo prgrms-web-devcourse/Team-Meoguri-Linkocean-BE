@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
@@ -31,7 +30,6 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 북마크_등록_Api_성공() throws Exception {
 		//given
@@ -54,6 +52,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
 	}
 

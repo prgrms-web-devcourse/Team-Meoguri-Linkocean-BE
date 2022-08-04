@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
@@ -28,12 +31,12 @@ public class ProfileController {
 	private final TagService tagService;
 
 	@PostMapping
-	public void createProfile(
+	public SimpleIdResponse createProfile(
 		@LoginUser SessionUser user,
 		@RequestBody CreateProfileRequest request
 	) {
 		log.info("session user id {}", user.getId());
-		profileService.registerProfile(request.toCommand(user.getId()));
+		return of(profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
 	@GetMapping("/me")

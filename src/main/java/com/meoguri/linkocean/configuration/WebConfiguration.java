@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUserArgumentResolver;
+import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParamsArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,10 +17,12 @@ import lombok.RequiredArgsConstructor;
 public class WebConfiguration implements WebMvcConfigurer {
 
 	private final LoginUserArgumentResolver loginUserArgumentResolver;
+	private final GetBookmarkQueryParamsArgumentResolver getBookmarkQueryParamsArgumentResolver;
 
 	@Override
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(loginUserArgumentResolver);
+		resolvers.add(getBookmarkQueryParamsArgumentResolver);
 	}
 
 	@Override

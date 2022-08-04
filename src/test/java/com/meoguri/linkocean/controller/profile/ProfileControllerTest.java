@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
@@ -21,7 +20,6 @@ class ProfileControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(ProfileController.class);
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 프로필_등록_Api_성공() throws Exception {
 		//given
@@ -39,6 +37,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
 	}
 
@@ -51,7 +50,6 @@ class ProfileControllerTest extends BaseControllerTest {
 	3. 팔로워, 팔로위 수
 	4. Bio, imageUrl
 	 */
-	@WithMockUser(roles = "USER")
 	@Test
 	void 내프로필_조회_단순_프로필_정보_조회() throws Exception {
 		//given
@@ -79,7 +77,6 @@ class ProfileControllerTest extends BaseControllerTest {
 			.andDo(print());
 	}
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 내프로필_조회_사용자가_작성한_카테고리_조회() throws Exception {
 		//given

@@ -1,23 +1,19 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
 
 class ReactionControllerTest extends BaseControllerTest {
 
@@ -26,8 +22,7 @@ class ReactionControllerTest extends BaseControllerTest {
 	@Autowired
 	private BookmarkService bookmarkService;
 
-	@WithMockUser(roles = "USER")
-	@Test
+		@Test
 	void 리액션_추가() throws Exception {
 
 		//given

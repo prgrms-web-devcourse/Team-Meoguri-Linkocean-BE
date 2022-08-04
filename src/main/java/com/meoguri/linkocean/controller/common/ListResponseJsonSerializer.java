@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller;
+package com.meoguri.linkocean.controller.common;
 
 import java.io.IOException;
 
