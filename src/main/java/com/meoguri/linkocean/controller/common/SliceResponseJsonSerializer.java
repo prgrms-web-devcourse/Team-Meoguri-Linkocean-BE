@@ -10,15 +10,13 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * 목록 조회의 공통 Serializer
  * - 데이터 타입 별로 array 의 이름을 커스터마이징 하기 위해 사용
  */
-public class ListResponseJsonSerializer extends JsonSerializer<ListResponse<?>> {
+public class SliceResponseJsonSerializer extends JsonSerializer<SliceResponse<?>> {
 
 	@Override
-	public void serialize(final ListResponse value, final JsonGenerator gen, final SerializerProvider serializers)
+	public void serialize(final SliceResponse value, final JsonGenerator gen, final SerializerProvider serializers)
 		throws IOException {
 
 		gen.writeStartObject();
-		gen.writeFieldName("count");
-		gen.writeNumber(value.getCount());
 		gen.writeArrayFieldStart(value.getName());
 
 		for (Object datum : value.getData()) {

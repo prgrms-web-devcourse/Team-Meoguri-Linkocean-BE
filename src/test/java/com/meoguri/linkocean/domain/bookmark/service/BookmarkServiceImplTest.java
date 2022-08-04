@@ -4,8 +4,10 @@ import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookm
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -16,11 +18,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
+import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
@@ -54,6 +61,12 @@ class BookmarkServiceImplTest {
 
 	@Autowired
 	private TagRepository tagRepository;
+
+	@Autowired
+	private ReactionRepository reactionRepository;
+
+	@Autowired
+	private FavoriteRepository favoriteRepository;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -124,15 +137,12 @@ class BookmarkServiceImplTest {
 	@Test
 	void 중복_url_북마크_생성_요청에_따라_실패() {
 		//given
-		final Bookmark bookmark = createBookmark(profile, linkMetadata);
-		bookmarkRepository.save(bookmark);
-
-		/* 중복 url 생성 요청 */
-		final RegisterBookmarkCommand registerBookmarkCommand = command(userId, url);
+		final RegisterBookmarkCommand command = command(userId, url);
+		bookmarkService.registerBookmark(command);
 
 		//when then
-		assertThatExceptionOfType(IllegalArgumentException.class)
-			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+			.isThrownBy(() -> bookmarkService.registerBookmark(command));
 	}
 
 	private RegisterBookmarkCommand command(long userId, final String url) {
@@ -250,72 +260,112 @@ class BookmarkServiceImplTest {
 		}
 	}
 
-	@Test
-	void 북마크_상세_조회_성공() {
-		//given
-		final Bookmark bookmark = Bookmark.builder()
-			.profile(profile)
-			.title("title")
-			.linkMetadata(linkMetadata)
-			.memo("dream company")
-			.category("인문")
-			.openType("all")
-			.url("www.google.com")
-			.build();
+	@Nested
+	class 북마크_상세_조회_테스트 {
 
-		final Tag tag = tagRepository.save(new Tag("tag1"));
-		bookmark.addBookmarkTag(tag);
+		private Bookmark bookmark;
 
-		final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
+		@BeforeEach
+		void setUp() {
+			bookmark = Bookmark.builder()
+				.profile(profile)
+				.title("title")
+				.linkMetadata(linkMetadata)
+				.memo("dream company")
+				.category("인문")
+				.openType("all")
+				.url("www.google.com")
+				.build();
 
-		em.flush();
-		em.clear();
+			final Tag tag = tagRepository.save(new Tag("tag1"));
+			bookmark.addBookmarkTag(tag);
 
-		//when
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, savedBookmark.getId());
+			final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
 
-		//then
-		assertThat(result).extracting(
-			GetDetailedBookmarkResult::getTitle,
-			GetDetailedBookmarkResult::getUrl,
-			GetDetailedBookmarkResult::getImage,
-			GetDetailedBookmarkResult::getCategory,
-			GetDetailedBookmarkResult::getMemo,
-			GetDetailedBookmarkResult::getOpenType,
-			GetDetailedBookmarkResult::isFavorite,
-			GetDetailedBookmarkResult::getUpdatedAt
-		).containsExactly(
-			savedBookmark.getTitle(),
-			savedBookmark.getLinkMetadata().getLink().getFullLink(),
-			savedBookmark.getLinkMetadata().getImage(),
-			savedBookmark.getCategory(),
-			savedBookmark.getMemo(),
-			savedBookmark.getOpenType(),
-			false,
-			savedBookmark.getUpdatedAt()
-		);
-		assertThat(result.getTags())
-			.contains("tag1");
+			em.flush();
+			em.clear();
+		}
 
-		assertThat(result.getReactionCount().get("like")).isZero();
-		assertThat(result.getReactionCount().get("hate")).isZero();
+		@Test
+		void 북마크_상세_조회_성공() {
+			//when
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
 
-		assertThat(result.getProfile())
-			.extracting(
-				GetBookmarkProfileResult::getProfileId,
-				GetBookmarkProfileResult::getUsername,
-				GetBookmarkProfileResult::getImage,
-				GetBookmarkProfileResult::isFollow
-			).containsExactly(profile.getId(), profile.getUsername(), profile.getImage(), false);
-	}
+			//then
+			assertThat(result).extracting(
+				GetDetailedBookmarkResult::getTitle,
+				GetDetailedBookmarkResult::getUrl,
+				GetDetailedBookmarkResult::getImage,
+				GetDetailedBookmarkResult::getCategory,
+				GetDetailedBookmarkResult::getMemo,
+				GetDetailedBookmarkResult::getOpenType,
+				GetDetailedBookmarkResult::isFavorite,
+				GetDetailedBookmarkResult::getUpdatedAt
+			).containsExactly(
+				bookmark.getTitle(),
+				bookmark.getLinkMetadata().getLink().getFullLink(),
+				bookmark.getLinkMetadata().getImage(),
+				bookmark.getCategory(),
+				bookmark.getMemo(),
+				bookmark.getOpenType(),
+				false,
+				bookmark.getUpdatedAt()
+			);
+			assertThat(result.getTags())
+				.contains("tag1");
 
-	@Test
-	void 북마크_조회_실패_존재하지_않는_북마크() {
-		//given
-		final long invalidBookmarkId = 10L;
+			assertThat(result.getReactionCount().get("like")).isZero();
+			assertThat(result.getReactionCount().get("hate")).isZero();
 
-		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
+			assertThat(result.getReaction().get("like")).isFalse();
+			assertThat(result.getReaction().get("hate")).isFalse();
+
+			assertThat(result.getProfile())
+				.extracting(
+					GetBookmarkProfileResult::getProfileId,
+					GetBookmarkProfileResult::getUsername,
+					GetBookmarkProfileResult::getImage,
+					GetBookmarkProfileResult::isFollow
+				).containsExactly(profile.getId(), profile.getUsername(), profile.getImage(), false);
+		}
+
+		@Test
+		void 내가_좋아요_누른_북마크_상세_조회_성공() {
+			//given
+			reactionRepository.save(new Reaction(profile, bookmark, "like"));
+
+			//when
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
+
+			//then
+			assertAll(
+				() -> assertThat(result.getReactionCount())
+					.containsExactlyInAnyOrderEntriesOf(Map.of("like", 1L, "hate", 0L)),
+				() -> assertThat(result.getReaction())
+					.containsExactlyInAnyOrderEntriesOf(Map.of("like", true, "hate", false))
+			);
+		}
+
+		@Test
+		void 내가_즐겨찾기한_북마크_상세_조회_성공() {
+			//given
+			favoriteRepository.save(new Favorite(bookmark, profile));
+
+			//when
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
+
+			//then
+			assertThat(result.isFavorite()).isTrue();
+		}
+
+		@Test
+		void 북마크_조회_실패_존재하지_않는_북마크() {
+			//given
+			final long invalidBookmarkId = 10L;
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
+		}
 	}
 }

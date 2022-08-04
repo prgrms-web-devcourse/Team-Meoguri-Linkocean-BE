@@ -43,6 +43,21 @@ class FollowRepositoryTest {
 	}
 
 	@Test
+	void 팔로우_여부_조회_성공() {
+		//given
+		Profile follower = profile1;
+		Profile followee = profile2;
+		followRepository.save(new Follow(follower, followee));
+
+		final boolean follow1 = followRepository.existsByFollowerAndFollowee(follower, followee);
+		final boolean follow2 = followRepository.existsByFollowerAndFollowee(followee, follower);
+
+		//then
+		assertThat(follow1).isTrue();
+		assertThat(follow2).isFalse();
+	}
+
+	@Test
 	void 팔로워_팔로이_조합으로_조회_성공() {
 		//given
 		Profile follower = profile1;

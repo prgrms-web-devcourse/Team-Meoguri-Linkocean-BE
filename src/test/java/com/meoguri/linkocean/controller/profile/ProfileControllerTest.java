@@ -1,20 +1,19 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class ProfileControllerTest extends BaseControllerTest {
 
@@ -24,17 +23,15 @@ class ProfileControllerTest extends BaseControllerTest {
 	void 프로필_등록_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-
 		final String username = "hani";
 		final List<String> categories = List.of("인문", "정치", "사회");
-
 		final CreateProfileRequest createProfileRequest = new CreateProfileRequest(username, categories);
 
 		//when
-		mockMvc.perform(post(basePath).session(session)
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post(basePath)
+				.session(session)
+				.contentType(APPLICATION_JSON)
 				.content(createJson(createProfileRequest)))
-
 			//then
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").exists())
@@ -50,95 +47,154 @@ class ProfileControllerTest extends BaseControllerTest {
 	3. 팔로워, 팔로위 수
 	4. Bio, imageUrl
 	 */
-	@Test
-	void 내프로필_조회_단순_프로필_정보_조회() throws Exception {
-		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-		프로필_등록("hani", List.of("인문", "정치", "사회"));
+	@Nested
+	class 내_프로필_조회_테스트 {
 
-		//when
-		mockMvc.perform(get(basePath + "/me").session(session)
-				.contentType(MediaType.APPLICATION_JSON))
+		@Test
+		void 내프로필_조회_단순_프로필_정보_조회() throws Exception {
+			//given
+			유저_등록_로그인("hani@gmail.com", "GOOGLE");
+			프로필_등록("hani", List.of("인문", "정치", "사회"));
 
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.profileId").exists(),
-				jsonPath("$.imageUrl").isEmpty(),
-				jsonPath("$.favoriteCategories", hasSize(3)),
-				jsonPath("$.username").value("hani"),
-				jsonPath("$.bio").isEmpty(),
-				jsonPath("$.followerCount").value(0),
-				jsonPath("$.followeeCount").value(0),
-				jsonPath("$.tags", hasSize(0)),
-				jsonPath("$.categories", hasSize(0))
+			//when
+			mockMvc.perform(get(basePath + "/me")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profileId").exists(),
+					jsonPath("$.imageUrl").isEmpty(),
+					jsonPath("$.favoriteCategories", hasSize(3)),
+					jsonPath("$.username").value("hani"),
+					jsonPath("$.bio").isEmpty(),
+					jsonPath("$.followerCount").value(0),
+					jsonPath("$.followeeCount").value(0),
+					jsonPath("$.tags", hasSize(0)),
+					jsonPath("$.categories", hasSize(0))
+				)
+				.andDo(print());
+		}
 
-			)
-			.andDo(print());
+		@Test
+		void 내프로필_조회_사용자가_작성한_카테고리_조회() throws Exception {
+			//given
+			유저_등록_로그인("hani@gmail.com", "GOOGLE");
+			프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+			북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", null, "private");
+			북마크_등록(링크_메타데이터_얻기("https://jojoldu.tistory.com"), "사회", null, "all");
+			북마크_등록(링크_메타데이터_얻기("https://github.com"), "IT", null, "private");
+
+			//when
+			mockMvc.perform(get(basePath + "/me")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profileId").exists(),
+					jsonPath("$.imageUrl").isEmpty(),
+					jsonPath("$.favoriteCategories", hasSize(4)),
+					jsonPath("$.username").value("hani"),
+					jsonPath("$.bio").isEmpty(),
+					jsonPath("$.followerCount").value(0),
+					jsonPath("$.followeeCount").value(0),
+					jsonPath("$.tags", hasSize(0)),
+					jsonPath("$.categories", hasSize(3)),
+					jsonPath("$.categories", hasItems("인문", "사회", "IT")))
+				.andDo(print());
+		}
+
+		@Test
+		void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null_일때() throws Exception {
+			//given
+			유저_등록_로그인("hani@gmail.com", "GOOGLE");
+			프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+			북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, null, "private");
+
+			//when
+			mockMvc.perform(get(basePath + "/me")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profileId").exists(),
+					jsonPath("$.imageUrl").isEmpty(),
+					jsonPath("$.favoriteCategories", hasSize(4)),
+					jsonPath("$.username").value("hani"),
+					jsonPath("$.bio").isEmpty(),
+					jsonPath("$.followerCount").value(0),
+					jsonPath("$.followeeCount").value(0),
+					jsonPath("$.tags", hasSize(0)),
+					jsonPath("$.categories", hasSize(0))
+				)
+				.andDo(print());
+		}
 	}
 
-	@Test
-	void 내프로필_조회_사용자가_작성한_카테고리_조회() throws Exception {
-		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+	@Nested
+	class 프로필_목록_조회_시리즈_테스트 {
+		long user1ProfileId;
+		long user2ProfileId;
+		long user3ProfileId;
 
-		북마크_등록(링크_메타데이터_조회("http://www.naver.com"), "인문", null, "private");
-		북마크_등록(링크_메타데이터_조회("https://jojoldu.tistory.com"), "사회", null, "all");
-		북마크_등록(링크_메타데이터_조회("https://github.com"), "IT", null, "private");
+		@BeforeEach
+		void setUp() throws Exception {
+			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			user1ProfileId = 프로필_등록("user1", List.of("IT"));
 
-		//when
-		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
-				.contentType(MediaType.APPLICATION_JSON))
+			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			user2ProfileId = 프로필_등록("user2", List.of("IT"));
 
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.profileId").exists(),
-				jsonPath("$.imageUrl").isEmpty(),
-				jsonPath("$.favoriteCategories", hasSize(4)),
-				jsonPath("$.username").value("hani"),
-				jsonPath("$.bio").isEmpty(),
-				jsonPath("$.followerCount").value(0),
-				jsonPath("$.followeeCount").value(0),
-				jsonPath("$.tags", hasSize(0)),
-				jsonPath("$.categories", hasSize(3))
-			)
-			.andDo(print())
-			.andReturn().getResponse();
+			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			user3ProfileId = 프로필_등록("user3", List.of("IT"));
 
-		final List<String> userCategories =
-			objectMapper.readValue(response.getContentAsByteArray(), GetMyProfileResponse.class).getCategories();
+			로그인("user1@gmail.com", "GOOGLE");
+			팔로우(user2ProfileId);
 
-		assertThat(userCategories).contains("인문", "사회", "IT");
-	}
+			로그인("user2@gmail.com", "GOOGLE");
+			팔로우(user1ProfileId);
+			팔로우(user3ProfileId);
+		}
 
-	@Test
-	void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null일때() throws Exception {
-		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+		// 1. 프로필 목록 조회 - 머구리 찾기 / 이름으로 필터링
+		@Test
+		void 프로필_목록_조회_Api_성공() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
 
-		북마크_등록(링크_메타데이터_조회("http://www.naver.com"), null, null, "private");
+			mockMvc.perform(get(basePath + "?username=" + "user")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles").isArray(),
+					jsonPath("$.profiles", hasSize(3)),
+					jsonPath("$.profiles[0].id").value(user1ProfileId),
+					jsonPath("$.profiles[1].id").value(user2ProfileId),
+					jsonPath("$.profiles[2].id").value(user3ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(false),
+					jsonPath("$.profiles[1].isFollow").value(true),
+					jsonPath("$.profiles[2].isFollow").value(false)
+				);
+		}
 
-		//when
-		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
-				.contentType(MediaType.APPLICATION_JSON))
+		@Test
+		void 프로필_목록_조회_Api_유저네임을_빠트리면_실패() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
 
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.profileId").exists(),
-				jsonPath("$.imageUrl").isEmpty(),
-				jsonPath("$.favoriteCategories", hasSize(4)),
-				jsonPath("$.username").value("hani"),
-				jsonPath("$.bio").isEmpty(),
-				jsonPath("$.followerCount").value(0),
-				jsonPath("$.followeeCount").value(0),
-				jsonPath("$.tags", hasSize(0)),
-				jsonPath("$.categories", hasSize(0))
-			)
-			.andDo(print())
-			.andReturn().getResponse();
+			mockMvc.perform(get(basePath)
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		// TODO
+		//2. 팔로워 조회
+
+		// TODO
+		//3. 팔로이 조회
 	}
 }
