@@ -279,5 +279,13 @@ class ProfileControllerTest extends BaseControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.profiles", hasSize(0)));
 		}
+
+		@Test
+		void 팔로워_팔로이_조회_탭을_누락하면_실패() throws Exception {
+			mockMvc.perform(get(basePath + "/" + user2ProfileId + "?tab=hi")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
 	}
 }
