@@ -18,7 +18,7 @@ class LoginControllerTest extends BaseControllerTest {
 	private final String basePath = getBaseUrl(LoginController.class);
 
 	@Test
-	void 로그인_성공_API() throws Exception {
+	void 로그인_성공_Api() throws Exception {
 		//given
 		final String email = "jk05018@naver.com";
 		final String oauthType = "NAVER";
