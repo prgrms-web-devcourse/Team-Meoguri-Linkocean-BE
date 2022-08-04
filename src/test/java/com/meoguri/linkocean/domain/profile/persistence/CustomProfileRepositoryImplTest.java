@@ -105,8 +105,17 @@ class CustomProfileRepositoryImplTest {
 		assertThat(followerOfUser1).containsExactly(profile3);
 	}
 
+	@Test
+	void 프로필_목록조회_성공_이름_지정() {
+		//when
+		final List<Profile> profiles = profileRepository.findByUsernameLike(new FindProfileCond(1, 8, "user"));
+
+		//then
+		assertThat(profiles).containsExactly(profile1, profile2, profile3);
+	}
+
 	private FindProfileCond findCond(final Profile profile, final String username) {
-		return new FindProfileCond(profile.getId(), 1, 10, username);
+		return new FindProfileCond(profile.getId(), 1, 8, username);
 	}
 
 	private FindProfileCond findCond(final Profile profile) {

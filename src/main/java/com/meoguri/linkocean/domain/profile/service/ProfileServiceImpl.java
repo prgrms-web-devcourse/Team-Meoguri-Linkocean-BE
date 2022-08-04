@@ -36,7 +36,6 @@ public class ProfileServiceImpl implements ProfileService {
 	private final FindUserByIdQuery findUserByIdQuery;
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 
-	@Transactional()
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
 
@@ -87,6 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.updateFavoriteCategories(command.getCategories());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<SearchProfileResult> searchFollowerProfiles(final ProfileSearchCond searchCond) {
 
@@ -132,6 +132,22 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public boolean existsByUserId(final long userId) {
 		return profileRepository.findByUserId(userId).isPresent();
+	}
+
+	@Override
+	public List<SearchProfileResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
+		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
+		List<Profile> profiles = profileRepository.findByUsernameLike(
+			new FindProfileCond(
+				searchCond.getPage(),
+				searchCond.getSize(),
+				searchCond.getUsername()
+			));
+
+		final List<Long> profilesId = profiles.stream().map(Profile::getId).collect(toList());
+		final List<Boolean> isFollows = checkIsFollows(currentUserProfileId, profilesId);
+
+		return getResult(profiles, isFollows);
 	}
 
 	/**

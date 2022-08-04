@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.boot.web.server.Cookie;
 import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUserArgumentResolver;
@@ -29,6 +29,11 @@ public class WebConfiguration implements WebMvcConfigurer {
 	}
 
 	@Override
+	public void addViewControllers(final ViewControllerRegistry registry) {
+		registry.addViewController("/api/v1/healthCheck").setViewName("health");
+	}
+
+	@Override
 	public void addCorsMappings(final CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOrigins("http://localhost:8080", "http://localhost:3000")
@@ -44,7 +49,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		return serializer;
 	}*/
 
-	@Bean
+	// @Bean
 	public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
 		return CookieSameSiteSupplier.of(Cookie.SameSite.valueOf(""));
 	}
