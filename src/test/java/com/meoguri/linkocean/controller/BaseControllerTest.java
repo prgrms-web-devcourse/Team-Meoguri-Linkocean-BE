@@ -100,6 +100,7 @@ public class BaseControllerTest {
 			.andReturn();
 	}
 
+	// TODO - 프로필 조회 API 구현 후 주석 필기
 /*
 	protected GetMyProfileResponse 프로필_조회(long profileId) throws Exception {
 
