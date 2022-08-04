@@ -59,7 +59,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	@WithMockUser(roles = "USER")
 	@Test
-	void 카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
+	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("crush@gmail.com", "GOOGLE");
 		프로필_등록("crush", List.of("IT", "인문"));
@@ -72,8 +72,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 			new RegisterBookmarkCommand(
 				userId,
 				"https://www.naver.com",
-				"title",
-				"memo",
+				null,
+				null,
 				null,
 				"all",
 				List.of("tag1", "tag2"))

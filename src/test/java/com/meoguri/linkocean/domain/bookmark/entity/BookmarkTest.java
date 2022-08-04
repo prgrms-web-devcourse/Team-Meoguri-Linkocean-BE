@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Test;
@@ -51,9 +50,9 @@ class BookmarkTest {
 				Bookmark::getOpenType
 			).containsExactly(
 				profile,
-				Optional.ofNullable(title).orElse(""),
+				title,
 				linkMetadata,
-				Optional.ofNullable(memo).orElse(""),
+				memo,
 				category,
 				openType);
 
