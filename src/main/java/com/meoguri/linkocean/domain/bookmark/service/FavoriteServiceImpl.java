@@ -29,6 +29,9 @@ public class FavoriteServiceImpl implements FavoriteService {
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 		final Profile owner = findProfileByUserIdQuery.findByUserId(userId);
 
+		final boolean isExisted = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
+		checkCondition(!isExisted);
+
 		favoriteRepository.save(new Favorite(bookmark, owner));
 	}
 
