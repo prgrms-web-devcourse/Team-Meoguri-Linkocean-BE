@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.BooleanUtils.*;
 import static org.apache.commons.lang3.math.NumberUtils.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,14 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 			username,
 			toBoolean(favorite),
 			toBoolean(follow),
-			Arrays.stream(tags.split(",")).collect(Collectors.toList())
+			toTagList(tags)
 		);
+	}
+
+	private List<String> toTagList(final String tags) {
+		if (Objects.isNull(tags)) {
+			return null;
+		}
+		return Arrays.stream(tags.split(",")).collect(Collectors.toList());
 	}
 }
