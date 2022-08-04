@@ -250,6 +250,25 @@ class ProfileServiceImplTest {
 					tuple(user2Id, "user2", null, true)
 				);
 		}
+
+		@Test
+		void 프로필_목록_조회_이름으로_필터링_성공() {
+			//given
+			followService.follow(new FollowCommand(user1Id, profile2Id));
+
+			//when
+			final List<SearchProfileResult> results =
+				profileService.searchProfilesByUsername(defaultSearchCondOfUserId(user1Id, "user"));
+
+			//then
+			assertThat(results)
+				.extracting(SearchProfileResult::getId, SearchProfileResult::isFollow)
+				.containsExactly(
+					tuple(user1Id, false),
+					tuple(user2Id, true),
+					tuple(user3Id, false)
+				);
+		}
 	}
 
 	public static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
@@ -262,6 +281,11 @@ class ProfileServiceImplTest {
 	}
 
 	static ProfileSearchCond defaultSearchCondOfUserId(long userId) {
+
+		return defaultSearchCondOfUserId(userId, null);
+	}
+
+	static ProfileSearchCond defaultSearchCondOfUserId(long userId, String username) {
 
 		return new ProfileSearchCond(userId, null, null, null);
 	}

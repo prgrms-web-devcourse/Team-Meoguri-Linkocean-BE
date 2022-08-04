@@ -10,7 +10,7 @@ import lombok.Getter;
 public final class ProfileSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 10;
+	private static final int DEFAULT_SIZE = 8;
 
 	private final long userId;
 	private final int page;

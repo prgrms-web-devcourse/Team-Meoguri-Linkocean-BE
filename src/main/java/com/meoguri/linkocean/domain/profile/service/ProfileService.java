@@ -23,4 +23,7 @@ public interface ProfileService {
 	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond);
 
 	boolean existsByUserId(long userId);
+
+	/* 프로필 목록 조회 - 머구리 찾기*/
+	List<SearchProfileResult> searchProfilesByUsername(ProfileSearchCond searchCond);
 }
