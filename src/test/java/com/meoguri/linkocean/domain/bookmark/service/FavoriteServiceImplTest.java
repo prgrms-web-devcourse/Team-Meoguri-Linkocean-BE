@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -53,22 +55,46 @@ class FavoriteServiceImplTest {
 	}
 
 	@Test
-	void 즐겨찾기_추가_제거_성공() {
-		//추가
+	void 즐겨찾기_추가() {
 		//when
 		favoriteService.favorite(userId, bookmarkId);
 
-		//then TODO - 북마크 서비스에서 조회 구현 이후 검증
-		// final GetBookmarkResult result1 = bookmarkService.getBookmark(userId, bookmarkId);
-		// assertThat(result1.isFavorite()).isTrue();
+		//then
+		final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(userId, bookmarkId);
 
-		//제거
 		//when
-		favoriteService.unfavorite(userId, bookmarkId);
+		assertThat(detailedBookmark.isFavorite()).isTrue();
+	}
 
-		//then TODO - 북마크 서비스에서 조회 구현 이후 검증
-		// final GetBookmarkResult result2 = bookmarkService.getBookmark(userId, bookmarkId);
-		// assertThat(result2.isFavorite()).isFalse();
+	@Test
+	void 즐겨찾기_해제() {
+
+		//when
+		favoriteService.favorite(userId, bookmarkId);
+
+		//then
+		favoriteService.unfavorite(userId, bookmarkId);
+		final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(userId, bookmarkId);
+
+		//when
+		assertThat(detailedBookmark.isFavorite()).isFalse();
+	}
+
+	@Test
+	void 즐겨찾기_추가_실패_이미_추가된_상태() {
+		//given
+		favoriteService.favorite(userId, bookmarkId);
+
+		//when then
+		assertThatThrownBy(() -> favoriteService.favorite(userId, bookmarkId))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+
+	@Test
+	void 즐겨찾기_해제_실패_즐겨찾기로_추가되어_있지_않음() {
+		assertThatThrownBy(() -> favoriteService.unfavorite(userId, bookmarkId))
+			.isInstanceOf(RuntimeException.class);
 	}
 
 	private RegisterBookmarkCommand command(final User user, final String url) {
