@@ -6,6 +6,7 @@ import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookm
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.Objects.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -164,7 +166,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
+	public PageResult<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 
@@ -192,7 +194,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return searchMyBookmarksByDefaultCond(profile, searchCond.toFindBookmarksDefaultCond());
 	}
 
-	private List<GetBookmarksResult> searchMyBookmarksByCategoryAndDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> searchMyBookmarksByCategoryAndDefaultCond(final Profile profile,
 		final Category category, final FindBookmarksDefaultCond cond) {
 		//전체 개수 조회
 		long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, category,
@@ -205,10 +207,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
 		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
 
-		return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
 	}
 
-	private List<GetBookmarksResult> searchMyBookmarksByFavoriteAndDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> searchMyBookmarksByFavoriteAndDefaultCond(final Profile profile,
 		final boolean favorite, final FindBookmarksDefaultCond cond) {
 		long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, favorite,
 			cond.getSearchTitle());
@@ -218,10 +220,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final List<Boolean> isFavorites = bookmarks.stream().map(bookmark -> true).collect(Collectors.toList());
 
-		return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
 	}
 
-	private List<GetBookmarksResult> searchMyBookmarksByTagsAndDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> searchMyBookmarksByTagsAndDefaultCond(final Profile profile,
 		final List<String> tags, final FindBookmarksDefaultCond cond) {
 		long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, tags, cond.getSearchTitle());
 
@@ -230,10 +232,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
 		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
 
-		return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
 	}
 
-	private List<GetBookmarksResult> searchMyBookmarksByDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> searchMyBookmarksByDefaultCond(final Profile profile,
 		final FindBookmarksDefaultCond cond) {
 		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, cond.getSearchTitle());
 
@@ -241,7 +243,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
 
-		return getBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
 	}
 
 	private List<Boolean> checkIsFavorite(final Profile profile, final List<Bookmark> bookmarks) {
@@ -254,9 +256,29 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO: Service Dto 변화 필요. 페이징 처리하기 위해선 totalCount 필요.
-	private List<GetBookmarksResult> getBookmarksResult(final long totalCount, final List<Bookmark> bookmarks,
+	private PageResult<GetBookmarksResult> convertToBookmarksResult(final long totalCount,
+		final List<Bookmark> bookmarks,
 		final Profile profile, final List<Boolean> isFavorites) {
-		return null;
+
+		final ArrayList<GetBookmarksResult> bookmarkResults = new ArrayList<>();
+		int size = bookmarks.size();
+		for (int i = 0; i < size; ++i) {
+			bookmarkResults.add(new GetBookmarksResult(
+				bookmarks.get(i).getId(),
+				bookmarks.get(i).getUrl(),
+				bookmarks.get(i).getTitle(),
+				bookmarks.get(i).getOpenType(),
+				bookmarks.get(i).getCategory(),
+				bookmarks.get(i).getUpdatedAt(),
+				isFavorites.get(i),
+				bookmarks.get(i).getLikeCount(),
+				bookmarks.get(i).getLinkMetadata().getImage(),
+				bookmarks.get(i).getProfile().equals(profile),
+				bookmarks.get(i).getTagNames()
+			));
+		}
+
+		return PageResult.of(totalCount, bookmarkResults);
 	}
 
 	//TODO
@@ -267,7 +289,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	//TODO
 	@Override
-	public List<GetBookmarksResult> getBookmarksByUsername(final BookmarkByUsernameSearchCond searchCond) {
+	public PageResult<GetBookmarksResult> getBookmarksByUsername(final BookmarkByUsernameSearchCond searchCond) {
 		return null;
 	}
 }

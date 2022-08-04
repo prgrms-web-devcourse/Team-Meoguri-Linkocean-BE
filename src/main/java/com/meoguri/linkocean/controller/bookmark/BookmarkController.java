@@ -3,6 +3,7 @@ package com.meoguri.linkocean.controller.bookmark;
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,6 @@ import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParams;
 import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 
@@ -57,14 +57,17 @@ public class BookmarkController {
 		final @LoginUser SessionUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final String username = queryParams.getUsername();
-		final List<GetBookmarksResult> result = username == null
-			? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
-			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
+		//TODO PR 변경 사항 반영하고 개발하기
 
-		final List<GetBookmarksResponse> response =
-			result.stream().map(GetBookmarksResponse::of).collect(toList());
-		return ListResponse.of("bookmarks", response);
+		// final String username = queryParams.getUsername();
+		// final List<GetBookmarksResult> result = username == null
+		// 	? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
+		// 	: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
+		//
+		// final List<GetBookmarksResponse> response =
+		// 	result.stream().map(GetBookmarksResponse::of).collect(toList());
+		// return ListResponse.of("bookmarks", response);
+		return ListResponse.of("bookmarks", Collections.emptyList());
 	}
 
 	/**
