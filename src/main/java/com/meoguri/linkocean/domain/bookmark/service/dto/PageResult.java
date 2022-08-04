@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
-import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -19,9 +18,4 @@ public class PageResult<T> {
 	public static <T> PageResult<T> of(final long totalCount, final List<T> data) {
 		return new PageResult<>(totalCount, data);
 	}
-
-	public List<Object> getData() {
-		return Arrays.asList(data.toArray());
-	}
-
 }
