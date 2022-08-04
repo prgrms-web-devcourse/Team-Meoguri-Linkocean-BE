@@ -56,7 +56,6 @@ class BookmarkControllerTest extends BaseControllerTest {
 			.andDo(print());
 	}
 
-	@WithMockUser(roles = "USER")
 	@Test
 	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
 		//given
