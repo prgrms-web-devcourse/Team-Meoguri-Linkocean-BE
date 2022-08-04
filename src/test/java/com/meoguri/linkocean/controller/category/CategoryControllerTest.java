@@ -23,7 +23,7 @@ class CategoryControllerTest extends BaseControllerTest {
 			//then
 			.andExpect(status().isOk())
 			.andExpectAll(
-				jsonPath("$.count").value(12),
+				// jsonPath("$.count").value(12),
 				jsonPath("$.categories").isArray(),
 				jsonPath("$.categories", hasSize(12)),
 				jsonPath("$.categories",
