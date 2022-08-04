@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.boot.web.server.Cookie;
 import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -50,7 +49,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		return serializer;
 	}*/
 
-	@Bean
+	// @Bean
 	public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
 		return CookieSameSiteSupplier.of(Cookie.SameSite.valueOf(""));
 	}
