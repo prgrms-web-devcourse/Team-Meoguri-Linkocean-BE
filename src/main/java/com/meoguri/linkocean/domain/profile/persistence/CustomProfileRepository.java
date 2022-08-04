@@ -10,4 +10,6 @@ public interface CustomProfileRepository {
 	List<Profile> findFollowerProfilesBy(FindProfileCond findCond);
 
 	List<Profile> findFolloweeProfilesBy(FindProfileCond findCond);
+
+	List<Profile> findByUsernameLike(FindProfileCond findCond);
 }

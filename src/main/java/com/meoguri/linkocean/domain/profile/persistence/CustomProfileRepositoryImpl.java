@@ -50,6 +50,18 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			.fetch();
 	}
 
+	@Override
+	public List<Profile> findByUsernameLike(final FindProfileCond findCond) {
+		return query
+			.selectFrom(profile)
+			.where(
+				usernameLike(findCond.getUsername())
+			)
+			.offset(findCond.getOffset())
+			.limit(findCond.getLimit())
+			.fetch();
+	}
+
 	private BooleanBuilder followerOfUsername(long profileId, String username) {
 
 		return nullSafeBuilder(() -> profile.in(
@@ -61,7 +73,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 				when(username != null)
 			).where(
 				follow.followee.id.eq(profileId),
-				nullSafeBuilder(() -> profile.username.eq(username))
+				usernameLike(username)
 			))
 		);
 	}
@@ -77,8 +89,14 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 				when(username != null)
 			).where(
 				follow.follower.id.eq(profileId),
-				nullSafeBuilder(() -> profile.username.eq(username))
+				usernameLike(username)
 			))
 		);
+	}
+
+	/* profile.username like '%username%' escape '!' */
+	private BooleanBuilder usernameLike(final String username) {
+
+		return nullSafeBuilder(() -> profile.username.like(String.join(username, "%", "%")));
 	}
 }
