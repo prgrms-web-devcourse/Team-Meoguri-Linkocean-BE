@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -136,6 +137,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public List<SearchProfileResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
+		checkArgument(searchCond.getUsername() != null, "사용자 이름을 입력해 주세요");
+
 		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
 		List<Profile> profiles = profileRepository.findByUsernameLike(
 			new FindProfileCond(
