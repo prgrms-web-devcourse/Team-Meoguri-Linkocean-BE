@@ -7,16 +7,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 
-@Disabled
 class LoginControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(LoginController.class);
+
+	@Test
+	void 로그인_성공_API() throws Exception {
+		//given
+		final String email = "jk05018@naver.com";
+		final String oauthType = "NAVER";
+
+		final LoginRequest loginRequest = new LoginRequest(email, oauthType);
+
+		//when
+		mockMvc.perform(post(basePath)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createJson(loginRequest)))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.token").exists())
+			.andDo(print());
+
+	}
 
 	@Test
 	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_true() throws Exception {

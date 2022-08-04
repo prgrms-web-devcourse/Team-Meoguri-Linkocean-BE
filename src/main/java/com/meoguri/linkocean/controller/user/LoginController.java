@@ -1,10 +1,5 @@
 package com.meoguri.linkocean.controller.user;
 
-import java.util.Map;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
+import com.meoguri.linkocean.controller.user.dto.LoginRequest;
+import com.meoguri.linkocean.controller.user.dto.LoginResponse;
 import com.meoguri.linkocean.controller.user.dto.LoginSuccessReponse;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.user.service.UserService;
@@ -38,20 +35,8 @@ public class LoginController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> saveAndHasProfile(@RequestBody Map<String, String> paramMap) {
-		final String token = userService.saveOrUpdate(paramMap.get("email"), paramMap.get("oauthType"));
-		final ResponseCookie tokenCookie = generateLoginSuccessCookie(token);
-		return ResponseEntity
-			.noContent()
-			.header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
-			.build();
-	}
-
-	private ResponseCookie generateLoginSuccessCookie(final String accessToken) {
-		return ResponseCookie.from("access-token", accessToken)
-			.httpOnly(true)
-			.path("/")
-			.build();
+	public LoginResponse login(@RequestBody LoginRequest request) {
+		return LoginResponse.of(userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
 	}
 
 }
