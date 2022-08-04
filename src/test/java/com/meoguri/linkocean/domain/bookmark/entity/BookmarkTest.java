@@ -48,7 +48,13 @@ class BookmarkTest {
 				Bookmark::getMemo,
 				Bookmark::getCategory,
 				Bookmark::getOpenType
-			).containsExactly(profile, title, linkMetadata, memo, category, openType);
+			).containsExactly(
+				profile,
+				title,
+				linkMetadata,
+				memo,
+				category,
+				openType);
 
 		assertThat(bookmark)
 			.extracting(

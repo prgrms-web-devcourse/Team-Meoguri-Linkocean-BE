@@ -144,7 +144,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	public String getCategory() {
-		return category.getKorName();
+		return category == null ? null : category.getKorName();
 	}
 
 	public String getOpenType() {
