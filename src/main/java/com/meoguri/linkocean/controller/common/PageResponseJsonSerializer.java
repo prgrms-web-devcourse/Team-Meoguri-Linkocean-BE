@@ -17,8 +17,8 @@ public class PageResponseJsonSerializer extends JsonSerializer<PageResponse<?>> 
 		throws IOException {
 
 		gen.writeStartObject();
-		gen.writeFieldName("count");
-		gen.writeNumber(value.getCount());
+		gen.writeFieldName("totalCount");
+		gen.writeNumber(value.getTotalCount());
 		gen.writeArrayFieldStart(value.getName());
 
 		for (Object datum : value.getData()) {
