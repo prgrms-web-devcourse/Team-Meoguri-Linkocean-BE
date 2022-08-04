@@ -97,6 +97,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.tags[1]").value(savedBookmark.getTagNames().get(1)),
 				jsonPath("$.reactionCount.like").value(0),
 				jsonPath("$.reactionCount.hate").value(0),
+				jsonPath("$.reaction.like").value(false),
+				jsonPath("$.reaction.hate").value(false),
 				jsonPath("$.profile.profileId").value(savedBookmark.getProfile().getId()),
 				jsonPath("$.profile.username").value(savedBookmark.getProfile().getUsername()),
 				jsonPath("$.profile.imageUrl").value(savedBookmark.getProfile().getImage()),

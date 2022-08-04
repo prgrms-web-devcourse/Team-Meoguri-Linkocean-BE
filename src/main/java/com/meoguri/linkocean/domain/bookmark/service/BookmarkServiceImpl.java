@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
@@ -119,6 +120,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO : 쿼리 튜닝
+	//고민 ( SQL 수를 줄이자니 Dto를 사용해야 해서 코드 복잡도도 올라가고 재사용성이 떨어지고, 그렇다고 엔티티 기준으로 하면 SQL이 너무 많이 나가는 것 같고...)
 	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
@@ -126,7 +128,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Bookmark bookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+
+		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(profile, bookmark);
+
+		final Optional<Reaction> oMyReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
 
 		final boolean isFollow = followRepository.findByProfiles(
 			bookmark.getProfile(),
@@ -144,15 +150,24 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.updatedAt(bookmark.getUpdatedAt())
 			.tags(bookmark.getTagNames())
 			.reactionCount(getReactionCountMap(bookmark))
+			.reaction(getReaction(oMyReaction))
 			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
 	}
 
+	//TODO 리액션 요청에서 북마크 좋아요 개수도 같이 수정하는 로직이 추가되면 이 부분 수정하기.
 	private Map<String, Long> getReactionCountMap(Bookmark bookmark) {
 		return Arrays.stream(ReactionType.values())
 			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
 				reactionRepository.countReactionByBookmarkAndType(bookmark, reactionType))
 			);
+	}
+
+	private Map<String, Boolean> getReaction(final Optional<Reaction> oMyReaction) {
+		return Arrays.stream(ReactionType.values())
+			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
+				oMyReaction.map(reaction -> ReactionType.of(reaction.getType()).equals(reactionType)).orElse(false)
+			));
 	}
 
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
