@@ -152,6 +152,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			유저_등록_로그인("user3@gmail.com", "GOOGLE");
 			user3ProfileId = 프로필_등록("user3", List.of("IT"));
 
+			// 팔로우 화살표 : user1 <-> user2 -> user3
 			로그인("user1@gmail.com", "GOOGLE");
 			팔로우(user2ProfileId);
 
@@ -191,21 +192,92 @@ class ProfileControllerTest extends BaseControllerTest {
 				.andExpect(status().isBadRequest());
 		}
 
-		// TODO
-		//2. 팔로워 조회
-
+		// 2. 팔로워 목록 조회
+		/*
+		팔로우 화살표 : user1 <-> user2 -> user3			user1 user2 user3
+		user1 의 팔로워 : user2        user1 의 팔로우 여부    x      o     x
+		user2 의 팔로워 : user1		 user2 의 팔로우 여부    o      x     o
+		user3 의 팔로워 : user2		 user3 의 팔로우 여부    x      x     x
+		 */
 		@Test
 		void 팔로워_조회_Api_성공() throws Exception {
 			로그인("user1@gmail.com", "GOOGLE");
 
+			// user1 -> user1 의 팔로워 조회
 			mockMvc.perform(get(basePath + "/" + user1ProfileId + "?tab=follower")
 					.session(session)
 					.contentType(APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
-				.andDo(print());
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles", hasSize(1)),
+					jsonPath("$.profiles[0].id").value(user2ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(true)
+				);
+
+			// user1 -> user2 의 팔로워 조회
+			mockMvc.perform(get(basePath + "/" + user2ProfileId + "?tab=follower")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles", hasSize(1)),
+					jsonPath("$.profiles[0].id").value(user1ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(false)
+				);
+
+			// user1 -> user3 의 팔로워 조회
+			mockMvc.perform(get(basePath + "/" + user3ProfileId + "?tab=follower")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles", hasSize(1)),
+					jsonPath("$.profiles[0].id").value(user2ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(true)
+				);
 		}
 
-		// TODO
-		//3. 팔로이 조회
+		// 3. 팔로이 목록 조회
+		/*
+		팔로우 화살표 : user1 <-> user2 -> user3	       		user1 user2 user3
+		user1 의 팔로이 : user2            user1 의 팔로우 여부    x      o     x
+		user2 의 팔로이 : user1, user3	 user2 의 팔로우 여부    o      x     o
+		user3 의 팔로이 : x				 user3 의 팔로우 여부    x      x     x
+		 */
+		@Test
+		void 팔로이_조회_Api_성공() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
+
+			// user1 -> user1 의 팔로이 조회
+			mockMvc.perform(get(basePath + "/" + user1ProfileId + "?tab=followee")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles", hasSize(1)),
+					jsonPath("$.profiles[0].id").value(user2ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(true)
+				);
+
+			// user1 -> user2 의 팔로이 조회
+			mockMvc.perform(get(basePath + "/" + user2ProfileId + "?tab=followee")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles", hasSize(2)),
+					jsonPath("$.profiles[0].id").value(user1ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(false),
+					jsonPath("$.profiles[1].id").value(user3ProfileId),
+					jsonPath("$.profiles[1].isFollow").value(false)
+				);
+
+			// user1 -> user3 의 팔로이 조회
+			mockMvc.perform(get(basePath + "/" + user3ProfileId + "?tab=followee")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.profiles", hasSize(0)));
+		}
 	}
 }
