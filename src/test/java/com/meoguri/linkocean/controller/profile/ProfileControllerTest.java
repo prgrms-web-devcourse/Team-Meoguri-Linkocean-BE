@@ -102,14 +102,12 @@ class ProfileControllerTest extends BaseControllerTest {
 					jsonPath("$.followeeCount").value(0),
 					jsonPath("$.tags", hasSize(0)),
 					jsonPath("$.categories", hasSize(3)),
-					jsonPath("$.categories[0]").value("인문"),
-					jsonPath("$.categories[1]").value("사회"),
-					jsonPath("$.categories[2]").value("IT"))
+					jsonPath("$.categories", hasItems("인문", "사회", "IT")))
 				.andDo(print());
 		}
 
 		@Test
-		void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null일때() throws Exception {
+		void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null_일때() throws Exception {
 			//given
 			유저_등록_로그인("hani@gmail.com", "GOOGLE");
 			프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));

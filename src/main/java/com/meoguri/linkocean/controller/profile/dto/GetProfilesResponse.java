@@ -17,9 +17,7 @@ public class GetProfilesResponse {
 
 	@JsonProperty("imageUrl")
 	private String image;
-
-	@JsonProperty("isFollow")
-	private boolean isFollow;
+	private Boolean isFollow;
 
 	public static GetProfilesResponse of(final SearchProfileResult result) {
 		return new GetProfilesResponse(
