@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -136,15 +137,12 @@ class BookmarkServiceImplTest {
 	@Test
 	void 중복_url_북마크_생성_요청에_따라_실패() {
 		//given
-		final Bookmark bookmark = createBookmark(profile, linkMetadata);
-		bookmarkRepository.save(bookmark);
-
-		/* 중복 url 생성 요청 */
-		final RegisterBookmarkCommand registerBookmarkCommand = command(userId, url);
+		final RegisterBookmarkCommand command = command(userId, url);
+		bookmarkService.registerBookmark(command);
 
 		//when then
-		assertThatExceptionOfType(IllegalArgumentException.class)
-			.isThrownBy(() -> bookmarkService.registerBookmark(registerBookmarkCommand));
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+			.isThrownBy(() -> bookmarkService.registerBookmark(command));
 	}
 
 	private RegisterBookmarkCommand command(long userId, final String url) {
