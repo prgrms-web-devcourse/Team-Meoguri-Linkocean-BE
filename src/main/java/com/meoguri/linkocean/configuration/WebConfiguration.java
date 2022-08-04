@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUserArgumentResolver;
@@ -23,6 +24,11 @@ public class WebConfiguration implements WebMvcConfigurer {
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(loginUserArgumentResolver);
 		resolvers.add(getBookmarkQueryParamsArgumentResolver);
+	}
+
+	@Override
+	public void addViewControllers(final ViewControllerRegistry registry) {
+		registry.addViewController("/api/v1/healthCheck").setViewName("health");
 	}
 
 	@Override

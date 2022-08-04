@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.configuration;
+package com.meoguri.linkocean.controller.common;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 @JsonComponent
-public class DateFormatConfig {
+public class CustomDateFormatter {
 
 	@Value("${spring.jackson.date-format:yyyy-MM-dd}")
 	private String pattern;
