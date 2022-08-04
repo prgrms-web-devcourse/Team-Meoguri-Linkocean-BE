@@ -76,17 +76,21 @@ public class ProfileController {
 		return SliceResponse.of("profiles", response);
 	}
 
+	/**
+	 * profileId 사용자의 팔로워/팔로이 프로필 목록 조회
+	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
+	 */
 	@GetMapping("/{profileId}")
 	public SliceResponse<GetProfilesResponse> getFollowerFollowee(
 		final @LoginUser SessionUser user,
-		final @PathVariable String profileId,
+		final @PathVariable long profileId,
 		final @RequestParam ProfileSearchTab tab,
 		final GetProfileQueryParams queryParams
 	) {
-		final ProfileSearchCond searchCond = queryParams.toSearchCond(user.getId());
+		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
 		final List<SearchProfileResult> results =
-			tab == ProfileSearchTab.FOLLOWER ? profileService.searchFollowerProfiles(searchCond) :
-				tab == ProfileSearchTab.FOLLOWEE ? profileService.searchFolloweeProfiles(searchCond) : emptyList();
+			tab == ProfileSearchTab.FOLLOWER ? profileService.searchFollowerProfiles(cond, profileId) :
+				tab == ProfileSearchTab.FOLLOWEE ? profileService.searchFolloweeProfiles(cond, profileId) : emptyList();
 
 		final List<GetProfilesResponse> response =
 			results.stream().map(GetProfilesResponse::of).collect(toList());
