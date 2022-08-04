@@ -5,14 +5,14 @@ import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
@@ -39,8 +39,8 @@ public class ProfileController {
 
 	@PostMapping
 	public SimpleIdResponse createProfile(
-		final @LoginUser SessionUser user,
-		final @RequestBody CreateProfileRequest request
+		@AuthenticationPrincipal SecurityUser user,
+		@RequestBody CreateProfileRequest request
 	) {
 		log.info("session user id {}", user.getId());
 		return of(profileService.registerProfile(request.toCommand(user.getId())));
@@ -48,7 +48,7 @@ public class ProfileController {
 
 	@GetMapping("/me")
 	public GetMyProfileResponse getMyProfile(
-		final @LoginUser SessionUser user
+		@AuthenticationPrincipal SecurityUser user
 	) {
 		return GetMyProfileResponse.of(
 			profileService.getMyProfile(user.getId()),
@@ -60,7 +60,7 @@ public class ProfileController {
 	/* 프로필 목록 조회 - 머구리 찾기 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final GetProfileQueryParams queryParams
 	) {
 		final List<SearchProfileResult> results =

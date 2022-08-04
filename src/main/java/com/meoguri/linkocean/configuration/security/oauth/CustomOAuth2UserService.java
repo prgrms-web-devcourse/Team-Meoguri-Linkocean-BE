@@ -55,7 +55,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		log.info(
 			String.format("user Session에 등록 email : %s oauthType : %s", user.getEmail(),
 				user.getOAuthType().toString()));
-		httpSession.setAttribute("user", new SessionUser(user));
 
 		log.info("token save");
 		return new DefaultOAuth2User(
