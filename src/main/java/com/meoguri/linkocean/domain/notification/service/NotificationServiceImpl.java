@@ -1,5 +1,8 @@
 package com.meoguri.linkocean.domain.notification.service;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +17,8 @@ import com.meoguri.linkocean.domain.notification.entity.noti.ProfileNoti;
 import com.meoguri.linkocean.domain.notification.persistence.NotificationRepository;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 
 import lombok.RequiredArgsConstructor;
@@ -26,21 +31,34 @@ public class NotificationServiceImpl implements NotificationService {
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
-	// TODO - 팔로우 여부 검증 필요
+	private final FindProfileByIdQuery findProfileByIdQuery;
+	private final CheckIsFollowQuery checkIsFollowQuery;
+
 	@Override
 	public void shareNotification(ShareNotificationCommand command) {
-
 		final long senderUserId = command.getSenderUserId();
 		final long targetProfileId = command.getTargetProfileId();
-		final Profile sender = findProfileByUserIdQuery.findByUserId(senderUserId);
-		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
+		final Profile sender = findProfileByUserIdQuery.findByUserId(senderUserId);
+		final Profile target = findProfileByIdQuery.findById(targetProfileId);
+		final boolean isSharable = checkIsFollowQuery.isFollow(target, sender);
+
+		checkCondition(isSharable);
+
+		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 		Map<String, Noti> info = Map.of(
 			"sender", new ProfileNoti(sender.getId(), sender.getUsername()),
-			"bookmark", new BookmarkNoti(bookmark.getId(), bookmark.getTitle(), "link")
+			"bookmark", new BookmarkNoti(bookmark.getId(), bookmark.getTitle(), bookmark.getUrl())
 		);
 
 		notificationRepository
 			.save(new Notification(NotificationType.SHARE, targetProfileId, info));
+	}
+
+	@Override
+	public List<Notification> getNotifications(final long userId) {
+
+		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(userId).getId();
+		return notificationRepository.findByTargetProfileId(currentUserProfileId);
 	}
 }

@@ -36,7 +36,8 @@ public class FollowServiceImpl implements FollowService {
 		final Profile followerProfile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final Profile followeeProfile = findProfileByIdQuery.findById(command.getTargetProfileId());
 
-		final Follow follow = followRepository.findByProfiles(followerProfile, followeeProfile)
+		final Follow follow = followRepository
+			.findByProfiles(followerProfile, followeeProfile)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		followRepository.delete(follow);

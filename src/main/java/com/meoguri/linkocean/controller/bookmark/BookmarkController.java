@@ -22,7 +22,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParams;
-import com.meoguri.linkocean.controller.common.ListResponse;
+import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -64,7 +64,7 @@ public class BookmarkController {
 
 		final List<GetBookmarksResponse> response =
 			result.stream().map(GetBookmarksResponse::of).collect(toList());
-		return ListResponse.of("bookmarks", response);
+		return PageResponse.of("bookmarks", response);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class BookmarkController {
 
 		final List<GetFeedBookmarksResponse> response =
 			result.stream().map(GetFeedBookmarksResponse::of).collect(toList());
-		return ListResponse.of("bookmarks", response);
+		return PageResponse.of("bookmarks", response);
 	}
 
 	/* 북마크 상세 조회 */

@@ -28,6 +28,7 @@ public final class GetDetailedBookmarkResult {
 	private List<String> tags;
 
 	private Map<String, Long> reactionCount;
+	private Map<String, Boolean> reaction;
 
 	private final GetBookmarkProfileResult profile;
 

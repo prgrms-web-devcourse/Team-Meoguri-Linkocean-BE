@@ -32,6 +32,7 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -62,6 +63,14 @@ public class BaseControllerTest {
 		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
+	protected void 로그인(final String email, final String oAuthType) {
+		final User user = userRepository
+			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
+			.orElseThrow();
+
+		session.setAttribute("user", new SessionUser(user));
+	}
+
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
 		final MvcResult mvcResult = mockMvc.perform(post("/api/v1/profiles")
 				.header(AUTHORIZATION, token)
@@ -73,7 +82,7 @@ public class BaseControllerTest {
 		return toId(mvcResult);
 	}
 
-	protected String 링크_메타데이터_조회(final String link) throws Exception {
+	protected String 링크_메타데이터_얻기(final String link) throws Exception {
 		mockMvc.perform(post(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas/obtain")
 				.queryParam("link", link)
 				.build()
