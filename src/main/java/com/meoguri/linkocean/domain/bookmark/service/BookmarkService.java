@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
@@ -20,7 +20,7 @@ public interface BookmarkService {
 	void updateBookmark(UpdateBookmarkCommand command);
 
 	/* 북마크 상세 조회 */
-	GetBookmarkResult getBookmark(long userId, long bookmarkId);
+	GetDetailedBookmarkResult getDetailedBookmark(long userId, long bookmarkId);
 
 	/* 내 북마크 목록 */
 	List<GetBookmarksResult> getMyBookmarks(long userId, MyBookmarkSearchCond searchCond);

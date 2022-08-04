@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
-import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
+import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
@@ -25,8 +25,8 @@ import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParams;
 import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 
 import lombok.RequiredArgsConstructor;
@@ -85,12 +85,12 @@ public class BookmarkController {
 
 	/* 북마크 상세 조회 */
 	@GetMapping("/{bookmarkId}")
-	public GetBookmarkResponse getBookmark(
+	public GetDetailedBookmarkResponse getDetailedBookmark(
 		final @LoginUser SessionUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetBookmarkResult result = bookmarkService.getBookmark(user.getId(), bookmarkId);
-		return GetBookmarkResponse.of(result);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
+		return GetDetailedBookmarkResponse.of(result);
 	}
 
 	/* 북마크 업데이트 */

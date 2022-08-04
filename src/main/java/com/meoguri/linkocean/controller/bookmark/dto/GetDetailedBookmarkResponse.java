@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.GetBookmarkProfileResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.GetBookmarkProfileResult;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public final class GetBookmarkResponse {
+public final class GetDetailedBookmarkResponse {
 
 	private final String title;
 	private final String url;
@@ -30,8 +30,8 @@ public final class GetBookmarkResponse {
 	private final Map<String, Long> reactionCount;
 	private final GetBookmarkProfileResponse profile;
 
-	public static GetBookmarkResponse of(final GetBookmarkResult result) {
-		return new GetBookmarkResponse(
+	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
+		return new GetDetailedBookmarkResponse(
 			result.getTitle(),
 			result.getUrl(),
 			result.getImage(),

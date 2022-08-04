@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
+import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -22,7 +22,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -272,18 +272,18 @@ class BookmarkServiceImplTest {
 		em.clear();
 
 		//when
-		final GetBookmarkResult result = bookmarkService.getBookmark(userId, savedBookmark.getId());
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, savedBookmark.getId());
 
 		//then
 		assertThat(result).extracting(
-			GetBookmarkResult::getTitle,
-			GetBookmarkResult::getUrl,
-			GetBookmarkResult::getImage,
-			GetBookmarkResult::getCategory,
-			GetBookmarkResult::getMemo,
-			GetBookmarkResult::getOpenType,
-			GetBookmarkResult::isFavorite,
-			GetBookmarkResult::getUpdatedAt
+			GetDetailedBookmarkResult::getTitle,
+			GetDetailedBookmarkResult::getUrl,
+			GetDetailedBookmarkResult::getImage,
+			GetDetailedBookmarkResult::getCategory,
+			GetDetailedBookmarkResult::getMemo,
+			GetDetailedBookmarkResult::getOpenType,
+			GetDetailedBookmarkResult::isFavorite,
+			GetDetailedBookmarkResult::getUpdatedAt
 		).containsExactly(
 			savedBookmark.getTitle(),
 			savedBookmark.getLinkMetadata().getLink().getFullLink(),
@@ -316,6 +316,6 @@ class BookmarkServiceImplTest {
 
 		//when then
 		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> bookmarkService.getBookmark(userId, invalidBookmarkId));
+			.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
 	}
 }
