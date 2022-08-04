@@ -24,7 +24,7 @@ public class FollowController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestParam long followeeId
 	) {
-		followService.follow(new FollowCommand(user.id(), followeeId));
+		followService.follow(new FollowCommand(user.getId(), followeeId));
 	}
 
 	@PostMapping("/unfollow")
@@ -32,6 +32,6 @@ public class FollowController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestParam long followeeId
 	) {
-		followService.unfollow(new FollowCommand(user.id(), followeeId));
+		followService.unfollow(new FollowCommand(user.getId(), followeeId));
 	}
 }

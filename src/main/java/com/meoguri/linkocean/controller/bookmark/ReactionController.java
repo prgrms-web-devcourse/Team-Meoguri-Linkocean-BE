@@ -25,7 +25,7 @@ public class ReactionController {
 		final @PathVariable long bookmarkId,
 		final @PathVariable String reactionType
 	) {
-		final ReactionCommand command = new ReactionCommand(user.id(), bookmarkId, reactionType);
+		final ReactionCommand command = new ReactionCommand(user.getId(), bookmarkId, reactionType);
 		reactionService.requestReaction(command);
 	}
 

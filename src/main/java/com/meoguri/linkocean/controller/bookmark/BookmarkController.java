@@ -44,7 +44,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.id())));
+		return of(bookmarkService.registerBookmark(request.toCommand(user.getId())));
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class BookmarkController {
 	) {
 		final String username = queryParams.getUsername();
 		final List<GetBookmarksResult> result = username == null
-			? bookmarkService.getMyBookmarks(user.id(), queryParams.toMySearchCond(user.id()))
+			? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
 			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
 
 		final List<GetBookmarksResponse> response =
@@ -89,7 +89,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.id(), bookmarkId);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
 		return GetDetailedBookmarkResponse.of(result);
 	}
 
@@ -100,7 +100,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.id(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */

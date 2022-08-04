@@ -24,9 +24,9 @@ public class TagController {
 	private final TagService tagService;
 
 	@GetMapping
-	public ListResponse<GetMyTagsResponse> getMyTags(@AuthenticationPrincipal SecurityUser sessionUser) {
+	public ListResponse<GetMyTagsResponse> getMyTags(@AuthenticationPrincipal SecurityUser user) {
 
-		final List<GetMyTagsResponse> tags = tagService.getMyTags(sessionUser.id()).stream()
+		final List<GetMyTagsResponse> tags = tagService.getMyTags(user.getId()).stream()
 			.map(GetMyTagsResponse::ofResult)
 			.collect(toList());
 

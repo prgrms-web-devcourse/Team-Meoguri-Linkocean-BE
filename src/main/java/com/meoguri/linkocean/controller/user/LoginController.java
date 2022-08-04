@@ -24,6 +24,11 @@ public class LoginController {
 	private final ProfileService profileService;
 	private final UserService userService;
 
+	@PostMapping
+	public LoginResponse login(@RequestBody LoginRequest request) {
+		return LoginResponse.of(userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
+	}
+
 	/**
 	 * OAuthLogin의 Default Success Url 로 등록된다
 	 *  로그인이 성공하면 사용자가 정상적인
@@ -31,12 +36,7 @@ public class LoginController {
 	 */
 	@GetMapping("/success")
 	public LoginSuccessReponse loginSuccess(@AuthenticationPrincipal SecurityUser user) {
-		return LoginSuccessReponse.of(profileService.existsByUserId(user.id()));
-	}
-
-	@PostMapping
-	public LoginResponse login(@RequestBody LoginRequest request) {
-		return LoginResponse.of(userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
+		return LoginSuccessReponse.of(profileService.existsByUserId(user.getId()));
 	}
 
 }

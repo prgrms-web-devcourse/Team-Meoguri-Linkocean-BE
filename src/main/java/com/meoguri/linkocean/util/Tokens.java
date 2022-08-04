@@ -10,7 +10,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Tokens {
+public final class Tokens {
 
 	public static String get(final HttpServletRequest request) {
 		return StringUtils.substringAfter(request.getHeader(AUTHORIZATION), "bearer ");

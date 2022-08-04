@@ -35,8 +35,8 @@ public class ProfileController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
-		log.info("session user id {}", user.id());
-		return of(profileService.registerProfile(request.toCommand(user.id())));
+		log.info("session user id {}", user.getId());
+		return of(profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
 	@GetMapping("/me")
@@ -44,9 +44,9 @@ public class ProfileController {
 		@AuthenticationPrincipal SecurityUser user
 	) {
 		return GetMyProfileResponse.of(
-			profileService.getMyProfile(user.id()),
-			tagService.getMyTags(user.id()),
-			categoryService.getUsedCategories(user.id())
+			profileService.getMyProfile(user.getId()),
+			tagService.getMyTags(user.getId()),
+			categoryService.getUsedCategories(user.getId())
 		);
 	}
 }

@@ -7,6 +7,9 @@ import java.util.function.Function;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import lombok.Getter;
+
+@Getter
 public class SecurityUser extends User {
 
 	private final Long id;
@@ -30,18 +33,6 @@ public class SecurityUser extends User {
 		return Optional.ofNullable(securityUser)
 			.map(securityUserResolver)
 			.orElse(defaultValue);
-	}
-
-	public String email() {
-		return email;
-	}
-
-	public String oAuthType() {
-		return oAuthType;
-	}
-
-	public Long id() {
-		return id;
 	}
 
 }
