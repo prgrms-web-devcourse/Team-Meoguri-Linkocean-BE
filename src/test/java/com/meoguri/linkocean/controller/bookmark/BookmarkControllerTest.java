@@ -35,7 +35,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
-		final String link = 링크_메타데이터_조회("http://www.naver.com");
+		final String link = 링크_메타데이터_얻기("http://www.naver.com");
 
 		final String title = "title1";
 		final String memo = "memo";
@@ -62,7 +62,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		유저_등록_로그인("crush@gmail.com", "GOOGLE");
 		프로필_등록("crush", List.of("IT", "인문"));
 
-		링크_메타데이터_조회("http://www.naver.com");
+		링크_메타데이터_얻기("http://www.naver.com");
 
 		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
 
