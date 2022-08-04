@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,7 +19,9 @@ import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
+import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 
 class BookmarkControllerTest extends BaseControllerTest {
@@ -30,12 +34,16 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
+	private long userId;
+
+	@BeforeEach
+	void setUp() throws Exception {
+		userId = 유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("정치", "인문", "사회"));
+	}
+
 	@Test
 	void 북마크_등록_Api_성공() throws Exception {
-		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-		프로필_등록("hani", List.of("정치", "인문", "사회"));
-		final String link = 링크_메타데이터_얻기("http://www.naver.com");
 
 		final String title = "title1";
 		final String memo = "memo";
@@ -43,7 +51,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		final String openType = "private";
 
 		final RegisterBookmarkRequest registerBookmarkRequest =
-			new RegisterBookmarkRequest(link, title, memo, category, openType, null);
+			new RegisterBookmarkRequest(링크_메타데이터_얻기("http://www.naver.com"), title, memo, category, openType, null);
 
 		//when
 		mockMvc.perform(post(basePath).session(session)
@@ -59,17 +67,12 @@ class BookmarkControllerTest extends BaseControllerTest {
 	@Test
 	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
 		//given
-		유저_등록_로그인("crush@gmail.com", "GOOGLE");
-		프로필_등록("crush", List.of("IT", "인문"));
-
-		링크_메타데이터_얻기("http://www.naver.com");
-
 		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
 
 		final long savedBookmarkId = bookmarkService.registerBookmark(
 			new RegisterBookmarkCommand(
 				userId,
-				"https://www.naver.com",
+				링크_메타데이터_얻기("https://www.naver.com"),
 				null,
 				null,
 				null,
@@ -106,4 +109,93 @@ class BookmarkControllerTest extends BaseControllerTest {
 			).andDo(print());
 	}
 
+	@Nested
+	class 내_북마크_목록_조회_테스트 {
+
+		private long bookmarkId1;
+		private long bookmarkId2;
+
+		@Autowired
+		private FavoriteService favoriteService;
+
+		@Autowired
+		private FindBookmarkByIdQuery findBookmarkByIdQuery;
+
+		@BeforeEach
+		void setUp() throws Exception {
+			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("공부"), "all");
+			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "여행", List.of("travel"), "partial");
+			// 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "가정", List.of("shopping"), "private");
+		}
+
+		@Test
+		void 내_북마크_목록_조회_Api_성공_필터링_조건_없이_조회() throws Exception {
+			//given
+			final Bookmark bookmark1 = findBookmarkByIdQuery.findById(bookmarkId1);
+			final Bookmark bookmark2 = findBookmarkByIdQuery.findById(bookmarkId2);
+
+			//when then
+			mockMvc.perform(get(basePath).session(session)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(2),
+					jsonPath("$.bookmarks", hasSize(2)),
+					jsonPath("$.bookmarks[0].id").value(bookmark2.getId()),
+					jsonPath("$.bookmarks[0].title").value(bookmark2.getTitle()),
+					jsonPath("$.bookmarks[0].url").value(bookmark2.getUrl()),
+					jsonPath("$.bookmarks[0].openType").value(bookmark2.getOpenType()),
+					jsonPath("$.bookmarks[0].updatedAt").value(bookmark2.getUpdatedAt().toLocalDate().toString()),
+					jsonPath("$.bookmarks[0].imageUrl").value(bookmark2.getLinkMetadata().getImage()),
+					jsonPath("$.bookmarks[0].likeCount").value(0),
+					jsonPath("$.bookmarks[0].isFavorite").value(false),
+					jsonPath("$.bookmarks[0].isWriter").value(true),
+					jsonPath("$.bookmarks[0].tags", hasSize(1)),
+					jsonPath("$.bookmarks[0].tags[0]").value(bookmark2.getTagNames().get(0)),
+					jsonPath("$.bookmarks[1].id").value(bookmark1.getId())
+				).andDo(print());
+		}
+
+		@Test
+		void 내_북마크_목록_조회_Api_성공_카테고리_필터링() throws Exception {
+			//when then
+			mockMvc.perform(get(basePath).session(session)
+					.param("category", "IT")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(1),
+					jsonPath("$.bookmarks[0].category").value("IT")
+				)
+				.andDo(print());
+		}
+
+		@Test
+		void 내_북마크_목록_조회_Api_성공_즐겨찾기_필터링() throws Exception {
+			//given
+			favoriteService.favorite(userId, bookmarkId1);
+
+			//when then
+			mockMvc.perform(get(basePath).session(session)
+					.param("favorite", "true")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(1),
+					jsonPath("$.bookmarks[0].isFavorite").value(true)
+				).andDo(print());
+		}
+
+		@Test
+		void 내_북마크_목록_조회_Api_성공_태그_필터링() throws Exception {
+			//when then
+			mockMvc.perform(get(basePath).session(session)
+					.param("tags", "공부,travel")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(2)
+				).andDo(print());
+		}
+	}
 }

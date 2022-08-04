@@ -51,10 +51,11 @@ public class BaseControllerTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	protected void 유저_등록_로그인(final String email, final String oAuthType) {
+	protected long 유저_등록_로그인(final String email, final String oAuthType) {
 		final User savedUser = userRepository.save(new User(email, oAuthType));
 
 		session.setAttribute("user", new SessionUser(savedUser));
+		return savedUser.getId();
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
