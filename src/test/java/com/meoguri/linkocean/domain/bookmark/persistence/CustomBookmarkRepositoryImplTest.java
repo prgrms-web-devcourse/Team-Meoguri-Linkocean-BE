@@ -21,6 +21,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -126,7 +127,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByCategory(profile, Category.IT, null);
+		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, Category.IT, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -135,7 +136,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리와_검색어로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByCategory(profile, Category.IT, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, Category.IT, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -144,8 +145,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByCategory(profile, Category.IT, null, "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
+			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "upload", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -159,8 +161,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByCategory(profile, Category.IT, null, "like", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
+			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "like", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -173,8 +176,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByCategory(profile, Category.IT, "1", "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
+			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "upload", "1")
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -185,7 +189,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByFavorite(profile, true, null);
+		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, true, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -194,7 +198,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByFavorite(profile, true, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, true, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -203,8 +207,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByFavorite(profile, true, null, "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
+			profile, true, new FindBookmarksDefaultCond(1, 8, "upload", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -220,8 +225,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByFavorite(profile, true, null, "like", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
+			profile, true, new FindBookmarksDefaultCond(1, 8, "like", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -232,8 +238,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByFavorite(profile, true, "1", "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
+			profile, true, new FindBookmarksDefaultCond(1, 8, "upload", "1")
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -244,7 +251,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByTags(profile, List.of("tag1"), null);
+		final long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, List.of("tag1"), null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -253,7 +260,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByTags(profile, List.of("tag1"), "1");
+		final long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, List.of("tag1"), "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -262,8 +269,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByTags(profile, List.of("tag1"), null, "upload", 1, 100);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
+			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "upload", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -277,8 +285,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByTags(profile, List.of("tag1"), null, "like", 1, 100);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
+			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "like", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -291,8 +300,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByTags(profile, List.of("tag1"), "1", "upload", 1, 100);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
+			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "upload", "1")
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -303,7 +313,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_총_개수() {
 		//give when
-		final long totalCount = bookmarkRepository.countByProfile(profile, null);
+		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(3L);
@@ -312,7 +322,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfile(profile, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -321,8 +331,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByProfile(profile, null, "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
+			profile, new FindBookmarksDefaultCond(1, 8, "upload", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -334,8 +345,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByProfile(profile, null, "like", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
+			profile, new FindBookmarksDefaultCond(1, 8, "like", null)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -346,8 +358,9 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository
-			.searchByProfile(profile, "1", "upload", 1, 10);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
+			profile, new FindBookmarksDefaultCond(1, 8, "upload", "1")
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
