@@ -34,6 +34,7 @@ public class NotificationController {
 	}
 
 	/* 알림 조회 */
+	// 개발 속도 및 적절한 방법을 모르는 고려하여 그냥 Entity 를 반환함 추후 학습하여 리팩토링
 	@GetMapping
 	public SliceResponse<Notification> getNotifications(
 		final @LoginUser SessionUser user
