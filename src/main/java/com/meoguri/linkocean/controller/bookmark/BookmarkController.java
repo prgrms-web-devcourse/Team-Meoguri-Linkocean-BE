@@ -22,7 +22,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParams;
-import com.meoguri.linkocean.controller.common.ListResponse;
+import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -53,7 +53,7 @@ public class BookmarkController {
 	 * - 내 북마크 목록 조회와 다른 사람 북마크 목록 조회로 나뉜다
 	 */
 	@GetMapping
-	public ListResponse<GetBookmarksResponse> getBookmarks(
+	public PageResponse<GetBookmarksResponse> getBookmarks(
 		final @LoginUser SessionUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
@@ -64,7 +64,7 @@ public class BookmarkController {
 
 		final List<GetBookmarksResponse> response =
 			result.stream().map(GetBookmarksResponse::of).collect(toList());
-		return ListResponse.of("bookmarks", response);
+		return PageResponse.of("bookmarks", response);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class BookmarkController {
 	 * - 북마크 정보와 함께 작성자 프로필 정보를 반환한다
 	 */
 	@GetMapping("/feed")
-	public ListResponse<GetFeedBookmarksResponse> getFeedBookmarks(
+	public PageResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @LoginUser SessionUser user,
 		final @RequestBody GetBookmarkQueryParams queryParams
 	) {
@@ -80,7 +80,7 @@ public class BookmarkController {
 
 		final List<GetFeedBookmarksResponse> response =
 			result.stream().map(GetFeedBookmarksResponse::of).collect(toList());
-		return ListResponse.of("bookmarks", response);
+		return PageResponse.of("bookmarks", response);
 	}
 
 	/* 북마크 상세 조회 */
