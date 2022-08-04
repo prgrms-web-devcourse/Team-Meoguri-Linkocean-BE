@@ -174,11 +174,11 @@ class ProfileServiceImplTest {
 
 			//when
 			final List<SearchProfileResult> result1
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user1Id));
+				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user1Id), profile1Id);
 			final List<SearchProfileResult> result2
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user2Id));
+				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user2Id), profile2Id);
 			final List<SearchProfileResult> result3
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user3Id));
+				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user3Id), profile3Id);
 
 			//then
 			assertThat(result1).isEmpty();
@@ -214,11 +214,11 @@ class ProfileServiceImplTest {
 
 			//when
 			final List<SearchProfileResult> result1
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user1Id));
+				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user1Id), profile1Id);
 			final List<SearchProfileResult> result2
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user2Id));
+				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user2Id), profile2Id);
 			final List<SearchProfileResult> result3
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user3Id));
+				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user3Id), profile3Id);
 
 			//then
 			assertThat(result1)
