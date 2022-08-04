@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
@@ -41,10 +41,10 @@ public class BookmarkController {
 	/* 북마크 등록 */
 	@PostMapping
 	public SimpleIdResponse registerBookmark(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.getId())));
+		return of(bookmarkService.registerBookmark(request.toCommand(user.id())));
 	}
 
 	/**
@@ -54,12 +54,12 @@ public class BookmarkController {
 	 */
 	@GetMapping
 	public ListResponse<GetBookmarksResponse> getBookmarks(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
 		final String username = queryParams.getUsername();
 		final List<GetBookmarksResult> result = username == null
-			? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
+			? bookmarkService.getMyBookmarks(user.id(), queryParams.toMySearchCond(user.id()))
 			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
 
 		final List<GetBookmarksResponse> response =
@@ -73,7 +73,7 @@ public class BookmarkController {
 	 */
 	@GetMapping("/feed")
 	public ListResponse<GetFeedBookmarksResponse> getFeedBookmarks(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody GetBookmarkQueryParams queryParams
 	) {
 		final List<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(queryParams.toFeedSearchCond());
@@ -86,27 +86,27 @@ public class BookmarkController {
 	/* 북마크 상세 조회 */
 	@GetMapping("/{bookmarkId}")
 	public GetDetailedBookmarkResponse getDetailedBookmark(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.id(), bookmarkId);
 		return GetDetailedBookmarkResponse.of(result);
 	}
 
 	/* 북마크 업데이트 */
 	@PutMapping("/{bookmarkId}")
 	public void updateBookmark(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.id(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
 	@DeleteMapping("/{bookmarkId}")
 	public void deleteBookmark(
-		final @LoginUser SessionUser user,
+		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
 		// TODO - 구현

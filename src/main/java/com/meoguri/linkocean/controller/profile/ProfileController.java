@@ -2,14 +2,14 @@ package com.meoguri.linkocean.controller.profile;
 
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
@@ -32,21 +32,21 @@ public class ProfileController {
 
 	@PostMapping
 	public SimpleIdResponse createProfile(
-		@LoginUser SessionUser user,
+		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
-		log.info("session user id {}", user.getId());
-		return of(profileService.registerProfile(request.toCommand(user.getId())));
+		log.info("session user id {}", user.id());
+		return of(profileService.registerProfile(request.toCommand(user.id())));
 	}
 
 	@GetMapping("/me")
 	public GetMyProfileResponse getMyProfile(
-		@LoginUser SessionUser user
+		@AuthenticationPrincipal SecurityUser user
 	) {
 		return GetMyProfileResponse.of(
-			profileService.getMyProfile(user.getId()),
-			tagService.getMyTags(user.getId()),
-			categoryService.getUsedCategories(user.getId())
+			profileService.getMyProfile(user.id()),
+			tagService.getMyTags(user.id()),
+			categoryService.getUsedCategories(user.id())
 		);
 	}
 }
