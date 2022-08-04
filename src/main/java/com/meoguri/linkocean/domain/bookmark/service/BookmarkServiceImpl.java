@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
-import static com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult.*;
+import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.Objects.*;
 
@@ -24,8 +24,8 @@ import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
@@ -121,7 +121,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	//TODO : 쿼리 튜닝
 	@Transactional(readOnly = true)
 	@Override
-	public GetBookmarkResult getBookmark(final long userId, final long bookmarkId) {
+	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
 
 		final Bookmark bookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
@@ -133,7 +133,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			findProfileByUserIdQuery.findByUserId(userId)
 		).isPresent();
 
-		return GetBookmarkResult.builder()
+		return GetDetailedBookmarkResult.builder()
 			.title(bookmark.getTitle())
 			.url(bookmark.getLinkMetadata().getLink().getFullLink())
 			.image(bookmark.getLinkMetadata().getImage())
