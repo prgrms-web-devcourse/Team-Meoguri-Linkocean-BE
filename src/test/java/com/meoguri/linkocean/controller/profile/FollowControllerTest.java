@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.profile;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,7 +34,7 @@ class FollowControllerTest extends BaseControllerTest {
 	void 팔로우_Api_성공() throws Exception {
 		//when
 		mockMvc.perform(post(baseUrl + "/follow?followeeId=" + hahaId)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
@@ -57,7 +58,7 @@ class FollowControllerTest extends BaseControllerTest {
 
 		//when
 		mockMvc.perform(post(baseUrl + "/follow?followeeId=" + hahaId)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
@@ -71,7 +72,7 @@ class FollowControllerTest extends BaseControllerTest {
 
 		//when
 		mockMvc.perform(post(baseUrl + "/unfollow?followeeId=" + hahaId)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
@@ -82,7 +83,7 @@ class FollowControllerTest extends BaseControllerTest {
 	void 팔로우_안하고_언팔로우_하면_실패() throws Exception {
 		//when
 		mockMvc.perform(post(baseUrl + "/unfollow?followeeId=" + hahaId)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then

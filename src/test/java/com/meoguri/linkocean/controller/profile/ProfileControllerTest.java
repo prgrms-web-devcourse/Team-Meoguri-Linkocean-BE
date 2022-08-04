@@ -2,6 +2,7 @@ package com.meoguri.linkocean.controller.profile;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,7 +32,8 @@ class ProfileControllerTest extends BaseControllerTest {
 		final CreateProfileRequest createProfileRequest = new CreateProfileRequest(username, categories);
 
 		//when
-		mockMvc.perform(post(basePath).session(session)
+		mockMvc.perform(post(basePath)
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(createJson(createProfileRequest)))
 
@@ -57,7 +59,8 @@ class ProfileControllerTest extends BaseControllerTest {
 		프로필_등록("hani", List.of("인문", "정치", "사회"));
 
 		//when
-		mockMvc.perform(get(basePath + "/me").session(session)
+		mockMvc.perform(get(basePath + "/me")
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
@@ -88,7 +91,8 @@ class ProfileControllerTest extends BaseControllerTest {
 		북마크_등록(링크_메타데이터_조회("https://github.com"), "IT", null, "private");
 
 		//when
-		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
+		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me")
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
@@ -122,7 +126,8 @@ class ProfileControllerTest extends BaseControllerTest {
 		북마크_등록(링크_메타데이터_조회("http://www.naver.com"), null, null, "private");
 
 		//when
-		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me").session(session)
+		final MockHttpServletResponse response = mockMvc.perform(get(basePath + "/me")
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then

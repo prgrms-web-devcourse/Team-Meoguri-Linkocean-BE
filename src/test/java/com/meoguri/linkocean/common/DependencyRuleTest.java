@@ -72,6 +72,7 @@ class DependencyRuleTest {
 					|| input.getPackage().getName().equals("service")
 					|| input.getName().contains("Service")
 					|| input.getName().contains("Scheduler");
+				// || input.getName().contains("Filter");
 			}
 		};
 	}

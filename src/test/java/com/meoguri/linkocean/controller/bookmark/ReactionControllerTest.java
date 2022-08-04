@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
+import static org.apache.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
@@ -22,7 +22,7 @@ class ReactionControllerTest extends BaseControllerTest {
 	@Autowired
 	private BookmarkService bookmarkService;
 
-		@Test
+	@Test
 	void 리액션_추가() throws Exception {
 
 		//given
@@ -30,17 +30,19 @@ class ReactionControllerTest extends BaseControllerTest {
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 
 		/* "userId" from session */
-		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
+
+		final Long userId = getUserId(token);
 
 		/* "bookmarkId" from bookmarkService */
 		final long savedBookmarkId = bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(userId, 링크_메타데이터_조회("http://www.naver.com"), "title", "memo", "인문", "all", List.of("tag1", "tag2"))
+			new RegisterBookmarkCommand(userId, 링크_메타데이터_조회("http://www.naver.com"), "title", "memo", "인문", "all",
+				List.of("tag1", "tag2"))
 		);
 
 		//when
 		mockMvc.perform(post(basePath + "/{bookmarkId}/reactions/{reactionType}", savedBookmarkId, "like")
-			.session(session)
-			.contentType(MediaType.APPLICATION_JSON))
+				.header(AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
 			.andExpect(status().isOk())
