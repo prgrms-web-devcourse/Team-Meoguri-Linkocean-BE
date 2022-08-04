@@ -341,8 +341,10 @@ class BookmarkServiceImplTest {
 
 			//then
 			assertAll(
-				() -> assertThat(result.getReactionCount()).containsExactlyEntriesOf(Map.of("like", 1L, "hate", 0L)),
-				() -> assertThat(result.getReaction()).containsExactlyEntriesOf(Map.of("like", true, "hate", false))
+				() -> assertThat(result.getReactionCount())
+					.containsExactlyInAnyOrderEntriesOf(Map.of("like", 1L, "hate", 0L)),
+				() -> assertThat(result.getReaction())
+					.containsExactlyInAnyOrderEntriesOf(Map.of("like", true, "hate", false))
 			);
 		}
 
