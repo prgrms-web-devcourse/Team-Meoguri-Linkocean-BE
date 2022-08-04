@@ -28,6 +28,7 @@ public final class GetDetailedBookmarkResponse {
 	private final LocalDate updatedAt;
 	private final List<String> tags;
 	private final Map<String, Long> reactionCount;
+	private final Map<String, Boolean> reaction;
 	private final GetBookmarkProfileResponse profile;
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
@@ -42,6 +43,7 @@ public final class GetDetailedBookmarkResponse {
 			result.getUpdatedAt().toLocalDate(),
 			result.getTags(),
 			result.getReactionCount(),
+			result.getReaction(),
 			GetBookmarkProfileResponse.of(result.getProfile())
 		);
 	}

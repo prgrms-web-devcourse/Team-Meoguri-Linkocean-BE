@@ -287,6 +287,6 @@ class ProfileServiceImplTest {
 
 	static ProfileSearchCond defaultSearchCondOfUserId(long userId, String username) {
 
-		return new ProfileSearchCond(userId, null, null, null);
+		return new ProfileSearchCond(userId, null, null, username);
 	}
 }
