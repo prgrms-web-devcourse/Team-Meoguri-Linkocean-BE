@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -134,5 +135,68 @@ class ProfileControllerTest extends BaseControllerTest {
 				)
 				.andDo(print());
 		}
+	}
+
+	@Nested
+	class 프로필_목록_조회_시리즈_테스트 {
+		long user1ProfileId;
+		long user2ProfileId;
+		long user3ProfileId;
+
+		@BeforeEach
+		void setUp() throws Exception {
+			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			user1ProfileId = 프로필_등록("user1", List.of("IT"));
+
+			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			user2ProfileId = 프로필_등록("user2", List.of("IT"));
+
+			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			user3ProfileId = 프로필_등록("user3", List.of("IT"));
+
+			로그인("user1@gmail.com", "GOOGLE");
+			팔로우(user2ProfileId);
+
+			로그인("user2@gmail.com", "GOOGLE");
+			팔로우(user1ProfileId);
+			팔로우(user3ProfileId);
+		}
+
+		// 1. 프로필 목록 조회 - 머구리 찾기 / 이름으로 필터링
+		@Test
+		void 프로필_목록_조회_Api_성공() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
+
+			mockMvc.perform(get(basePath + "?username=" + "user")
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.profiles").isArray(),
+					jsonPath("$.profiles", hasSize(3)),
+					jsonPath("$.profiles[0].id").value(user1ProfileId),
+					jsonPath("$.profiles[1].id").value(user2ProfileId),
+					jsonPath("$.profiles[2].id").value(user3ProfileId),
+					jsonPath("$.profiles[0].isFollow").value(false),
+					jsonPath("$.profiles[1].isFollow").value(true),
+					jsonPath("$.profiles[2].isFollow").value(false)
+				);
+		}
+
+		@Test
+		void 프로필_목록_조회_Api_유저네임을_빠트리면_실패() throws Exception {
+			로그인("user1@gmail.com", "GOOGLE");
+
+			mockMvc.perform(get(basePath)
+					.session(session)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+		}
+
+		// TODO
+		//2. 팔로워 조회
+
+		// TODO
+		//3. 팔로이 조회
 	}
 }
