@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.configuration.security.oauth.LoginUser;
 import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetMyTagsResponse;
-import com.meoguri.linkocean.controller.common.ListResponse;
+import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,12 @@ public class TagController {
 	private final TagService tagService;
 
 	@GetMapping
-	public ListResponse<GetMyTagsResponse> getMyTags(@LoginUser SessionUser sessionUser) {
+	public PageResponse<GetMyTagsResponse> getMyTags(@LoginUser SessionUser sessionUser) {
 
 		final List<GetMyTagsResponse> tags = tagService.getMyTags(sessionUser.getId()).stream()
 			.map(GetMyTagsResponse::ofResult)
 			.collect(toList());
 
-		return ListResponse.of("tags", tags);
+		return PageResponse.of("tags", tags);
 	}
 }
