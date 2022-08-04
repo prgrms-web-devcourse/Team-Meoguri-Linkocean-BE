@@ -33,8 +33,8 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final TagRepository tagRepository;
 	private final FavoriteRepository favoriteRepository;
 	private final ReactionRepository reactionRepository;
-	private final FollowRepository followRepository;
+	private final CheckIsFollowQuery checkIsFollowQuery;
 
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
@@ -59,12 +59,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
-
-		/* 동일한 url의 북마크는 만들 수 없다. */
-		bookmarkRepository.findByProfileAndLinkMetadata(profile, linkMetadata)
-			.ifPresent(bookmark -> {
-				throw new IllegalArgumentException(String.format("%s의 북마크가 이미 존재합니다.", command.getUrl()));
-			});
 
 		/* 북마크 생성 & 저장 */
 		final Bookmark newBookmark = Bookmark.builder()
@@ -123,15 +117,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
 
-		final Bookmark bookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
+		final Bookmark bookmark = bookmarkRepository
+			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(bookmark.getProfile(), bookmark);
+		final Profile owner = bookmark.getProfile();
+		final Profile currentUserProfile = findProfileByUserIdQuery.findByUserId(userId);
 
-		final boolean isFollow = followRepository.findByProfiles(
-			bookmark.getProfile(),
-			findProfileByUserIdQuery.findByUserId(userId)
-		).isPresent();
+		final boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
+		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
 
 		return GetDetailedBookmarkResult.builder()
 			.title(bookmark.getTitle())
