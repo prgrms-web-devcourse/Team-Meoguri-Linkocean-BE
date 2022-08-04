@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.profile;
 
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import com.meoguri.linkocean.controller.profile.support.ProfileSearchTab;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 
 import lombok.RequiredArgsConstructor;
@@ -81,6 +83,13 @@ public class ProfileController {
 		final @RequestParam ProfileSearchTab tab,
 		final GetProfileQueryParams queryParams
 	) {
-		throw new IllegalArgumentException("user " + user.getId() + "tab : " + tab);
+		final ProfileSearchCond searchCond = queryParams.toSearchCond(user.getId());
+		final List<SearchProfileResult> results =
+			tab == ProfileSearchTab.FOLLOWER ? profileService.searchFollowerProfiles(searchCond) :
+				tab == ProfileSearchTab.FOLLOWEE ? profileService.searchFolloweeProfiles(searchCond) : emptyList();
+
+		final List<GetProfilesResponse> response =
+			results.stream().map(GetProfilesResponse::of).collect(toList());
+		return SliceResponse.of("profiles", response);
 	}
 }
