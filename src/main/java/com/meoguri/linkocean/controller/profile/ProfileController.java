@@ -24,8 +24,8 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
-import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 
