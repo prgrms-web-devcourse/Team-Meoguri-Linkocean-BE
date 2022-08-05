@@ -23,12 +23,16 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
+import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 import com.meoguri.linkocean.infrastructure.s3.S3Uploader;
@@ -60,11 +64,11 @@ public class ProfileController {
 	public GetMyProfileResponse getMyProfile(
 		@AuthenticationPrincipal SecurityUser user
 	) {
-		return GetMyProfileResponse.of(
-			profileService.getMyProfile(user.getId()),
-			tagService.getMyTags(user.getId()),
-			categoryService.getUsedCategories(user.getId())
-		);
+		final GetMyProfileResult profile = profileService.getMyProfile(user.getId());
+		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
+		final List<String> categories = categoryService.getUsedCategories(user.getId());
+
+		return GetMyProfileResponse.of(profile, tags, categories);
 	}
 
 	@PostMapping("/me")
@@ -134,5 +138,17 @@ public class ProfileController {
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
+	}
+
+	@GetMapping("/{profileId}")
+	public GetDetailedProfileResponse getDetailedProfile(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @PathVariable long profileId
+	) {
+		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getId(), profileId);
+		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
+		final List<String> categories = categoryService.getUsedCategories(user.getId());
+
+		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
 }
