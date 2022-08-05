@@ -153,7 +153,8 @@ class ProfileControllerTest extends BaseControllerTest {
 				.param("bio", bio)
 				.header(AUTHORIZATION, token))
 			//then
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(print());
 
 		// 수정된 프로필 조회
 		//when
@@ -161,8 +162,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		//then
 		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
-		// TODO - 한글 꺠짐 문제 해결
-		// assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
+		assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
 		assertThat(myProfile.getBio()).isEqualTo(bio);
 		assertThat(myProfile.getImage()).isNotNull();
 	}
