@@ -67,8 +67,8 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getImage(),
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
-			followRepository.countFollowerByUserId(userId),
-			followRepository.countFolloweeByUserId(userId)
+			followRepository.countFollowerByProfile(profile),
+			followRepository.countFolloweeByProfile(profile)
 		);
 	}
 
@@ -85,8 +85,8 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
 			checkIsFollowQuery.isFollow(currentUser, profile),
-			followRepository.countFollowerByUserId(userId),
-			followRepository.countFolloweeByUserId(userId)
+			followRepository.countFollowerByProfile(profile),
+			followRepository.countFolloweeByProfile(profile)
 		);
 	}
 
