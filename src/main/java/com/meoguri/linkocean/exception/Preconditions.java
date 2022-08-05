@@ -38,4 +38,10 @@ public final class Preconditions {
 			throw new LinkoceanRuntimeException();
 		}
 	}
+
+	public static void checkNotNull(final Object target) {
+		if (target == null) {
+			throw new NullPointerException();
+		}
+	}
 }

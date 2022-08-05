@@ -1,9 +1,9 @@
 package com.meoguri.linkocean.infrastructure.s3;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,45 +31,27 @@ public class S3Uploader {
 		if (multipartFile == null) {
 			return null;
 		}
+		return upload(convert(multipartFile), dirName);
+	}
+
+	private File convert(MultipartFile multipartFile) {
+		final String originalFilename = multipartFile.getOriginalFilename();
+		checkNotNull(originalFilename);
 		try {
-			File uploadFile = convert(multipartFile)
-				.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다"));
-			return upload(uploadFile, dirName);
+			final File file = new File(originalFilename);
+			multipartFile.transferTo(file);
+			return file;
 		} catch (IOException e) {
-			throw new RuntimeException("S3 업로드에 실패했습니다", e);
+			log.info("failed to convert MultipartFile with original file name : {} to File", originalFilename);
+			throw new RuntimeException(e);
 		}
 	}
 
 	private String upload(File uploadFile, String dirName) {
 		String fileName = dirName + "/" + uploadFile.getName();
-		String uploadImageUrl = putS3(uploadFile, fileName);
-		removeNewFile(uploadFile);
-		return uploadImageUrl;
-	}
-
-	private String putS3(File uploadFile, String fileName) {
-		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(
-			CannedAccessControlList.PublicRead));
+		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
+			.withCannedAcl(CannedAccessControlList.PublicRead));
 		return amazonS3Client.getUrl(bucket, fileName).toString();
-	}
-
-	private void removeNewFile(File targetFile) {
-		if (targetFile.delete()) {
-			log.info("파일이 삭제되었습니다.");
-		} else {
-			log.info("파일이 삭제되지 못했습니다.");
-		}
-	}
-
-	private Optional<File> convert(MultipartFile file) throws IOException {
-		File convertFile = new File(file.getOriginalFilename());
-		if (convertFile.createNewFile()) {
-			try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-				fos.write(file.getBytes());
-			}
-			return Optional.of(convertFile);
-		}
-		return Optional.empty();
 	}
 }
 
