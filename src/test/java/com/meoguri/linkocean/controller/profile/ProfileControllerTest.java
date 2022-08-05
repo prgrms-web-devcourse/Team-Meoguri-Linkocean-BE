@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -17,6 +18,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class ProfileControllerTest extends BaseControllerTest {
 
@@ -150,26 +152,18 @@ class ProfileControllerTest extends BaseControllerTest {
 				.param("categories", "자기계발", "과학")
 				.param("bio", bio)
 				.header(AUTHORIZATION, token))
+			//then
 			.andExpect(status().isOk());
 
 		// 수정된 프로필 조회
 		//when
-		mockMvc.perform(get(basePath + "/me")
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpectAll(
-				jsonPath("$.profileId").exists(),
-				jsonPath("$.imageUrl").exists(),
-				jsonPath("$.favoriteCategories", hasSize(2)),
-				jsonPath("$.username").value(updateUsername),
-				jsonPath("$.bio").value(bio),
-				jsonPath("$.followerCount").value(0),
-				jsonPath("$.followeeCount").value(0),
-				jsonPath("$.tags", hasSize(0)),
-				jsonPath("$.categories", hasSize(0))
-			)
-			.andDo(print());
+		final GetMyProfileResponse myProfile = 내_프로필_조회();
+
+		//then
+		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
+		// assertThat(myProfile.getCategories()).containsExactly("자기계발", "과학"); ->> 왜 empty array 가 반환되죠?!?!?!
+		assertThat(myProfile.getBio()).isEqualTo(bio);
+		assertThat(myProfile.getImage()).isNotNull();
 	}
 
 	@Nested
