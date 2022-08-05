@@ -29,13 +29,21 @@ import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.service.FollowService;
+import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
+import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
@@ -366,6 +374,99 @@ class BookmarkServiceImplTest {
 			//when then
 			assertThatExceptionOfType(LinkoceanRuntimeException.class)
 				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
+		}
+	}
+
+	@Nested
+	class 다른_사람_북마크_목록_조회_테스트 {
+
+		@Autowired
+		private ProfileService profileService;
+
+		@Autowired
+		private LinkMetadataService linkMetadataService;
+
+		@Autowired
+		private FollowService followService;
+
+		private long otherUserId;
+		private long otherProfileId;
+
+		private long bookmarkId1;
+		private long bookmarkId2;
+		private long bookmarkId3;
+
+		@BeforeEach
+		void setUp() {
+			otherUserId = userRepository.save(new User("crush@gmail.com", "GOOGLE")).getId();
+
+			final RegisterProfileCommand command = new RegisterProfileCommand(otherUserId, "crush", emptyList());
+			otherProfileId = profileService.registerProfile(command);
+
+			linkMetadataService.getTitleByLink("http://www.naver.com");
+			final RegisterBookmarkCommand command1 = new RegisterBookmarkCommand(
+				otherUserId,
+				"http://www.naver.com",
+				"title1",
+				null,
+				"IT",
+				"all",
+				List.of("tag1", "tag2"));
+			bookmarkId1 = bookmarkService.registerBookmark(command1);
+
+			linkMetadataService.getTitleByLink("http://www.daum.com");
+			final RegisterBookmarkCommand command2 = new RegisterBookmarkCommand(
+				otherUserId,
+				"http://www.daum.com",
+				"title2",
+				null,
+				"IT",
+				"partial",
+				List.of("tag2"));
+			bookmarkId2 = bookmarkService.registerBookmark(command2);
+
+			linkMetadataService.getTitleByLink("http://www.coupang.com");
+			final RegisterBookmarkCommand command3 = new RegisterBookmarkCommand(
+				otherUserId,
+				"http://www.coupang.com",
+				"title3",
+				null,
+				"가정",
+				"private",
+				List.of("tag1"));
+			bookmarkId3 = bookmarkService.registerBookmark(command3);
+		}
+
+		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all인 글만 볼 수 있다 */
+		@Test
+		void 다른_사람_북마크_목록_조회() {
+			//given
+			//when
+			final PageResult<GetBookmarksResult> otherBookmarkResults = bookmarkService.getOtherBookmarks(userId,
+				new OtherBookmarkSearchCond(
+					otherProfileId, null, null, null, null, false, null, null));
+
+			//then
+			assertThat(otherBookmarkResults.getData()).hasSize(1)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
+				.containsExactly(tuple(bookmarkId1, "all"));
+		}
+
+		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial인 글을 볼 수 있다 */
+		@Test
+		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
+			//given
+			followService.follow(new FollowCommand(userId, otherProfileId));
+
+			//when
+			final PageResult<GetBookmarksResult> otherBookmarkResults = bookmarkService.getOtherBookmarks(userId,
+				new OtherBookmarkSearchCond(
+					otherProfileId, null, null, null, null, false, null, null));
+
+			//then
+			assertThat(otherBookmarkResults.getData()).hasSize(2)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
+				.containsExactly(tuple(bookmarkId2, "partial"), tuple(bookmarkId1, "all"));
 		}
 	}
 }
