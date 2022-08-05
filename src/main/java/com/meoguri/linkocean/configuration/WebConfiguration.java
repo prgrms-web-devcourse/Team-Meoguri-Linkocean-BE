@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.meoguri.linkocean.controller.bookmark.support.GetBookmarkQueryParamsArgumentResolver;
-import com.meoguri.linkocean.controller.profile.support.GetProfileQueryParamsArgumentResolver;
-import com.meoguri.linkocean.controller.profile.support.ProfileSearchTabConverterFactory;
+import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParamsArgumentResolver;
+import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParamsArgumentResolver;
+import com.meoguri.linkocean.configuration.resolver.ProfileSearchTabConverterFactory;
 
 import lombok.RequiredArgsConstructor;
 

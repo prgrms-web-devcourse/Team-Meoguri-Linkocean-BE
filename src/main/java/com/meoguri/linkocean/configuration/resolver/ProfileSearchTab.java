@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.profile.support;
+package com.meoguri.linkocean.configuration.resolver;
 
 /**
  * 프로필 검색 페이지의 탭

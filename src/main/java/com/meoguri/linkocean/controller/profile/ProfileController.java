@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParams;
+import com.meoguri.linkocean.configuration.resolver.ProfileSearchTab;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
-import com.meoguri.linkocean.controller.profile.support.GetProfileQueryParams;
-import com.meoguri.linkocean.controller.profile.support.ProfileSearchTab;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
