@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,48 +12,32 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class GetFeedBookmarksResponse {
 
+	private final long id;
 	private final String title;
 	private final String url;
-	private final String image;
+	private final String openType;
 	private final String category;
-	private final boolean isFavorite;
 	private final LocalDateTime updatedAt;
-	private final List<String> tags;
-	private final int linkCount;
-	private final GetFeedBookmarkProfileResponse profile;
 
-	public static GetFeedBookmarksResponse of(final GetFeedBookmarksResult result) {
-		return new GetFeedBookmarksResponse(
-			result.getTitle(),
-			result.getUrl(),
-			result.getImage(),
-			result.getCategory(),
-			result.isFavorite(),
-			result.getUpdatedAt(),
-			result.getTags(),
-			result.getLikeCount(),
-			GetFeedBookmarkProfileResponse.of(result.getProfile())
-		);
-	}
+	private final long likeCount;
+	private final Boolean isFavorite;
+	private final Boolean isWriter;
+
+	@JsonProperty("imageUrl")
+	private final String image;
+	private final List<String> tags;
+
+	private final GetFeedBookmarkProfileResponse profile;
 
 	@Getter
 	@RequiredArgsConstructor
-	static class GetFeedBookmarkProfileResponse {
+	public static class GetFeedBookmarkProfileResponse {
 
 		private final long profileId;
 		private final String username;
 
 		@JsonProperty("imageUrl")
 		private final String image;
-
-		public static GetFeedBookmarkProfileResponse of(
-			final GetFeedBookmarksResult.ProfileResult profile) {
-			return new GetFeedBookmarkProfileResponse(
-				profile.getId(),
-				profile.getUsername(),
-				profile.getImage()
-			);
-		}
+		private final Boolean isFollow;
 	}
-
 }

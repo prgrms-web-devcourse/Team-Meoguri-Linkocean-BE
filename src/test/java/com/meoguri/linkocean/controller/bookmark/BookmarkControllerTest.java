@@ -184,4 +184,14 @@ class BookmarkControllerTest extends BaseControllerTest {
 				).andDo(print());
 		}
 	}
+
+	@Test
+	void 다른_사람_북마크_조회_Api_더미_데이터_반환_테스트() throws Exception {
+		//when then
+		mockMvc.perform(get(basePath + "/others/1")
+				.header(AUTHORIZATION, token)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 }
