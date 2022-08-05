@@ -2,9 +2,9 @@ package com.meoguri.linkocean.controller.bookmark.support;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +25,8 @@ public final class GetBookmarkQueryParams {
 		return new MyBookmarkSearchCond(page, size, order, favorite, category, tags, searchTitle);
 	}
 
-	// TODO - 구현
-	public BookmarkByUsernameSearchCond toUsernameSearchCond(final String username) {
-		return null;
+	public OtherBookmarkSearchCond toOtherSearchCond(final Long id) {
+		return new OtherBookmarkSearchCond(id, page, size, order, searchTitle, favorite, category, tags);
 	}
 
 	public FeedBookmarksSearchCond toFeedSearchCond() {

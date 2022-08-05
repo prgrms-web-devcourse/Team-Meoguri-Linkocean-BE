@@ -25,12 +25,12 @@ import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
@@ -290,7 +290,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	//TODO
 	@Override
 	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId,
-		final BookmarkByUsernameSearchCond searchCond) {
+		final OtherBookmarkSearchCond searchCond) {
 		return null;
 	}
 
