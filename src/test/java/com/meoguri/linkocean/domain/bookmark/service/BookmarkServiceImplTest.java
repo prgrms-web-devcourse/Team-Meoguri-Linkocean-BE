@@ -261,6 +261,55 @@ class BookmarkServiceImplTest {
 	}
 
 	@Nested
+	class 북마크_삭제_테스트 {
+
+		private Bookmark bookmark;
+
+		@BeforeEach
+		void setUp() {
+			bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
+		}
+
+		@Test
+		void 북마크_삭제_성공() {
+			//given, when
+			bookmarkService.removeBookmark(userId, bookmark.getId());
+
+			//then
+			em.flush();
+			em.clear();
+
+			final Optional<Bookmark> updatedBookmark = bookmarkRepository.findById(bookmark.getId());
+			assertThat(updatedBookmark).isEmpty();
+		}
+
+		@Test
+		void 북마크_삭제_실패_존재하지_않는_북마크() {
+			//given
+			final long invalidBookmarkId = 10L;
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.removeBookmark(userId, invalidBookmarkId));
+		}
+
+		@Test
+		void 북마크_삭제_실패_다른_사용자의_북마크_삭제_시도() {
+			//given
+			final User anotherUser = createUser("hani@mail.com", "NAVER");
+			userRepository.save(anotherUser);
+
+			final Profile anotherProfile = createProfile(anotherUser, "crush");
+			profileRepository.save(anotherProfile);
+
+			//when then
+			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+				.isThrownBy(() -> bookmarkService.removeBookmark(anotherUser.getId(), bookmark.getId()));
+		}
+
+	}
+
+	@Nested
 	class 북마크_상세_조회_테스트 {
 
 		private Bookmark bookmark;
