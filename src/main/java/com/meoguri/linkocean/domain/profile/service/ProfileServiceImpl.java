@@ -15,6 +15,7 @@ import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
+import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -67,8 +68,7 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
 			followRepository.countFollowerByUserId(userId),
-			followRepository.countFolloweeByUserId(userId),
-			false
+			followRepository.countFolloweeByUserId(userId)
 		);
 	}
 
@@ -153,6 +153,11 @@ public class ProfileServiceImpl implements ProfileService {
 		final List<Boolean> isFollows = checkIsFollows(currentUserProfileId, profilesId);
 
 		return getResult(profiles, isFollows);
+	}
+
+	@Override
+	public GetDetailedProfileResult getByProfileId(final long userId, final long profileId) {
+		return null;
 	}
 
 	/**
