@@ -56,7 +56,7 @@ public class ProfileController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
-		log.info("session user id {}", user.getId());
+		log.info("user id {}", user.getId());
 		return of(profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
