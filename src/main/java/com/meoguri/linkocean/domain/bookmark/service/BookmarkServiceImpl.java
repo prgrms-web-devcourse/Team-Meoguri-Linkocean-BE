@@ -289,13 +289,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	//TODO
 	@Override
-	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
+	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId,
+		final BookmarkByUsernameSearchCond searchCond) {
 		return null;
 	}
 
 	//TODO
 	@Override
-	public PageResult<GetBookmarksResult> getBookmarksByUsername(final BookmarkByUsernameSearchCond searchCond) {
+	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
 		return null;
 	}
 }

@@ -49,19 +49,33 @@ public class BookmarkController {
 	}
 
 	/**
-	 * 북마크 목록 조회
+	 * 내 북마크 목록 조회
 	 * - 프로필이 없다
 	 * - 내 북마크 목록 조회와 다른 사람 북마크 목록 조회로 나뉜다
 	 */
-	@GetMapping
-	public PageResponse<GetBookmarksResponse> getBookmarks(
+	@GetMapping("/me")
+	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @LoginUser SessionUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final String username = queryParams.getUsername();
-		final PageResult<GetBookmarksResult> result = username == null
-			? bookmarkService.getMyBookmarks(user.getId(), queryParams.toMySearchCond(user.getId()))
-			: bookmarkService.getBookmarksByUsername(queryParams.toUsernameSearchCond(username));
+		final PageResult<GetBookmarksResult> result = bookmarkService.getMyBookmarks(user.getId(),
+			queryParams.toMySearchCond(user.getId()));
+
+		final List<GetBookmarksResponse> response = result.getData()
+			.stream()
+			.map(GetBookmarksResponse::of)
+			.collect(toList());
+		return PageResponse.of(result.getTotalCount(), "bookmarks", response);
+	}
+
+	//TODO (초벌 상태)
+	@GetMapping("/{profileId}")
+	public PageResponse<GetBookmarksResponse> getOtherBookmarks(
+		final @LoginUser SessionUser user,
+		final GetBookmarkQueryParams queryParams
+	) {
+		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
+			queryParams.toUsernameSearchCond(null));
 
 		final List<GetBookmarksResponse> response = result.getData()
 			.stream()

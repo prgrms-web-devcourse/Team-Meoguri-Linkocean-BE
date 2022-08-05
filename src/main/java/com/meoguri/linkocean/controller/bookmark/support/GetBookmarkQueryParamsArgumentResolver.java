@@ -37,7 +37,6 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 		final String order = webRequest.getParameter("order");
 		final String category = webRequest.getParameter("category");
 		final String searchTitle = webRequest.getParameter("searchTitle");
-		final String username = webRequest.getParameter("username");
 		final String favorite = webRequest.getParameter("favorite");
 		final String follow = webRequest.getParameter("follow");
 		final String tags = webRequest.getParameter("tags");
@@ -48,7 +47,6 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 			Optional.ofNullable(order).orElse(DEFAULT_ORDER),
 			category,
 			searchTitle,
-			username,
 			toBoolean(favorite),
 			toBoolean(follow),
 			toTagList(tags)

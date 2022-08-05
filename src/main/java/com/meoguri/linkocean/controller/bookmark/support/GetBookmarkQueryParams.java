@@ -6,7 +6,6 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearc
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -18,8 +17,6 @@ public final class GetBookmarkQueryParams {
 	private final String category;
 	private final String searchTitle;
 
-	@Getter
-	private final String username;
 	private final boolean favorite;
 	private final boolean follow;
 	private final List<String> tags;
