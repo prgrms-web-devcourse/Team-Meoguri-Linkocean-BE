@@ -5,25 +5,28 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface CustomBookmarkRepository {
 
-	long countByCategory(Profile profile, Category of, String searchTitle);
+	long countByProfileAndCategoryAndSearchTitle(final Profile profile, final Category of, final String searchTitle);
 
-	List<Bookmark> searchByCategory(Profile profile, Category of, String searchTitle, String order, int page, int size);
+	List<Bookmark> searchByProfileAndCategoryAndDefaultCond(final Profile profile, final Category of,
+		final FindBookmarksDefaultCond cond);
 
-	long countByFavorite(Profile profile, boolean favorite, String searchTitle);
+	long countByProfileAndFavoriteAndSearchTitle(final Profile profile, final boolean favorite,
+		final String searchTitle);
 
-	List<Bookmark> searchByFavorite(Profile profile, boolean favorite, String searchTitle, String order, int page,
-		int size);
+	List<Bookmark> searchByProfileAndFavoriteAndDefaultCond(final Profile profile, boolean favorite,
+		final FindBookmarksDefaultCond cond);
 
-	long countByTags(Profile profile, List<String> tags, String searchTitle);
+	long countByProfileAndTagsAndSearchTitle(final Profile profile, final List<String> tags, final String searchTitle);
 
-	List<Bookmark> searchByTags(Profile profile, List<String> tags, String searchTitle, String order, int page,
-		int size);
+	List<Bookmark> searchByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tags,
+		final FindBookmarksDefaultCond cond);
 
-	long countByProfile(Profile profile, String searchTitle);
+	long countByProfileAndSearchTitle(final Profile profile, final String searchTitle);
 
-	List<Bookmark> searchByProfile(Profile profile, String searchTitle, String order, int page, int size);
+	List<Bookmark> searchByProfileAndDefaultCond(final Profile profile, final FindBookmarksDefaultCond cond);
 }

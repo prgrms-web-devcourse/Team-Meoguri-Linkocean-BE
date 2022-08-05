@@ -3,6 +3,8 @@ package com.meoguri.linkocean.domain.bookmark.service.dto;
 import java.util.List;
 import java.util.Optional;
 
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+
 import lombok.Getter;
 
 /**
@@ -12,7 +14,7 @@ import lombok.Getter;
 public final class MyBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 10;
+	private static final int DEFAULT_SIZE = 8;
 	private static final String DEFAULT_ORDER = "upload";
 	private static final String DEFAULT_OPENTYPE = "all";
 
@@ -38,5 +40,9 @@ public final class MyBookmarkSearchCond {
 		this.tags = tags;
 
 		this.searchTitle = searchTitle;
+	}
+
+	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
+		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.searchTitle);
 	}
 }

@@ -21,7 +21,8 @@ public final class GetBookmarksResponse {
 	private final LocalDateTime updatedAt;
 
 	private final long likeCount;
-	private final boolean isFavorite;
+	private final Boolean isFavorite;
+	private final Boolean isWriter;
 
 	@JsonProperty("imageUrl")
 	private final String image;
@@ -38,6 +39,7 @@ public final class GetBookmarksResponse {
 			result.getUpdatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),
+			result.isWriter(),
 			result.getImage(),
 			result.getTags()
 		);
