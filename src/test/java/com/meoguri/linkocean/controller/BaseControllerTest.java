@@ -141,10 +141,8 @@ public class BaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		final String content = mvcResult.getResponse().getContentAsString();
-
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(content, GetMyProfileResponse.class);
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
 	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
