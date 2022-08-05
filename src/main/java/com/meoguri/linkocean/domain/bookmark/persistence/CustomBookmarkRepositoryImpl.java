@@ -58,8 +58,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				bookmark.category.eq(category),
 				filterBySearchTitle(cond.getSearchTitle())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset((cond.getPage() - 1) * cond.getSize())
-			.limit(cond.getSize())
+			.offset(cond.getOffset())
+			.limit(cond.getLimit())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -92,8 +92,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				favorite.owner.eq(profile))
 			.where(filterBySearchTitle(cond.getSearchTitle()))
 			.orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset((cond.getPage() - 1) * cond.getSize())
-			.limit(cond.getSize())
+			.offset(cond.getOffset())
+			.limit(cond.getLimit())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -143,8 +143,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				bookmark.profile.eq(profile),
 				filterBySearchTitle(cond.getSearchTitle())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset((cond.getPage() - 1) * cond.getSize())
-			.limit(cond.getSize())
+			.offset(cond.getOffset())
+			.limit(cond.getLimit())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -172,8 +172,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				bookmark.profile.eq(profile),
 				filterBySearchTitle(cond.getSearchTitle())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset((cond.getPage() - 1) * cond.getSize())
-			.limit(cond.getSize())
+			.offset(cond.getOffset())
+			.limit(cond.getLimit())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
