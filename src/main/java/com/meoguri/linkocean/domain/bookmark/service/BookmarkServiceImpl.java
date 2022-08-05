@@ -111,7 +111,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.findByProfileAndId(profile, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		bookmarkRepository.deleteById(bookmark.getId());
+		bookmarkRepository.delete(bookmark);
 	}
 
 	/**
