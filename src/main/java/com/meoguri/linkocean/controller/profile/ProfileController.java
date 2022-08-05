@@ -81,7 +81,7 @@ public class ProfileController {
 	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
 	 */
 	@GetMapping("/{profileId}")
-	public SliceResponse<GetProfilesResponse> getFollowerFollowee(
+	public SliceResponse<GetProfilesResponse> getFollowerOrFollowee(
 		final @LoginUser SessionUser user,
 		final @PathVariable long profileId,
 		final @RequestParam ProfileSearchTab tab,
