@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.FindUserByEmailAndTypeQuery;
-import com.meoguri.linkocean.util.Tokens;
+import com.meoguri.linkocean.util.TokenUtil;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		throws IOException, ServletException {
 		try {
 			// 토큰 가져오기
-			final String token = Tokens.get(request);
+			final String token = TokenUtil.get(request);
 
 			// 토큰이 비었는지 확인
-			if (Tokens.isBlankToken(token)) {
+			if (TokenUtil.isBlankToken(token)) {
 				filterChain.doFilter(request, response);
 				return;
 			}

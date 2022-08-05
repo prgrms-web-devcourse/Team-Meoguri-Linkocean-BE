@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProfilesResponse {
+public final class GetProfilesResponse {
 
 	private long id;
 	private String username;

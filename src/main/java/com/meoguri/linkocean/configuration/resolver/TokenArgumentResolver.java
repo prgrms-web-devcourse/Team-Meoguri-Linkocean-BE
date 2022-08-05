@@ -9,7 +9,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.meoguri.linkocean.configuration.security.jwt.Token;
-import com.meoguri.linkocean.util.Tokens;
+import com.meoguri.linkocean.util.TokenUtil;
 
 public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -23,7 +23,7 @@ public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
 		final ModelAndViewContainer mavContainer,
 		final NativeWebRequest webRequest,
 		final WebDataBinderFactory binderFactory) {
-		return Tokens.get((HttpServletRequest)webRequest.getNativeRequest());
+		return TokenUtil.get((HttpServletRequest)webRequest.getNativeRequest());
 	}
 
 }

@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class ProfileNoti implements Noti {
+public final class ProfileNoti implements Noti {
 
 	private final long profileId;
 	private final String profileUsername;

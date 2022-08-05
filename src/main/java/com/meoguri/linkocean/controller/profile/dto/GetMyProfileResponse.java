@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetMyProfileResponse {
+public final class GetMyProfileResponse {
 
 	private Long profileId;
 

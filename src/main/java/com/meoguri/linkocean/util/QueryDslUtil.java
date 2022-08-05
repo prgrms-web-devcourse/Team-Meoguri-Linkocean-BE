@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.util;
 
+import static lombok.AccessLevel.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -12,7 +14,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class QueryDslUtil {
 
 	/**
