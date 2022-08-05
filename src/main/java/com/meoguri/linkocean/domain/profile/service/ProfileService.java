@@ -24,7 +24,7 @@ public interface ProfileService {
 
 	/**
 	 * profileId 사용자의 팔로이 프로필 목록 조회
-	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다벌
+	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
 	 */
 	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond, long profileId);
 
