@@ -197,8 +197,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			// user1 -> user1 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user1ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user1ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -209,8 +208,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user2 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user2ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user2ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -221,8 +219,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user3 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user3ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user3ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -245,8 +242,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			// user1 -> user1 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user1ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user1ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -257,8 +253,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user2 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user2ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user2ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -271,8 +266,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user3 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user3ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user3ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -281,8 +275,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		@Test
 		void 팔로워_팔로이_조회_탭을_누락하면_실패() throws Exception {
-			mockMvc.perform(get(basePath + "/" + user2ProfileId)
-					.param("tab", "hi")
+			mockMvc.perform(get(basePath + "/{profileId}/{tab}", user3ProfileId, "hi")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
