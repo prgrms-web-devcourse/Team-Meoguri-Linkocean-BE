@@ -23,11 +23,6 @@ public class CategoryServiceImpl implements CategoryService {
 	private final BookmarkRepository bookmarkRepository;
 
 	@Override
-	public List<String> getAllCategories() {
-		return Category.getKoreanNames();
-	}
-
-	@Override
 	public List<String> getUsedCategories(final long userId) {
 		final Profile writer = findProfileByUserIdQuery.findByUserId(userId);
 

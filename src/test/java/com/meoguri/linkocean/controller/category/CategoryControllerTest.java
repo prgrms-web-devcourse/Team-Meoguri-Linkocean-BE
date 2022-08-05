@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.bookmark.CategoryController;
 
 class CategoryControllerTest extends BaseControllerTest {
 
