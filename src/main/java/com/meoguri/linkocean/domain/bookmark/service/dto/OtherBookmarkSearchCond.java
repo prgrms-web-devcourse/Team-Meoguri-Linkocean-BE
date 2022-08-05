@@ -12,7 +12,7 @@ public class OtherBookmarkSearchCond {
 	private static final int DEFAULT_SIZE = 8;
 	private static final String DEFAULT_ORDER = "upload";
 
-	private final long profileId;
+	private final long otherProfileId;
 	private final int page;
 	private final int size;
 	private final String order;
@@ -22,10 +22,11 @@ public class OtherBookmarkSearchCond {
 	private final boolean favorite;
 	private final List<String> tags;
 
-	public OtherBookmarkSearchCond(final Long profileId, final Integer page, final Integer size, final String order,
+	public OtherBookmarkSearchCond(final Long otherProfileId, final Integer page, final Integer size,
+		final String order,
 		final String searchTitle, final boolean favorite, final String category, final List<String> tags) {
 
-		this.profileId = profileId;
+		this.otherProfileId = otherProfileId;
 		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
 		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
