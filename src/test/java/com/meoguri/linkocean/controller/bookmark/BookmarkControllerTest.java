@@ -108,7 +108,6 @@ class BookmarkControllerTest extends BaseControllerTest {
 		void setUp() throws Exception {
 			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("공부"), "all");
 			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "여행", List.of("travel"), "partial");
-			// 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "가정", List.of("shopping"), "private");
 		}
 
 		@Test
@@ -118,7 +117,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			final Bookmark bookmark2 = findBookmarkByIdQuery.findById(bookmarkId2);
 
 			//when then
-			mockMvc.perform(get(basePath).session(session)
+			mockMvc.perform(get(basePath + "/me").session(session)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
@@ -142,7 +141,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@Test
 		void 내_북마크_목록_조회_Api_성공_카테고리_필터링() throws Exception {
 			//when then
-			mockMvc.perform(get(basePath).session(session)
+			mockMvc.perform(get(basePath + "/me").session(session)
 					.param("category", "IT")
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -159,7 +158,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			favoriteService.favorite(userId, bookmarkId1);
 
 			//when then
-			mockMvc.perform(get(basePath).session(session)
+			mockMvc.perform(get(basePath + "/me").session(session)
 					.param("favorite", "true")
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -172,7 +171,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@Test
 		void 내_북마크_목록_조회_Api_성공_태그_필터링() throws Exception {
 			//when then
-			mockMvc.perform(get(basePath).session(session)
+			mockMvc.perform(get(basePath + "/me").session(session)
 					.param("tags", "공부,travel")
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())

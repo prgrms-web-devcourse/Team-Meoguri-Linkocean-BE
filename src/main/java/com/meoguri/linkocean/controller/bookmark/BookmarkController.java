@@ -69,7 +69,7 @@ public class BookmarkController {
 	}
 
 	//TODO (초벌 상태)
-	@GetMapping("/{profileId}")
+	@GetMapping("/others/{profileId}")
 	public PageResponse<GetBookmarksResponse> getOtherBookmarks(
 		final @LoginUser SessionUser user,
 		final GetBookmarkQueryParams queryParams
