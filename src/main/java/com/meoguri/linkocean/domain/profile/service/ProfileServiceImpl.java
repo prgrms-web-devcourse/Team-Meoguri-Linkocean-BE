@@ -45,24 +45,20 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
-
 		final User user = findUserByIdQuery.findById(command.getUserId());
 
 		// 프로필 등록
-		final Profile profile = new Profile(user, command.getUsername());
-		profileRepository.save(profile);
+		final Profile profile = profileRepository.save(new Profile(user, command.getUsername()));
+		log.info("save profile with id :{}, username :{}", profile.getId(), profile.getUsername());
 
-		log.info("save Profile 완료");
 		// 선호 카테고리 등록
 		command.getCategories().forEach(profile::addToFavoriteCategory);
-
 		return profile.getId();
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public GetMyProfileResult getMyProfile(final long userId) {
-
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 
 		return new GetMyProfileResult(
@@ -96,15 +92,10 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
-
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
 
 		// 프로필 업데이트
-		profile.update(
-			command.getUsername(),
-			command.getBio(),
-			command.getImage()
-		);
+		profile.update(command.getUsername(), command.getBio(), command.getImage());
 
 		// 선호 카테고리 업데이트
 		profile.updateFavoriteCategories(command.getCategories());
