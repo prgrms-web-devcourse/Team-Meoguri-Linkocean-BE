@@ -1,8 +1,8 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.profile.service;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyTagsResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetMyTagsResult;
 
 public interface TagService {
 

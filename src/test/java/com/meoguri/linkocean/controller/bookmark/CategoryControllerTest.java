@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.category;
+package com.meoguri.linkocean.controller.bookmark;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -23,7 +23,6 @@ class CategoryControllerTest extends BaseControllerTest {
 			//then
 			.andExpect(status().isOk())
 			.andExpectAll(
-				// jsonPath("$.count").value(12),
 				jsonPath("$.categories").isArray(),
 				jsonPath("$.categories", hasSize(12)),
 				jsonPath("$.categories",

@@ -3,8 +3,8 @@ package com.meoguri.linkocean.controller.profile.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetMyTagsResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
