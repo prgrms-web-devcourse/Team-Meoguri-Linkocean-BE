@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProfileTagsResponse {
+public final class GetProfileTagsResponse {
 
 	private String tag;
 	private int count;

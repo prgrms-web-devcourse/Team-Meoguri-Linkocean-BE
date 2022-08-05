@@ -3,7 +3,6 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 
 import lombok.Getter;
@@ -23,9 +22,7 @@ public final class GetBookmarksResponse {
 	private final long likeCount;
 	private final Boolean isFavorite;
 	private final Boolean isWriter;
-
-	@JsonProperty("imageUrl")
-	private final String image;
+	private final String imageUrl;
 	private final List<String> tags;
 
 	public static GetBookmarksResponse of(GetBookmarksResult result) {
