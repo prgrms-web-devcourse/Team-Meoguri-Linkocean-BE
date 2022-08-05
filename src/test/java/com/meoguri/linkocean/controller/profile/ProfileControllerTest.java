@@ -4,11 +4,13 @@ import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URI;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -171,7 +173,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		// 내 프로필 수정
 		//when
-		mockMvc.perform(multipart(baseUrl + "/me")
+		mockMvc.perform(multipart(PUT, URI.create(baseUrl + "/me"))
 				.file(mockImage)
 				.param("username", updateUsername)
 				.param("categories", "자기계발", "과학")
