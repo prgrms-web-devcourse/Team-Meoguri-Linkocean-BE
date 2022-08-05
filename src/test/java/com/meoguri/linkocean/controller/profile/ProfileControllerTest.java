@@ -164,7 +164,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		// TODO - 한글 꺠짐 문제 해결
 		// assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
 		assertThat(myProfile.getBio()).isEqualTo(bio);
-		assertThat(myProfile.getImage()).isNotNull();
+		assertThat(myProfile.getImageUrl()).isNotNull();
 	}
 
 	@Nested

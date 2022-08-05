@@ -76,16 +76,14 @@ class ProfileServiceImplTest {
 				GetMyProfileResult::getImage,
 				GetMyProfileResult::getBio,
 				GetMyProfileResult::getFollowerCount,
-				GetMyProfileResult::getFolloweeCount,
-				GetMyProfileResult::isFollow
+				GetMyProfileResult::getFolloweeCount
 			).containsExactly(
 				profileId,
 				profile.getUsername(),
 				profile.getImage(),
 				profile.getBio(),
 				0,
-				0,
-				false
+				0
 			);
 
 			assertThat(result.getFavoriteCategories()).containsExactly("인문", "정치");
