@@ -3,7 +3,6 @@ package com.meoguri.linkocean.configuration;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -11,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParamsArgumentResolver;
 import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParamsArgumentResolver;
-import com.meoguri.linkocean.configuration.resolver.ProfileSearchTabConverterFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,10 +37,4 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.allowedOrigins("*")
 			.allowedMethods("GET", "POST");
 	}
-
-	@Override
-	public void addFormatters(final FormatterRegistry registry) {
-		registry.addConverterFactory(new ProfileSearchTabConverterFactory());
-	}
-
 }

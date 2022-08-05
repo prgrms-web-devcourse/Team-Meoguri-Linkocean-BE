@@ -86,8 +86,7 @@ public class ProfileController {
 		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
 		final List<SearchProfileResult> results = profileService.searchFollowerProfiles(cond, profileId);
 
-		final List<GetProfilesResponse> response =
-			results.stream().map(GetProfilesResponse::of).collect(toList());
+		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
 	}
 
@@ -95,7 +94,7 @@ public class ProfileController {
 	 * profileId 사용자의 팔로이 프로필 목록 조회
 	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
 	 */
-	@GetMapping("/{profileId}/follower")
+	@GetMapping("/{profileId}/followee")
 	public SliceResponse<GetProfilesResponse> getFolloweeProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId,
@@ -104,8 +103,7 @@ public class ProfileController {
 		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
 		final List<SearchProfileResult> results = profileService.searchFolloweeProfiles(cond, profileId);
 
-		final List<GetProfilesResponse> response =
-			results.stream().map(GetProfilesResponse::of).collect(toList());
+		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
 	}
 }
