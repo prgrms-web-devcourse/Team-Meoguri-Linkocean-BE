@@ -1,10 +1,8 @@
-package com.meoguri.linkocean.domain.user;
-
-import javax.servlet.http.HttpSession;
+package com.meoguri.linkocean.domain.user.service;
 
 import org.springframework.stereotype.Service;
 
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
+import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -18,9 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final HttpSession session;
+	private final JwtProvider jwtProvider;
 
-	public long saveOrUpdate(final String email, final String oauthType) {
+	public String saveOrUpdate(final String email, final String oauthType) {
 		log.info("user save start email : {} ", email);
 		final User user = userRepository.findByEmailAndOAuthType(
 				new Email(email), User.OAuthType.of(oauthType.toUpperCase()))
@@ -33,9 +31,7 @@ public class UserService {
 				return savedUser;
 			});
 
-		session.setAttribute("user", new SessionUser(user));
-
-		return user.getId();
+		return jwtProvider.generate(email, oauthType);
 	}
 
 }
