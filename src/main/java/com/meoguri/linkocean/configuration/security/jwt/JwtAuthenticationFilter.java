@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final UserDetailsService customUserDetailsService;
 	private final FindUserByEmailAndTypeQuery findUserByEmailAndTypeQuery;
 	private final JwtProvider jwtProvider;
+
+	private static final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 
 	@Override
 	protected void doFilterInternal(
@@ -82,6 +85,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void checkUserDetails(final UserDetails userDetails) {
 		checkState(userDetails != null, "유효하지 않은 인증정보 입니다.");
-		new AccountStatusUserDetailsChecker().check(userDetails);
+		userDetailsChecker.check(userDetails);
 	}
 }
