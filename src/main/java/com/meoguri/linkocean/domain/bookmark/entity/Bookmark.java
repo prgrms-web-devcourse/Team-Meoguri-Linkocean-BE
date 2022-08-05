@@ -151,6 +151,10 @@ public class Bookmark extends BaseIdEntity {
 		return openType.getName();
 	}
 
+	public boolean isOwnedBy(final Profile profile) {
+		return this.profile.equals(profile);
+	}
+
 	/**
 	 * 북마크의 공개 범위
 	 */
