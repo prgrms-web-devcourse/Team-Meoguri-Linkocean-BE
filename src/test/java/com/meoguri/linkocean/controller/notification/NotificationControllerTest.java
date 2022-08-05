@@ -2,6 +2,7 @@ package com.meoguri.linkocean.controller.notification;
 
 import static java.util.Collections.*;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -46,7 +47,7 @@ class NotificationControllerTest extends BaseControllerTest {
 		//when
 		//공유 알림 하나 생성
 		mockMvc.perform(post(baseUrl)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
 			//then
@@ -57,7 +58,7 @@ class NotificationControllerTest extends BaseControllerTest {
 		//공유 알림 조회
 		로그인("target@gmail.com", "GOOGLE");
 		mockMvc.perform(get(baseUrl)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 			//then
 			.andExpect(status().isOk())
@@ -85,7 +86,7 @@ class NotificationControllerTest extends BaseControllerTest {
 
 		//when
 		mockMvc.perform(post(baseUrl)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
 			//then
@@ -100,7 +101,7 @@ class NotificationControllerTest extends BaseControllerTest {
 
 		//when
 		mockMvc.perform(post(baseUrl)
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
 			//then
