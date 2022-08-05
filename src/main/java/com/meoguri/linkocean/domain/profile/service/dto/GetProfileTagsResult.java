@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public final class GetMyTagsResult {
+public final class GetProfileTagsResult {
 
 	private final String tag;
 	private final int count;

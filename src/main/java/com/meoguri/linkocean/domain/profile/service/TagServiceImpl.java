@@ -15,7 +15,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
-import com.meoguri.linkocean.domain.profile.service.dto.GetMyTagsResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +29,7 @@ public class TagServiceImpl implements TagService {
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 
 	@Override
-	public List<GetMyTagsResult> getMyTags(final long userId) {
+	public List<GetProfileTagsResult> getMyTags(final long userId) {
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileFetchTags(profile);
 
@@ -38,12 +38,12 @@ public class TagServiceImpl implements TagService {
 	}
 
 	/* 카운트 순으로 정렬하여 결과로 말아주기 */
-	private List<GetMyTagsResult> getResult(final Map<String, Integer> tagCountMap) {
+	private List<GetProfileTagsResult> getResult(final Map<String, Integer> tagCountMap) {
 
 		return new ArrayList<>(tagCountMap.entrySet())
 			.stream()
 			.sorted(Map.Entry.comparingByValue(reverseOrder()))
-			.map(entry -> new GetMyTagsResult(entry.getKey(), entry.getValue()))
+			.map(entry -> new GetProfileTagsResult(entry.getKey(), entry.getValue()))
 			.collect(toList());
 	}
 
