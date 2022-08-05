@@ -123,11 +123,10 @@ public class BookmarkController {
 
 	/* 북마크 삭제 */
 	@DeleteMapping("/{bookmarkId}")
-	public void deleteBookmark(
+	public void removeBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		// TODO - 구현
-		// bookmarkService.deleteBookmark(user.getId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getId(), bookmarkId);
 	}
 }
