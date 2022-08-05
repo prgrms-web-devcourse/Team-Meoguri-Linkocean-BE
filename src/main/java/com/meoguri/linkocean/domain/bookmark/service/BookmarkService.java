@@ -20,6 +20,9 @@ public interface BookmarkService {
 	/* 북마크 수정 */
 	void updateBookmark(UpdateBookmarkCommand command);
 
+	/* 북마크 삭제 */
+	void removeBookmark(long userId, long bookmarkId);
+
 	/* 북마크 상세 조회 */
 	GetDetailedBookmarkResult getDetailedBookmark(long userId, long bookmarkId);
 
