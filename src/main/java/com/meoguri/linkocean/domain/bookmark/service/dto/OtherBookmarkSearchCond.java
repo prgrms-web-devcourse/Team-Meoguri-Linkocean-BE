@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
 
-// TODO - 구현
+import lombok.Getter;
+
+@Getter
 public class OtherBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
@@ -38,6 +40,6 @@ public class OtherBookmarkSearchCond {
 	}
 
 	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.searchTitle);
+		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.otherProfileId, this.searchTitle);
 	}
 }

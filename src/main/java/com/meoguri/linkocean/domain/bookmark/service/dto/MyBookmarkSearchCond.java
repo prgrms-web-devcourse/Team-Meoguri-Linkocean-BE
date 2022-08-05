@@ -42,7 +42,7 @@ public final class MyBookmarkSearchCond {
 		this.searchTitle = searchTitle;
 	}
 
-	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.searchTitle);
+	public FindBookmarksDefaultCond toFindBookmarksDefaultCond(final long profileId) {
+		return new FindBookmarksDefaultCond(this.page, this.size, this.order, profileId, this.searchTitle);
 	}
 }
