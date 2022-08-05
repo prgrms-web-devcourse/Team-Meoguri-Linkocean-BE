@@ -3,9 +3,7 @@ package com.meoguri.linkocean.controller.profile;
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,22 +73,10 @@ public class ProfileController {
 	public void updateMyProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@ModelAttribute UpdateProfileRequest request,
-		@RequestPart(required = false) MultipartFile profilePhoto
+		@RequestPart(required = false, name = "image") MultipartFile profileImage
 	) {
-
-		final String image = Optional.ofNullable(profilePhoto)
-			.map(photo -> uploadImage(photo))
-			.orElseGet(null);
-		profileService.updateProfile(request.toCommand(user.getId(), image));
-
-	}
-
-	private String uploadImage(final MultipartFile photo) {
-		try {
-			return s3Uploader.upload(photo, "profile");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		final String imageUrl = s3Uploader.upload(profileImage, "profile");
+		profileService.updateProfile(request.toCommand(user.getId(), imageUrl));
 	}
 
 	/* 프로필 목록 조회 - 머구리 찾기 */
@@ -140,6 +126,7 @@ public class ProfileController {
 		return SliceResponse.of("profiles", response);
 	}
 
+	/* 프로필 상세 조회 */
 	@GetMapping("/{profileId}")
 	public GetDetailedProfileResponse getDetailedProfile(
 		final @AuthenticationPrincipal SecurityUser user,

@@ -141,7 +141,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		final String updateUsername = "updateHani";
 		final List<String> updateCategories = List.of("자기계발", "과학");
 		final String bio = "i like programming";
-		final MockMultipartFile mockImage = new MockMultipartFile("profilePhoto", "test.png", "image/png",
+		final MockMultipartFile mockImage = new MockMultipartFile("image", "test.png", "image/png",
 			"image".getBytes());
 
 		// 내 프로필 수정

@@ -22,11 +22,22 @@ public class S3Uploader {
 
 	private final String bucket;
 
-	public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-		File uploadFile = convert(multipartFile)
-			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
-
-		return upload(uploadFile, dirName);
+	/**
+	 * multipartFile 을 S3 버킷의 directory 에 저장한다.
+	 * 주어진 multipartFile 이 저장된 imageUrl 을 반환한다.
+	 * 주어진 multipartFile 이 null 이라면 null 을 반환한다.
+	 */
+	public String upload(MultipartFile multipartFile, String dirName) {
+		if (multipartFile == null) {
+			return null;
+		}
+		try {
+			File uploadFile = convert(multipartFile)
+				.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다"));
+			return upload(uploadFile, dirName);
+		} catch (IOException e) {
+			throw new RuntimeException("S3 업로드에 실패했습니다", e);
+		}
 	}
 
 	private String upload(File uploadFile, String dirName) {
