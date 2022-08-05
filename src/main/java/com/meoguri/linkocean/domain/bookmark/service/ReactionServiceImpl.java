@@ -33,6 +33,11 @@ public class ReactionServiceImpl implements ReactionService {
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 
+		updateBookmarkReaction(profile, bookmark, requestReactionType);
+		updateBookmarkLikeCount(bookmark);
+	}
+
+	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
 		final Optional<Reaction> oReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
 
 		oReaction.ifPresentOrElse(
@@ -66,5 +71,10 @@ public class ReactionServiceImpl implements ReactionService {
 		final boolean isDeleted
 			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;
 		checkCondition(isDeleted);
+	}
+
+	private void updateBookmarkLikeCount(Bookmark bookmark) {
+		final long likeCount = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
+		bookmark.changeLikeCount(likeCount);
 	}
 }
