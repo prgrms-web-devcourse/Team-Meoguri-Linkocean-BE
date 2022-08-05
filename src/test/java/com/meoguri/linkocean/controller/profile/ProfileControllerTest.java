@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
@@ -113,6 +114,7 @@ class ProfileControllerTest extends BaseControllerTest {
 					.contentType(APPLICATION_JSON))
 				//then
 				.andExpect(status().isOk())
+
 				.andExpectAll(
 					jsonPath("$.profileId").exists(),
 					jsonPath("$.imageUrl").isEmpty(),
@@ -126,6 +128,48 @@ class ProfileControllerTest extends BaseControllerTest {
 				)
 				.andDo(print());
 		}
+	}
+
+	@Test
+	void 내프로필_수정_Api_성공() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+		final String updateUsername = "updateHani";
+		final List<String> updateCategories = List.of("자기계발", "과학");
+		final String bio = "i like programming";
+		final MockMultipartFile mockImage = new MockMultipartFile("profilePhoto", "test.png", "image/png",
+			"image".getBytes());
+
+		// 내 프로필 수정
+		//when
+		mockMvc.perform(multipart(basePath + "/me")
+				.file(mockImage)
+				.param("username", updateUsername)
+				.param("categories", "자기계발", "과학")
+				.param("bio", bio)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isOk());
+
+		// 수정된 프로필 조회
+		//when
+		mockMvc.perform(get(basePath + "/me")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			//then
+			.andExpectAll(
+				jsonPath("$.profileId").exists(),
+				jsonPath("$.imageUrl").exists(),
+				jsonPath("$.favoriteCategories", hasSize(2)),
+				jsonPath("$.username").value(updateUsername),
+				jsonPath("$.bio").value(bio),
+				jsonPath("$.followerCount").value(0),
+				jsonPath("$.followeeCount").value(0),
+				jsonPath("$.tags", hasSize(0)),
+				jsonPath("$.categories", hasSize(0))
+			)
+			.andDo(print());
 	}
 
 	@Nested
