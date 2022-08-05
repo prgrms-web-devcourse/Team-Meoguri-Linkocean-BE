@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class FollowControllerTest extends BaseControllerTest {
@@ -33,19 +34,19 @@ class FollowControllerTest extends BaseControllerTest {
 	@Test
 	void 팔로우_Api_성공() throws Exception {
 		//when
-		mockMvc.perform(post(baseUrl + "/follow?followeeId=" + hahaId)
+		mockMvc.perform(post(baseUrl + "/follow")
+				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
 			.andExpect(status().isOk());
 
-		// TODO - 프로필 조회 API 구현 후 주석 필기
-		/*final GetMyProfileResponse hahaProfile = 프로필_조회(hahaId);*/
+		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
 		final GetMyProfileResponse papaProfile = 내_프로필_조회();
 
-		/*assertThat(hahaProfile.getFollowerCount()).isEqualTo(1L);
-		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);*/
+		assertThat(hahaProfile.getFollowerCount()).isEqualTo(1L);
+		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);
 
 		assertThat(papaProfile.getFollowerCount()).isEqualTo(0L);
 		assertThat(papaProfile.getFolloweeCount()).isEqualTo(1L);
@@ -57,7 +58,8 @@ class FollowControllerTest extends BaseControllerTest {
 		팔로우(hahaId);
 
 		//when
-		mockMvc.perform(post(baseUrl + "/follow?followeeId=" + hahaId)
+		mockMvc.perform(post(baseUrl + "/follow")
+				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
@@ -71,32 +73,33 @@ class FollowControllerTest extends BaseControllerTest {
 		팔로우(hahaId);
 
 		//when
-		mockMvc.perform(post(baseUrl + "/unfollow?followeeId=" + hahaId)
+		mockMvc.perform(post(baseUrl + "/unfollow")
+				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
 			.andExpect(status().isOk());
+
+		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
+		final GetMyProfileResponse papaProfile = 내_프로필_조회();
+
+		assertThat(hahaProfile.getFollowerCount()).isEqualTo(0L);
+		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);
+
+		assertThat(papaProfile.getFollowerCount()).isEqualTo(0L);
+		assertThat(papaProfile.getFolloweeCount()).isEqualTo(0L);
 	}
 
 	@Test
 	void 팔로우_안하고_언팔로우_하면_실패() throws Exception {
 		//when
-		mockMvc.perform(post(baseUrl + "/unfollow?followeeId=" + hahaId)
+		mockMvc.perform(post(baseUrl + "/unfollow")
+				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
 			.andExpect(status().isBadRequest());
-
-		// TODO - 프로필 조회 API 구현 후 주석 필기
-		/*final GetMyProfileResponse hahaProfile = 프로필_조회(hahaId);*/
-		final GetMyProfileResponse papaProfile = 내_프로필_조회();
-
-		/*assertThat(hahaProfile.getFollowerCount()).isEqualTo(0L);
-		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);*/
-
-		assertThat(papaProfile.getFollowerCount()).isEqualTo(0L);
-		assertThat(papaProfile.getFolloweeCount()).isEqualTo(0L);
 	}
 }
