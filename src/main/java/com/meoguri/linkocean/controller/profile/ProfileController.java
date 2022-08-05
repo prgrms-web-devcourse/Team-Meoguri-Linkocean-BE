@@ -49,6 +49,7 @@ public class ProfileController {
 	private final TagService tagService;
 	private final S3Uploader s3Uploader;
 
+	/* 프로필 등록 */
 	@PostMapping
 	public SimpleIdResponse createProfile(
 		@AuthenticationPrincipal SecurityUser user,
@@ -58,6 +59,7 @@ public class ProfileController {
 		return of(profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
+	/* 내 프로필 조회 */
 	@GetMapping("/me")
 	public GetMyProfileResponse getMyProfile(
 		@AuthenticationPrincipal SecurityUser user
@@ -69,6 +71,20 @@ public class ProfileController {
 		return GetMyProfileResponse.of(profile, tags, categories);
 	}
 
+	/* 프로필 상세 조회 */
+	@GetMapping("/{profileId}")
+	public GetDetailedProfileResponse getDetailedProfile(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @PathVariable long profileId
+	) {
+		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getId(), profileId);
+		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
+		final List<String> categories = categoryService.getUsedCategories(user.getId());
+
+		return GetDetailedProfileResponse.of(profile, tags, categories);
+	}
+
+	/* 내 프로필 수정 */
 	@PostMapping("/me")
 	public void updateMyProfile(
 		@AuthenticationPrincipal SecurityUser user,
@@ -126,16 +142,4 @@ public class ProfileController {
 		return SliceResponse.of("profiles", response);
 	}
 
-	/* 프로필 상세 조회 */
-	@GetMapping("/{profileId}")
-	public GetDetailedProfileResponse getDetailedProfile(
-		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable long profileId
-	) {
-		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getId(), profileId);
-		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
-		final List<String> categories = categoryService.getUsedCategories(user.getId());
-
-		return GetDetailedProfileResponse.of(profile, tags, categories);
-	}
 }
