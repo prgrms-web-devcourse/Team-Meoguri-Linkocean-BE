@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public final class TokenUtil {
 
 	public static String get(final HttpServletRequest request) {
-		return StringUtils.substringAfter(request.getHeader(AUTHORIZATION), "bearer ");
+		return StringUtils.substringAfter(request.getHeader(AUTHORIZATION), "Bearer ");
 	}
 
 	public static boolean isBlankToken(final String token) {
