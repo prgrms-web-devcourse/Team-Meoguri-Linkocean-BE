@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -38,6 +40,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 	private final FindUserByIdQuery findUserByIdQuery;
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
+	private final FindProfileByIdQuery findProfileByIdQuery;
+	private final CheckIsFollowQuery checkIsFollowQuery;
 
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
@@ -67,6 +71,24 @@ public class ProfileServiceImpl implements ProfileService {
 			profile.getImage(),
 			profile.getBio(),
 			profile.getMyFavoriteCategories(),
+			followRepository.countFollowerByUserId(userId),
+			followRepository.countFolloweeByUserId(userId)
+		);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public GetDetailedProfileResult getByProfileId(final long userId, final long profileId) {
+		final Profile currentUser = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile profile = findProfileByIdQuery.findById(profileId);
+
+		return new GetDetailedProfileResult(
+			profile.getId(),
+			profile.getUsername(),
+			profile.getImage(),
+			profile.getBio(),
+			profile.getMyFavoriteCategories(),
+			checkIsFollowQuery.isFollow(currentUser, profile),
 			followRepository.countFollowerByUserId(userId),
 			followRepository.countFolloweeByUserId(userId)
 		);
@@ -132,11 +154,13 @@ public class ProfileServiceImpl implements ProfileService {
 		return getResult(followeeProfiles, isFollows);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public boolean existsByUserId(final long userId) {
 		return profileRepository.findByUserId(userId).isPresent();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<SearchProfileResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
 		checkArgument(searchCond.getUsername() != null, "사용자 이름을 입력해 주세요");
@@ -153,11 +177,6 @@ public class ProfileServiceImpl implements ProfileService {
 		final List<Boolean> isFollows = checkIsFollows(currentUserProfileId, profilesId);
 
 		return getResult(profiles, isFollows);
-	}
-
-	@Override
-	public GetDetailedProfileResult getByProfileId(final long userId, final long profileId) {
-		return null;
 	}
 
 	/**
