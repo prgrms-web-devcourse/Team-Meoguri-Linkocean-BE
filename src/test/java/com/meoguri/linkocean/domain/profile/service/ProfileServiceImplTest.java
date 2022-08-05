@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
+import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -38,6 +39,9 @@ class ProfileServiceImplTest {
 
 	@Autowired
 	private ProfileService profileService;
+
+	@Autowired
+	private FollowService followService;
 
 	@Nested
 	class 프로필_등록_수정_조회_테스트 {
@@ -86,7 +90,8 @@ class ProfileServiceImplTest {
 				0
 			);
 
-			assertThat(result.getFavoriteCategories()).containsExactly("인문", "정치");
+			final List<String> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly("인문", "정치");
 		}
 
 		@Test
@@ -99,14 +104,8 @@ class ProfileServiceImplTest {
 			em.clear();
 
 			//when
-			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
-				userId,
-				"papa",
-				"updated image url",
-				"updated bio",
-				List.of("인문", "과학")
-			);
-
+			final UpdateProfileCommand updateCommand =
+				new UpdateProfileCommand(userId, "papa", "updated image url", "updated bio", List.of("인문", "과학"));
 			profileService.updateProfile(updateCommand);
 
 			em.flush();
@@ -114,18 +113,48 @@ class ProfileServiceImplTest {
 
 			//then
 			final GetMyProfileResult result = profileService.getMyProfile(userId);
-			assertThat(result).extracting(
-				GetMyProfileResult::getUsername,
-				GetMyProfileResult::getImage,
-				GetMyProfileResult::getBio
-			).containsExactly(
-				"papa",
-				"updated image url",
-				"updated bio"
-			);
+			assertThat(result)
+				.extracting(GetMyProfileResult::getUsername, GetMyProfileResult::getImage, GetMyProfileResult::getBio)
+				.containsExactly("papa", "updated image url", "updated bio");
 
-			assertThat(result.getFavoriteCategories()).containsExactly("인문", "과학");
+			final List<String> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly("인문", "과학");
 		}
+	}
+
+	@Test
+	void 프로필_상세_조회_성공() {
+		//given
+		final User user1 = userRepository.save(new User("user1@gamil.com", "GOOGLE"));
+		final User user2 = userRepository.save(new User("user2@gamil.com", "GOOGLE"));
+
+		final long profileId1 = profileService.registerProfile(registerCommandOf(createProfile(user1, "user1")));
+		final long profileId2 = profileService.registerProfile(registerCommandOf(createProfile(user2, "user2")));
+
+		followService.follow(new FollowCommand(user1.getId(), profileId2));
+
+		//when
+		GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(user1.getId(), profileId1);
+		GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(user1.getId(), profileId2);
+		GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(user2.getId(), profileId1);
+		GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(user2.getId(), profileId2);
+
+		//then
+		assertDetailProfileResult(user1ToUser1ProfileResult, 0, 1, false);
+		assertDetailProfileResult(user1ToUser2ProfileResult, 1, 0, true);
+		assertDetailProfileResult(user2ToUser1ProfileResult, 0, 1, false);
+		assertDetailProfileResult(user2ToUser2ProfileResult, 1, 0, false);
+	}
+
+	private void assertDetailProfileResult(
+		final GetDetailedProfileResult user1ToUser1ProfileResult,
+		final int expectedFollowerCount,
+		final int expectedFolloweeCount,
+		final boolean expectedFollow
+	) {
+		assertThat(user1ToUser1ProfileResult.getFollowerCount()).isEqualTo(expectedFollowerCount);
+		assertThat(user1ToUser1ProfileResult.getFolloweeCount()).isEqualTo(expectedFolloweeCount);
+		assertThat(user1ToUser1ProfileResult.isFollow()).isEqualTo(expectedFollow);
 	}
 
 	@Nested
@@ -139,27 +168,24 @@ class ProfileServiceImplTest {
 		private long profile2Id;
 		private long profile3Id;
 
-		@Autowired
-		private FollowService followService;
-
 		@BeforeEach
 		void setUp() {
 			// set up 3 users
-			User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-			User user2 = userRepository.save(new User("user2@naver.com", "NAVER"));
-			User user3 = userRepository.save(new User("user3@kakao.com", "KAKAO"));
+			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
+			final User user2 = userRepository.save(new User("user2@naver.com", "NAVER"));
+			final User user3 = userRepository.save(new User("user3@kakao.com", "KAKAO"));
 
 			user1Id = user1.getId();
 			user2Id = user2.getId();
 			user3Id = user3.getId();
 
-			Profile profile1 = new Profile(user1, "user1");
-			Profile profile2 = new Profile(user2, "user2");
-			Profile profile3 = new Profile(user3, "user3");
+			final Profile profile1 = new Profile(user1, "user1");
+			final Profile profile2 = new Profile(user2, "user2");
+			final Profile profile3 = new Profile(user3, "user3");
 
-			profile1Id = profileService.registerProfile(registerCommandOf(profile1, emptyList()));
-			profile2Id = profileService.registerProfile(registerCommandOf(profile2, emptyList()));
-			profile3Id = profileService.registerProfile(registerCommandOf(profile3, emptyList()));
+			profile1Id = profileService.registerProfile(registerCommandOf(profile1));
+			profile2Id = profileService.registerProfile(registerCommandOf(profile2));
+			profile3Id = profileService.registerProfile(registerCommandOf(profile3));
 		}
 
 		@Test
@@ -171,12 +197,9 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> result1
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user1Id), profile1Id);
-			final List<SearchProfileResult> result2
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user2Id), profile2Id);
-			final List<SearchProfileResult> result3
-				= profileService.searchFollowerProfiles(defaultSearchCondOfUserId(user3Id), profile3Id);
+			final List<SearchProfileResult> result1 = profileService.searchFollowerProfiles(cond(user1Id), profile1Id);
+			final List<SearchProfileResult> result2 = profileService.searchFollowerProfiles(cond(user2Id), profile2Id);
+			final List<SearchProfileResult> result3 = profileService.searchFollowerProfiles(cond(user3Id), profile3Id);
 
 			//then
 			assertThat(result1).isEmpty();
@@ -211,12 +234,9 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> result1
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user1Id), profile1Id);
-			final List<SearchProfileResult> result2
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user2Id), profile2Id);
-			final List<SearchProfileResult> result3
-				= profileService.searchFolloweeProfiles(defaultSearchCondOfUserId(user3Id), profile3Id);
+			final List<SearchProfileResult> result1 = profileService.searchFolloweeProfiles(cond(user1Id), profile1Id);
+			final List<SearchProfileResult> result2 = profileService.searchFolloweeProfiles(cond(user2Id), profile2Id);
+			final List<SearchProfileResult> result3 = profileService.searchFolloweeProfiles(cond(user3Id), profile3Id);
 
 			//then
 			assertThat(result1)
@@ -255,8 +275,7 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user1Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> results =
-				profileService.searchProfilesByUsername(defaultSearchCondOfUserId(user1Id, "user"));
+			final List<SearchProfileResult> results = profileService.searchProfilesByUsername(cond(user1Id, "user"));
 
 			//then
 			assertThat(results)
@@ -269,8 +288,11 @@ class ProfileServiceImplTest {
 		}
 	}
 
-	public static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
+	private static RegisterProfileCommand registerCommandOf(Profile profile) {
+		return registerCommandOf(profile, emptyList());
+	}
 
+	private static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
 		return new RegisterProfileCommand(
 			profile.getUser().getId(),
 			profile.getUsername(),
@@ -278,13 +300,11 @@ class ProfileServiceImplTest {
 		);
 	}
 
-	static ProfileSearchCond defaultSearchCondOfUserId(long userId) {
-
-		return defaultSearchCondOfUserId(userId, null);
+	private static ProfileSearchCond cond(long userId) {
+		return cond(userId, null);
 	}
 
-	static ProfileSearchCond defaultSearchCondOfUserId(long userId, String username) {
-
+	private static ProfileSearchCond cond(long userId, String username) {
 		return new ProfileSearchCond(userId, null, null, username);
 	}
 }
