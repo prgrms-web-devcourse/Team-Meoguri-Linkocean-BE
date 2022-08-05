@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -33,30 +32,31 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndCategoryAndSearchTitle(final Profile profile, final Category category,
-		final String searchTitle) {
+	public long countByCategoryAndDefaultCond(final Category category, final FindBookmarksDefaultCond cond) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
 			.where(
-				bookmark.profile.eq(profile),
+				bookmark.profile.id.eq(cond.getProfileId()),
 				bookmark.category.eq(category),
-				filterBySearchTitle(searchTitle)
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
 
 	@Override
-	public List<Bookmark> searchByProfileAndCategoryAndDefaultCond(final Profile profile, final Category category,
-		FindBookmarksDefaultCond cond) {
+	public List<Bookmark> searchByCategoryAndDefaultCond(final Category category,
+		final FindBookmarksDefaultCond cond) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
 			.join(bookmark.profile).fetchJoin()
 			.join(bookmark.linkMetadata).fetchJoin()
 			.where(
-				bookmark.profile.eq(profile),
+				bookmark.profile.id.eq(cond.getProfileId()),
 				bookmark.category.eq(category),
-				filterBySearchTitle(cond.getSearchTitle())
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
 			.offset(cond.getOffset())
 			.limit(cond.getLimit())
@@ -68,20 +68,21 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndFavoriteAndSearchTitle(final Profile profile, final boolean isFavorite,
-		final String searchTitle) {
+	public long countByFavoriteAndDefaultCond(final boolean isFavorite, final FindBookmarksDefaultCond cond) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
 			.join(favorite).on(
 				favorite.bookmark.eq(bookmark),
-				favorite.owner.eq(profile))
-			.where(filterBySearchTitle(searchTitle))
+				favorite.owner.id.eq(cond.getProfileId()))
+			.where(
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes()))
 			.fetchOne();
 	}
 
 	@Override
-	public List<Bookmark> searchByProfileAndFavoriteAndDefaultCond(final Profile profile, final boolean isFavorite,
+	public List<Bookmark> searchByFavoriteAndDefaultCond(final boolean isFavorite,
 		final FindBookmarksDefaultCond cond) {
 
 		final List<Bookmark> bookmarks = query
@@ -89,8 +90,10 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.from(bookmark)
 			.join(favorite).on(
 				favorite.bookmark.eq(bookmark),
-				favorite.owner.eq(profile))
-			.where(filterBySearchTitle(cond.getSearchTitle()))
+				favorite.owner.id.eq(cond.getProfileId()))
+			.where(
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes()))
 			.orderBy(getOrderSpecifier(cond.getOrder()))
 			.offset(cond.getOffset())
 			.limit(cond.getLimit())
@@ -102,8 +105,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndTagsAndSearchTitle(final Profile profile, final List<String> tagNames,
-		final String searchTitle) {
+	public long countByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
 
 		final List<Long> bookmarkIds = query
 			.select(bookmarkTag.bookmark.id).distinct()
@@ -118,14 +120,14 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile)
 			.where(
 				bookmark.id.in(bookmarkIds),
-				bookmark.profile.eq(profile),
-				filterBySearchTitle(searchTitle)
+				bookmark.profile.id.eq(cond.getProfileId()),
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
 
 	@Override
-	public List<Bookmark> searchByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tagNames,
-		final FindBookmarksDefaultCond cond) {
+	public List<Bookmark> searchByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
 
 		final List<Long> bookmarkIds = query
 			.select(bookmarkTag.bookmark.id).distinct()
@@ -140,8 +142,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile).fetchJoin()
 			.where(
 				bookmark.id.in(bookmarkIds),
-				bookmark.profile.eq(profile),
-				filterBySearchTitle(cond.getSearchTitle())
+				bookmark.profile.id.eq(cond.getProfileId()),
+				containsSearchTitle(cond.getSearchTitle())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
 			.offset(cond.getOffset())
 			.limit(cond.getLimit())
@@ -153,24 +155,26 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndSearchTitle(final Profile profile, final String searchTitle) {
+	public long countByDefaultCond(final FindBookmarksDefaultCond cond) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
 			.where(
-				bookmark.profile.eq(profile),
-				filterBySearchTitle(searchTitle)
+				bookmark.profile.id.eq(cond.getProfileId()),
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
 
 	@Override
-	public List<Bookmark> searchByProfileAndDefaultCond(final Profile profile, final FindBookmarksDefaultCond cond) {
+	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
 			.where(
-				bookmark.profile.eq(profile),
-				filterBySearchTitle(cond.getSearchTitle())
+				bookmark.profile.id.eq(cond.getProfileId()),
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
 			.offset(cond.getOffset())
 			.limit(cond.getLimit())
@@ -181,14 +185,18 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return bookmarks;
 	}
 
-	private BooleanBuilder filterBySearchTitle(final String searchTitle) {
+	private BooleanBuilder inOpenTypes(final List<OpenType> openTypes) {
+		return nullSafeBuilder(() -> bookmark.openType.in(openTypes));
+	}
+
+	private BooleanBuilder containsSearchTitle(final String searchTitle) {
 		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(searchTitle));
 	}
 
 	private OrderSpecifier<?>[] getOrderSpecifier(final String order) {
 		final List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
 		if (order.equals("like")) {
-			orderSpecifiers.add(new OrderSpecifier(Order.DESC, stringPath("likeCount")));
+			orderSpecifiers.add(new OrderSpecifier(Order.DESC, stringPath("bookmark.likeCount")));
 		}
 		orderSpecifiers.add(new OrderSpecifier(Order.DESC, stringPath("bookmark.updatedAt")));
 		return orderSpecifiers.toArray(new OrderSpecifier[0]);
