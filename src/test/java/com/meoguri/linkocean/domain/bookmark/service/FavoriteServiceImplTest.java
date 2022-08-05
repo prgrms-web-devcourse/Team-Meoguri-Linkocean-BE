@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,7 +92,6 @@ class FavoriteServiceImplTest {
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 			.isThrownBy(() -> favoriteService.favorite(userId, bookmarkId));
 	}
-
 
 	@Test
 	void 즐겨찾기_해제_실패_즐겨찾기로_추가되어_있지_않음() {

@@ -1,15 +1,18 @@
 package com.meoguri.linkocean.controller.profile;
 
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
@@ -19,9 +22,11 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.support.GetProfileQueryParams;
+import com.meoguri.linkocean.controller.profile.support.ProfileSearchTab;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 
 import lombok.RequiredArgsConstructor;
@@ -65,6 +70,27 @@ public class ProfileController {
 	) {
 		final List<SearchProfileResult> results =
 			profileService.searchProfilesByUsername(queryParams.toSearchCond(user.getId()));
+
+		final List<GetProfilesResponse> response =
+			results.stream().map(GetProfilesResponse::of).collect(toList());
+		return SliceResponse.of("profiles", response);
+	}
+
+	/**
+	 * profileId 사용자의 팔로워/팔로이 프로필 목록 조회
+	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
+	 */
+	@GetMapping("/{profileId}")
+	public SliceResponse<GetProfilesResponse> getFollowerOrFollowee(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @PathVariable long profileId,
+		final @RequestParam ProfileSearchTab tab,
+		final GetProfileQueryParams queryParams
+	) {
+		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
+		final List<SearchProfileResult> results =
+			tab == ProfileSearchTab.FOLLOWER ? profileService.searchFollowerProfiles(cond, profileId) :
+				tab == ProfileSearchTab.FOLLOWEE ? profileService.searchFolloweeProfiles(cond, profileId) : emptyList();
 
 		final List<GetProfilesResponse> response =
 			results.stream().map(GetProfilesResponse::of).collect(toList());

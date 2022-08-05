@@ -2,7 +2,7 @@ package com.meoguri.linkocean.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import org.hibernate.TypeMismatchException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

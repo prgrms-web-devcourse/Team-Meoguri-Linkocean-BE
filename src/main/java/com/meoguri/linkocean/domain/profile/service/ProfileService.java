@@ -16,11 +16,17 @@ public interface ProfileService {
 
 	void updateProfile(UpdateProfileCommand command);
 
-	/* 팔로워 프로필 목록 조회 */
-	List<SearchProfileResult> searchFollowerProfiles(ProfileSearchCond searchCond);
+	/**
+	 * profileId 사용자의 팔로워 프로필 목록 조회
+	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
+	 */
+	List<SearchProfileResult> searchFollowerProfiles(ProfileSearchCond searchCond, long profileId);
 
-	/* 팔로이 프로필 목록 조회 */
-	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond);
+	/**
+	 * profileId 사용자의 팔로이 프로필 목록 조회
+	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
+	 */
+	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond, long profileId);
 
 	boolean existsByUserId(long userId);
 
