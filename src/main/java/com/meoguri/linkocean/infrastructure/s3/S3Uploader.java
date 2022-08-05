@@ -47,11 +47,13 @@ public class S3Uploader {
 		}
 	}
 
-	private String upload(File uploadFile, String dirName) {
-		String fileName = dirName + "/" + uploadFile.getName();
-		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
+	private String upload(File file, String dirName) {
+		String fileName = dirName + "/" + file.getName();
+		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
-		return amazonS3Client.getUrl(bucket, fileName).toString();
+		final String uploadUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+		file.delete(); // local 에 남는 파일을 지우기 위한 용도
+		return uploadUrl;
 	}
 }
 
