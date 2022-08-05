@@ -2,6 +2,7 @@ package com.meoguri.linkocean.controller.bookmark;
 
 import static java.time.format.DateTimeFormatter.*;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -46,7 +46,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 			new RegisterBookmarkRequest(link, title, memo, category, openType, null);
 
 		//when
-		mockMvc.perform(post(basePath).session(session)
+		mockMvc.perform(post(basePath)
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(createJson(registerBookmarkRequest)))
 
@@ -64,7 +65,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 		링크_메타데이터_얻기("http://www.naver.com");
 
-		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
+		final Long userId = getUserId(token);
 
 		final long savedBookmarkId = bookmarkService.registerBookmark(
 			new RegisterBookmarkCommand(
@@ -80,7 +81,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 		Bookmark savedBookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(savedBookmarkId).get();
 
 		//when then
-		mockMvc.perform(get(basePath + "/" + savedBookmarkId).session(session))
+		mockMvc.perform(get(basePath + "/" + savedBookmarkId)
+				.header(AUTHORIZATION, token))
 			.andExpect(status().isOk())
 			.andExpectAll(
 				jsonPath("$.title").value(savedBookmark.getTitle()),

@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.linkmetadata;
 
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,7 +30,7 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 				.queryParam("link", link)
 				.build()
 				.toUri())
-				.session(session)
+				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
