@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.linkmetadata.service;
 
-import static com.meoguri.linkocean.exception.Preconditions.*;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,6 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		return linkMetadataRepository.findTitleByLink(new Link(link))
 			.orElseGet(() -> {
 				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
-				checkArgument(result.isValid(), "존재하지 않는 url 입니다");
 
 				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImage());
 				linkMetadataRepository.save(linkMetadata);

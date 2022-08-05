@@ -72,9 +72,11 @@ class LinkMetadataServiceImplTest {
 		given(jsoupLinkMetadataService.search(invalidLink))
 			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
-		//when then
-		assertThatExceptionOfType(IllegalArgumentException.class)
-			.isThrownBy(() -> linkMetadataService.getTitleByLink(invalidLink));
+		//when
+		final String title = linkMetadataService.getTitleByLink(invalidLink);
+
+		// then
+		assertThat(title).isEqualTo(DEFAULT_TITLE);
 	}
 
 	@Test
