@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,7 @@ public final class GetBookmarksResponse {
 	private final String url;
 	private final String openType;
 	private final String category;
-	private final LocalDate updatedAt;
+	private final LocalDateTime updatedAt;
 
 	private final long likeCount;
 	private final Boolean isFavorite;
@@ -36,7 +36,7 @@ public final class GetBookmarksResponse {
 			result.getUrl(),
 			result.getOpenType(),
 			result.getCategory(),
-			result.getUpdatedAt().toLocalDate(),
+			result.getUpdatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),
 			result.isWriter(),

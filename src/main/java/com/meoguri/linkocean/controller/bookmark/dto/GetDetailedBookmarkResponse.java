@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,7 @@ public final class GetDetailedBookmarkResponse {
 	private final String openType;
 
 	private final Boolean isFavorite;
-	private final LocalDate updatedAt;
+	private final LocalDateTime updatedAt;
 	private final List<String> tags;
 	private final Map<String, Long> reactionCount;
 	private final Map<String, Boolean> reaction;
@@ -40,7 +40,7 @@ public final class GetDetailedBookmarkResponse {
 			result.getMemo(),
 			result.getOpenType(),
 			result.isFavorite(),
-			result.getUpdatedAt().toLocalDate(),
+			result.getUpdatedAt(),
 			result.getTags(),
 			result.getReactionCount(),
 			result.getReaction(),
