@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain.profile.service;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static org.springframework.util.StringUtils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,12 +94,14 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
 		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final String origUsername = profile.getUsername();
 
 		// 프로필 업데이트
 		profile.update(command.getUsername(), command.getBio(), command.getImage());
 
 		// 선호 카테고리 업데이트
 		profile.updateFavoriteCategories(command.getCategories());
+		log.info("profile updated : from username : {} -> {}", origUsername, profile.getUsername());
 	}
 
 	@Transactional(readOnly = true)
@@ -154,7 +157,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<SearchProfileResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
-		checkArgument(searchCond.getUsername() != null, "사용자 이름을 입력해 주세요");
+		checkArgument(hasText(searchCond.getUsername()), "사용자 이름을 입력해 주세요");
 
 		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
 		List<Profile> profiles = profileRepository.findByUsernameLike(

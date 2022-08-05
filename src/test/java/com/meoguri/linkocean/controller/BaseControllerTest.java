@@ -72,7 +72,7 @@ public class BaseControllerTest {
 	protected void 유저_등록_로그인(final String email, final String oAuthType) {
 		final User savedUser = userRepository.save(new User(email, oAuthType));
 
-		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
@@ -80,7 +80,7 @@ public class BaseControllerTest {
 			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
 			.orElseThrow();
 
-		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
@@ -161,7 +161,7 @@ public class BaseControllerTest {
 
 	// TODO - 리팩터링 제거 대상입니당
 	protected long getUserId(final String tokenHeader) {
-		String token = StringUtils.substringAfter(tokenHeader, "bearer ");
+		String token = StringUtils.substringAfter(tokenHeader, "Bearer ");
 
 		final String email = jwtProvider.getClaims(token, Claims::getId);
 		final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
