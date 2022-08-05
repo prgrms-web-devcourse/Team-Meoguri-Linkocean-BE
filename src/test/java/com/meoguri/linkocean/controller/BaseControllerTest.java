@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -51,10 +52,12 @@ public class BaseControllerTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	protected void 유저_등록_로그인(final String email, final String oAuthType) {
+	protected Long 유저_등록_로그인(final String email, final String oAuthType) {
 		final User savedUser = userRepository.save(new User(email, oAuthType));
 
 		session.setAttribute("user", new SessionUser(savedUser));
+
+		return savedUser.getId();
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
@@ -105,6 +108,14 @@ public class BaseControllerTest {
 		mockMvc.perform(post("/api/v1/profiles/follow?followeeId=" + followeeId)
 				.session(session)
 				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
+	}
+
+	protected void 즐겨찾기에_추가(final long bookmarkId) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/favorite", bookmarkId)
+				.session(session)
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andReturn();
 	}
