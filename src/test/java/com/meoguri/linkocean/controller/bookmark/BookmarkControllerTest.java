@@ -14,20 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.configuration.security.oauth.SessionUser;
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
-import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
-import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 
 class BookmarkControllerTest extends BaseControllerTest {
-
-	@Autowired
-	private BookmarkService bookmarkService;
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
@@ -67,23 +61,12 @@ class BookmarkControllerTest extends BaseControllerTest {
 	@Test
 	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
 		//given
-		final Long userId = ((SessionUser)session.getAttribute("user")).getId();
+		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
 
-		final long savedBookmarkId = bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(
-				userId,
-				링크_메타데이터_얻기("https://www.naver.com"),
-				null,
-				null,
-				null,
-				"all",
-				List.of("tag1", "tag2"))
-		);
-
-		Bookmark savedBookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(savedBookmarkId).get();
+		Bookmark savedBookmark = bookmarkRepository.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId).get();
 
 		//when then
-		mockMvc.perform(get(basePath + "/" + savedBookmarkId).session(session))
+		mockMvc.perform(get(basePath + "/" + bookmarkId).session(session))
 			.andExpect(status().isOk())
 			.andExpectAll(
 				jsonPath("$.title").value(savedBookmark.getTitle()),
