@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.profile.support;
+package com.meoguri.linkocean.configuration.resolver;
 
 import static org.apache.commons.lang3.math.NumberUtils.*;
 

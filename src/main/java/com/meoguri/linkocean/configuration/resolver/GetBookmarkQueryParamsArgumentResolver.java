@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.bookmark.support;
+package com.meoguri.linkocean.configuration.resolver;
 
 import static org.apache.commons.lang3.BooleanUtils.*;
 import static org.apache.commons.lang3.math.NumberUtils.*;

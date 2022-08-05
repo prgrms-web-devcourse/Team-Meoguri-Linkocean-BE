@@ -66,7 +66,7 @@ public class Profile extends BaseIdEntity {
 	public void update(final String username, final String bio, final String image) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
-		checkNullableStringLength(image, MAX_PROFILE_BIO_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
+		checkNullableStringLength(image, MAX_PROFILE_IMAGE_URL_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
 
 		this.username = username;
 		this.bio = bio;

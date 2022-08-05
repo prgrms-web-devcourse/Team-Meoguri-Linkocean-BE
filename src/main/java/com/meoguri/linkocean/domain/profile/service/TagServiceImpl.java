@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.profile.service;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetMyTagsResult;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.service.dto.GetMyTagsResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,8 +24,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class TagServiceImpl implements TagService {
 
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final BookmarkRepository bookmarkRepository;
+
+	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 
 	@Override
 	public List<GetMyTagsResult> getMyTags(final long userId) {
