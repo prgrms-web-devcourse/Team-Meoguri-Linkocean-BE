@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -115,6 +114,7 @@ class CustomBookmarkRepositoryImplTest {
 		savedBookmark3 = bookmarkRepository.save(bookmark3);
 
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
+		bookmark1.changeLikeCount(1L);
 		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
 
 		favoriteRepository.save(new Favorite(savedBookmark1, profile));
@@ -158,7 +158,6 @@ class CustomBookmarkRepositoryImplTest {
 				tuple(savedBookmark1.getId(), savedBookmark3.getCategory()));
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
 		//given when
@@ -221,7 +220,6 @@ class CustomBookmarkRepositoryImplTest {
 		);
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
 		//given when
@@ -280,7 +278,6 @@ class CustomBookmarkRepositoryImplTest {
 				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()));
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
 		//given when
@@ -337,7 +334,6 @@ class CustomBookmarkRepositoryImplTest {
 			.containsExactly(savedBookmark3.getId(), savedBookmark2.getId(), savedBookmark1.getId());
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_좋아요_정렬() {
 		//given when

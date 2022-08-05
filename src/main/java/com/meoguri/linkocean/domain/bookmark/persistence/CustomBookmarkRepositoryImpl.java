@@ -143,7 +143,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.where(
 				bookmark.id.in(bookmarkIds),
 				bookmark.profile.id.eq(cond.getProfileId()),
-				containsSearchTitle(cond.getSearchTitle())
+				containsSearchTitle(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
 			.offset(cond.getOffset())
 			.limit(cond.getLimit())
