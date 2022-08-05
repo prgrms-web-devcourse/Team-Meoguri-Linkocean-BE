@@ -4,16 +4,21 @@ import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
@@ -21,6 +26,7 @@ import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
+import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.controller.profile.support.GetProfileQueryParams;
 import com.meoguri.linkocean.controller.profile.support.ProfileSearchTab;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
@@ -28,6 +34,7 @@ import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
+import com.meoguri.linkocean.infrastructure.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +48,7 @@ public class ProfileController {
 	private final ProfileService profileService;
 	private final CategoryService categoryService;
 	private final TagService tagService;
+	private final S3Uploader s3Uploader;
 
 	@PostMapping
 	public SimpleIdResponse createProfile(
@@ -60,6 +68,28 @@ public class ProfileController {
 			tagService.getMyTags(user.getId()),
 			categoryService.getUsedCategories(user.getId())
 		);
+	}
+
+	@PostMapping("/me")
+	public void updateMyProfile(
+		@AuthenticationPrincipal SecurityUser user,
+		@ModelAttribute UpdateProfileRequest request,
+		@RequestPart(required = false) MultipartFile profilePhoto
+	) {
+
+		final String image = Optional.ofNullable(profilePhoto)
+			.map(photo -> uploadImage(photo))
+			.orElseGet(null);
+		profileService.updateProfile(request.toCommand(user.getId(), image));
+
+	}
+
+	private String uploadImage(final MultipartFile photo) {
+		try {
+			return s3Uploader.upload(photo, "profile");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/* 프로필 목록 조회 - 머구리 찾기 */
