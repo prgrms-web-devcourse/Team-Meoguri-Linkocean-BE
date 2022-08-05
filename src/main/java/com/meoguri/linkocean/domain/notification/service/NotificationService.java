@@ -7,6 +7,11 @@ import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCo
 
 public interface NotificationService {
 
+	/**
+	 * 북마크 공유 알림 생성
+	 * - 나를 팔로우 해주는 상대에게만 공유 할 수 있다.
+	 * - 자신의 북마크만 공유할 수 있다.
+	 */
 	void shareNotification(ShareNotificationCommand command);
 
 	List<Notification> getNotifications(long userId);

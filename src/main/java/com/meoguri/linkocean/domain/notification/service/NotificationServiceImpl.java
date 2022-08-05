@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
@@ -24,6 +25,7 @@ import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -41,11 +43,12 @@ public class NotificationServiceImpl implements NotificationService {
 
 		final Profile sender = findProfileByUserIdQuery.findByUserId(senderUserId);
 		final Profile target = findProfileByIdQuery.findById(targetProfileId);
-		final boolean isSharable = checkIsFollowQuery.isFollow(target, sender);
+		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
+		final boolean isSharable =
+			checkIsFollowQuery.isFollow(target, sender) && bookmark.isOwnedBy(sender);
 		checkCondition(isSharable);
 
-		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 		Map<String, Noti> info = Map.of(
 			"sender", new ProfileNoti(sender.getId(), sender.getUsername()),
 			"bookmark", new BookmarkNoti(bookmark.getId(), bookmark.getTitle(), bookmark.getUrl())

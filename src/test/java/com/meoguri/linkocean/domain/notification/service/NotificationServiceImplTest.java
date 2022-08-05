@@ -122,4 +122,18 @@ class NotificationServiceImplTest {
 		assertThatExceptionOfType(LinkoceanRuntimeException.class)
 			.isThrownBy(() -> notificationService.shareNotification(command));
 	}
+
+	@Test
+	void 내_글이_아니면_공유_알림_추가_실패() {
+		//given - sender 가 target 사용자의 게시글을 공유하는 Illegal 한 커맨드
+		final ShareNotificationCommand command = new ShareNotificationCommand(
+			sender.getId(),
+			targetProfile.getId(),
+			notSharableBookmark.getId()
+		);
+
+		//when then
+		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			.isThrownBy(() -> notificationService.shareNotification(command));
+	}
 }
