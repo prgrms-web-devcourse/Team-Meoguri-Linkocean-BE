@@ -204,7 +204,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private PageResult<GetBookmarksResult> searchMyBookmarksByCategoryAndDefaultCond(final Profile profile,
 		final Category category, final FindBookmarksDefaultCond cond) {
 		//전체 개수 조회
-		long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, category,
+		long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, category,
 			cond.getSearchTitle());
 
 		//페이지에 맞게 조회
@@ -219,7 +219,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private PageResult<GetBookmarksResult> searchMyBookmarksByFavoriteAndDefaultCond(final Profile profile,
 		final boolean favorite, final FindBookmarksDefaultCond cond) {
-		long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, favorite,
+		long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, favorite,
 			cond.getSearchTitle());
 
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(profile, favorite,
@@ -232,7 +232,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private PageResult<GetBookmarksResult> searchMyBookmarksByTagsAndDefaultCond(final Profile profile,
 		final List<String> tags, final FindBookmarksDefaultCond cond) {
-		long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, tags, cond.getSearchTitle());
+		long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, tags, cond.getSearchTitle());
 
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(profile, tags, cond);
 
@@ -244,7 +244,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private PageResult<GetBookmarksResult> searchMyBookmarksByDefaultCond(final Profile profile,
 		final FindBookmarksDefaultCond cond) {
-		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, cond.getSearchTitle());
+		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, cond.getSearchTitle());
 
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(profile, cond);
 
@@ -262,7 +262,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.collect(Collectors.toList());
 	}
 
-	//TODO: Service Dto 변화 필요. 페이징 처리하기 위해선 totalCount 필요.
 	private PageResult<GetBookmarksResult> convertToBookmarksResult(final long totalCount,
 		final List<Bookmark> bookmarks,
 		final Profile profile, final List<Boolean> isFavorites) {

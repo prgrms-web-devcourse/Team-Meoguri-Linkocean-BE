@@ -10,23 +10,23 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface CustomBookmarkRepository {
 
-	long countByProfileAndCategoryAndDefaultCond(final Profile profile, final Category of, final String searchTitle);
+	long countByProfileAndCategoryAndSearchTitle(final Profile profile, final Category of, final String searchTitle);
 
 	List<Bookmark> searchByProfileAndCategoryAndDefaultCond(final Profile profile, final Category of,
 		final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndFavoriteAndDefaultCond(final Profile profile, final boolean favorite,
+	long countByProfileAndFavoriteAndSearchTitle(final Profile profile, final boolean favorite,
 		final String searchTitle);
 
 	List<Bookmark> searchByProfileAndFavoriteAndDefaultCond(final Profile profile, boolean favorite,
 		final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tags, final String searchTitle);
+	long countByProfileAndTagsAndSearchTitle(final Profile profile, final List<String> tags, final String searchTitle);
 
 	List<Bookmark> searchByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tags,
 		final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndDefaultCond(final Profile profile, final String searchTitle);
+	long countByProfileAndSearchTitle(final Profile profile, final String searchTitle);
 
 	List<Bookmark> searchByProfileAndDefaultCond(final Profile profile, final FindBookmarksDefaultCond cond);
 }

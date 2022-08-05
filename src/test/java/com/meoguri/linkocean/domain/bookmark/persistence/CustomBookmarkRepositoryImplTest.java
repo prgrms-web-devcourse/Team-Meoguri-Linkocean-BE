@@ -127,7 +127,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, Category.IT, null);
+		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, Category.IT, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -136,7 +136,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리와_검색어로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndDefaultCond(profile, Category.IT, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, Category.IT, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -189,7 +189,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, true, null);
+		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, true, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -198,7 +198,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndDefaultCond(profile, true, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, true, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -251,7 +251,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, List.of("tag1"), null);
+		final long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, List.of("tag1"), null);
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -260,7 +260,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndTagsAndDefaultCond(profile, List.of("tag1"), "1");
+		final long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, List.of("tag1"), "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -313,7 +313,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_총_개수() {
 		//give when
-		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, null);
+		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, null);
 
 		//then
 		assertThat(totalCount).isEqualTo(3L);
@@ -322,7 +322,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndDefaultCond(profile, "1");
+		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, "1");
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);

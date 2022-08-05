@@ -33,7 +33,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndCategoryAndDefaultCond(final Profile profile, final Category category,
+	public long countByProfileAndCategoryAndSearchTitle(final Profile profile, final Category category,
 		final String searchTitle) {
 		return query
 			.select(bookmark.id.count())
@@ -68,7 +68,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndFavoriteAndDefaultCond(final Profile profile, final boolean isFavorite,
+	public long countByProfileAndFavoriteAndSearchTitle(final Profile profile, final boolean isFavorite,
 		final String searchTitle) {
 		return query
 			.select(bookmark.id.count())
@@ -102,7 +102,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tagNames,
+	public long countByProfileAndTagsAndSearchTitle(final Profile profile, final List<String> tagNames,
 		final String searchTitle) {
 
 		final List<Long> bookmarkIds = query
@@ -153,7 +153,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByProfileAndDefaultCond(final Profile profile, final String searchTitle) {
+	public long countByProfileAndSearchTitle(final Profile profile, final String searchTitle) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
