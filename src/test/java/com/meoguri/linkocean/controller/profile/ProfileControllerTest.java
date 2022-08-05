@@ -161,7 +161,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		//then
 		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
-		// assertThat(myProfile.getCategories()).containsExactly("자기계발", "과학"); ->> 왜 empty array 가 반환되죠?!?!?!
+		assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
 		assertThat(myProfile.getBio()).isEqualTo(bio);
 		assertThat(myProfile.getImage()).isNotNull();
 	}
