@@ -107,8 +107,9 @@ class ReactionServiceImplTest {
 
 		em.flush();
 		em.clear();
+
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "HATE");
+		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "hate");
 		reactionService.requestReaction(command); //취소됨
 
 		em.flush();
@@ -144,4 +145,61 @@ class ReactionServiceImplTest {
 			.containsExactly(profile1, bookmark2, "like");
 	}
 
+	@Test
+	void 좋아요_개수_수정_성공_Like_추가_경우() {
+		//given
+
+		//when
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
+
+		//then
+		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+	}
+
+	@Test
+	void 좋아요_개수_수정_성공_Hate_추가_경우() {
+		//given
+
+		//when
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate"));
+
+		em.flush();
+		em.clear();
+
+		//then
+		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+	}
+
+	@Test
+	void 좋아요_개수_수정_성공_좋아요_좋아요_경우() {
+		//given
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+
+		//when
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
+
+		//then
+		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+	}
+
+	@Test
+	void 좋아요_개수_수정_성공_싫어요_좋아요_경우() {
+		//given
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+
+		//when
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
+
+		//then
+		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+	}
 }

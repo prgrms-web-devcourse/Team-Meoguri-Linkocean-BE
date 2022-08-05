@@ -156,6 +156,13 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	/**
+	 * 좋아요 수 변경
+	 */
+	public void changeLikeCount(long likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	/**
 	 * 북마크의 공개 범위
 	 */
 	public enum OpenType {
