@@ -40,16 +40,16 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					profileIdEq(cond.getProfileId()),
 					bookmark.category.eq(category),
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
-				)
-			, Bookmark::getTagNames,
+				),
+			Bookmark::getTagNames,
 			countQuery -> countQuery
 				.selectFrom(bookmark)
 				.where(
 					profileIdEq(cond.getProfileId()),
 					bookmark.category.eq(category),
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
 				)
 		);
@@ -66,12 +66,13 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					favorite.bookmark.eq(bookmark),
 					profileIdEq(cond.getProfileId())
 				).where(
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
-				)
-			, Bookmark::getTagNames);
+				),
+			Bookmark::getTagNames);
 	}
 
+	/* 태그로 조회 */
 	@Override
 	public Page<Bookmark> findByTags(
 		final List<String> tagNames,
@@ -92,7 +93,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					bookmark.id.in(bookmarkIds),
 					profileIdEq(cond.getProfileId()),
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames,
@@ -101,21 +102,22 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					bookmark.id.in(bookmarkIds),
 					profileIdEq(cond.getProfileId()),
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
 				)
 		);
 	}
 
+	/* 기본 조회 */
 	@Override
 	public Page<Bookmark> findBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
 
 		return applyPagination(pageable,
-			contentQuery -> contentQuery.
-				selectFrom(bookmark)
+			contentQuery -> contentQuery
+				.selectFrom(bookmark)
 				.where(
 					profileIdEq(cond.getProfileId()),
-					titleLike(cond.getSearchTitle()),
+					titleContains(cond.getSearchTitle()),
 					inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames
@@ -130,8 +132,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.openType.in(openTypes));
 	}
 
-	private BooleanBuilder titleLike(final String title) {
-		return nullSafeBuilder(() -> bookmark.title.like(String.join(title, "%", "%")));
+	private BooleanBuilder titleContains(final String title) {
+		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(title));
 	}
-
 }
