@@ -18,31 +18,26 @@ public final class MyBookmarkSearchCond {
 	private static final String DEFAULT_ORDER = "upload";
 	private static final String DEFAULT_OPENTYPE = "all";
 
-	private final int page;
-	private final int size;
+	private final long userId;
 	private final String order;
-
 	private final String category;
 	private final boolean favorite;
 	private final List<String> tags;
 
 	private final String searchTitle;
 
-	public MyBookmarkSearchCond(final Integer page, final Integer size, final String order,
-		final boolean favorite, final String category, final List<String> tags, final String searchTitle) {
+	public MyBookmarkSearchCond(final long userId, final boolean favorite, final String category,
+		final List<String> tags, final String searchTitle, final String order) {
 
-		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
-		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
-		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
-
+		this.userId = userId;
 		this.favorite = favorite;
 		this.category = category;
 		this.tags = tags;
-
 		this.searchTitle = searchTitle;
+		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
 	}
 
 	public FindBookmarksDefaultCond toFindBookmarksDefaultCond(final long profileId) {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, profileId, this.searchTitle);
+		return new FindBookmarksDefaultCond(profileId, searchTitle, order);
 	}
 }

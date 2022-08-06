@@ -2,12 +2,18 @@ package com.meoguri.linkocean.configuration.resolver;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public final class GetBookmarkQueryParams {
 
@@ -21,8 +27,8 @@ public final class GetBookmarkQueryParams {
 	private final boolean follow;
 	private final List<String> tags;
 
-	public MyBookmarkSearchCond toMySearchCond(final Long id) {
-		return new MyBookmarkSearchCond(page, size, order, favorite, category, tags, searchTitle);
+	public MyBookmarkSearchCond toMySearchCond(final long userId) {
+		return new MyBookmarkSearchCond(userId, favorite, category, tags, searchTitle, order);
 	}
 
 	public OtherBookmarkSearchCond toOtherSearchCond(final Long otherProfileId) {
@@ -31,5 +37,9 @@ public final class GetBookmarkQueryParams {
 
 	public FeedBookmarksSearchCond toFeedSearchCond() {
 		return new FeedBookmarksSearchCond(page, size, order, category, searchTitle, follow);
+	}
+
+	public Pageable toPage() {
+		return PageRequest.of(page, size, Sort.DEFAULT_DIRECTION);
 	}
 }
