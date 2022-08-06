@@ -2,24 +2,26 @@ package com.meoguri.linkocean.configuration.security.jwt;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 
+import java.util.List;
+
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.meoguri.linkocean.domain.user.entity.Email;
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
-import com.meoguri.linkocean.domain.user.repository.FindUserByEmailAndTypeQuery;
+import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.util.TokenUtil;
 
 import io.jsonwebtoken.Claims;
@@ -31,8 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final UserDetailsService customUserDetailsService;
-	private final FindUserByEmailAndTypeQuery findUserByEmailAndTypeQuery;
+	private final UserRepository userRepository;
 	private final JwtProvider jwtProvider;
 
 	private static final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
@@ -57,12 +58,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
 
 			// email 과 OauthType 으로 User 가 존재하는지 확인
-			final User user =
-				findUserByEmailAndTypeQuery.findUserByUserAndType(new Email(email), OAuthType.of(oauthType));
+			final SecurityUserProjection projection = userRepository
+				.findSecurityUserByEmailAndOauthType(new Email(email), OAuthType.of(oauthType))
+				.orElseThrow(LinkoceanRuntimeException::new);
 
 			// @AuthenticationPrincipal 을 위한 UserDetails
-			final UserDetails userDetails =
-				customUserDetailsService.loadUserByUsername(String.valueOf(user.getId()));
+			final UserDetails userDetails = new SecurityUser(
+				projection.getId(),
+				projection.getProfile_id(),
+				projection.getEmail(),
+				projection.getOauthType(),
+				List.of(new SimpleGrantedAuthority("ROLE_USER"))
+			);
 
 			checkUserDetails(userDetails);
 

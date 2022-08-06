@@ -19,12 +19,7 @@ class UserTest {
 
 		//then
 		assertThat(user).isNotNull()
-			.extracting(
-				User::getEmail,
-				User::getOAuthType
-			).containsExactly(
-				new Email(email),
-				OAuthType.of(oAuthType)
-			);
+			.extracting(User::getEmail, User::getOauthType)
+			.containsExactly(new Email(email), OAuthType.of(oAuthType));
 	}
 }

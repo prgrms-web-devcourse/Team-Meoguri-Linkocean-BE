@@ -34,7 +34,7 @@ class UserRepositoryTest {
 
 		//then
 		assertThat(foundUser).isPresent();
-		assertThat(foundUser.get()).extracting(User::getEmail, User::getOAuthType)
+		assertThat(foundUser.get()).extracting(User::getEmail, User::getOauthType)
 			.isEqualTo(List.of(new Email(email), OAuthType.of(oAuthType)));
 	}
 

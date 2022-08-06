@@ -39,7 +39,6 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByU
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -55,7 +54,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final ReactionRepository reactionRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
@@ -63,7 +61,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
 		/* 북마크 생성 & 저장 */
@@ -88,10 +86,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
+		final long bookmarkId = command.getBookmarkId();
 
 		//userId, bookmarkId 유효성 검사
 		Bookmark bookmark = bookmarkRepository
-			.findByProfileAndId(findProfileByUserIdQuery.findByUserId(command.getUserId()), command.getBookmarkId())
+			.findByProfileAndId(profile, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		//update 진행
@@ -105,8 +105,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public void removeBookmark(final long userId, final long bookmarkId) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+	public void removeBookmark(final long profileId, final long bookmarkId) {
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		// 자신의 북마크 쓴 북마크를 가져옴
 		final Bookmark bookmark = bookmarkRepository
@@ -130,15 +130,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	//TODO : 쿼리 튜닝
 	@Transactional(readOnly = true)
 	@Override
-	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
+	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		final Profile owner = bookmark.getProfile();
-		final Profile currentUserProfile = findProfileByUserIdQuery.findByUserId(userId);
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile currentUserProfile = findProfileByIdQuery.findById(profileId);
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		final boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
@@ -184,9 +184,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public PageResult<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
+	public PageResult<GetBookmarksResult> getMyBookmarks(final long profileId, final MyBookmarkSearchCond searchCond) {
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		if (nonNull(searchCond.getCategory())) {
 			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
@@ -213,10 +213,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId,
+	public PageResult<GetBookmarksResult> getOtherBookmarks(final long profileId,
 		final OtherBookmarkSearchCond cond) {
 
-		final Profile myProfile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile myProfile = findProfileByIdQuery.findById(profileId);
 		final Profile otherProfile = findProfileByIdQuery.findById(cond.getOtherProfileId());
 
 		List<OpenType> openTypes = new ArrayList<>();

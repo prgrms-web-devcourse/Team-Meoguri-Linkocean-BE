@@ -15,7 +15,7 @@ public final class UpdateBookmarkRequest {
 	private String openType;
 	private List<String> tags;
 
-	public UpdateBookmarkCommand toCommand(final long userId, final long bookmarkId) {
-		return new UpdateBookmarkCommand(userId, bookmarkId, title, memo, category, openType, tags);
+	public UpdateBookmarkCommand toCommand(final long profileId, final long bookmarkId) {
+		return new UpdateBookmarkCommand(profileId, bookmarkId, title, memo, category, openType, tags);
 	}
 }

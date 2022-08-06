@@ -32,7 +32,7 @@ public class User extends BaseIdEntity {
 
 	@Column(name = "oauth_type", nullable = false, length = 50)
 	@Enumerated(STRING)
-	private OAuthType oAuthType;
+	private OAuthType oauthType;
 
 	@Getter(NONE)
 	@OneToOne(fetch = LAZY, mappedBy = "user")
@@ -41,10 +41,10 @@ public class User extends BaseIdEntity {
 	/**
 	 * 회원 가입시 사용하는 생성자
 	 */
-	public User(final String email, final String oAuthType) {
+	public User(final String email, final String oauthType) {
 
 		this.email = new Email(email);
-		this.oAuthType = OAuthType.of(oAuthType);
+		this.oauthType = OAuthType.of(oauthType);
 	}
 
 	public Long getProfileId() {

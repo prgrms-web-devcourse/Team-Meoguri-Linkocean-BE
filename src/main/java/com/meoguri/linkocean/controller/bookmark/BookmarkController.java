@@ -46,7 +46,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.getId())));
+		return of(bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
 	}
 
 	/**
@@ -57,8 +57,8 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getMyBookmarks(user.getId(),
-			queryParams.toMySearchCond(user.getId()));
+		final PageResult<GetBookmarksResult> result = bookmarkService
+			.getMyBookmarks(user.getProfileId(), queryParams.toMySearchCond());
 
 		final List<GetBookmarksResponse> response = result.getData()
 			.stream()
@@ -175,7 +175,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId);
 		return GetDetailedBookmarkResponse.of(result);
 	}
 
@@ -186,7 +186,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
@@ -195,6 +195,6 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.removeBookmark(user.getId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 }

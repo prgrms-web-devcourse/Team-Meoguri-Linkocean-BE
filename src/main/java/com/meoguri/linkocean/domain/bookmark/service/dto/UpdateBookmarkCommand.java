@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class UpdateBookmarkCommand {
 
-	private final long userId;
+	private final long profileId;
 	private final long bookmarkId;
 	private final String title;
 	private final String memo;

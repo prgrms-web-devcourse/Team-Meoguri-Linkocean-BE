@@ -46,7 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
 		final User user = userOf(attributes);
 
-		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOAuthType());
+		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOauthType());
 		return new DefaultOAuth2User(
 			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
 			attributes.getAttributes(),
@@ -61,9 +61,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 				final User user = userRepository.save(attributes.toEntity());
 
 				log.info("save user with email : {}, oauthType : {}",
-					Email.toString(user.getEmail()), user.getOAuthType());
+					Email.toString(user.getEmail()), user.getOauthType());
 				return user;
 			});
-
 	}
 }

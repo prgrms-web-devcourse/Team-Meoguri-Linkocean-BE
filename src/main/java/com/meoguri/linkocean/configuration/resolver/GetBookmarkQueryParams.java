@@ -21,7 +21,7 @@ public final class GetBookmarkQueryParams {
 	private final boolean follow;
 	private final List<String> tags;
 
-	public MyBookmarkSearchCond toMySearchCond(final Long id) {
+	public MyBookmarkSearchCond toMySearchCond() {
 		return new MyBookmarkSearchCond(page, size, order, favorite, category, tags, searchTitle);
 	}
 
