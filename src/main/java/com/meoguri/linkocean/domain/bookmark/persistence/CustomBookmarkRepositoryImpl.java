@@ -75,19 +75,17 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	/* 즐겨찾기 된 북마크 조회 */
 	@Override
 	public Page<Bookmark> findFavoriteBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
-
-		final List<Bookmark> bookmarks =
-			query
-				.select(bookmark)
-				.from(bookmark)
-				.join(favorite)
-				.on(
-					favorite.bookmark.eq(bookmark),
-					profileIdEq(favorite.owner, cond))
-				.where(
-					titleLike(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
-				)
+		final List<Bookmark> bookmarks = query
+			.select(bookmark)
+			.from(bookmark)
+			.join(favorite)
+			.on(
+				favorite.bookmark.eq(bookmark),
+				profileIdEq(favorite.owner, cond))
+			.where(
+				titleLike(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
+			)
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
@@ -145,18 +143,11 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
 
-		final long count = countByTags(tagNames, cond);
+		final long count = countByTags(bookmarkIds, cond);
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	private long countByTags(final List<String> tagNames, final BookmarkFindCond cond) {
-		final List<Long> bookmarkIds = query
-			.select(bookmarkTag.bookmark.id).distinct()
-			.from(bookmarkTag)
-			.join(bookmarkTag.tag)
-			.where(bookmarkTag.tag.name.in(tagNames))
-			.fetch();
-
+	private long countByTags(final List<Long> bookmarkIds, final BookmarkFindCond cond) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
