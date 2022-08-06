@@ -94,8 +94,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
-		final long count = countFavoriteBookmarks(cond);
 
+		final long count = countFavoriteBookmarks(cond);
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
@@ -115,31 +115,11 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public long countByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
-
-		final List<Long> bookmarkIds = query
-			.select(bookmarkTag.bookmark.id).distinct()
-			.from(bookmarkTag)
-			.join(bookmarkTag.tag)
-			.where(bookmarkTag.tag.name.in(tagNames))
-			.fetch();
-
-		return query
-			.select(bookmark.id.count())
-			.from(bookmark)
-			.join(bookmark.profile)
-			.where(
-				bookmark.id.in(bookmarkIds),
-				profileIdEq(bookmark.profile, cond),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			).fetchOne();
-	}
-
-	@Override
-	public List<Bookmark> searchByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond,
-		final
-		Pageable pageable) {
+	public Page<Bookmark> findByTags(
+		final List<String> tagNames,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
 
 		final List<Long> bookmarkIds = query
 			.select(bookmarkTag.bookmark.id).distinct()
@@ -164,15 +144,25 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
-		return bookmarks;
+
+		final long count = countByTags(tagNames, cond);
+		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	@Override
-	public long countByDefaultCond(final FindBookmarksDefaultCond cond) {
+	private long countByTags(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
+		final List<Long> bookmarkIds = query
+			.select(bookmarkTag.bookmark.id).distinct()
+			.from(bookmarkTag)
+			.join(bookmarkTag.tag)
+			.where(bookmarkTag.tag.name.in(tagNames))
+			.fetch();
+
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
+			.join(bookmark.profile)
 			.where(
+				bookmark.id.in(bookmarkIds),
 				profileIdEq(bookmark.profile, cond),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
@@ -180,7 +170,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond, final Pageable pageable) {
+	public Page<Bookmark> findBookmarks(final FindBookmarksDefaultCond cond, final Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
@@ -195,7 +185,20 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
-		return bookmarks;
+
+		final long count = countBookmarks(cond);
+		return new PageImpl<>(bookmarks, pageable, count);
+	}
+
+	private long countBookmarks(final FindBookmarksDefaultCond cond) {
+		return query
+			.select(bookmark.id.count())
+			.from(bookmark)
+			.where(
+				profileIdEq(bookmark.profile, cond),
+				titleLike(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
+			).fetchOne();
 	}
 
 	private BooleanExpression profileIdEq(final QProfile bookmark, final FindBookmarksDefaultCond cond) {

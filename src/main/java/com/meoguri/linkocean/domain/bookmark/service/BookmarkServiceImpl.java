@@ -187,50 +187,25 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional(readOnly = true)
 	@Override
 	public Page<GetBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond, final Pageable pageable) {
-		final String searchCategory = searchCond.getCategory();
+		final Category searchCategory = Category.of(searchCond.getCategory());
 		final boolean searchFavorite = searchCond.isFavorite();
 		final List<String> searchTags = searchCond.getTags();
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(searchCond.getUserId());
 		final FindBookmarksDefaultCond findCond = searchCond.toFindCond(profile.getId());
 
-		// Case 1 - 카테고리 필터링
-		if (searchCategory != null) {
-			// 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다.
-			checkCondition(!searchFavorite && isNull(searchTags));
-			final Category category = Category.of(searchCategory);
+		final Page<Bookmark> bookmarkPage =
+			// Case 1 - 카테고리 필터링
+			searchCategory != null ? bookmarkRepository.findByCategory(searchCategory, findCond, pageable) :
+				// Case 2 - 즐겨찾기 필터링
+				searchFavorite ? bookmarkRepository.findFavoriteBookmarks(findCond, pageable) :
+					// Case 3 - 태그 필터링
+					searchTags != null ? bookmarkRepository.findByTags(searchTags, findCond, pageable) :
+						// Case 4 - 기본 검색
+						bookmarkRepository.findBookmarks(findCond, pageable);
 
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByCategory(category, findCond, pageable);
-			final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
-
-			return toResultPage(bookmarkPage, isFavorites, pageable);
-		}
-
-		// Case 2 - 즐겨찾기 필터링
-		if (searchFavorite) {
-			// 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다.
-			checkCondition(isNull(searchCond.getTags()));
-
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findFavoriteBookmarks(findCond, pageable);
-			final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
-
-			return toResultPage(bookmarkPage, isFavorites, pageable);
-		}
-
-		/*// Case 3 - 태그 필터링
-		if (nonNull(searchTags)) {
-			// 태그는 최대 3개 까지 필터링 가능하다
-			checkCondition(searchCond.getTags().size() <= 3);
-			return getPageResultBy(
-				profile,
-				searchTags,
-				searchCond.toFindBookmarksDefaultCond(profile.getId()),
-				pageable
-			);
-		}*/
-
-		// return getPageResultBy(profile, searchCond.toFindBookmarksDefaultCond(profile.getId()));
-		throw new IllegalStateException("temp illegal state");
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
+		return toResultPage(bookmarkPage, isFavorites, pageable);
 	}
 
 	@Override

@@ -18,11 +18,9 @@ public interface CustomBookmarkRepository {
 	/* 즐겨찾기 된 북마크 조회 */
 	Page<Bookmark> findFavoriteBookmarks(FindBookmarksDefaultCond cond, Pageable pageable);
 
-	long countByTagsAndDefaultCond(List<String> tags, FindBookmarksDefaultCond cond);
+	/* 태그로 조회 */
+	Page<Bookmark> findByTags(List<String> tags, FindBookmarksDefaultCond cond, Pageable pageable);
 
-	List<Bookmark> searchByTagsAndDefaultCond(List<String> tags, FindBookmarksDefaultCond cond, Pageable pageable);
-
-	long countByDefaultCond(FindBookmarksDefaultCond cond);
-
-	List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond, Pageable pageable);
+	/* 기본 조회 */
+	Page<Bookmark> findBookmarks(final FindBookmarksDefaultCond cond, Pageable pageable);
 }
