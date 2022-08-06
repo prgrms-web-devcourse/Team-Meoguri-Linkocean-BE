@@ -161,8 +161,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId3, Category.IT.getKorName()),
-					tuple(bookmarkId1, Category.IT.getKorName())
+					tuple(bookmarkId3, "IT"),
+					tuple(bookmarkId1, "IT")
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -181,8 +181,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId1, Category.IT.getKorName()),
-					tuple(bookmarkId3, Category.IT.getKorName())
+					tuple(bookmarkId1, "IT"),
+					tuple(bookmarkId3, "IT")
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -201,7 +201,7 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(1)
 				.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
 				.containsExactly(
-					tuple(bookmarkId1, Category.IT.getKorName(), "title1")
+					tuple(bookmarkId1, "IT", "title1")
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(1);
 		}
