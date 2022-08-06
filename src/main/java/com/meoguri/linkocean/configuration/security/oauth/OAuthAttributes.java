@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * OAuth2UserService를 통해 가져온 OAuth2User의 attribute를 담을 클래스
+ * OAuth2UserService 를 통해 가져온 OAuth2User 의 attribute 를 담을 클래스
  */
 @Getter
 @RequiredArgsConstructor
-public class OAuthAttributes {
+public final class OAuthAttributes {
 
 	private final Map<String, Object> attributes;
 	private final String email;

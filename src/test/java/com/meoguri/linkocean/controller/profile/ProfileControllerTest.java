@@ -1,25 +1,30 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.URI;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class ProfileControllerTest extends BaseControllerTest {
 
-	private final String basePath = getBaseUrl(ProfileController.class);
+	private final String baseUrl = getBaseUrl(ProfileController.class);
 
 	@Test
 	void 프로필_등록_Api_성공() throws Exception {
@@ -30,9 +35,9 @@ class ProfileControllerTest extends BaseControllerTest {
 		final CreateProfileRequest createProfileRequest = new CreateProfileRequest(username, categories);
 
 		//when
-		mockMvc.perform(post(basePath)
+		mockMvc.perform(post(baseUrl)
 				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON)
+				.contentType(APPLICATION_JSON)
 				.content(createJson(createProfileRequest)))
 			//then
 			.andExpect(status().isOk())
@@ -50,7 +55,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			프로필_등록("hani", List.of("인문", "정치", "사회"));
 
 			//when
-			mockMvc.perform(get(basePath + "/me")
+			mockMvc.perform(get(baseUrl + "/me")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
@@ -80,7 +85,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			북마크_등록(링크_메타데이터_얻기("https://github.com"), "IT", null, "private");
 
 			//when
-			mockMvc.perform(get(basePath + "/me")
+			mockMvc.perform(get(baseUrl + "/me")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
@@ -108,11 +113,12 @@ class ProfileControllerTest extends BaseControllerTest {
 			북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, null, "private");
 
 			//when
-			mockMvc.perform(get(basePath + "/me")
+			mockMvc.perform(get(baseUrl + "/me")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				//then
 				.andExpect(status().isOk())
+
 				.andExpectAll(
 					jsonPath("$.profileId").exists(),
 					jsonPath("$.imageUrl").isEmpty(),
@@ -126,6 +132,66 @@ class ProfileControllerTest extends BaseControllerTest {
 				)
 				.andDo(print());
 		}
+	}
+
+	@Test
+	void 프로필_상세_조회_Api_성공() throws Exception {
+		//given
+		유저_등록_로그인("user1@gmail.com", "GOOGLE");
+		final long user1ProfileId = 프로필_등록("user1", emptyList());
+
+		유저_등록_로그인("user2@gmail.com", "GOOGLE");
+		final long user2ProfileId = 프로필_등록("user2", emptyList());
+
+		로그인("user1@gmail.com", "GOOGLE");
+		팔로우(user2ProfileId);
+
+		//when
+		mockMvc.perform(get(baseUrl + "/{profileId}", user2ProfileId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			//then
+			.andExpect(status().isOk())
+			.andExpectAll(
+				jsonPath("$.isFollow").value(true),
+				jsonPath("$.followerCount").value(1),
+				jsonPath("$.followeeCount").value(0)
+			).andDo(print());
+	}
+
+	@Test
+	void 내프로필_수정_Api_성공() throws Exception {
+		//given
+		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
+
+		final String updateUsername = "updateHani";
+		final List<String> updateCategories = List.of("자기계발", "과학");
+		final String bio = "i like programming";
+		final MockMultipartFile mockImage = new MockMultipartFile("image", "test.png", "image/png",
+			"image".getBytes());
+
+		// 내 프로필 수정
+		//when
+		mockMvc.perform(multipart(PUT, URI.create(baseUrl + "/me"))
+				.file(mockImage)
+				.param("username", updateUsername)
+				.param("categories", "자기계발", "과학")
+				.param("bio", bio)
+				.header(AUTHORIZATION, token))
+			//then
+			.andExpect(status().isOk())
+			.andDo(print());
+
+		// 수정된 프로필 조회
+		//when
+		final GetMyProfileResponse myProfile = 내_프로필_조회();
+
+		//then
+		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
+		assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
+		assertThat(myProfile.getBio()).isEqualTo(bio);
+		assertThat(myProfile.getImageUrl()).isNotNull();
 	}
 
 	@Nested
@@ -159,7 +225,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		void 프로필_목록_조회_Api_성공() throws Exception {
 			로그인("user1@gmail.com", "GOOGLE");
 
-			mockMvc.perform(get(basePath + "?username=" + "user")
+			mockMvc.perform(get(baseUrl + "?username=" + "user")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -179,7 +245,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		void 프로필_목록_조회_Api_유저네임을_빠트리면_실패() throws Exception {
 			로그인("user1@gmail.com", "GOOGLE");
 
-			mockMvc.perform(get(basePath)
+			mockMvc.perform(get(baseUrl)
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
@@ -197,8 +263,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			// user1 -> user1 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user1ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -209,8 +274,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user2 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user2ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -221,8 +285,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user3 의 팔로워 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user3ProfileId)
-					.param("tab", "follower")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "follower")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -245,8 +308,7 @@ class ProfileControllerTest extends BaseControllerTest {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			// user1 -> user1 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user1ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -257,8 +319,7 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user2 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user2ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -271,21 +332,11 @@ class ProfileControllerTest extends BaseControllerTest {
 				);
 
 			// user1 -> user3 의 팔로이 조회
-			mockMvc.perform(get(basePath + "/{profileId}", user3ProfileId)
-					.param("tab", "followee")
+			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "followee")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.profiles", hasSize(0)));
-		}
-
-		@Test
-		void 팔로워_팔로이_조회_탭을_누락하면_실패() throws Exception {
-			mockMvc.perform(get(basePath + "/" + user2ProfileId)
-					.param("tab", "hi")
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
 		}
 	}
 }

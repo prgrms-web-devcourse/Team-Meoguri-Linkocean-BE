@@ -7,42 +7,39 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaul
 
 import lombok.Getter;
 
-/**
- * 내 북마크 검색 조건 - 쿼리 파라미터의 값을 전달하기 위한 dto
- */
 @Getter
-public final class MyBookmarkSearchCond {
+public final class OtherBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 8;
 	private static final String DEFAULT_ORDER = "upload";
-	private static final String DEFAULT_OPENTYPE = "all";
 
+	private final long otherProfileId;
 	private final int page;
 	private final int size;
 	private final String order;
+	private final String searchTitle;
 
 	private final String category;
 	private final boolean favorite;
 	private final List<String> tags;
 
-	private final String searchTitle;
+	public OtherBookmarkSearchCond(final Long otherProfileId, final Integer page, final Integer size,
+		final String order,
+		final String searchTitle, final boolean favorite, final String category, final List<String> tags) {
 
-	public MyBookmarkSearchCond(final Integer page, final Integer size, final String order,
-		final boolean favorite, final String category, final List<String> tags, final String searchTitle) {
-
+		this.otherProfileId = otherProfileId;
 		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
 		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
+		this.searchTitle = searchTitle;
 
 		this.favorite = favorite;
 		this.category = category;
 		this.tags = tags;
-
-		this.searchTitle = searchTitle;
 	}
 
-	public FindBookmarksDefaultCond toFindBookmarksDefaultCond(final long profileId) {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, profileId, this.searchTitle);
+	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
+		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.otherProfileId, this.searchTitle);
 	}
 }

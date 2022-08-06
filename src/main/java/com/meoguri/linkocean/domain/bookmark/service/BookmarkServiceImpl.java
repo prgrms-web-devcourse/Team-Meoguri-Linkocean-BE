@@ -25,12 +25,12 @@ import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.BookmarkByUsernameSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
+import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
@@ -38,6 +38,7 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
@@ -55,6 +56,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
+	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
 	//TODO : 쿼리 튜닝
@@ -77,12 +79,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final Bookmark savedBookmark = bookmarkRepository.save(newBookmark);
 
-		/**
-		 * 태그가 null로 들어올 때 처리가 안되었던 것 같습니다 -> 에러발생
-		 * 임시방편으로 리팩터링 해놨습니다!
-		 */
 		Optional.ofNullable(command.getTagNames())
-			.ifPresent(tagNames -> convertTagNamesToTags(tagNames).forEach(savedBookmark::addBookmarkTag));
+			.ifPresent(tagNames -> convertTagNamesToTags(tagNames)
+				.forEach(savedBookmark::addBookmarkTag));
 
 		return savedBookmark.getId();
 	}
@@ -103,6 +102,18 @@ public class BookmarkServiceImpl implements BookmarkService {
 			command.getOpenType(),
 			convertTagNamesToTags(command.getTagNames())
 		);
+	}
+
+	@Override
+	public void removeBookmark(final long userId, final long bookmarkId) {
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+
+		// 자신의 북마크 쓴 북마크를 가져옴
+		final Bookmark bookmark = bookmarkRepository
+			.findByProfileAndId(profile, bookmarkId)
+			.orElseThrow(LinkoceanRuntimeException::new);
+
+		bookmarkRepository.delete(bookmark);
 	}
 
 	/**
@@ -180,81 +191,120 @@ public class BookmarkServiceImpl implements BookmarkService {
 		if (nonNull(searchCond.getCategory())) {
 			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
 			checkCondition(!searchCond.isFavorite() && isNull(searchCond.getTags()));
-			return searchMyBookmarksByCategoryAndDefaultCond(profile, Category.of(searchCond.getCategory()),
-				searchCond.toFindBookmarksDefaultCond());
+			return getBookmarksByCategoryAndDefaultCond(profile, Category.of(searchCond.getCategory()),
+				searchCond.toFindBookmarksDefaultCond(profile.getId()));
 		}
 
 		if (searchCond.isFavorite()) {
 			/* 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다. */
 			checkCondition(isNull(searchCond.getTags()));
-			return searchMyBookmarksByFavoriteAndDefaultCond(profile, searchCond.isFavorite(),
-				searchCond.toFindBookmarksDefaultCond());
+			return getBookmarksByFavoriteAndDefaultCond(profile, searchCond.isFavorite(),
+				searchCond.toFindBookmarksDefaultCond(profile.getId()));
 		}
 
 		if (nonNull(searchCond.getTags())) {
 			/* 태그는 최대 3개 까지 필터링 가능하다 */
 			checkCondition(searchCond.getTags().size() <= 3);
-			return searchMyBookmarksByTagsAndDefaultCond(profile, searchCond.getTags(),
-				searchCond.toFindBookmarksDefaultCond());
+			return getBookmarksByTagsAndDefaultCond(profile, searchCond.getTags(),
+				searchCond.toFindBookmarksDefaultCond(profile.getId()));
 		}
 
-		return searchMyBookmarksByDefaultCond(profile, searchCond.toFindBookmarksDefaultCond());
+		return getBookmarksByDefaultCond(profile, searchCond.toFindBookmarksDefaultCond(profile.getId()));
 	}
 
-	private PageResult<GetBookmarksResult> searchMyBookmarksByCategoryAndDefaultCond(final Profile profile,
+	@Override
+	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId,
+		final OtherBookmarkSearchCond cond) {
+
+		final Profile myProfile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile otherProfile = findProfileByIdQuery.findById(cond.getOtherProfileId());
+
+		List<OpenType> openTypes = new ArrayList<>();
+		openTypes.add(OpenType.ALL);
+
+		if (checkIsFollowQuery.isFollow(myProfile, otherProfile)) {
+			openTypes.add(OpenType.PARTIAL);
+		}
+
+		final FindBookmarksDefaultCond defaultCond = cond.toFindBookmarksDefaultCond();
+		defaultCond.changeOpenType(openTypes);
+
+		if (nonNull(cond.getCategory())) {
+			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
+			checkCondition(!cond.isFavorite() && isNull(cond.getTags()));
+			return getBookmarksByCategoryAndDefaultCond(myProfile, Category.of(cond.getCategory()), defaultCond);
+		}
+
+		if (cond.isFavorite()) {
+			/* 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다. */
+			checkCondition(isNull(cond.getTags()));
+			return getBookmarksByFavoriteAndDefaultCond(myProfile, cond.isFavorite(), defaultCond);
+		}
+
+		if (nonNull(cond.getTags())) {
+			/* 태그는 최대 3개 까지 필터링 가능하다 */
+			checkCondition(cond.getTags().size() <= 3);
+			return getBookmarksByTagsAndDefaultCond(myProfile, cond.getTags(), defaultCond);
+		}
+
+		return getBookmarksByDefaultCond(myProfile, defaultCond);
+	}
+
+	private PageResult<GetBookmarksResult> getBookmarksByCategoryAndDefaultCond(final Profile myProfile,
 		final Category category, final FindBookmarksDefaultCond cond) {
 		//전체 개수 조회
-		long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, category,
-			cond.getSearchTitle());
+		long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
 
 		//페이지에 맞게 조회
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(profile, category,
-			cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
 
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
-		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
 
-		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
 
-	private PageResult<GetBookmarksResult> searchMyBookmarksByFavoriteAndDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> getBookmarksByFavoriteAndDefaultCond(final Profile myProfile,
 		final boolean favorite, final FindBookmarksDefaultCond cond) {
-		long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, favorite,
-			cond.getSearchTitle());
+		long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(favorite, cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(profile, favorite,
-			cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(favorite, cond);
 
-		final List<Boolean> isFavorites = bookmarks.stream().map(bookmark -> true).collect(Collectors.toList());
+		final List<Boolean> isFavorites;
+		if (myProfile.getId().equals(cond.getProfileId())) {
+			isFavorites = bookmarks.stream().map(bookmark -> true).collect(Collectors.toList());
+		} else {
+			isFavorites = checkIsFavorite(myProfile, bookmarks);
+		}
 
-		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
 
-	private PageResult<GetBookmarksResult> searchMyBookmarksByTagsAndDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> getBookmarksByTagsAndDefaultCond(final Profile myProfile,
 		final List<String> tags, final FindBookmarksDefaultCond cond) {
-		long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, tags, cond.getSearchTitle());
+		long totalCount = bookmarkRepository.countByTagsAndDefaultCond(tags, cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(profile, tags, cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(tags, cond);
 
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
-		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
 
-		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
 
-	private PageResult<GetBookmarksResult> searchMyBookmarksByDefaultCond(final Profile profile,
+	private PageResult<GetBookmarksResult> getBookmarksByDefaultCond(final Profile myProfile,
 		final FindBookmarksDefaultCond cond) {
-		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, cond.getSearchTitle());
+		final long totalCount = bookmarkRepository.countByDefaultCond(cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(profile, cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(cond);
 
-		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
 
-		return convertToBookmarksResult(totalCount, bookmarks, profile, isFavorites);
+		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
 
-	private List<Boolean> checkIsFavorite(final Profile profile, final List<Bookmark> bookmarks) {
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findAllFavoriteByProfileAndBookmarks(profile,
+	private List<Boolean> checkIsFavorite(final Profile myProfile, final List<Bookmark> bookmarks) {
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findAllFavoriteByProfileAndBookmarks(myProfile,
 			bookmarks);
 
 		return bookmarks.stream()
@@ -264,7 +314,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private PageResult<GetBookmarksResult> convertToBookmarksResult(final long totalCount,
 		final List<Bookmark> bookmarks,
-		final Profile profile, final List<Boolean> isFavorites) {
+		final Profile myProfile, final List<Boolean> isFavorites) {
 
 		final ArrayList<GetBookmarksResult> bookmarkResults = new ArrayList<>();
 		int size = bookmarks.size();
@@ -279,19 +329,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmarks.get(i).getLikeCount(),
 				bookmarks.get(i).getLinkMetadata().getImage(),
-				bookmarks.get(i).getProfile().equals(profile),
+				bookmarks.get(i).getProfile().equals(myProfile),
 				bookmarks.get(i).getTagNames()
 			));
 		}
 
 		return PageResult.of(totalCount, bookmarkResults);
-	}
-
-	//TODO
-	@Override
-	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId,
-		final BookmarkByUsernameSearchCond searchCond) {
-		return null;
 	}
 
 	//TODO

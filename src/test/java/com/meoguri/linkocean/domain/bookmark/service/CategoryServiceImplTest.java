@@ -1,10 +1,8 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
-import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -51,9 +47,6 @@ class CategoryServiceImplTest {
 	private User user;
 	private Profile profile;
 	private LinkMetadata link;
-	private Tag tag1;
-	private Tag tag2;
-	private Tag tag3;
 
 	@BeforeEach
 	void setUp() {
@@ -61,18 +54,6 @@ class CategoryServiceImplTest {
 		user = userRepository.save(createUser());
 		profile = profileRepository.save(createProfile(user));
 		link = linkMetadataRepository.save(createLinkMetadata());
-	}
-
-	@Test
-	void 카테고리_전체조회_성공() {
-		//when
-		final List<String> allCategories = categoryService.getAllCategories();
-
-		//then
-		final List<String> expectedCategories
-			= Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
-		assertThat(allCategories)
-			.containsExactlyElementsOf(expectedCategories);
 	}
 
 	@Test
@@ -93,7 +74,7 @@ class CategoryServiceImplTest {
 	}
 
 	@Test
-	void 사용자가_작성한_북마크가있는_카테고리_조회_카테고리가_null일때() {
+	void 사용자가_작성한_북마크가있는_카테고리_조회_카테고리가_null_일때() {
 		//given
 		bookmarkRepository.save(createBookmark(profile, link, "제목", null, "www.naver.com"));
 

@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -115,6 +114,7 @@ class CustomBookmarkRepositoryImplTest {
 		savedBookmark3 = bookmarkRepository.save(bookmark3);
 
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
+		bookmark1.changeLikeCount(1L);
 		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
 
 		favoriteRepository.save(new Favorite(savedBookmark1, profile));
@@ -127,7 +127,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, Category.IT, null);
+		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(Category.IT,
+			cond(null, profile.getId(), null));
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -136,7 +137,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_카테고리와_검색어로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndCategoryAndSearchTitle(profile, Category.IT, "1");
+		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(Category.IT,
+			cond(null, profile.getId(), "1"));
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -145,9 +147,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
-			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "upload", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
+			cond("upload", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -157,13 +158,11 @@ class CustomBookmarkRepositoryImplTest {
 				tuple(savedBookmark1.getId(), savedBookmark3.getCategory()));
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
-			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "like", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
+			cond("like", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -176,9 +175,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndCategoryAndDefaultCond(
-			profile, Category.IT, new FindBookmarksDefaultCond(1, 8, "upload", "1")
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
+			cond("upload", profile.getId(), "1"));
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -189,7 +187,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, true, null);
+		final long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(true,
+			cond(null, profile.getId(), null));
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -198,7 +197,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndFavoriteAndSearchTitle(profile, true, "1");
+		final long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(true,
+			cond(null, profile.getId(), "1"));
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -207,9 +207,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
-			profile, true, new FindBookmarksDefaultCond(1, 8, "upload", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
+			cond("upload", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -221,13 +220,11 @@ class CustomBookmarkRepositoryImplTest {
 		);
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
-			profile, true, new FindBookmarksDefaultCond(1, 8, "like", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
+			cond("like", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -238,9 +235,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndFavoriteAndDefaultCond(
-			profile, true, new FindBookmarksDefaultCond(1, 8, "upload", "1")
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
+			cond("upload", profile.getId(), "1"));
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -251,7 +247,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, List.of("tag1"), null);
+		final long totalCount = bookmarkRepository.countByTagsAndDefaultCond(List.of("tag1"),
+			cond(null, profile.getId(), null));
 
 		//then
 		assertThat(totalCount).isEqualTo(2L);
@@ -260,7 +257,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndTagsAndSearchTitle(profile, List.of("tag1"), "1");
+		final long totalCount = bookmarkRepository.countByTagsAndDefaultCond(List.of("tag1"),
+			cond(null, profile.getId(), "1"));
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -269,9 +267,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
-			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "upload", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
+			cond("upload", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -281,13 +278,11 @@ class CustomBookmarkRepositoryImplTest {
 				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()));
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
-			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "like", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
+			cond("like", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -300,9 +295,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndTagsAndDefaultCond(
-			profile, List.of("tag1"), new FindBookmarksDefaultCond(1, 8, "upload", "1")
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
+			cond("upload", profile.getId(), "1"));
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -313,7 +307,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_총_개수() {
 		//give when
-		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, null);
+		final long totalCount = bookmarkRepository.countByDefaultCond(cond(null, profile.getId(), null));
 
 		//then
 		assertThat(totalCount).isEqualTo(3L);
@@ -322,7 +316,7 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_제목으로_필터링_총_개수() {
 		//given when
-		final long totalCount = bookmarkRepository.countByProfileAndSearchTitle(profile, "1");
+		final long totalCount = bookmarkRepository.countByDefaultCond(cond(null, profile.getId(), "1"));
 
 		//then
 		assertThat(totalCount).isEqualTo(1L);
@@ -331,9 +325,8 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
-			profile, new FindBookmarksDefaultCond(1, 8, "upload", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
+			cond("upload", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -341,13 +334,11 @@ class CustomBookmarkRepositoryImplTest {
 			.containsExactly(savedBookmark3.getId(), savedBookmark2.getId(), savedBookmark1.getId());
 	}
 
-	@Disabled("북마크에 likeCount 추가 후 작업")
 	@Test
 	void 내_북마크_조회_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
-			profile, new FindBookmarksDefaultCond(1, 8, "like", null)
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
+			cond("like", profile.getId(), null));
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -358,13 +349,16 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByProfileAndDefaultCond(
-			profile, new FindBookmarksDefaultCond(1, 8, "upload", "1")
-		);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
+			cond("upload", profile.getId(), "1"));
 
 		//then
 		assertThat(bookmarks).hasSize(1)
 			.extracting(Bookmark::getId, Bookmark::getTitle)
 			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTitle()));
+	}
+
+	private FindBookmarksDefaultCond cond(final String order, final long profileId, final String searchTitle) {
+		return new FindBookmarksDefaultCond(1, 8, order, profileId, searchTitle);
 	}
 }

@@ -27,16 +27,13 @@ class FollowRepositoryTest {
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	private User user1;
-	private User user2;
-
 	private Profile profile1;
 	private Profile profile2;
 
 	@BeforeEach
 	void setUp() {
-		user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
-		user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
+		User user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
+		User user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
 
 		profile1 = profileRepository.save(new Profile(user1, "haha"));
 		profile2 = profileRepository.save(new Profile(user2, "papa"));
@@ -81,11 +78,11 @@ class FollowRepositoryTest {
 		followRepository.save(new Follow(follower, followee));
 
 		//when
-		int countProfile1Follower = followRepository.countFollowerByUserId(user1.getId());
-		int countProfile1Followee = followRepository.countFolloweeByUserId(user1.getId());
+		int countProfile1Follower = followRepository.countFollowerByProfile(follower);
+		int countProfile1Followee = followRepository.countFolloweeByProfile(follower);
 
-		int countProfile2Follower = followRepository.countFollowerByUserId(user2.getId());
-		int countProfile2Followee = followRepository.countFolloweeByUserId(user2.getId());
+		int countProfile2Follower = followRepository.countFollowerByProfile(followee);
+		int countProfile2Followee = followRepository.countFolloweeByProfile(followee);
 
 		//then
 		assertThat(countProfile1Follower).isEqualTo(0);

@@ -25,7 +25,7 @@ public class CustomRestControllerAdvice {
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
-		return ErrorResponse.of(BAD_REQUEST, ex.getMessage());
+		return ErrorResponse.of(BAD_REQUEST, ex.getMessage(), ex);
 	}
 
 	@ResponseStatus(BAD_REQUEST)
@@ -35,7 +35,7 @@ public class CustomRestControllerAdvice {
 	public ErrorResponse handleBadRequestException(RuntimeException ex) {
 		log.debug(ex.getMessage(), ex);
 
-		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.");
+		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.", ex);
 	}
 
 	@ResponseStatus(BAD_REQUEST)
@@ -46,7 +46,7 @@ public class CustomRestControllerAdvice {
 		// TODO - 정당한 요청에 대해서 예외 메시지 남기기
 		// 1. 중복 팔로우 요청 (Illegal 요청) -> "잘못된 요청입니다."
 		// 2. 중복 사용자 이름 삽입 요청 (정당한 요청) -> 예외 메시지를 남겨야됨
-		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.");
+		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.", ex);
 	}
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
@@ -54,7 +54,7 @@ public class CustomRestControllerAdvice {
 	public ErrorResponse handleServerException(RuntimeException ex) {
 		log.error(ex.getMessage(), ex);
 
-		return ErrorResponse.of(INTERNAL_SERVER_ERROR, "알 수 없는 에러가 발생했습니다. 고객센터에 문의하세요.");
+		return ErrorResponse.of(INTERNAL_SERVER_ERROR, "알 수 없는 에러가 발생했습니다. 고객센터에 문의하세요.", ex);
 	}
 
 	@Getter
@@ -63,9 +63,11 @@ public class CustomRestControllerAdvice {
 
 		private int code;
 		private String message;
+		private String info; // 정신 건강을 위해 추가
 
-		public static ErrorResponse of(HttpStatus status, String message) {
-			return new ErrorResponse(status.value(), message);
+		public static ErrorResponse of(HttpStatus status, String message, Exception ex) {
+			final String info = "class : " + ex.getClass().getSimpleName() + " message : " + ex.getMessage();
+			return new ErrorResponse(status.value(), message, info);
 		}
 	}
 }

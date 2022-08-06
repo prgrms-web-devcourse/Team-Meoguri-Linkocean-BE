@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.profile.support;
+package com.meoguri.linkocean.configuration.resolver;
 
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 

@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.configuration;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,28 +24,26 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
+			// 사용하지 않는 필터 disable
 			.csrf().disable()
 			.formLogin().disable()
 			.httpBasic().disable()
 			.headers().disable()
 
-			.authorizeRequests()
-			// .antMatchers("/", "/error", "/api/v1/healthCheck", "/api/v1/login").permitAll()
-			.anyRequest().permitAll()
-			.and()
-			.logout()
-			.logoutSuccessUrl("/")
-			.and()
-			.oauth2Login(oauth2 ->
-				oauth2.userInfoEndpoint().userService(customOAuth2UserService)
+			.logout(
+				logout -> logout.logoutSuccessUrl("/")
+			)
+			.authorizeRequests(
+				request -> request.anyRequest().permitAll()
+			)
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint().userService(customOAuth2UserService)
+			)
+			.exceptionHandling(ex -> ex
+				.authenticationEntryPoint((request, response, authException) -> response.setStatus(SC_UNAUTHORIZED))
+				.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(SC_UNAUTHORIZED))
 			)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.exceptionHandling()
-			.authenticationEntryPoint(
-				(request, response, authException) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
-			.accessDeniedHandler(
-				(request, response, accessDeniedException) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
-			.and()
 			.build();
 	}
 }
