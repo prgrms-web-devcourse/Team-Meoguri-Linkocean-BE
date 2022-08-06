@@ -32,4 +32,7 @@ public interface BookmarkService {
 
 	/* 피드 북마크 목록 */
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
+
+	/* 중복Url 확인 */
+	boolean checkDuplicatedUrl(long userId, String url);
 }

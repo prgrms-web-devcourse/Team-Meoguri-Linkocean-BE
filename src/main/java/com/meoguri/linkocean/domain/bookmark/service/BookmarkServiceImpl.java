@@ -299,4 +299,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
 		return null;
 	}
+
+	@Override
+	public boolean checkDuplicatedUrl(final long userId, String url) {
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		return bookmarkRepository.existsByProfileAndUrl(profile, url);
+	}
 }
