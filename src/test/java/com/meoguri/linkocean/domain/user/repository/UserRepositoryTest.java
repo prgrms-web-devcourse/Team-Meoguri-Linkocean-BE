@@ -22,19 +22,20 @@ class UserRepositoryTest {
 	@Test
 	void 이메일과_벤터로_사용자_조회_성공() {
 		//given
-		final Email email = new Email("user@naver.com");
-		final OAuthType oAuthType = OAuthType.NAVER;
+		final String email = "user@naver.com";
+		final String oAuthType = "NAVER";
 
 		final User user = new User(email, oAuthType);
 		userRepository.save(user);
 
 		//when
-		final Optional<User> foundUser = userRepository.findByEmailAndOAuthType(email, oAuthType);
+		final Optional<User> foundUser = userRepository.findByEmailAndOAuthType(new Email(email),
+			OAuthType.of(oAuthType));
 
 		//then
 		assertThat(foundUser).isPresent();
 		assertThat(foundUser.get()).extracting(User::getEmail, User::getOAuthType)
-			.isEqualTo(List.of(email, oAuthType));
+			.isEqualTo(List.of(new Email(email), OAuthType.of(oAuthType)));
 	}
 
 }

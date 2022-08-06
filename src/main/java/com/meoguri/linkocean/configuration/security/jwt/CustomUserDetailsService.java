@@ -23,7 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(final String id) {
 		final User user = findUserByIdQuery.findById(Long.parseLong(id));
 
-		return new SecurityUser(user.getId(),
+		return new SecurityUser(
+			user.getId(),
+			user.getProfileId(),
 			Email.toString(user.getEmail()),
 			user.getOAuthType().name(),
 			List.of(new SimpleGrantedAuthority("ROLE_USER"))

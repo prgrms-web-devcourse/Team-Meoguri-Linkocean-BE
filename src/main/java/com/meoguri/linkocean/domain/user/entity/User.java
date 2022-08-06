@@ -1,18 +1,20 @@
 package com.meoguri.linkocean.domain.user.entity;
 
 import static javax.persistence.EnumType.*;
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +25,6 @@ import lombok.NoArgsConstructor;
 	name = "users",
 	uniqueConstraints = @UniqueConstraint(columnNames = {"email", "oauth_type"})
 )
-@AllArgsConstructor
 public class User extends BaseIdEntity {
 
 	@Embedded
@@ -33,6 +34,10 @@ public class User extends BaseIdEntity {
 	@Enumerated(STRING)
 	private OAuthType oAuthType;
 
+	@Getter(NONE)
+	@OneToOne(fetch = LAZY, mappedBy = "user")
+	private Profile profile;
+
 	/**
 	 * 회원 가입시 사용하는 생성자
 	 */
@@ -40,6 +45,10 @@ public class User extends BaseIdEntity {
 
 		this.email = new Email(email);
 		this.oAuthType = OAuthType.of(oAuthType);
+	}
+
+	public Long getProfileId() {
+		return profile == null ? null : profile.getId();
 	}
 
 	/**
