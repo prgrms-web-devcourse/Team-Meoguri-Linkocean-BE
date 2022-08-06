@@ -37,7 +37,7 @@ public final class MyBookmarkSearchCond {
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
 	}
 
-	public FindBookmarksDefaultCond toFindBookmarksDefaultCond(final long profileId) {
+	public FindBookmarksDefaultCond toFindCond(final long profileId) {
 		return new FindBookmarksDefaultCond(profileId, searchTitle, order);
 	}
 }

@@ -5,21 +5,21 @@ import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.util.QueryDslUtil.*;
-import static com.querydsl.core.types.dsl.Expressions.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.profile.entity.QProfile;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -32,78 +32,86 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		this.query = new JPAQueryFactory(em);
 	}
 
+	/* 카테고리로 조회 */
 	@Override
-	public long countByCategoryAndDefaultCond(final Category category, final FindBookmarksDefaultCond cond) {
-		return query
-			.select(bookmark.id.count())
-			.from(bookmark)
-			.where(
-				bookmark.profile.id.eq(cond.getProfileId()),
-				bookmark.category.eq(category),
-				containsSearchTitle(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			).fetchOne();
-	}
-
-	@Override
-	public List<Bookmark> searchByCategoryAndDefaultCond(final Category category,
-		final FindBookmarksDefaultCond cond, final Pageable pageable) {
-
+	public Page<Bookmark> findByCategory(
+		final Category category,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
 			.join(bookmark.profile).fetchJoin()
 			.join(bookmark.linkMetadata).fetchJoin()
 			.where(
-				bookmark.profile.id.eq(cond.getProfileId()),
+				profileIdEq(bookmark.profile, cond),
 				bookmark.category.eq(category),
-				containsSearchTitle(cond.getSearchTitle()),
+				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
-			).orderBy(getOrderSpecifier(cond.getOrder()))
+			)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
-		return bookmarks;
+
+		final long count = countByCategory(category, cond);
+		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	@Override
-	public long countByFavoriteAndDefaultCond(final boolean isFavorite, final FindBookmarksDefaultCond cond) {
+	private long countByCategory(final Category category, final FindBookmarksDefaultCond cond) {
 		return query
-			.select(bookmark.id.count())
+			.select(bookmark.count())
 			.from(bookmark)
-			.join(favorite).on(
-				favorite.bookmark.eq(bookmark),
-				favorite.owner.id.eq(cond.getProfileId()))
 			.where(
-				containsSearchTitle(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes()))
-			.fetchOne();
+				profileIdEq(bookmark.profile, cond),
+				bookmark.category.eq(category),
+				titleLike(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
+			).fetchOne();
 	}
 
+	/* 즐겨찾기 된 북마크 조회 */
 	@Override
-	public List<Bookmark> searchByFavoriteAndDefaultCond(final boolean isFavorite,
-		final FindBookmarksDefaultCond cond, final
-	Pageable pageable) {
+	public Page<Bookmark> findFavoriteBookmarks(final FindBookmarksDefaultCond cond, final Pageable pageable) {
 
-		final List<Bookmark> bookmarks = query
-			.select(bookmark)
-			.from(bookmark)
-			.join(favorite).on(
-				favorite.bookmark.eq(bookmark),
-				favorite.owner.id.eq(cond.getProfileId()))
-			.where(
-				containsSearchTitle(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes()))
-			.orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+		final List<Bookmark> bookmarks =
+			query
+				.select(bookmark)
+				.from(bookmark)
+				.join(favorite)
+				.on(
+					favorite.bookmark.eq(bookmark),
+					profileIdEq(favorite.owner, cond))
+				.where(
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				)
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
-		return bookmarks;
+		final long count = countFavoriteBookmarks(cond);
+
+		return new PageImpl<>(bookmarks, pageable, count);
+	}
+
+	private long countFavoriteBookmarks(final FindBookmarksDefaultCond cond) {
+		return query
+			.select(bookmark.count())
+			.from(bookmark)
+			.join(favorite).on(
+				favorite.bookmark.eq(bookmark),
+				profileIdEq(favorite.owner, cond)
+			)
+			.where(
+				titleLike(cond.getSearchTitle()),
+				inOpenTypes(cond.getOpenTypes())
+			)
+			.fetchOne();
 	}
 
 	@Override
@@ -122,8 +130,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile)
 			.where(
 				bookmark.id.in(bookmarkIds),
-				bookmark.profile.id.eq(cond.getProfileId()),
-				containsSearchTitle(cond.getSearchTitle()),
+				profileIdEq(bookmark.profile, cond),
+				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
@@ -146,10 +154,10 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile).fetchJoin()
 			.where(
 				bookmark.id.in(bookmarkIds),
-				bookmark.profile.id.eq(cond.getProfileId()),
-				containsSearchTitle(cond.getSearchTitle()),
+				profileIdEq(bookmark.profile, cond),
+				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
-			).orderBy(getOrderSpecifier(cond.getOrder()))
+			)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -165,23 +173,22 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.select(bookmark.id.count())
 			.from(bookmark)
 			.where(
-				bookmark.profile.id.eq(cond.getProfileId()),
-				containsSearchTitle(cond.getSearchTitle()),
+				profileIdEq(bookmark.profile, cond),
+				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
 
 	@Override
-	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond, final
-	Pageable pageable) {
+	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond, final Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
 			.where(
-				bookmark.profile.id.eq(cond.getProfileId()),
-				containsSearchTitle(cond.getSearchTitle()),
+				profileIdEq(bookmark.profile, cond),
+				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
-			).orderBy(getOrderSpecifier(cond.getOrder()))
+			)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -191,20 +198,16 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return bookmarks;
 	}
 
+	private BooleanExpression profileIdEq(final QProfile bookmark, final FindBookmarksDefaultCond cond) {
+		return bookmark.id.eq(cond.getProfileId());
+	}
+
 	private BooleanBuilder inOpenTypes(final List<OpenType> openTypes) {
 		return nullSafeBuilder(() -> bookmark.openType.in(openTypes));
 	}
 
-	private BooleanBuilder containsSearchTitle(final String searchTitle) {
-		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(searchTitle));
+	private BooleanBuilder titleLike(final String title) {
+		return nullSafeBuilder(() -> bookmark.title.like(String.join(title, "%", "%")));
 	}
 
-	private OrderSpecifier<?>[] getOrderSpecifier(final String order) {
-		final List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-		if (order.equals("like")) {
-			orderSpecifiers.add(new OrderSpecifier(Order.DESC, stringPath("bookmark.likeCount")));
-		}
-		orderSpecifiers.add(new OrderSpecifier(Order.DESC, stringPath("bookmark.updatedAt")));
-		return orderSpecifiers.toArray(new OrderSpecifier[0]);
-	}
 }
