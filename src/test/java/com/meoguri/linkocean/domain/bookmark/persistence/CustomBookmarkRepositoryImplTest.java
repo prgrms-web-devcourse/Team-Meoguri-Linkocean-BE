@@ -24,7 +24,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -157,7 +157,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_성공() {
 			//given
 			final Category findCategory = Category.IT;
-			final FindBookmarksDefaultCond findCond = cond();
+			final BookmarkFindCond findCond = cond();
 
 			//given when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
@@ -177,7 +177,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
 			final Category findCategory = Category.IT;
-			final FindBookmarksDefaultCond findCond = cond("like", null);
+			final BookmarkFindCond findCond = cond("like", null);
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
@@ -196,7 +196,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
 			final Category findCategory = Category.IT;
-			final FindBookmarksDefaultCond cond = cond("1");
+			final BookmarkFindCond cond = cond("1");
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, cond, pageable);
@@ -218,7 +218,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
 			//given
-			final FindBookmarksDefaultCond cond = cond("1");
+			final BookmarkFindCond cond = cond("1");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findFavoriteBookmarks(cond, pageable);
@@ -311,7 +311,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_성공() {
 			//given
-			final FindBookmarksDefaultCond findCond = cond("upload", null);
+			final BookmarkFindCond findCond = cond("upload", null);
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -327,7 +327,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
-			final FindBookmarksDefaultCond findCond = cond("like", null);
+			final BookmarkFindCond findCond = cond("like", null);
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -342,7 +342,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
-			final FindBookmarksDefaultCond findCond = cond("1");
+			final BookmarkFindCond findCond = cond("1");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -356,15 +356,15 @@ class CustomBookmarkRepositoryImplTest {
 
 	}
 
-	private FindBookmarksDefaultCond cond(final String order, final String searchTitle) {
-		return new FindBookmarksDefaultCond(profile.getId(), searchTitle, order);
+	private BookmarkFindCond cond(final String order, final String searchTitle) {
+		return new BookmarkFindCond(profile.getId(), searchTitle, order);
 	}
 
-	private FindBookmarksDefaultCond cond(final String searchTitle) {
+	private BookmarkFindCond cond(final String searchTitle) {
 		return cond(null, searchTitle);
 	}
 
-	private FindBookmarksDefaultCond cond() {
+	private BookmarkFindCond cond() {
 		return cond(null);
 	}
 }

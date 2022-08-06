@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.profile.entity.QProfile;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -36,7 +36,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	@Override
 	public Page<Bookmark> findByCategory(
 		final Category category,
-		final FindBookmarksDefaultCond cond,
+		final BookmarkFindCond cond,
 		final Pageable pageable
 	) {
 		final List<Bookmark> bookmarks = query
@@ -60,7 +60,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	private long countByCategory(final Category category, final FindBookmarksDefaultCond cond) {
+	private long countByCategory(final Category category, final BookmarkFindCond cond) {
 		return query
 			.select(bookmark.count())
 			.from(bookmark)
@@ -74,7 +74,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 	/* 즐겨찾기 된 북마크 조회 */
 	@Override
-	public Page<Bookmark> findFavoriteBookmarks(final FindBookmarksDefaultCond cond, final Pageable pageable) {
+	public Page<Bookmark> findFavoriteBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
 
 		final List<Bookmark> bookmarks =
 			query
@@ -99,7 +99,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	private long countFavoriteBookmarks(final FindBookmarksDefaultCond cond) {
+	private long countFavoriteBookmarks(final BookmarkFindCond cond) {
 		return query
 			.select(bookmark.count())
 			.from(bookmark)
@@ -117,7 +117,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	@Override
 	public Page<Bookmark> findByTags(
 		final List<String> tagNames,
-		final FindBookmarksDefaultCond cond,
+		final BookmarkFindCond cond,
 		final Pageable pageable
 	) {
 
@@ -149,7 +149,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	private long countByTags(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
+	private long countByTags(final List<String> tagNames, final BookmarkFindCond cond) {
 		final List<Long> bookmarkIds = query
 			.select(bookmarkTag.bookmark.id).distinct()
 			.from(bookmarkTag)
@@ -170,7 +170,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public Page<Bookmark> findBookmarks(final FindBookmarksDefaultCond cond, final Pageable pageable) {
+	public Page<Bookmark> findBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
@@ -190,7 +190,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		return new PageImpl<>(bookmarks, pageable, count);
 	}
 
-	private long countBookmarks(final FindBookmarksDefaultCond cond) {
+	private long countBookmarks(final BookmarkFindCond cond) {
 		return query
 			.select(bookmark.id.count())
 			.from(bookmark)
@@ -201,7 +201,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			).fetchOne();
 	}
 
-	private BooleanExpression profileIdEq(final QProfile bookmark, final FindBookmarksDefaultCond cond) {
+	private BooleanExpression profileIdEq(final QProfile bookmark, final BookmarkFindCond cond) {
 		return bookmark.id.eq(cond.getProfileId());
 	}
 

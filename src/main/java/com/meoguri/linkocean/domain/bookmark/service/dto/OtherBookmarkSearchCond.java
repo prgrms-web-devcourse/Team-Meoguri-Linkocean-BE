@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service.dto;
 import java.util.List;
 import java.util.Optional;
 
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 
 import lombok.Getter;
 
@@ -39,7 +39,7 @@ public final class OtherBookmarkSearchCond {
 		this.tags = tags;
 	}
 
-	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
-		return new FindBookmarksDefaultCond(this.otherProfileId, this.searchTitle, this.order);
+	public BookmarkFindCond toFindBookmarksDefaultCond() {
+		return new BookmarkFindCond(this.otherProfileId, this.searchTitle, this.order);
 	}
 }

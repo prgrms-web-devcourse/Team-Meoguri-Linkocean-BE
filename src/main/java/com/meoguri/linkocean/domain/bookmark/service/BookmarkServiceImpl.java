@@ -25,7 +25,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -193,7 +193,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<String> searchTags = searchCond.getTags();
 
 		final Profile profile = findProfileByUserIdQuery.findByUserId(searchCond.getUserId());
-		final FindBookmarksDefaultCond findCond = searchCond.toFindCond(profile.getId());
+		final BookmarkFindCond findCond = searchCond.toFindCond(profile.getId());
 
 		final Page<Bookmark> bookmarkPage =
 			// Case 1 - 카테고리 필터링 조회
@@ -222,7 +222,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			openTypes.add(OpenType.PARTIAL);
 		}
 
-		final FindBookmarksDefaultCond defaultCond = cond.toFindBookmarksDefaultCond();
+		final BookmarkFindCond defaultCond = cond.toFindBookmarksDefaultCond();
 		defaultCond.changeOpenType(openTypes);
 
 		if (nonNull(cond.getCategory())) {

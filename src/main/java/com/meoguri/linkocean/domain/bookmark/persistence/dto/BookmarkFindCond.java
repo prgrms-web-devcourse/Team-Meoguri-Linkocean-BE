@@ -9,9 +9,10 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/* 북마크 조회 조건 */
 @Getter
 @RequiredArgsConstructor
-public final class FindBookmarksDefaultCond {
+public final class BookmarkFindCond {
 
 	private final long profileId;
 	private final String searchTitle;
