@@ -25,8 +25,8 @@ public final class GetBookmarkQueryParams {
 		return new MyBookmarkSearchCond(page, size, order, favorite, category, tags, searchTitle);
 	}
 
-	public OtherBookmarkSearchCond toOtherSearchCond(final Long id) {
-		return new OtherBookmarkSearchCond(id, page, size, order, searchTitle, favorite, category, tags);
+	public OtherBookmarkSearchCond toOtherSearchCond(final Long otherProfileId) {
+		return new OtherBookmarkSearchCond(otherProfileId, page, size, order, searchTitle, favorite, category, tags);
 	}
 
 	public FeedBookmarksSearchCond toFeedSearchCond() {

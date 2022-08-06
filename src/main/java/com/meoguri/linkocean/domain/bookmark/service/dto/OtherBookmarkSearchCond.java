@@ -5,14 +5,16 @@ import java.util.Optional;
 
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
 
-// TODO - 구현
+import lombok.Getter;
+
+@Getter
 public final class OtherBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 8;
 	private static final String DEFAULT_ORDER = "upload";
 
-	private final long profileId;
+	private final long otherProfileId;
 	private final int page;
 	private final int size;
 	private final String order;
@@ -22,10 +24,11 @@ public final class OtherBookmarkSearchCond {
 	private final boolean favorite;
 	private final List<String> tags;
 
-	public OtherBookmarkSearchCond(final Long profileId, final Integer page, final Integer size, final String order,
+	public OtherBookmarkSearchCond(final Long otherProfileId, final Integer page, final Integer size,
+		final String order,
 		final String searchTitle, final boolean favorite, final String category, final List<String> tags) {
 
-		this.profileId = profileId;
+		this.otherProfileId = otherProfileId;
 		this.page = Optional.ofNullable(page).orElse(DEFAULT_PAGE);
 		this.size = Optional.ofNullable(size).orElse(DEFAULT_SIZE);
 		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
@@ -37,6 +40,6 @@ public final class OtherBookmarkSearchCond {
 	}
 
 	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.searchTitle);
+		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.otherProfileId, this.searchTitle);
 	}
 }

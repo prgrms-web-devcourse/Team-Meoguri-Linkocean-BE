@@ -6,27 +6,22 @@ import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface CustomBookmarkRepository {
 
-	long countByProfileAndCategoryAndSearchTitle(final Profile profile, final Category of, final String searchTitle);
+	long countByCategoryAndDefaultCond(final Category category, final FindBookmarksDefaultCond cond);
 
-	List<Bookmark> searchByProfileAndCategoryAndDefaultCond(final Profile profile, final Category of,
-		final FindBookmarksDefaultCond cond);
+	List<Bookmark> searchByCategoryAndDefaultCond(final Category of, final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndFavoriteAndSearchTitle(final Profile profile, final boolean favorite,
-		final String searchTitle);
+	long countByFavoriteAndDefaultCond(final boolean favorite, final FindBookmarksDefaultCond cond);
 
-	List<Bookmark> searchByProfileAndFavoriteAndDefaultCond(final Profile profile, boolean favorite,
-		final FindBookmarksDefaultCond cond);
+	List<Bookmark> searchByFavoriteAndDefaultCond(boolean favorite, final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndTagsAndSearchTitle(final Profile profile, final List<String> tags, final String searchTitle);
+	long countByTagsAndDefaultCond(final List<String> tags, final FindBookmarksDefaultCond cond);
 
-	List<Bookmark> searchByProfileAndTagsAndDefaultCond(final Profile profile, final List<String> tags,
-		final FindBookmarksDefaultCond cond);
+	List<Bookmark> searchByTagsAndDefaultCond(final List<String> tags, final FindBookmarksDefaultCond cond);
 
-	long countByProfileAndSearchTitle(final Profile profile, final String searchTitle);
+	long countByDefaultCond(final FindBookmarksDefaultCond cond);
 
-	List<Bookmark> searchByProfileAndDefaultCond(final Profile profile, final FindBookmarksDefaultCond cond);
+	List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond);
 }

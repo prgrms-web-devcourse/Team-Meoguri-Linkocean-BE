@@ -73,11 +73,11 @@ public class BookmarkController {
 	@GetMapping("/others/{profileId}")
 	public PageResponse<GetBookmarksResponse> getOtherBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable long profileId,
+		final @PathVariable("profileId") long otherProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-			queryParams.toOtherSearchCond(profileId));
+		// final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
+		// 	queryParams.toOtherSearchCond(otherProfileId));
 
 		// final List<GetBookmarksResponse> response = result.getData()
 		// 	.stream()
