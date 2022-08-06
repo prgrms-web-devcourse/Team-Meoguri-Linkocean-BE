@@ -147,10 +147,8 @@ public class BaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		final String content = mvcResult.getResponse().getContentAsString();
-
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(content, GetMyProfileResponse.class);
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
