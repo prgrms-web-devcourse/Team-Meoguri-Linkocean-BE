@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 
@@ -13,13 +12,7 @@ import lombok.Getter;
 @Getter
 public final class MyBookmarkSearchCond {
 
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 8;
-	private static final String DEFAULT_ORDER = "upload";
-	private static final String DEFAULT_OPENTYPE = "all";
-
 	private final long userId;
-	private final String order;
 	private final String category;
 	private final boolean favorite;
 	private final List<String> tags;
@@ -27,17 +20,16 @@ public final class MyBookmarkSearchCond {
 	private final String searchTitle;
 
 	public MyBookmarkSearchCond(final long userId, final boolean favorite, final String category,
-		final List<String> tags, final String searchTitle, final String order) {
+		final List<String> tags, final String searchTitle) {
 
 		this.userId = userId;
 		this.favorite = favorite;
 		this.category = category;
 		this.tags = tags;
 		this.searchTitle = searchTitle;
-		this.order = Optional.ofNullable(order).orElse(DEFAULT_ORDER);
 	}
 
 	public BookmarkFindCond toFindCond(final long profileId) {
-		return new BookmarkFindCond(profileId, searchTitle, order);
+		return new BookmarkFindCond(profileId, searchTitle);
 	}
 }

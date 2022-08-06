@@ -17,7 +17,6 @@ public final class BookmarkFindCond {
 	private final long profileId;
 	private final String searchTitle;
 	private List<OpenType> openTypes = Arrays.stream(OpenType.values()).collect(Collectors.toList());
-	private final String order;
 
 	/* Question - 검색 조건에 왜 세터형 로직이 등장하는지 ?!?!?!? */
 	public void changeOpenType(List<OpenType> openTypes) {
