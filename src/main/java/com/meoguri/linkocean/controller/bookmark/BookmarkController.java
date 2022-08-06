@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
+import com.meoguri.linkocean.controller.bookmark.dto.GetDuplicatedUrlResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
@@ -129,5 +133,21 @@ public class BookmarkController {
 	) {
 		// TODO - 구현
 		// bookmarkService.deleteBookmark(user.getId(), bookmarkId);
+	}
+
+	@GetMapping
+	public GetDuplicatedUrlResponse getDetailedBookmark(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @RequestParam("url") String url,
+		HttpServletResponse response
+	) {
+
+		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+
+		if(isDuplicated){
+			response.setHeader("location",url);
+		}
+
+		return new GetDuplicatedUrlResponse(isDuplicated);
 	}
 }

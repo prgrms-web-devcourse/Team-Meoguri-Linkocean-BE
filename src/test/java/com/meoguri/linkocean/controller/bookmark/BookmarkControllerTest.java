@@ -180,7 +180,19 @@ class BookmarkControllerTest extends BaseControllerTest {
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(2)
+					//jsonPath("$.totalCount").value(2)
+				).andDo(print());
+		}
+
+		@Test
+		void Url중복확인_성공_새로운_url() throws Exception {
+
+			mockMvc.perform(get(basePath + "?url=https://www.google.com")
+					.header(AUTHORIZATION, token)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.isDuplicateUrl").value(false)
 				).andDo(print());
 		}
 	}
