@@ -76,44 +76,15 @@ public class BookmarkController {
 		final @PathVariable("profileId") long otherProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		// final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-		// 	queryParams.toOtherSearchCond(otherProfileId));
+		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
+			queryParams.toOtherSearchCond(otherProfileId));
 
-		// final List<GetBookmarksResponse> response = result.getData()
-		// 	.stream()
-		// 	.map(GetBookmarksResponse::of)
-		// 	.collect(toList());
+		final List<GetBookmarksResponse> response = result.getData()
+			.stream()
+			.map(GetBookmarksResponse::of)
+			.collect(toList());
 
-		/* API 개발 전 더미 데이터 */
-		final List<GetBookmarksResponse> dummyResponse = List.of(
-			new GetBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				LocalDateTime.now(),
-				20,
-				false,
-				false,
-				"imageUrl",
-				List.of("webtoon, fun")
-			),
-			new GetBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://commic.daum.com/index",
-				"all",
-				null,
-				LocalDateTime.now(),
-				10,
-				false,
-				false,
-				"imageUrl",
-				List.of("hello")
-			));
-
-		return PageResponse.of(dummyResponse.size(), "bookmarks", dummyResponse);
+		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/**
