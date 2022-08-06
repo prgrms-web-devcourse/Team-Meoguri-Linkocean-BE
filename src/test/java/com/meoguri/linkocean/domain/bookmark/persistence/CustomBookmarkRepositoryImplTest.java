@@ -257,16 +257,16 @@ class CustomBookmarkRepositoryImplTest {
 			final List<String> searchTags = List.of("tag1");
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(searchTags, cond(),
-				pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond(), pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(2)
+			assertThat(bookmarkPage).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getTagNames)
 				.containsExactlyInAnyOrder(
 					tuple(bookmarkId2, List.of("tag1")),
 					tuple(bookmarkId1, List.of("tag1", "tag2"))
 				);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
 		@Disabled("정렬 구현 후 풀기")
@@ -276,17 +276,16 @@ class CustomBookmarkRepositoryImplTest {
 			final List<String> searchTags = List.of("tag1");
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(searchTags,
-				cond("like", null),
-				pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond("like", null), pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(2)
+			assertThat(bookmarkPage).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getTagNames)
 				.containsExactly(
-					tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()),
-					tuple(savedBookmark2.getId(), savedBookmark2.getTagNames())
+					tuple(bookmarkId1, List.of("tag1", "tag2")),
+					tuple(bookmarkId2, List.of("tag1"))
 				);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
 		@Test
@@ -295,14 +294,13 @@ class CustomBookmarkRepositoryImplTest {
 			final List<String> searchTags = List.of("tag1");
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(searchTags, cond("1"),
-				pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond("1"), pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(1)
+			assertThat(bookmarkPage).hasSize(1)
 				.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
-				.containsExactly(
-					tuple(savedBookmark1.getId(), savedBookmark1.getTagNames(), savedBookmark1.getTitle()));
+				.containsExactly(tuple(bookmarkId1, List.of("tag1", "tag2"), "title1"));
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
 		}
 	}
 
@@ -316,12 +314,13 @@ class CustomBookmarkRepositoryImplTest {
 			final FindBookmarksDefaultCond findCond = cond("upload", null);
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(3)
+			assertThat(bookmarkPage).hasSize(3)
 				.extracting(Bookmark::getId)
-				.containsExactlyInAnyOrder(savedBookmark3.getId(), savedBookmark2.getId(), savedBookmark1.getId());
+				.containsExactlyInAnyOrder(bookmarkId3, bookmarkId2, bookmarkId1);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
 		@Disabled
@@ -331,12 +330,13 @@ class CustomBookmarkRepositoryImplTest {
 			final FindBookmarksDefaultCond findCond = cond("like", null);
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(3)
+			assertThat(bookmarkPage).hasSize(3)
 				.extracting(Bookmark::getId)
 				.containsExactlyInAnyOrder(bookmarkId1, bookmarkId3, bookmarkId2);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
 		@Test
@@ -345,12 +345,13 @@ class CustomBookmarkRepositoryImplTest {
 			final FindBookmarksDefaultCond findCond = cond("1");
 
 			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
-			assertThat(bookmarks).hasSize(1)
+			assertThat(bookmarkPage).hasSize(1)
 				.extracting(Bookmark::getId, Bookmark::getTitle)
 				.containsExactly(tuple(bookmarkId1, "title1"));
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
 		}
 
 	}

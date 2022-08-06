@@ -118,18 +118,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		bookmarkRepository.delete(bookmark);
 	}
 
-	/**
-	 * TagName 정보를 이용해 Tag 를 만든다.
-	 * 1. tag 이름이 존재하면 만들지 않고 db 에서 가져온다.
-	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db에 저장한다.
-	 */
-	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
-		return tagNames.stream()
-			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
-			.collect(toList());
-	}
-
 	//TODO : 쿼리 튜닝
+
 	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
@@ -159,6 +149,17 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.reaction(getReactionMap(profile, bookmark))
 			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
+	}
+
+	/**
+	 * TagName 정보를 이용해 Tag 를 만든다.
+	 * 1. tag 이름이 존재하면 만들지 않고 db 에서 가져온다.
+	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db에 저장한다.
+	 */
+	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
+		return tagNames.stream()
+			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
+			.collect(toList());
 	}
 
 	//TODO 리액션 요청에서 북마크 좋아요 개수도 같이 수정하는 로직이 추가되면 이 부분 수정하기.
@@ -195,14 +196,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final FindBookmarksDefaultCond findCond = searchCond.toFindCond(profile.getId());
 
 		final Page<Bookmark> bookmarkPage =
-			// Case 1 - 카테고리 필터링
+			// Case 1 - 카테고리 필터링 조회
 			searchCategory != null ? bookmarkRepository.findByCategory(searchCategory, findCond, pageable) :
-				// Case 2 - 즐겨찾기 필터링
-				searchFavorite ? bookmarkRepository.findFavoriteBookmarks(findCond, pageable) :
-					// Case 3 - 태그 필터링
-					searchTags != null ? bookmarkRepository.findByTags(searchTags, findCond, pageable) :
-						// Case 4 - 기본 검색
-						bookmarkRepository.findBookmarks(findCond, pageable);
+			// Case 2 - 즐겨찾기 필터링 조회
+			searchFavorite ? bookmarkRepository.findFavoriteBookmarks(findCond, pageable) :
+			// Case 3 - 태그 필터링 조회
+			searchTags != null ? bookmarkRepository.findByTags(searchTags, findCond, pageable) :
+			// Case 4 - 기본 조회
+			bookmarkRepository.findBookmarks(findCond, pageable);
 
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
 		return toResultPage(bookmarkPage, isFavorites, pageable);
