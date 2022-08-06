@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformationSuppo
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
-import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
@@ -39,7 +39,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
-	private final Class domainClass;
+	private final Class<?> domainClass;
 	private Querydsl querydsl;
 	private EntityManager entityManager;
 	private JPAQueryFactory queryFactory;
@@ -109,7 +109,7 @@ public abstract class Querydsl4RepositorySupport {
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
 		JPAQuery<T> countResult = countQuery.apply(getQueryFactory());
-		return PageableExecutionUtils.getPage(content, pageable, countResult::fetchCount);
+		return PageableExecutionUtils.getPage(content, pageable, () -> countResult.stream().count());
 	}
 
 	private Pageable convertBookmarkSort(Pageable pageable) {
