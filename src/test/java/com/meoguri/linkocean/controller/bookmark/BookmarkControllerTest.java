@@ -209,29 +209,25 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 		private long bookmarkId1;
 		private long bookmarkId2;
-		private long bookmarkId3;
 		private long bookmarkId4;
 
-		private String otherUserToken;
 		private long otherProfileId;
-
-		@Autowired
-		private FindBookmarkByIdQuery findBookmarkByIdQuery;
 
 		@BeforeEach
 		void setUp() throws Exception {
 
-			otherUserToken = 다른_유저_등록_로그인("other@email.com", "GOOGLE");
-			otherProfileId = 다른_유저_프로필_등록(otherUserToken, "other", List.of());
+			유저_등록_로그인("crush@gmail.com", "GOOGLE");
+			프로필_등록("crush", List.of("IT"));
 
-			bookmarkId1 = 다른_유저_북마크_등록(otherUserToken, otherProfileId, 링크_메타데이터_얻기("https://www.naver.com"), "title1",
-				"IT", List.of("공부"), "all");
-			bookmarkId2 = 다른_유저_북마크_등록(otherUserToken, otherProfileId, 링크_메타데이터_얻기("https://www.airbnb.co.kr"),
-				"title2", "여행", List.of("travel"), "partial");
-			bookmarkId3 = 다른_유저_북마크_등록(otherUserToken, otherProfileId, 링크_메타데이터_얻기("https://programmers.co.kr"),
-				"title3", "기술", List.of("공부", "코테"), "private");
-			bookmarkId4 = 다른_유저_북마크_등록(otherUserToken, otherProfileId, 링크_메타데이터_얻기("https://www.google.com"), "title4",
-				"자기계발", List.of("머구리"), "all");
+			유저_등록_로그인("otherUser@gmail.com", "GOOGLE");
+			otherProfileId = 프로필_등록("user1", List.of("IT"));
+
+			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
+			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
+			북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
+			bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
+
+			로그인("crush@gmail.com", "GOOGLE");
 		}
 
 		@Test
@@ -274,7 +270,10 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@Test
 		void 모르는_유저_북마크_목록_조회_즐겨찾기_필터링() throws Exception {
 			//given
-			다른_유저가_북마크_즐겨찾기(otherUserToken, bookmarkId1);
+			로그인("otherUser@gmail.com", "GOOGLE");
+			북마크_즐겨찾기(bookmarkId1);
+
+			로그인("crush@gmail.com", "GOOGLE");
 
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
