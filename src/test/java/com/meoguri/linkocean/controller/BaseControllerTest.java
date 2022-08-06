@@ -3,6 +3,7 @@ package com.meoguri.linkocean.controller;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.UnsupportedEncodingException;
@@ -75,6 +76,11 @@ public class BaseControllerTest {
 		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
+	protected String 다른_유저_등록_로그인(final String email, final String oAuthType) {
+		final User savedUser = userRepository.save(new User(email, oAuthType));
+		return String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
+	}
+
 	protected void 로그인(final String email, final String oAuthType) {
 		final User user = userRepository
 			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
@@ -83,7 +89,27 @@ public class BaseControllerTest {
 		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
+	protected String 다른_유저_로그인(final String email, final String oAuthType) {
+		final User user = userRepository
+			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
+			.orElseThrow();
+
+		return String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
+	}
+
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
+		final MvcResult mvcResult = mockMvc.perform(post("/api/v1/profiles")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON)
+				.content(createJson(new CreateProfileRequest(username, categories))))
+			.andExpect(status().isOk())
+			.andReturn();
+
+		return toId(mvcResult);
+	}
+
+	protected long 다른_유저_프로필_등록(final String token, final String username, final List<String> categories) throws
+		Exception {
 		final MvcResult mvcResult = mockMvc.perform(post("/api/v1/profiles")
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
@@ -106,11 +132,30 @@ public class BaseControllerTest {
 
 	protected long 북마크_등록(final String url, final String category, final List<String> tags,
 		final String openType) throws Exception {
+		return 북마크_등록(url, "title", category, tags, openType);
+	}
+
+	protected long 북마크_등록(final String url, final String title, final String category, final List<String> tags,
+		final String openType) throws Exception {
 		final MvcResult mvcResult =
 			mockMvc.perform(post("/api/v1/bookmarks")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON)
-					.content(createJson(new RegisterBookmarkRequest(url, "title", "memo", category, openType, tags))))
+					.content(createJson(new RegisterBookmarkRequest(url, title, "memo", category, openType, tags))))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		return toId(mvcResult);
+	}
+
+	protected long 다른_유저_북마크_등록(final String token, final long profileId, final String url, final String title,
+		final String category,
+		final List<String> tags, final String openType) throws Exception {
+		final MvcResult mvcResult =
+			mockMvc.perform(post("/api/v1/bookmarks")
+					.header(AUTHORIZATION, token)
+					.contentType(APPLICATION_JSON)
+					.content(createJson(new RegisterBookmarkRequest(url, title, "memo", category, openType, tags))))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -149,6 +194,27 @@ public class BaseControllerTest {
 
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
+	}
+
+	protected void 북마크_즐겨찾기(final long bookmarkId) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/favorite", bookmarkId)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	protected void 다른_유저가_북마크_즐겨찾기(final String token, final long bookmarkId) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/favorite", bookmarkId)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	protected void 북마크_좋아요(final long bookmarkId) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/like", bookmarkId)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
