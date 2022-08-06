@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -62,15 +64,9 @@ class CustomBookmarkRepositoryImplTest {
 
 	private Profile profile;
 
-	private Bookmark savedBookmark1;
-	private Bookmark savedBookmark2;
-	private Bookmark savedBookmark3;
-
 	private long bookmarkId1;
 	private long bookmarkId2;
 	private long bookmarkId3;
-
-	private static final Pageable pageable = Pageable.ofSize(8);
 
 	@BeforeEach
 	void setUp() {
@@ -103,7 +99,7 @@ class CustomBookmarkRepositoryImplTest {
 			.build();
 		bookmark1.addBookmarkTag(tag1);
 		bookmark1.addBookmarkTag(tag2);
-		savedBookmark1 = bookmarkRepository.save(bookmark1);
+		final Bookmark savedBookmark1 = bookmarkRepository.save(bookmark1);
 
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
 		final Bookmark bookmark2 = builder()
@@ -116,7 +112,7 @@ class CustomBookmarkRepositoryImplTest {
 			.url("www.google.com")
 			.build();
 		bookmark2.addBookmarkTag(tag1);
-		savedBookmark2 = bookmarkRepository.save(bookmark2);
+		final Bookmark savedBookmark2 = bookmarkRepository.save(bookmark2);
 
 		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
 		final Bookmark bookmark3 = builder()
@@ -128,7 +124,7 @@ class CustomBookmarkRepositoryImplTest {
 			.openType("private")
 			.url("www.github.com")
 			.build();
-		savedBookmark3 = bookmarkRepository.save(bookmark3);
+		final Bookmark savedBookmark3 = bookmarkRepository.save(bookmark3);
 
 		// 크러쉬가 네이버에 좋아요를 누름
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
@@ -152,32 +148,32 @@ class CustomBookmarkRepositoryImplTest {
 	@Nested
 	class 북마크_카테고리로_조회 {
 
-		// TODO - 정렬 구현 후 InAnyOrder 때기
 		@Test
 		void 북마크_카테고리로_조회_성공() {
 			//given
 			final Category findCategory = Category.IT;
 			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
 
-			//given when
+			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
-				.containsExactlyInAnyOrder(
+				.containsExactly(
 					tuple(bookmarkId3, Category.IT.getKorName()),
 					tuple(bookmarkId1, Category.IT.getKorName())
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 
-		@Disabled("정렬 구현 후 풀기")
 		@Test
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
 			final Category findCategory = Category.IT;
-			final BookmarkFindCond findCond = cond("like", null);
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
@@ -197,6 +193,7 @@ class CustomBookmarkRepositoryImplTest {
 			//given
 			final Category findCategory = Category.IT;
 			final BookmarkFindCond cond = cond("1");
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, cond, pageable);
@@ -219,6 +216,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
 			//given
 			final BookmarkFindCond cond = cond("1");
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findFavoriteBookmarks(cond, pageable);
@@ -231,38 +229,40 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
 
-		@Disabled("정렬 구현 후 테스트")
 		@Test
-		void 북마크_즐겨찾기_조회_좋아요_정렬_성공() {
-		/*//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(
-			true,
-			cond("like", profile.getId(), null),
-			pageable);
+		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
+			//given
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
 
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId)
-			.containsExactly(savedBookmark1.getId(), savedBookmark2.getId());*/
+			// when
+			final Page<Bookmark> bookmarks = bookmarkRepository.findFavoriteBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(2)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId1, bookmarkId2);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 	}
 
 	@Nested
 	class 북마크_태그로_조회 {
 
-		//TODO - 정렬 구현 후 InAnyOrder 때기
 		@Test
 		void 북마크_태그로_조회_성공() {
 			//given
 			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond(), pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getTagNames)
-				.containsExactlyInAnyOrder(
+				.containsExactly(
 					tuple(bookmarkId2, List.of("tag1")),
 					tuple(bookmarkId1, List.of("tag1", "tag2"))
 				);
@@ -272,11 +272,15 @@ class CustomBookmarkRepositoryImplTest {
 		@Disabled("정렬 구현 후 풀기")
 		@Test
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
+			// TODO - pageable - like 추가
+
 			//given
 			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond("like", null), pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -292,9 +296,11 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_태그로_조회_제목_필터링_성공() {
 			//given
 			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond("1");
+			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, cond("1"), pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -307,11 +313,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Nested
 	class 북마크_기본_조회 {
 
-		//TODO - 정렬 구현 후 InAnyOrder 때기
 		@Test
 		void 북마크_기본_조회_성공() {
 			//given
-			final BookmarkFindCond findCond = cond("upload", null);
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -327,7 +333,8 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
-			final BookmarkFindCond findCond = cond("like", null);
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -343,6 +350,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
 			final BookmarkFindCond findCond = cond("1");
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -356,15 +364,20 @@ class CustomBookmarkRepositoryImplTest {
 
 	}
 
-	private BookmarkFindCond cond(final String order, final String searchTitle) {
-		return new BookmarkFindCond(profile.getId(), searchTitle, order);
-	}
-
 	private BookmarkFindCond cond(final String searchTitle) {
-		return cond(null, searchTitle);
+		return new BookmarkFindCond(profile.getId(), searchTitle);
 	}
 
 	private BookmarkFindCond cond() {
 		return cond(null);
 	}
+
+	private PageRequest defaultPageable() {
+		return PageRequest.of(0, 8, Sort.by("upload"));
+	}
+
+	private PageRequest likePageable() {
+		return PageRequest.of(0, 8, Sort.by("like", "upload"));
+	}
+
 }

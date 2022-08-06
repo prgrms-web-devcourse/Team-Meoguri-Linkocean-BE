@@ -8,27 +8,21 @@ import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPQLQueryFactory;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
-public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
+public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport implements CustomBookmarkRepository {
 
-	private final JPQLQueryFactory query;
-
-	public CustomBookmarkRepositoryImpl(final EntityManager em) {
-		this.query = new JPAQueryFactory(em);
+	public CustomBookmarkRepositoryImpl() {
+		super(Bookmark.class);
 	}
 
 	/* 카테고리로 조회 */
@@ -38,77 +32,44 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		final BookmarkFindCond cond,
 		final Pageable pageable
 	) {
-		final List<Bookmark> bookmarks = query
-			.selectFrom(bookmark)
-			.join(bookmark.profile).fetchJoin()
-			.join(bookmark.linkMetadata).fetchJoin()
-			.where(
-				profileIdEq(cond.getProfileId()),
-				bookmark.category.eq(category),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			)
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		// Lazy Loading (배치 옵션 이용)
-		bookmarks.forEach(Bookmark::getTagNames);
-
-		final long count = countByCategory(category, cond);
-		return new PageImpl<>(bookmarks, pageable, count);
-	}
-
-	private long countByCategory(final Category category, final BookmarkFindCond cond) {
-		return query
-			.select(bookmark.count())
-			.from(bookmark)
-			.where(
-				profileIdEq(cond.getProfileId()),
-				bookmark.category.eq(category),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			).fetchOne();
+		return applyPagination(pageable,
+			contentQuery -> contentQuery
+				.selectFrom(bookmark)
+				.join(bookmark.profile).fetchJoin()
+				.join(bookmark.linkMetadata).fetchJoin()
+				.where(
+					profileIdEq(cond.getProfileId()),
+					bookmark.category.eq(category),
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				)
+			, Bookmark::getTagNames,
+			countQuery -> countQuery
+				.selectFrom(bookmark)
+				.where(
+					profileIdEq(cond.getProfileId()),
+					bookmark.category.eq(category),
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				)
+		);
 	}
 
 	/* 즐겨찾기 된 북마크 조회 */
 	@Override
 	public Page<Bookmark> findFavoriteBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
-		final List<Bookmark> bookmarks = query
-			.select(bookmark)
-			.from(bookmark)
-			.join(favorite)
-			.on(
-				favorite.bookmark.eq(bookmark),
-				profileIdEq(cond.getProfileId())
-			).where(
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			)
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		// Lazy Loading (배치 옵션 이용)
-		bookmarks.forEach(Bookmark::getTagNames);
-
-		final long count = countFavoriteBookmarks(cond);
-		return new PageImpl<>(bookmarks, pageable, count);
-	}
-
-	private long countFavoriteBookmarks(final BookmarkFindCond cond) {
-		return query
-			.select(bookmark.count())
-			.from(bookmark)
-			.join(favorite).on(
-				favorite.bookmark.eq(bookmark),
-				profileIdEq(cond.getProfileId())
-			)
-			.where(
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			)
-			.fetchOne();
+		return applyPagination(pageable,
+			contentQuery -> contentQuery
+				.selectFrom(bookmark)
+				.join(favorite)
+				.on(
+					favorite.bookmark.eq(bookmark),
+					profileIdEq(cond.getProfileId())
+				).where(
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				)
+			, Bookmark::getTagNames);
 	}
 
 	@Override
@@ -117,78 +78,48 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		final BookmarkFindCond cond,
 		final Pageable pageable
 	) {
+		final List<Long> bookmarkIds =
+			select(bookmarkTag.bookmark.id).distinct()
+				.from(bookmarkTag)
+				.join(bookmarkTag.tag)
+				.where(bookmarkTag.tag.name.in(tagNames))
+				.fetch();
 
-		final List<Long> bookmarkIds = query
-			.select(bookmarkTag.bookmark.id).distinct()
-			.from(bookmarkTag)
-			.join(bookmarkTag.tag)
-			.where(bookmarkTag.tag.name.in(tagNames))
-			.fetch();
-
-		final List<Bookmark> bookmarks = query
-			.select(bookmark)
-			.from(bookmark)
-			.join(bookmark.profile).fetchJoin()
-			.where(
-				bookmark.id.in(bookmarkIds),
-				profileIdEq(cond.getProfileId()),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			)
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		// Lazy Loading (배치 옵션 이용)
-		bookmarks.forEach(Bookmark::getTagNames);
-
-		final long count = countByTags(bookmarkIds, cond);
-		return new PageImpl<>(bookmarks, pageable, count);
-	}
-
-	private long countByTags(final List<Long> bookmarkIds, final BookmarkFindCond cond) {
-		return query
-			.select(bookmark.id.count())
-			.from(bookmark)
-			.join(bookmark.profile)
-			.where(
-				bookmark.id.in(bookmarkIds),
-				profileIdEq(cond.getProfileId()),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			).fetchOne();
+		return applyPagination(pageable,
+			contentQuery -> contentQuery
+				.selectFrom(bookmark)
+				.join(bookmark.profile).fetchJoin()
+				.where(
+					bookmark.id.in(bookmarkIds),
+					profileIdEq(cond.getProfileId()),
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				),
+			Bookmark::getTagNames,
+			countQuery -> countQuery
+				.selectFrom(bookmark)
+				.where(
+					bookmark.id.in(bookmarkIds),
+					profileIdEq(cond.getProfileId()),
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				)
+		);
 	}
 
 	@Override
 	public Page<Bookmark> findBookmarks(final BookmarkFindCond cond, final Pageable pageable) {
 
-		final List<Bookmark> bookmarks = query
-			.selectFrom(bookmark)
-			.where(
-				profileIdEq(cond.getProfileId()),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			)
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		// Lazy Loading (배치 옵션 이용)
-		bookmarks.forEach(Bookmark::getTagNames);
-
-		final long count = countBookmarks(cond);
-		return new PageImpl<>(bookmarks, pageable, count);
-	}
-
-	private long countBookmarks(final BookmarkFindCond cond) {
-		return query
-			.select(bookmark.id.count())
-			.from(bookmark)
-			.where(
-				profileIdEq(cond.getProfileId()),
-				titleLike(cond.getSearchTitle()),
-				inOpenTypes(cond.getOpenTypes())
-			).fetchOne();
+		return applyPagination(pageable,
+			contentQuery -> contentQuery.
+				selectFrom(bookmark)
+				.where(
+					profileIdEq(cond.getProfileId()),
+					titleLike(cond.getSearchTitle()),
+					inOpenTypes(cond.getOpenTypes())
+				),
+			Bookmark::getTagNames
+		);
 	}
 
 	private BooleanExpression profileIdEq(final long profileId) {

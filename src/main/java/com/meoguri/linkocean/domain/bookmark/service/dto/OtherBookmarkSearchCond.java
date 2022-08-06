@@ -40,6 +40,6 @@ public final class OtherBookmarkSearchCond {
 	}
 
 	public BookmarkFindCond toFindBookmarksDefaultCond() {
-		return new BookmarkFindCond(this.otherProfileId, this.searchTitle, this.order);
+		return new BookmarkFindCond(this.otherProfileId, this.searchTitle);
 	}
 }
