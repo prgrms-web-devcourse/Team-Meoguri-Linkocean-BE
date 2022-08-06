@@ -162,8 +162,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 		void 내_북마크_목록_조회_Api_성공_카테고리_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/me")
-					.header(AUTHORIZATION, token)
 					.param("category", "IT")
+					.header(AUTHORIZATION, token)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
@@ -182,8 +182,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 			//when then
 			mockMvc.perform(get(basePath + "/me")
-					.header(AUTHORIZATION, token)
 					.param("favorite", "true")
+					.header(AUTHORIZATION, token)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(

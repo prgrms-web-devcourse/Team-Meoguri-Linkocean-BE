@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UpdateProfileRequest {
+public final class UpdateProfileRequest {
 	private String username;
 	private List<String> categories;
 	private String bio;

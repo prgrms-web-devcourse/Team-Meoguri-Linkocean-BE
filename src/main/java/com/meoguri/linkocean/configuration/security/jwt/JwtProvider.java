@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class JwtProvider {
 
-	private final JwtProperty jwtProperty;
+	private final JwtProperties jwtProperties;
 
 	public String generate(final String email, final String oauthType) {
 		final Date now = new Date();
-		final Date expiration = new Date(now.getTime() + jwtProperty.getExpiration());
+		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
 
 		return Jwts.builder()
 			.setSubject("LinkOcean API Token")
@@ -29,7 +29,7 @@ public class JwtProvider {
 			.setId(email)
 			.setAudience(oauthType)
 			.setExpiration(expiration)
-			.signWith(SignatureAlgorithm.HS256, jwtProperty.getSecretKey())
+			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
 			.compact();
 	}
 
@@ -40,7 +40,7 @@ public class JwtProvider {
 
 	private Claims parseClaimsJws(final String token) {
 		try {
-			final String secretKey = jwtProperty.getSecretKey();
+			final String secretKey = jwtProperties.getSecretKey();
 			return Jwts.parser()
 				.setSigningKey(secretKey)
 				.parseClaimsJws(token)

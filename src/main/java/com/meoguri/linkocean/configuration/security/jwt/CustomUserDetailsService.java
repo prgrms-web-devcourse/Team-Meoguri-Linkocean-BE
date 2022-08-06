@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(final String id) {
-		final User user = findUserByIdQuery.findById(Long.valueOf(id));
+		final User user = findUserByIdQuery.findById(Long.parseLong(id));
 
 		return new SecurityUser(user.getId(),
 			Email.toString(user.getEmail()),

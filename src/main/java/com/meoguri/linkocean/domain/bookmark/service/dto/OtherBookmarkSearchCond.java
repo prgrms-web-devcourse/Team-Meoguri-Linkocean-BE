@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
 
 // TODO - 구현
-public class OtherBookmarkSearchCond {
+public final class OtherBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 8;
