@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,7 +210,6 @@ class CustomBookmarkRepositoryImplTest {
 	@Nested
 	class 북마크_즐겨찾기_조회 {
 
-		//TODO - 정렬 구현 후 InAnyOrder 때기
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
 			//given
@@ -224,7 +222,7 @@ class CustomBookmarkRepositoryImplTest {
 			//then
 			assertThat(bookmarkPage).hasSize(1)
 				.extracting(Bookmark::getId)
-				.containsExactlyInAnyOrder(bookmarkId1);
+				.containsExactly(bookmarkId1);
 			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByOwnerAndBookmark(profile, b));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
@@ -269,11 +267,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
-		@Disabled("정렬 구현 후 풀기")
 		@Test
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
-			// TODO - pageable - like 추가
-
 			//given
 			final List<String> searchTags = List.of("tag1");
 			final BookmarkFindCond findCond = cond();
@@ -325,16 +320,15 @@ class CustomBookmarkRepositoryImplTest {
 			//then
 			assertThat(bookmarkPage).hasSize(3)
 				.extracting(Bookmark::getId)
-				.containsExactlyInAnyOrder(bookmarkId3, bookmarkId2, bookmarkId1);
+				.containsExactly(bookmarkId3, bookmarkId2, bookmarkId1);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
-		@Disabled
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
 			final BookmarkFindCond findCond = cond();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = likePageable();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -342,7 +336,7 @@ class CustomBookmarkRepositoryImplTest {
 			//then
 			assertThat(bookmarkPage).hasSize(3)
 				.extracting(Bookmark::getId)
-				.containsExactlyInAnyOrder(bookmarkId1, bookmarkId3, bookmarkId2);
+				.containsExactly(bookmarkId1, bookmarkId3, bookmarkId2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 

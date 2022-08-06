@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
@@ -116,7 +115,6 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Nested
-	@Transactional
 	class 내_북마크_목록_조회_테스트 {
 
 		private long bookmarkId1;
