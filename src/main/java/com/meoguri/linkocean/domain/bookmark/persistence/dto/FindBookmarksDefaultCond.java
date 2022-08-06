@@ -18,6 +18,7 @@ public final class FindBookmarksDefaultCond {
 	private List<OpenType> openTypes = Arrays.stream(OpenType.values()).collect(Collectors.toList());
 	private final String order;
 
+	/* Question - 검색 조건에 왜 세터형 로직이 등장하는지 ?!?!?!? */
 	public void changeOpenType(List<OpenType> openTypes) {
 		this.openTypes = openTypes;
 	}
