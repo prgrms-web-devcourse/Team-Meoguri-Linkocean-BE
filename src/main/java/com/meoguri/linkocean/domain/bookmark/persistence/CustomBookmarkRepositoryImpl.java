@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.domain.profile.entity.QProfile;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
@@ -44,7 +43,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile).fetchJoin()
 			.join(bookmark.linkMetadata).fetchJoin()
 			.where(
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				bookmark.category.eq(category),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
@@ -65,7 +64,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.select(bookmark.count())
 			.from(bookmark)
 			.where(
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				bookmark.category.eq(category),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
@@ -81,14 +80,14 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(favorite)
 			.on(
 				favorite.bookmark.eq(bookmark),
-				profileIdEq(favorite.owner, cond))
-			.where(
+				profileIdEq(cond.getProfileId())
+			).where(
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			)
-				.offset(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.fetch();
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
 		bookmarks.forEach(Bookmark::getTagNames);
@@ -103,7 +102,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.from(bookmark)
 			.join(favorite).on(
 				favorite.bookmark.eq(bookmark),
-				profileIdEq(favorite.owner, cond)
+				profileIdEq(cond.getProfileId())
 			)
 			.where(
 				titleLike(cond.getSearchTitle()),
@@ -132,7 +131,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile).fetchJoin()
 			.where(
 				bookmark.id.in(bookmarkIds),
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			)
@@ -154,7 +153,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.join(bookmark.profile)
 			.where(
 				bookmark.id.in(bookmarkIds),
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
@@ -166,7 +165,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
 			.where(
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			)
@@ -186,14 +185,14 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 			.select(bookmark.id.count())
 			.from(bookmark)
 			.where(
-				profileIdEq(bookmark.profile, cond),
+				profileIdEq(cond.getProfileId()),
 				titleLike(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).fetchOne();
 	}
 
-	private BooleanExpression profileIdEq(final QProfile bookmark, final BookmarkFindCond cond) {
-		return bookmark.id.eq(cond.getProfileId());
+	private BooleanExpression profileIdEq(final long profileId) {
+		return bookmark.profile.id.eq(profileId);
 	}
 
 	private BooleanBuilder inOpenTypes(final List<OpenType> openTypes) {
