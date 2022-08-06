@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
@@ -40,6 +39,6 @@ public final class GetBookmarkQueryParams {
 	}
 
 	public Pageable toPage() {
-		return PageRequest.of(page, size, Sort.DEFAULT_DIRECTION);
+		return PageRequest.of(page - 1, size); // PageRequest 는 0 부터 페이지를 세기 때문에 조정해줌
 	}
 }

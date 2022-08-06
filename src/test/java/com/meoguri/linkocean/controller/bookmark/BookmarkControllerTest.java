@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
@@ -115,6 +116,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Nested
+	@Transactional
 	class 내_북마크_목록_조회_테스트 {
 
 		private long bookmarkId1;
@@ -173,7 +175,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 				.andDo(print());
 		}
 
-		//TODO BaseController에 즐겨찾기 추가 메서드 만들어서 사용하기
+		//TODO BaseController 에 즐겨찾기 추가 메서드 만들어서 사용하기
 		@Disabled
 		@Test
 		void 내_북마크_목록_조회_Api_성공_즐겨찾기_필터링() throws Exception {

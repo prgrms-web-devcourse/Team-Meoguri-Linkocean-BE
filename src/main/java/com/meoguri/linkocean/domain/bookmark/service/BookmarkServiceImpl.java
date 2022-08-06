@@ -5,17 +5,17 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
@@ -40,6 +39,7 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
@@ -54,10 +54,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final BookmarkRepository bookmarkRepository;
 	private final TagRepository tagRepository;
-	private final FavoriteRepository favoriteRepository;
 	private final ReactionRepository reactionRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
+	private final CheckIsFavoriteQuery checkIsFavoriteQuery;
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
@@ -127,7 +127,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
 		return tagNames.stream()
 			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	//TODO : 쿼리 튜닝
@@ -143,7 +143,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Profile currentUserProfile = findProfileByUserIdQuery.findByUserId(userId);
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 
-		final boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
+		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(owner, bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
 
 		return GetDetailedBookmarkResult.builder()
@@ -165,7 +165,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	//TODO 리액션 요청에서 북마크 좋아요 개수도 같이 수정하는 로직이 추가되면 이 부분 수정하기.
 	private Map<String, Long> getReactionCountMap(Bookmark bookmark) {
 		return Arrays.stream(ReactionType.values())
-			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
+			.collect(toMap(ReactionType::getName, reactionType ->
 				reactionRepository.countReactionByBookmarkAndType(bookmark, reactionType))
 			);
 	}
@@ -174,7 +174,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Optional<Reaction> oMyReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
 
 		return Arrays.stream(ReactionType.values())
-			.collect(Collectors.toMap(ReactionType::getName, reactionType ->
+			.collect(toMap(ReactionType::getName, reactionType ->
 				oMyReaction.map(reaction -> ReactionType.of(reaction.getType()).equals(reactionType)).orElse(false)
 			));
 	}
@@ -199,7 +199,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			// 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다.
 			checkCondition(!favorite && isNull(tags));
 
-			return getPageResultBy(
+			return searchResultBy(
 				Category.of(category),
 				profile,
 				searchCond.toFindBookmarksDefaultCond(profile.getId()),
@@ -255,7 +255,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		if (nonNull(cond.getCategory())) {
 			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
 			checkCondition(!cond.isFavorite() && isNull(cond.getTags()));
-			return getBookmarksByCategoryAndDefaultCond(myProfile, Category.of(cond.getCategory()), defaultCond);
+			return getBookmarksByCategoryAndDefaultCond(myProfile, Category.of(cond.getCategory()), defaultCond,
+				PageRequest.of(1, 8));
 		}
 
 		if (cond.isFavorite()) {
@@ -273,14 +274,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return getBookmarksByDefaultCond(myProfile, defaultCond);
 	}
 
-	private Page<GetBookmarksResult> getPageResultBy(
+	private Page<GetBookmarksResult> searchResultBy(
 		final Category category,
 		final Profile profile,
 		final FindBookmarksDefaultCond cond,
 		final Pageable pageable
 	) {
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
-		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond, pageable);
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarks);
 		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
 
 		return convert(bookmarks, isFavorites, pageable, totalCount);
@@ -322,16 +323,20 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return convert(bookmarks, myProfile, isFavorites, pageable, totalCount);
 	}*/
 
-	private PageResult<GetBookmarksResult> getBookmarksByCategoryAndDefaultCond(final Profile myProfile,
-		final Category category, final FindBookmarksDefaultCond cond) {
+	private PageResult<GetBookmarksResult> getBookmarksByCategoryAndDefaultCond(
+		final Profile myProfile,
+		final Category category,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
 		//전체 개수 조회
 		long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
 
 		//페이지에 맞게 조회
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond, pageable);
 
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
-		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(myProfile, bookmarks);
 
 		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
@@ -340,13 +345,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean favorite, final FindBookmarksDefaultCond cond) {
 		long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(favorite, cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(favorite, cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(favorite, cond,
+			PageRequest.of(1, 8));
 
 		final List<Boolean> isFavorites;
 		if (myProfile.getId().equals(cond.getProfileId())) {
-			isFavorites = bookmarks.stream().map(bookmark -> true).collect(Collectors.toList());
+			isFavorites = bookmarks.stream().map(bookmark -> true).collect(toList());
 		} else {
-			isFavorites = checkIsFavorite(myProfile, bookmarks);
+			isFavorites = checkIsFavoriteQuery.isFavorites(myProfile, bookmarks);
 		}
 
 		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
@@ -356,10 +362,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<String> tags, final FindBookmarksDefaultCond cond) {
 		long totalCount = bookmarkRepository.countByTagsAndDefaultCond(tags, cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(tags, cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(tags, cond,
+			PageRequest.of(1, 8));
 
 		//즐겨 찾기 여부 리스트 한번에 가져오기.
-		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(myProfile, bookmarks);
 
 		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
 	}
@@ -368,20 +375,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final FindBookmarksDefaultCond cond) {
 		final long totalCount = bookmarkRepository.countByDefaultCond(cond);
 
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(cond);
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(cond,
+			PageRequest.of(1, 8));
 
-		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(myProfile, bookmarks);
 
 		return convertToBookmarksResult(totalCount, bookmarks, myProfile, isFavorites);
-	}
-
-	private List<Boolean> checkIsFavorite(final Profile myProfile, final List<Bookmark> bookmarks) {
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findAllFavoriteByProfileAndBookmarks(myProfile,
-			bookmarks);
-
-		return bookmarks.stream()
-			.map(bookmark -> favoriteBookmarkIds.contains(bookmark.getId()))
-			.collect(Collectors.toList());
 	}
 
 	/**
@@ -397,7 +396,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Pageable pageable,
 		final long totalCount
 	) {
-
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {

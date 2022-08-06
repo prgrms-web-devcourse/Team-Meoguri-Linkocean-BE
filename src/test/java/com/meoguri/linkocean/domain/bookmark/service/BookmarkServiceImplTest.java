@@ -492,8 +492,7 @@ class BookmarkServiceImplTest {
 			//given
 			//when
 			final PageResult<GetBookmarksResult> otherBookmarkResults = bookmarkService.getOtherBookmarks(userId,
-				new OtherBookmarkSearchCond(
-					otherProfileId, null, null, null, null, false, null, null));
+				new OtherBookmarkSearchCond(otherProfileId, null, null, null, null, false, null, null));
 
 			//then
 			assertThat(otherBookmarkResults.getData()).hasSize(1)

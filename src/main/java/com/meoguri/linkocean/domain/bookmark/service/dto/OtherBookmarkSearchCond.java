@@ -40,6 +40,6 @@ public final class OtherBookmarkSearchCond {
 	}
 
 	public FindBookmarksDefaultCond toFindBookmarksDefaultCond() {
-		return new FindBookmarksDefaultCond(this.page, this.size, this.order, this.otherProfileId, this.searchTitle);
+		return new FindBookmarksDefaultCond(this.otherProfileId, this.searchTitle, this.order);
 	}
 }

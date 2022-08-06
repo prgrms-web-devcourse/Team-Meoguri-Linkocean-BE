@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -46,7 +47,7 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 	@Override
 	public List<Bookmark> searchByCategoryAndDefaultCond(final Category category,
-		final FindBookmarksDefaultCond cond) {
+		final FindBookmarksDefaultCond cond, final Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
@@ -58,8 +59,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				containsSearchTitle(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset(cond.getOffset())
-			.limit(cond.getLimit())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -83,7 +84,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 
 	@Override
 	public List<Bookmark> searchByFavoriteAndDefaultCond(final boolean isFavorite,
-		final FindBookmarksDefaultCond cond) {
+		final FindBookmarksDefaultCond cond, final
+	Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.select(bookmark)
@@ -95,8 +97,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				containsSearchTitle(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes()))
 			.orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset(cond.getOffset())
-			.limit(cond.getLimit())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -127,7 +129,9 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public List<Bookmark> searchByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond) {
+	public List<Bookmark> searchByTagsAndDefaultCond(final List<String> tagNames, final FindBookmarksDefaultCond cond,
+		final
+		Pageable pageable) {
 
 		final List<Long> bookmarkIds = query
 			.select(bookmarkTag.bookmark.id).distinct()
@@ -146,8 +150,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				containsSearchTitle(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset(cond.getOffset())
-			.limit(cond.getLimit())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)
@@ -168,7 +172,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 	}
 
 	@Override
-	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond) {
+	public List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond, final
+	Pageable pageable) {
 
 		final List<Bookmark> bookmarks = query
 			.selectFrom(bookmark)
@@ -177,8 +182,8 @@ public class CustomBookmarkRepositoryImpl implements CustomBookmarkRepository {
 				containsSearchTitle(cond.getSearchTitle()),
 				inOpenTypes(cond.getOpenTypes())
 			).orderBy(getOrderSpecifier(cond.getOrder()))
-			.offset(cond.getOffset())
-			.limit(cond.getLimit())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
 		// Lazy Loading (배치 옵션 이용)

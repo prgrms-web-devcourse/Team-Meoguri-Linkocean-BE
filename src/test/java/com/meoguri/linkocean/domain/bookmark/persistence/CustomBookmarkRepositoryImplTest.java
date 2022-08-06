@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -147,8 +148,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("upload", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(
+			Category.IT,
+			cond("upload", profile.getId(), null),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -161,8 +165,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("like", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(
+			Category.IT,
+			cond("like", profile.getId(), null),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -175,8 +182,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_카테고리와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("upload", profile.getId(), "1"));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(
+			Category.IT,
+			cond("upload", profile.getId(), "1"),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -207,8 +217,10 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("upload", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(
+			true,
+			cond("upload", profile.getId(), null)
+			, PageRequest.of(0, 8));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -223,8 +235,10 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("like", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(
+			true,
+			cond("like", profile.getId(), null),
+			PageRequest.of(0, 8));
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -235,8 +249,10 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_즐겨찾기와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("upload", profile.getId(), "1"));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(
+			true,
+			cond("upload", profile.getId(), "1"),
+			PageRequest.of(0, 8));
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -267,8 +283,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("upload", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(
+			List.of("tag1"),
+			cond("upload", profile.getId(), null),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -281,8 +300,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("like", profile.getId(), null));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(
+			List.of("tag1"),
+			cond("like", profile.getId(), null),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(2)
@@ -295,8 +317,11 @@ class CustomBookmarkRepositoryImplTest {
 	@Test
 	void 내_북마크_조회_태그와_제목으로_필터링() {
 		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("upload", profile.getId(), "1"));
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(
+			List.of("tag1"),
+			cond("upload", profile.getId(), "1"),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
@@ -326,7 +351,8 @@ class CustomBookmarkRepositoryImplTest {
 	void 내_북마크_조회() {
 		//given when
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("upload", profile.getId(), null));
+			cond("upload", profile.getId(), null),
+			PageRequest.of(0, 8));
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -338,7 +364,9 @@ class CustomBookmarkRepositoryImplTest {
 	void 내_북마크_조회_좋아요_정렬() {
 		//given when
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("like", profile.getId(), null));
+			cond("like", profile.getId(), null),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(3)
@@ -350,7 +378,9 @@ class CustomBookmarkRepositoryImplTest {
 	void 내_북마크_조회_제목으로_필터링() {
 		//given when
 		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("upload", profile.getId(), "1"));
+			cond("upload", profile.getId(), "1"),
+			PageRequest.of(0, 8)
+		);
 
 		//then
 		assertThat(bookmarks).hasSize(1)
