@@ -14,6 +14,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -184,32 +187,52 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public PageResult<GetBookmarksResult> getMyBookmarks(final long userId, final MyBookmarkSearchCond searchCond) {
+	public Page<GetBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond, final Pageable pageable) {
+		final String category = searchCond.getCategory();
+		final boolean favorite = searchCond.isFavorite();
+		final List<String> tags = searchCond.getTags();
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile profile = findProfileByUserIdQuery.findByUserId(searchCond.getUserId());
 
-		if (nonNull(searchCond.getCategory())) {
-			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
-			checkCondition(!searchCond.isFavorite() && isNull(searchCond.getTags()));
-			return getBookmarksByCategoryAndDefaultCond(profile, Category.of(searchCond.getCategory()),
-				searchCond.toFindBookmarksDefaultCond(profile.getId()));
+		// Case 1 - 카테고리 필터링
+		if (nonNull(category)) {
+			// 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다.
+			checkCondition(!favorite && isNull(tags));
+
+			return getPageResultBy(
+				Category.of(category),
+				profile,
+				searchCond.toFindBookmarksDefaultCond(profile.getId()),
+				pageable
+			);
 		}
 
-		if (searchCond.isFavorite()) {
-			/* 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다. */
+		/*// Case 2 - 즐겨찾기 필터링
+		if (favorite) {
+			// 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다.
 			checkCondition(isNull(searchCond.getTags()));
-			return getBookmarksByFavoriteAndDefaultCond(profile, searchCond.isFavorite(),
-				searchCond.toFindBookmarksDefaultCond(profile.getId()));
-		}
+			return getPageResultBy(
+				profile,
+				favorite,
+				searchCond.toFindBookmarksDefaultCond(profile.getId()),
+				pageable
+			);
+		}*/
 
-		if (nonNull(searchCond.getTags())) {
-			/* 태그는 최대 3개 까지 필터링 가능하다 */
+		/*// Case 3 - 태그 필터링
+		if (nonNull(tags)) {
+			// 태그는 최대 3개 까지 필터링 가능하다
 			checkCondition(searchCond.getTags().size() <= 3);
-			return getBookmarksByTagsAndDefaultCond(profile, searchCond.getTags(),
-				searchCond.toFindBookmarksDefaultCond(profile.getId()));
-		}
+			return getPageResultBy(
+				profile,
+				tags,
+				searchCond.toFindBookmarksDefaultCond(profile.getId()),
+				pageable
+			);
+		}*/
 
-		return getBookmarksByDefaultCond(profile, searchCond.toFindBookmarksDefaultCond(profile.getId()));
+		// return getPageResultBy(profile, searchCond.toFindBookmarksDefaultCond(profile.getId()));
+		throw new IllegalStateException("temp illegal state");
 	}
 
 	@Override
@@ -249,6 +272,55 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		return getBookmarksByDefaultCond(myProfile, defaultCond);
 	}
+
+	private Page<GetBookmarksResult> getPageResultBy(
+		final Category category,
+		final Profile profile,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
+		final List<Boolean> isFavorites = checkIsFavorite(profile, bookmarks);
+		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
+
+		return convert(bookmarks, isFavorites, pageable, totalCount);
+	}
+
+	/*private Page<GetBookmarksResult> getPageResultBy(
+		final Profile myProfile,
+		final boolean favorite,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
+		//전체 개수 조회
+		long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
+
+		//페이지에 맞게 조회
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
+
+		//즐겨 찾기 여부 리스트 한번에 가져오기.
+		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
+
+		return convert(bookmarks, myProfile, isFavorites, pageable, totalCount);
+	}*/
+
+	/*private Page<GetBookmarksResult> getPageResultBy(
+		final Profile myProfile,
+		final List<String> tags,
+		final FindBookmarksDefaultCond cond,
+		final Pageable pageable
+	) {
+		//전체 개수 조회
+		long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(category, cond);
+
+		//페이지에 맞게 조회
+		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(category, cond);
+
+		//즐겨 찾기 여부 리스트 한번에 가져오기.
+		final List<Boolean> isFavorites = checkIsFavorite(myProfile, bookmarks);
+
+		return convert(bookmarks, myProfile, isFavorites, pageable, totalCount);
+	}*/
 
 	private PageResult<GetBookmarksResult> getBookmarksByCategoryAndDefaultCond(final Profile myProfile,
 		final Category category, final FindBookmarksDefaultCond cond) {
@@ -310,6 +382,41 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return bookmarks.stream()
 			.map(bookmark -> favoriteBookmarkIds.contains(bookmark.getId()))
 			.collect(Collectors.toList());
+	}
+
+	/**
+	 * @param bookmarks   조회한 북마크
+	 * @param isFavorites 북마크의 즐겨찾기 여부
+	 * @param pageable      페이지 정보
+	 * @param totalCount  북마크의 총 개수
+	 * @return 결과 페이지
+	 */
+	private Page<GetBookmarksResult> convert(
+		final List<Bookmark> bookmarks,
+		final List<Boolean> isFavorites,
+		final Pageable pageable,
+		final long totalCount
+	) {
+
+		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
+		int size = bookmarks.size();
+		for (int i = 0; i < size; ++i) {
+			bookmarkResults.add(new GetBookmarksResult(
+				bookmarks.get(i).getId(),
+				bookmarks.get(i).getUrl(),
+				bookmarks.get(i).getTitle(),
+				bookmarks.get(i).getOpenType(),
+				bookmarks.get(i).getCategory(),
+				bookmarks.get(i).getUpdatedAt(),
+				isFavorites.get(i),
+				bookmarks.get(i).getLikeCount(),
+				bookmarks.get(i).getLinkMetadata().getImage(),
+				true,        // 자신의 북마크 조회이므로 항상 참
+				bookmarks.get(i).getTagNames()
+			));
+		}
+
+		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
 	private PageResult<GetBookmarksResult> convertToBookmarksResult(final long totalCount,

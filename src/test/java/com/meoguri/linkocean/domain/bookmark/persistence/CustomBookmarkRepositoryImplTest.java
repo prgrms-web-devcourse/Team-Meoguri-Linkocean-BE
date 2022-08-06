@@ -359,6 +359,6 @@ class CustomBookmarkRepositoryImplTest {
 	}
 
 	private FindBookmarksDefaultCond cond(final String order, final long profileId, final String searchTitle) {
-		return new FindBookmarksDefaultCond(1, 8, order, profileId, searchTitle);
+		return new FindBookmarksDefaultCond(profileId, searchTitle, order);
 	}
 }
