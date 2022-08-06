@@ -204,27 +204,17 @@ class BookmarkControllerTest extends BaseControllerTest {
 					//jsonPath("$.totalCount").value(2)
 				).andDo(print());
 		}
-
-		@Test
-		void Url중복확인_성공_새로운_url() throws Exception {
-
-			mockMvc.perform(get(basePath + "?url=https://www.google.com")
-					.header(AUTHORIZATION, token)
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.isDuplicateUrl").value(false)
-				).andDo(print());
-		}
 	}
 
 	@Test
-	void 다른_사람_북마크_조회_Api_더미_데이터_반환_테스트() throws Exception {
-		//when then
-		mockMvc.perform(get(basePath + "/others/1")
+	void Url중복확인_성공_새로운_url() throws Exception {
+
+		mockMvc.perform(get(basePath + "?url=https://www.google.com")
 				.header(AUTHORIZATION, token)
 				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andDo(print());
+			.andExpectAll(
+				jsonPath("$.isDuplicateUrl").value(false)
+			).andDo(print());
 	}
 }

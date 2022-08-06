@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.controller.bookmark.dto.GetDuplicatedUrlResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
+import com.meoguri.linkocean.controller.bookmark.dto.GetDuplicatedUrlResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
@@ -211,8 +211,8 @@ public class BookmarkController {
 
 		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
 
-		if(isDuplicated){
-			response.setHeader("location",url);
+		if (isDuplicated) {
+			response.setHeader("location", url);
 		}
 
 		return new GetDuplicatedUrlResponse(isDuplicated);

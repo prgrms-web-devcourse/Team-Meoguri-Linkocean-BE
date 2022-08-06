@@ -424,24 +424,6 @@ class BookmarkServiceImplTest {
 			assertThatExceptionOfType(LinkoceanRuntimeException.class)
 				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
 		}
-
-		@Test
-		void 중복_Url_있을_때() {
-			//when
-			final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, url);
-
-			//then
-			assertThat(isDuplicateUrl).isTrue();
-		}
-
-		@Test
-		void 중복_Url_없을_때() {
-			//when
-			final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
-
-			//then
-			assertThat(isDuplicateUrl).isFalse();
-		}
 	}
 
 	@Nested
@@ -535,5 +517,26 @@ class BookmarkServiceImplTest {
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId2, "partial"), tuple(bookmarkId1, "all"));
 		}
+	}
+
+	@Test
+	void 중복_Url_있을_때() {
+		//when
+		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
+
+		//when
+		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, bookmark.getUrl());
+
+		//then
+		assertThat(isDuplicateUrl).isTrue();
+	}
+
+	@Test
+	void 중복_Url_없을_때() {
+		//when
+		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
+
+		//then
+		assertThat(isDuplicateUrl).isFalse();
 	}
 }
