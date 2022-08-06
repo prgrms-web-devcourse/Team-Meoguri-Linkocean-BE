@@ -67,7 +67,7 @@ public class ProfileController {
 	) {
 		final GetMyProfileResult profile = profileService.getMyProfile(user.getId());
 		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
-		final List<String> categories = categoryService.getUsedCategories(user.getId());
+		final List<String> categories = categoryService.getMyUsedCategories(user.getId());
 
 		return GetMyProfileResponse.of(profile, tags, categories);
 	}
@@ -79,8 +79,8 @@ public class ProfileController {
 		final @PathVariable long profileId
 	) {
 		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getId(), profileId);
-		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
-		final List<String> categories = categoryService.getUsedCategories(user.getId());
+		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
+		final List<String> categories = categoryService.getUsedCategories(profileId);
 
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
