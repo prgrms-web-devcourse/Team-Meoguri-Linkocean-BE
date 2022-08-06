@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,6 +28,7 @@ import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
+import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
@@ -57,10 +57,22 @@ public class BaseControllerTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	protected String createJson(Object dto) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(dto);
+	}
+
+	protected static String getBaseUrl(final Class<?> clazz) {
+		return Stream.of(Optional.ofNullable(AnnotationUtils.findAnnotation(clazz, RequestMapping.class))
+				.map(RequestMapping::value)
+				.orElseThrow(NullPointerException::new))
+			.findFirst()
+			.orElseThrow(NullPointerException::new);
+	}
+
 	protected void 유저_등록_로그인(final String email, final String oAuthType) {
 		final User savedUser = userRepository.save(new User(email, oAuthType));
 
-		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
@@ -68,7 +80,7 @@ public class BaseControllerTest {
 			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
 			.orElseThrow();
 
-		token = String.format("bearer %s", jwtProvider.generate(email, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
@@ -83,10 +95,8 @@ public class BaseControllerTest {
 	}
 
 	protected String 링크_메타데이터_얻기(final String link) throws Exception {
-		mockMvc.perform(post(UriComponentsBuilder.fromUriString("/api/v1/linkmetadatas/obtain")
-				.queryParam("link", link)
-				.build()
-				.toUri())
+		mockMvc.perform(post("/api/v1/linkmetadatas/obtain")
+				.param("link", link)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -108,34 +118,16 @@ public class BaseControllerTest {
 	}
 
 	protected void 팔로우(final long followeeId) throws Exception {
-		mockMvc.perform(post("/api/v1/profiles/follow?followeeId=" + followeeId)
+		mockMvc.perform(post("/api/v1/profiles/follow")
+				.param("followeeId", String.valueOf(followeeId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andReturn();
+			.andExpect(status().isOk());
 	}
 
-	// TODO - 프로필 조회 API 구현 후 주석 필기
-/*
-	protected GetMyProfileResponse 프로필_조회(long profileId) throws Exception {
-
-		final MvcResult mvcResult = mockMvc.perform(get("/api/v1/profiles/" + profileId)
-				.session(session)
-				.contentType(APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andReturn();
-
-		final String content = mvcResult.getResponse().getContentAsString();
-
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(content, GetMyProfileResponse.class);
-	}
-*/
-
-	protected GetMyProfileResponse 내_프로필_조회() throws Exception {
-
+	protected GetDetailedProfileResponse 프로필_상세_조회(long profileId) throws Exception {
 		final MvcResult mvcResult =
-			mockMvc.perform(get("/api/v1/profiles/me")
+			mockMvc.perform(get("/api/v1/profiles/{profileId}", profileId)
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -144,20 +136,19 @@ public class BaseControllerTest {
 		final String content = mvcResult.getResponse().getContentAsString();
 
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(content, GetMyProfileResponse.class);
+		return mapper.readValue(content, GetDetailedProfileResponse.class);
 	}
 
-	protected String createJson(Object dto) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(dto);
-	}
+	protected GetMyProfileResponse 내_프로필_조회() throws Exception {
+		final MvcResult mvcResult =
+			mockMvc.perform(get("/api/v1/profiles/me")
+					.header(AUTHORIZATION, token)
+					.contentType(APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn();
 
-	protected static String getBaseUrl(final Class<?> clazz) {
-
-		return Stream.of(Optional.ofNullable(AnnotationUtils.findAnnotation(clazz, RequestMapping.class))
-				.map(RequestMapping::value)
-				.orElseThrow(NullPointerException::new))
-			.findFirst()
-			.orElseThrow(NullPointerException::new);
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -166,8 +157,9 @@ public class BaseControllerTest {
 		return objectMapper.readValue(content, JsonNode.class).get("id").asLong();
 	}
 
+	// TODO - 리팩터링 제거 대상입니당
 	protected long getUserId(final String tokenHeader) {
-		String token = StringUtils.substringAfter(tokenHeader, "bearer ");
+		String token = StringUtils.substringAfter(tokenHeader, "Bearer ");
 
 		final String email = jwtProvider.getClaims(token, Claims::getId);
 		final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);

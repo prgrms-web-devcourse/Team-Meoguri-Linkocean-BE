@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class FindBookmarksDefaultCond {
+public final class FindBookmarksDefaultCond {
 
 	private final int page;
 	private final int size;

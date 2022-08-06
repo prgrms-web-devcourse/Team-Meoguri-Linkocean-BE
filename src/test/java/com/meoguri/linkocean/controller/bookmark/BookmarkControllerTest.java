@@ -59,6 +59,27 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void 북마크_삭제_Api_성공() throws Exception {
+
+		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
+
+		// 북마크 삭제
+		//when
+		mockMvc.perform(delete(basePath + "/" + bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andDo(print());
+
+		// 북마크 조회 -> LinkedOceanRuntimcException 발생, 북마크가 존재하지 않음
+		mockMvc.perform(get(basePath + "/" + bookmarkId)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
 		//given
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
@@ -141,8 +162,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 		void 내_북마크_목록_조회_Api_성공_카테고리_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/me")
-					.header(AUTHORIZATION, token)
 					.param("category", "IT")
+					.header(AUTHORIZATION, token)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
@@ -161,8 +182,8 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 			//when then
 			mockMvc.perform(get(basePath + "/me")
-					.header(AUTHORIZATION, token)
 					.param("favorite", "true")
+					.header(AUTHORIZATION, token)
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(

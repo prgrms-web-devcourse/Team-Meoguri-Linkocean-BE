@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class BookmarkNoti implements Noti {
+public final class BookmarkNoti implements Noti {
 
 	private final long bookmarkId;
 	private final String title;

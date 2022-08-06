@@ -2,8 +2,6 @@ package com.meoguri.linkocean.configuration.security.oauth;
 
 import java.util.Collections;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -29,22 +27,18 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
 	private final UserRepository userRepository;
-	private final HttpSession httpSession;
 	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
 
-	public CustomOAuth2UserService(final UserRepository userRepository, final HttpSession httpSession) {
+	public CustomOAuth2UserService(final UserRepository userRepository) {
 		this.userRepository = userRepository;
-		this.httpSession = httpSession;
 		this.delegate = new DefaultOAuth2UserService();
 	}
 
 	/**
-	 * delegate 를 통한 loadUser 수행 및 <br>
-	 * 유저를 생성 저장하고 세션에 저장하는 역할을 추가로 수행한다.
+	 * delegate 를 통한 loadUser 수행
 	 */
 	@Override
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
 		log.info("CustomOAuth2UserService loadUser start");
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
 		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -52,11 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
 		final User user = userOf(attributes);
 
-		log.info(
-			String.format("user Session에 등록 email : %s oauthType : %s", user.getEmail(),
-				user.getOAuthType().toString()));
-
-		log.info("token save");
+		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOAuthType());
 		return new DefaultOAuth2User(
 			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
 			attributes.getAttributes(),
@@ -70,9 +60,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			.orElseGet(() -> {
 				final User user = userRepository.save(attributes.toEntity());
 
-				log.info("새로운 사용자 저장 email : {}, oauth type : {}",
+				log.info("save user with email : {}, oauthType : {}",
 					Email.toString(user.getEmail()), user.getOAuthType());
-
 				return user;
 			});
 

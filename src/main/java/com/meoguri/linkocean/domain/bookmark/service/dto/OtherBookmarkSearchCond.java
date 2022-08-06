@@ -8,7 +8,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaul
 import lombok.Getter;
 
 @Getter
-public class OtherBookmarkSearchCond {
+public final class OtherBookmarkSearchCond {
 
 	private static final int DEFAULT_PAGE = 1;
 	private static final int DEFAULT_SIZE = 8;

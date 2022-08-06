@@ -18,8 +18,7 @@ public final class GetDetailedBookmarkResponse {
 	private final String title;
 	private final String url;
 
-	@JsonProperty("imageUrl")
-	private final String image;
+	private final String imageUrl;
 	private final String category;
 	private final String memo;
 	private final String openType;

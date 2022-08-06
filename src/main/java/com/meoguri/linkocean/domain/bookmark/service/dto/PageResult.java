@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class PageResult<T> {
+public final class PageResult<T> {
 
 	private final long totalCount;
 	private final List<T> data;

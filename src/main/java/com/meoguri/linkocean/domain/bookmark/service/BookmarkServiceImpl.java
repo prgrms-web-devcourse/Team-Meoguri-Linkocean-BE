@@ -79,12 +79,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final Bookmark savedBookmark = bookmarkRepository.save(newBookmark);
 
-		/**
-		 * 태그가 null로 들어올 때 처리가 안되었던 것 같습니다 -> 에러발생
-		 * 임시방편으로 리팩터링 해놨습니다!
-		 */
 		Optional.ofNullable(command.getTagNames())
-			.ifPresent(tagNames -> convertTagNamesToTags(tagNames).forEach(savedBookmark::addBookmarkTag));
+			.ifPresent(tagNames -> convertTagNamesToTags(tagNames)
+				.forEach(savedBookmark::addBookmarkTag));
 
 		return savedBookmark.getId();
 	}
@@ -105,6 +102,18 @@ public class BookmarkServiceImpl implements BookmarkService {
 			command.getOpenType(),
 			convertTagNamesToTags(command.getTagNames())
 		);
+	}
+
+	@Override
+	public void removeBookmark(final long userId, final long bookmarkId) {
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+
+		// 자신의 북마크 쓴 북마크를 가져옴
+		final Bookmark bookmark = bookmarkRepository
+			.findByProfileAndId(profile, bookmarkId)
+			.orElseThrow(LinkoceanRuntimeException::new);
+
+		bookmarkRepository.delete(bookmark);
 	}
 
 	/**
