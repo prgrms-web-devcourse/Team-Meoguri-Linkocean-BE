@@ -212,19 +212,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId, final OtherBookmarkSearchCond cond) {
 
-		final Profile myProfile = findProfileByUserIdQuery.findByUserId(userId);
-		final Profile otherProfile = findProfileByIdQuery.findById(cond.getOtherProfileId());
-
-		List<OpenType> openTypes = new ArrayList<>();
-		openTypes.add(OpenType.ALL);
-
-		if (checkIsFollowQuery.isFollow(myProfile, otherProfile)) {
-			openTypes.add(OpenType.PARTIAL);
-		}
-
-		final BookmarkFindCond defaultCond = cond.toFindBookmarksDefaultCond();
-		defaultCond.changeOpenType(openTypes);
-
 		if (nonNull(cond.getCategory())) {
 			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
 			checkCondition(!cond.isFavorite() && isNull(cond.getTags()));
@@ -243,6 +230,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 			return null;
 		}
 
+		return null;
+	}
+
+	@Override
+	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
 		return null;
 	}
 
@@ -280,10 +272,5 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long totalCount = bookmarkPage.getTotalElements();
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
-	}
-
-	@Override
-	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
-		return null;
 	}
 }

@@ -40,8 +40,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					profileIdEq(cond.getProfileId()),
 					bookmark.category.eq(category),
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames,
 			countQuery -> countQuery
@@ -49,8 +49,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					profileIdEq(cond.getProfileId()),
 					bookmark.category.eq(category),
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				)
 		);
 	}
@@ -66,8 +66,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					favorite.bookmark.eq(bookmark),
 					profileIdEq(cond.getProfileId())
 				).where(
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames);
 	}
@@ -93,8 +93,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					bookmark.id.in(bookmarkIds),
 					profileIdEq(cond.getProfileId()),
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames,
 			countQuery -> countQuery
@@ -102,8 +102,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(
 					bookmark.id.in(bookmarkIds),
 					profileIdEq(cond.getProfileId()),
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				)
 		);
 	}
@@ -117,8 +117,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.selectFrom(bookmark)
 				.where(
 					profileIdEq(cond.getProfileId()),
-					titleContains(cond.getSearchTitle()),
-					inOpenTypes(cond.getOpenTypes())
+					titleContains(cond.getSearchTitle())
+					// inOpenTypes(cond.getOpenTypes())
 				),
 			Bookmark::getTagNames
 		);
