@@ -33,6 +33,8 @@ public class Follow extends BaseIdEntity {
 
 	public Follow(final Profile follower, final Profile followee) {
 
+		//TODO follower == follow (자기자신이 자기 팔로우하지 못하는 로직 추가하기)
+
 		this.follower = follower;
 		this.followee = followee;
 	}
