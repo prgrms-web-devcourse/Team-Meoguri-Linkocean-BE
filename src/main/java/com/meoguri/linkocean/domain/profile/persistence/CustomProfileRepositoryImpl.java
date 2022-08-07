@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,7 +26,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 	}
 
 	@Override
-	public List<Profile> findFollowerProfilesBy(final FindProfileCond findCond) {
+	public List<Profile> findFollowerProfilesBy(final ProfileFindCond findCond) {
 
 		return query
 			.selectFrom(profile)
@@ -39,7 +39,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 	}
 
 	@Override
-	public List<Profile> findFolloweeProfilesBy(final FindProfileCond findCond) {
+	public List<Profile> findFolloweeProfilesBy(final ProfileFindCond findCond) {
 		return query
 			.selectFrom(profile)
 			.where(
@@ -51,7 +51,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 	}
 
 	@Override
-	public List<Profile> findByUsernameLike(final FindProfileCond findCond) {
+	public List<Profile> findByUsernameLike(final ProfileFindCond findCond) {
 		return query
 			.selectFrom(profile)
 			.where(

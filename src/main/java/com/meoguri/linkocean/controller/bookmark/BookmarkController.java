@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,16 +62,17 @@ public class BookmarkController {
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams params
 	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getMyBookmarks(user.getId(),
-			queryParams.toMySearchCond(user.getId()));
+		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
+			params.toMySearchCond(user.getId()),
+			params.toPage()
+		);
 
-		final List<GetBookmarksResponse> response = result.getData()
-			.stream()
+		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(result.getTotalCount(), "bookmarks", response);
+		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
 	}
 
 	/**
@@ -84,44 +84,15 @@ public class BookmarkController {
 		final @PathVariable("profileId") long otherProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		// final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-		// 	queryParams.toOtherSearchCond(otherProfileId));
+		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
+			queryParams.toOtherSearchCond(otherProfileId));
 
-		// final List<GetBookmarksResponse> response = result.getData()
-		// 	.stream()
-		// 	.map(GetBookmarksResponse::of)
-		// 	.collect(toList());
+		final List<GetBookmarksResponse> response = result.getData()
+			.stream()
+			.map(GetBookmarksResponse::of)
+			.collect(toList());
 
-		/* API 개발 전 더미 데이터 */
-		final List<GetBookmarksResponse> dummyResponse = List.of(
-			new GetBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				LocalDateTime.now(),
-				20,
-				false,
-				false,
-				"imageUrl",
-				List.of("webtoon, fun")
-			),
-			new GetBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://commic.daum.com/index",
-				"all",
-				null,
-				LocalDateTime.now(),
-				10,
-				false,
-				false,
-				"imageUrl",
-				List.of("hello")
-			));
-
-		return PageResponse.of(dummyResponse.size(), "bookmarks", dummyResponse);
+		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/**
@@ -210,15 +181,15 @@ public class BookmarkController {
 	public ResponseEntity<Map<String, Object>> getDetailedBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
-	) throws URISyntaxException {
-
+	) {
 		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
 		HttpHeaders headers = new HttpHeaders();
 
+		//TODO: haeder에 bookmarkid 반환
 		if (isDuplicated) {
-			headers.setLocation(new URI(url));
+			headers.setLocation(URI.create(url));
 		}
 
-		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl",isDuplicated));
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", isDuplicated));
 	}
 }
