@@ -30,11 +30,15 @@ public final class QueryDslUtil {
 	/**
 	 * 동적 join 을 지원하기 위한 유틸리티 메서드
 	 */
-	public static <T> JPQLQuery<T> joinIf(JPQLQuery<T> base,
-		final JoinInfoListBuilder joinInfoListBuilder, final List<Predicate> on, final Boolean when) {
-		final List<JoinInfo> joinInfoList = joinInfoListBuilder.build();
+	public static <T> JPQLQuery<T> joinIf(
+		JPQLQuery<T> base,
+		final Supplier<JoinInfoListBuilder> joinInfoListBuilder,
+		final List<Predicate> on,
+		final boolean when
+	) {
 
 		if (when) {
+			final List<JoinInfo> joinInfoList = joinInfoListBuilder.get().build();
 			for (JoinInfo joinInfo : joinInfoList) {
 
 				if (joinInfo.joinType == 1) {

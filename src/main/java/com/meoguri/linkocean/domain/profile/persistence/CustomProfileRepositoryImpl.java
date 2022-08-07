@@ -69,7 +69,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			joinIf(query
 					.select(follow.follower)
 					.from(follow),
-				join(follow.follower, profile),
+				() -> join(follow.follower, profile),
 				on(follow.follower.id.eq(profile.id)),
 				when(username != null)
 			).where(
@@ -85,7 +85,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			joinIf(query
 					.select(follow.followee)
 					.from(follow),
-				join(follow.followee, profile),
+				() -> join(follow.followee, profile),
 				on(follow.followee.id.eq(profile.id)),
 				when(username != null)
 			).where(
