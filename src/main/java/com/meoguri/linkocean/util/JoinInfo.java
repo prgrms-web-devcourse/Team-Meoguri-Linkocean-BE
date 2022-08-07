@@ -5,6 +5,10 @@ import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.MapExpression;
 import com.querydsl.core.types.Path;
 
+/**
+ * JPAQueryBase의 join의 파라미터 정보를 담는 클래스
+ * @see com.querydsl.jpa.JPAQueryBase
+ */
 public class JoinInfo {
 
 	EntityPath targetEntityPath;

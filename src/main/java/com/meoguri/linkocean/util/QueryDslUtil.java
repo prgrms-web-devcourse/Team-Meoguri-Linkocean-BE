@@ -30,27 +30,28 @@ public final class QueryDslUtil {
 	/**
 	 * 동적 join 을 지원하기 위한 유틸리티 메서드
 	 */
-	public static <T, P> JPQLQuery<T> joinIf(JPQLQuery<T> base,
-		final List<JoinInfo> joinInfo, final List<Predicate> on, final Boolean when) {
+	public static <T> JPQLQuery<T> joinIf(JPQLQuery<T> base,
+		final JoinInfoListBuilder joinInfoListBuilder, final List<Predicate> on, final Boolean when) {
+		final List<JoinInfo> joinInfoList = joinInfoListBuilder.build();
 
 		if (when) {
-			for (JoinInfo pJoinInfo : joinInfo) {
+			for (JoinInfo joinInfo : joinInfoList) {
 
-				if (pJoinInfo.joinType == 1) {
-					base = base.join(pJoinInfo.targetEntityPath);
-				} else if (pJoinInfo.joinType == 2) {
-					base = base.join(pJoinInfo.targetEntityPath, pJoinInfo.alias);
-				} else if (pJoinInfo.joinType == 3) {
-					base = base.join(pJoinInfo.targetCollection);
-				} else if (pJoinInfo.joinType == 4) {
-					base = base.join(pJoinInfo.targetCollection, pJoinInfo.alias);
-				} else if (pJoinInfo.joinType == 5) {
-					base = base.join(pJoinInfo.targetMap);
-				} else if (pJoinInfo.joinType == 6) {
-					base = base.join(pJoinInfo.targetMap, pJoinInfo.alias);
+				if (joinInfo.joinType == 1) {
+					base = base.join(joinInfo.targetEntityPath);
+				} else if (joinInfo.joinType == 2) {
+					base = base.join(joinInfo.targetEntityPath, joinInfo.alias);
+				} else if (joinInfo.joinType == 3) {
+					base = base.join(joinInfo.targetCollection);
+				} else if (joinInfo.joinType == 4) {
+					base = base.join(joinInfo.targetCollection, joinInfo.alias);
+				} else if (joinInfo.joinType == 5) {
+					base = base.join(joinInfo.targetMap);
+				} else if (joinInfo.joinType == 6) {
+					base = base.join(joinInfo.targetMap, joinInfo.alias);
 				}
 
-				if (pJoinInfo.isFetchJoin) {
+				if (joinInfo.isFetchJoin) {
 					base = base.fetchJoin();
 				}
 			}
