@@ -1,12 +1,11 @@
 package com.meoguri.linkocean.configuration.security.jwt;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
 import java.util.Collection;
-import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Getter;
 
@@ -14,7 +13,7 @@ import lombok.Getter;
 public final class SecurityUser extends User {
 
 	private final long id;
-	private final Optional<Long> profileId; // profileId is nullable
+	private final Long profileId; // profileId is nullable
 
 	public SecurityUser(
 		final long id,
@@ -26,10 +25,11 @@ public final class SecurityUser extends User {
 
 		super(email, oAuthType, authorities);
 		this.id = id;
-		this.profileId = Optional.ofNullable(profileId);
+		this.profileId = profileId;
 	}
 
 	public long getProfileId() {
-		return profileId.orElseThrow(LinkoceanRuntimeException::new);
+		checkCondition(profileId != null);
+		return profileId;
 	}
 }
