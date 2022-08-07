@@ -24,7 +24,7 @@ public class JoinInfoListBuilder {
 	/**
 	 * join 메서드 이름을 static, non-static 을 모두 가져가기 위해 내부 클래스를 두었습니다
 	 */
-	public static class JoinInfoListBuilderInitializer {
+	public static class Initializer {
 
 		public static JoinInfoListBuilder join(EntityPath target) {
 			return builder().join(target);

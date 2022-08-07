@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
-import static com.meoguri.linkocean.util.JoinInfoListBuilder.JoinInfoListBuilderInitializer.*;
+import static com.meoguri.linkocean.util.JoinInfoListBuilder.Initializer.*;
 import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
