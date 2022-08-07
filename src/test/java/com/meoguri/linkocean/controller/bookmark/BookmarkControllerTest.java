@@ -209,12 +209,33 @@ class BookmarkControllerTest extends BaseControllerTest {
 	@Test
 	void Url중복확인_성공_새로운_url() throws Exception {
 
+		//when
 		mockMvc.perform(get(basePath + "?url=https://www.google.com")
 				.header(AUTHORIZATION, token)
 				.accept(MediaType.APPLICATION_JSON))
+
+			//then
 			.andExpect(status().isOk())
 			.andExpectAll(
 				jsonPath("$.isDuplicateUrl").value(false)
+			).andDo(print());
+	}
+
+	@Test
+	void Url중복확인_성공_기존_url() throws Exception {
+		//given
+		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "IT", List.of("good", "spring"), "all");
+
+		//when
+		mockMvc.perform(get(basePath + "?url=https://www.google.com")
+				.header(AUTHORIZATION, token)
+				.accept(MediaType.APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpect(header().string("location","https://www.google.com"))
+			.andExpectAll(
+				jsonPath("$.isDuplicateUrl").value(true)
 			).andDo(print());
 	}
 }

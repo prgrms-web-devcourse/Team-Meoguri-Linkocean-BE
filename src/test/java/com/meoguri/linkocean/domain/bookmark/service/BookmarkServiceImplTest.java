@@ -521,7 +521,7 @@ class BookmarkServiceImplTest {
 
 	@Test
 	void 중복_Url_있을_때() {
-		//when
+		//given
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
@@ -533,6 +533,7 @@ class BookmarkServiceImplTest {
 
 	@Test
 	void 중복_Url_없을_때() {
+
 		//when
 		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
 
