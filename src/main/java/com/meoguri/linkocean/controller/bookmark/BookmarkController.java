@@ -3,9 +3,14 @@ package com.meoguri.linkocean.controller.bookmark;
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParams;
@@ -57,14 +63,15 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService
-			.getMyBookmarks(user.getProfileId(), queryParams.toMySearchCond());
+		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
+			queryParams.toMySearchCond(user.getProfileId()),
+			queryParams.toPage()
+		);
 
-		final List<GetBookmarksResponse> response = result.getData()
-			.stream()
+		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(result.getTotalCount(), "bookmarks", response);
+		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
 	}
 
 	/**
@@ -76,44 +83,15 @@ public class BookmarkController {
 		final @PathVariable("profileId") long otherProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		// final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-		// 	queryParams.toOtherSearchCond(otherProfileId));
+		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
+			queryParams.toOtherSearchCond(otherProfileId));
 
-		// final List<GetBookmarksResponse> response = result.getData()
-		// 	.stream()
-		// 	.map(GetBookmarksResponse::of)
-		// 	.collect(toList());
+		final List<GetBookmarksResponse> response = result.getData()
+			.stream()
+			.map(GetBookmarksResponse::of)
+			.collect(toList());
 
-		/* API 개발 전 더미 데이터 */
-		final List<GetBookmarksResponse> dummyResponse = List.of(
-			new GetBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				LocalDateTime.now(),
-				20,
-				false,
-				false,
-				"imageUrl",
-				List.of("webtoon, fun")
-			),
-			new GetBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://commic.daum.com/index",
-				"all",
-				null,
-				LocalDateTime.now(),
-				10,
-				false,
-				false,
-				"imageUrl",
-				List.of("hello")
-			));
-
-		return PageResponse.of(dummyResponse.size(), "bookmarks", dummyResponse);
+		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/**
@@ -175,7 +153,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
 		return GetDetailedBookmarkResponse.of(result);
 	}
 
@@ -186,7 +164,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getProfileId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
@@ -195,6 +173,22 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getId(), bookmarkId);
+	}
+
+	@GetMapping
+	public ResponseEntity<Map<String, Object>> getDetailedBookmark(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @RequestParam("url") String url
+	) {
+		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+		HttpHeaders headers = new HttpHeaders();
+
+		//TODO: haeder에 bookmarkid 반환
+		if (isDuplicated) {
+			headers.setLocation(URI.create(url));
+		}
+
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", isDuplicated));
 	}
 }

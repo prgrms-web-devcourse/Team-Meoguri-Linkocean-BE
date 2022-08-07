@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,7 +270,7 @@ class BookmarkServiceImplTest {
 	}
 
 	@Nested
-	class 북마크_삭제_테스트 {
+	class 북마크_삭제 {
 
 		private Bookmark bookmark;
 
@@ -426,6 +427,7 @@ class BookmarkServiceImplTest {
 		}
 	}
 
+	@Disabled("disable due to refactoring")
 	@Nested
 	class 다른_사람_북마크_목록_조회_테스트 {
 
@@ -492,8 +494,7 @@ class BookmarkServiceImplTest {
 			//given
 			//when
 			final PageResult<GetBookmarksResult> otherBookmarkResults = bookmarkService.getOtherBookmarks(userId,
-				new OtherBookmarkSearchCond(
-					otherProfileId, null, null, null, null, false, null, null));
+				new OtherBookmarkSearchCond(otherProfileId, null, null, null, null, false, null, null));
 
 			//then
 			assertThat(otherBookmarkResults.getData()).hasSize(1)
@@ -517,5 +518,27 @@ class BookmarkServiceImplTest {
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId2, "partial"), tuple(bookmarkId1, "all"));
 		}
+	}
+
+	@Test
+	void 중복_Url_있을_때() {
+		//given
+		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
+
+		//when
+		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, bookmark.getUrl());
+
+		//then
+		assertThat(isDuplicateUrl).isTrue();
+	}
+
+	@Test
+	void 중복_Url_없을_때() {
+
+		//when
+		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
+
+		//then
+		assertThat(isDuplicateUrl).isFalse();
 	}
 }

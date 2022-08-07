@@ -76,18 +76,18 @@ class FavoriteRepositoryTest {
 	@Test
 	void 여러_북마크에_대해_즐겨찾기_PK를_조회() {
 		//given
-		final User user2 = userRepository.save(createUser("crush@mail.com", "GOOGLE"));
-		final Profile profile2 = profileRepository.save(createProfile(user2, "crush"));
-		final Bookmark bookmark2 = bookmarkRepository.save(createBookmark(profile2, linkMetadata));
+		final User user = userRepository.save(createUser("crush@mail.com", "GOOGLE"));
+		final Profile profile = profileRepository.save(createProfile(user, "crush"));
+		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
-		final Favorite saveFavorite = favoriteRepository.save(new Favorite(bookmark, owner));
+		final Favorite favorite = favoriteRepository.save(new Favorite(this.bookmark, owner));
 
 		//when
-		final Set<Long> favoriteIds = favoriteRepository
-			.findAllFavoriteByProfileAndBookmarks(owner, List.of(bookmark, bookmark2));
+		final Set<Long> favoriteIds = favoriteRepository.findByOwnerAndBookmark(owner,
+			List.of(this.bookmark, bookmark));
 
 		//then
 		assertThat(favoriteIds).hasSize(1)
-			.containsExactly(saveFavorite.getId());
+			.containsExactly(favorite.getId());
 	}
 }

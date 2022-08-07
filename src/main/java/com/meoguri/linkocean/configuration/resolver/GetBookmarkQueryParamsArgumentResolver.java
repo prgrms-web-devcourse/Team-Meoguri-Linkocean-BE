@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.math.NumberUtils.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.core.MethodParameter;
@@ -41,10 +40,14 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 		final String follow = webRequest.getParameter("follow");
 		final String tags = webRequest.getParameter("tags");
 
+		final String orderBy = order == null ? DEFAULT_ORDER : order;
+		final List<String> orderProperties =
+			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(DEFAULT_ORDER, order);
+
 		return new GetBookmarkQueryParams(
 			toInt(page, DEFAULT_PAGE),
 			toInt(size, DEFAULT_SIZE),
-			Optional.ofNullable(order).orElse(DEFAULT_ORDER),
+			orderProperties,
 			category,
 			searchTitle,
 			toBoolean(favorite),

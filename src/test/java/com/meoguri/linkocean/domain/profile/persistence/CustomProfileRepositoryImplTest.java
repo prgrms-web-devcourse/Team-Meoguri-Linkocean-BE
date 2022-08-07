@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
@@ -108,17 +108,17 @@ class CustomProfileRepositoryImplTest {
 	@Test
 	void 프로필_목록조회_성공_이름_지정() {
 		//when
-		final List<Profile> profiles = profileRepository.findByUsernameLike(new FindProfileCond(1, 8, "user"));
+		final List<Profile> profiles = profileRepository.findByUsernameLike(new ProfileFindCond(1, 8, "user"));
 
 		//then
 		assertThat(profiles).containsExactly(profile1, profile2, profile3);
 	}
 
-	private FindProfileCond findCond(final Profile profile, final String username) {
-		return new FindProfileCond(profile.getId(), 1, 8, username);
+	private ProfileFindCond findCond(final Profile profile, final String username) {
+		return new ProfileFindCond(profile.getId(), 1, 8, username);
 	}
 
-	private FindProfileCond findCond(final Profile profile) {
+	private ProfileFindCond findCond(final Profile profile) {
 		return findCond(profile, null);
 	}
 }

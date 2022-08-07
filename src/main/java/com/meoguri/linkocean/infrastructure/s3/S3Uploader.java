@@ -1,8 +1,7 @@
 package com.meoguri.linkocean.infrastructure.s3;
 
-import static com.meoguri.linkocean.exception.Preconditions.*;
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,7 @@ public class S3Uploader {
 	 * 주어진 multipartFile 이 null 이라면 null 을 반환한다.
 	 */
 	public String upload(MultipartFile multipartFile, String dirName) {
-		if (multipartFile == null) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
 			return null;
 		}
 		return upload(convert(multipartFile), dirName);
@@ -36,15 +35,19 @@ public class S3Uploader {
 
 	private File convert(MultipartFile multipartFile) {
 		final String originalFilename = multipartFile.getOriginalFilename();
-		checkNotNull(originalFilename);
+		File convertFile = new File(multipartFile.getOriginalFilename());
 		try {
-			final File file = new File(originalFilename);
-			multipartFile.transferTo(file);
-			return file;
+			if (convertFile.createNewFile()) {
+				try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+					fos.write(multipartFile.getBytes());
+				}
+				return convertFile;
+			}
 		} catch (IOException e) {
 			log.info("failed to convert MultipartFile with original file name : {} to File", originalFilename);
 			throw new RuntimeException(e);
 		}
+		return null;
 	}
 
 	private String upload(File file, String dirName) {
@@ -56,4 +59,3 @@ public class S3Uploader {
 		return uploadUrl;
 	}
 }
-

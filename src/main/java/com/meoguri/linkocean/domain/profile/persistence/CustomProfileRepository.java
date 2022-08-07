@@ -3,13 +3,13 @@ package com.meoguri.linkocean.domain.profile.persistence;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 
 public interface CustomProfileRepository {
 
-	List<Profile> findFollowerProfilesBy(FindProfileCond findCond);
+	List<Profile> findFollowerProfilesBy(ProfileFindCond findCond);
 
-	List<Profile> findFolloweeProfilesBy(FindProfileCond findCond);
+	List<Profile> findFolloweeProfilesBy(ProfileFindCond findCond);
 
-	List<Profile> findByUsernameLike(FindProfileCond findCond);
+	List<Profile> findByUsernameLike(ProfileFindCond findCond);
 }
