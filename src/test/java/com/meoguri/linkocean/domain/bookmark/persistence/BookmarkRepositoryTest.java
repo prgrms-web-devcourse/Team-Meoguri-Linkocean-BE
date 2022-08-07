@@ -187,4 +187,26 @@ class BookmarkRepositoryTest {
 		//then
 		assertThat(categories).contains("HUMANITIES", "SOCIAL", "SCIENCE");
 	}
+
+	@Test
+	void Url_검색시_해당_Url_존재() {
+		//given
+		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "https://www.google.com"));
+
+		//when
+		final boolean isExist = bookmarkRepository.existsByProfileAndUrl(profile, "https://www.google.com");
+
+		//then
+		assertThat(isExist).isTrue();
+	}
+
+	@Test
+	void Url_검색시_해당_Url_없음() {
+
+		//when
+		final boolean isExist = bookmarkRepository.existsByProfileAndUrl(profile, "https://www.linkocean.com");
+
+		//then
+		assertThat(isExist).isFalse();
+	}
 }

@@ -16,6 +16,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 
 	Optional<Bookmark> findByProfileAndId(Profile profile, long id);
 
+	boolean existsByProfileAndUrl(final Profile profile, final String url);
+
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.bookmarkTags bt "

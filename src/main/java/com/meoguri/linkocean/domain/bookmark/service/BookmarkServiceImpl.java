@@ -273,4 +273,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
+
+	@Override
+	public boolean checkDuplicatedUrl(final long userId, String url) {
+		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		return bookmarkRepository.existsByProfileAndUrl(profile, url);
+	}
 }

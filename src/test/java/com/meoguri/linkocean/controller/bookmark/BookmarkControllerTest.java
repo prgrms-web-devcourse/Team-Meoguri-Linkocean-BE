@@ -205,6 +205,21 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 	}
 
+	@Test
+	void Url중복확인_성공_새로운_url() throws Exception {
+
+		//when
+		mockMvc.perform(get(basePath + "?url=https://www.google.com")
+				.header(AUTHORIZATION, token)
+				.accept(APPLICATION_JSON))
+
+			//then
+			.andExpect(status().isOk())
+			.andExpectAll(
+				jsonPath("$.isDuplicateUrl").value(false)
+			).andDo(print());
+	}
+
 	@Disabled
 	@Nested
 	class 다른_유저_북마크_목록_조회_테스트 {
