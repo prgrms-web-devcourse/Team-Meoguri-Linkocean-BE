@@ -3,11 +3,16 @@ package com.meoguri.linkocean.controller.bookmark;
 import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +28,6 @@ import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
-import com.meoguri.linkocean.controller.bookmark.dto.GetDuplicatedUrlResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
@@ -203,18 +207,18 @@ public class BookmarkController {
 	}
 
 	@GetMapping
-	public GetDuplicatedUrlResponse getDetailedBookmark(
+	public ResponseEntity<Map<String, Object>> getDetailedBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @RequestParam("url") String url,
-		HttpServletResponse response
-	) {
+		final @RequestParam("url") String url
+	) throws URISyntaxException {
 
 		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+		HttpHeaders headers = new HttpHeaders();
 
 		if (isDuplicated) {
-			response.setHeader("location", url);
+			headers.setLocation(new URI(url));
 		}
 
-		return new GetDuplicatedUrlResponse(isDuplicated);
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl",isDuplicated));
 	}
 }
