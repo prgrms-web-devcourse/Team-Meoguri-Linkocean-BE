@@ -32,7 +32,6 @@ public interface BookmarkService {
 	/* 내 북마크 목록 */
 	Page<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond, Pageable pageable);
 
-	// TODO - 구현
 	/* 다른 사람 북마크 목록 */
 	PageResult<GetBookmarksResult> getOtherBookmarks(long userId, OtherBookmarkSearchCond searchCond);
 

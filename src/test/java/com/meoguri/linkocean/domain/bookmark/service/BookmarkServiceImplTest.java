@@ -270,7 +270,7 @@ class BookmarkServiceImplTest {
 	}
 
 	@Nested
-	class 북마크_삭제_테스트 {
+	class 북마크_삭제 {
 
 		private Bookmark bookmark;
 
