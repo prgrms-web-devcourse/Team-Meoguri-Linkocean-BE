@@ -12,7 +12,7 @@ public class FindProfileByIdQuery {
 
 	private final ProfileRepository profileRepository;
 
-	public Profile findById(long id) {
-		return profileRepository.findById(id).orElseThrow(LinkoceanRuntimeException::new);
+	public Profile findById(long profileId) {
+		return profileRepository.findById(profileId).orElseThrow(LinkoceanRuntimeException::new);
 	}
 }

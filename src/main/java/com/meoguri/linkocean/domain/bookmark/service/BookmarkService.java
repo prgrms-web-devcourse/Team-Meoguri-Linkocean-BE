@@ -24,16 +24,17 @@ public interface BookmarkService {
 	void updateBookmark(UpdateBookmarkCommand command);
 
 	/* 북마크 삭제 */
-	void removeBookmark(long userId, long bookmarkId);
+	void removeBookmark(long profileId, long bookmarkId);
 
 	/* 북마크 상세 조회 */
-	GetDetailedBookmarkResult getDetailedBookmark(long userId, long bookmarkId);
+	GetDetailedBookmarkResult getDetailedBookmark(long profileId, long bookmarkId);
 
 	/* 내 북마크 목록 */
 	Page<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond, Pageable pageable);
 
+	// TODO - 구현
 	/* 다른 사람 북마크 목록 */
-	PageResult<GetBookmarksResult> getOtherBookmarks(long userId, OtherBookmarkSearchCond searchCond);
+	PageResult<GetBookmarksResult> getOtherBookmarks(long profileId, OtherBookmarkSearchCond searchCond);
 
 	/* 피드 북마크 목록 */
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);

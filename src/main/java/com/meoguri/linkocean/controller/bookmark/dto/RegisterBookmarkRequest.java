@@ -18,7 +18,7 @@ public final class RegisterBookmarkRequest {
 	private String openType;
 	private List<String> tags;
 
-	public RegisterBookmarkCommand toCommand(final Long id) {
-		return new RegisterBookmarkCommand(id, url, title, memo, category, openType, tags);
+	public RegisterBookmarkCommand toCommand(final Long profileId) {
+		return new RegisterBookmarkCommand(profileId, url, title, memo, category, openType, tags);
 	}
 }

@@ -79,7 +79,7 @@ class OAuthAttributesTest {
 
 		//then
 		assertThat(user).isNotNull()
-			.extracting(User::getEmail, User::getOAuthType)
+			.extracting(User::getEmail, User::getOauthType)
 			.containsExactly(new Email("haha@gmail.com"), OAuthType.GOOGLE);
 	}
 
@@ -94,7 +94,7 @@ class OAuthAttributesTest {
 
 		//then
 		assertThat(user).isNotNull()
-			.extracting(User::getEmail, User::getOAuthType)
+			.extracting(User::getEmail, User::getOauthType)
 			.containsExactly(new Email("haha@naver.com"), OAuthType.NAVER);
 	}
 
@@ -109,7 +109,7 @@ class OAuthAttributesTest {
 
 		//then
 		assertThat(user).isNotNull()
-			.extracting(User::getEmail, User::getOAuthType)
+			.extracting(User::getEmail, User::getOauthType)
 			.containsExactly(new Email("haha@kakao.com"), OAuthType.KAKAO);
 	}
 

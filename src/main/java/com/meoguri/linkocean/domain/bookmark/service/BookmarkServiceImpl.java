@@ -65,7 +65,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
 		/* 북마크 생성 & 저장 */
@@ -90,10 +90,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
+		final long bookmarkId = command.getBookmarkId();
 
 		//userId, bookmarkId 유효성 검사
 		Bookmark bookmark = bookmarkRepository
-			.findByProfileAndId(findProfileByUserIdQuery.findByUserId(command.getUserId()), command.getBookmarkId())
+			.findByProfileAndId(profile, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		//update 진행
@@ -107,8 +109,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public void removeBookmark(final long userId, final long bookmarkId) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+	public void removeBookmark(final long profileId, final long bookmarkId) {
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		// 자신의 북마크 쓴 북마크를 가져옴
 		final Bookmark bookmark = bookmarkRepository
@@ -119,18 +121,17 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO : 쿼리 튜닝
-
 	@Transactional(readOnly = true)
 	@Override
-	public GetDetailedBookmarkResult getDetailedBookmark(final long userId, final long bookmarkId) {
+	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		final Profile owner = bookmark.getProfile();
-		final Profile currentUserProfile = findProfileByUserIdQuery.findByUserId(userId);
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile currentUserProfile = findProfileByIdQuery.findById(profileId);
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(owner, bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
@@ -152,8 +153,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	/**
-	 * TagName 정보를 이용해 Tag 를 만든다.
-	 * 1. tag 이름이 존재하면 만들지 않고 db 에서 가져온다.
+	 * TagName 정보를 이용해 Tag를 만든다.
+	 * 1. tag 이름이 존재하면 만들지 않고 db에서 가져온다.
 	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db에 저장한다.
 	 */
 	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
@@ -192,7 +193,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean searchFavorite = searchCond.isFavorite();
 		final List<String> searchTags = searchCond.getTags();
 
-		final Profile profile = findProfileByUserIdQuery.findByUserId(searchCond.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(searchCond.getProfileId());
 		final BookmarkFindCond findCond = searchCond.toFindCond(profile.getId());
 
 		final Page<Bookmark> bookmarkPage =
@@ -210,7 +211,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public PageResult<GetBookmarksResult> getOtherBookmarks(final long userId, final OtherBookmarkSearchCond cond) {
+	public PageResult<GetBookmarksResult> getOtherBookmarks(final long profileId, final OtherBookmarkSearchCond cond) {
 
 		if (nonNull(cond.getCategory())) {
 			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */

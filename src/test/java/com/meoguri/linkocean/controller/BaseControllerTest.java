@@ -77,9 +77,7 @@ public class BaseControllerTest {
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
-		final User user = userRepository
-			.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType))
-			.orElseThrow();
+		userRepository.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType)).orElseThrow();
 
 		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}

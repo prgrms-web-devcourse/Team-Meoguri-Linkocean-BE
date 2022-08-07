@@ -7,22 +7,22 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import lombok.Getter;
 
 /**
- * 내 북마크 검색 조건 - 쿼리 파라미터의 값을 전달하기 위한 dto
+ * 내 북마크 검색 조건
  */
 @Getter
 public final class MyBookmarkSearchCond {
 
-	private final long userId;
+	private final long profileId;
 	private final String category;
 	private final boolean favorite;
 	private final List<String> tags;
 
 	private final String searchTitle;
 
-	public MyBookmarkSearchCond(final long userId, final boolean favorite, final String category,
+	public MyBookmarkSearchCond(final long profileId, final boolean favorite, final String category,
 		final List<String> tags, final String searchTitle) {
 
-		this.userId = userId;
+		this.profileId = profileId;
 		this.favorite = favorite;
 		this.category = category;
 		this.tags = tags;

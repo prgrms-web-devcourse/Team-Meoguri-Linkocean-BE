@@ -4,7 +4,6 @@ import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.getId())));
+		return of(bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
 	}
 
 	/**
@@ -62,11 +61,11 @@ public class BookmarkController {
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams params
+		final GetBookmarkQueryParams queryParams
 	) {
 		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
-			params.toMySearchCond(user.getId()),
-			params.toPage()
+			queryParams.toMySearchCond(user.getProfileId()),
+			queryParams.toPage()
 		);
 
 		final List<GetBookmarksResponse> response = result.get()
