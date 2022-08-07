@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.controller.profile.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 
 import lombok.AllArgsConstructor;
@@ -12,11 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public final class GetProfilesResponse {
 
-	private long id;
+	private long profileId;
 	private String username;
-
-	@JsonProperty("imageUrl")
-	private String image;
+	private String imageUrl;
 	private Boolean isFollow;
 
 	public static GetProfilesResponse of(final SearchProfileResult result) {
