@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
+import static com.meoguri.linkocean.util.JoinInfoListBuilder.*;
 import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			joinIf(query
 					.select(follow.follower)
 					.from(follow),
-				join(follow.follower, profile),
+				builder().join(follow.follower, profile).build(),
 				on(follow.follower.id.eq(profile.id)),
 				when(username != null)
 			).where(
@@ -84,7 +85,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 			joinIf(query
 					.select(follow.followee)
 					.from(follow),
-				join(follow.followee, profile),
+				builder().join(follow.followee, profile).build(),
 				on(follow.followee.id.eq(profile.id)),
 				when(username != null)
 			).where(
