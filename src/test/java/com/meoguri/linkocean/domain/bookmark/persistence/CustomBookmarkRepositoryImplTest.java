@@ -10,17 +10,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -58,25 +63,30 @@ class CustomBookmarkRepositoryImplTest {
 
 	private Profile profile;
 
-	private Bookmark savedBookmark1;
-	private Bookmark savedBookmark2;
-	private Bookmark savedBookmark3;
+	private long bookmarkId1;
+	private long bookmarkId2;
+	private long bookmarkId3;
 
 	@BeforeEach
 	void setUp() {
+		// 사용자 1명 셋업 - 크러쉬
 		final User user = userRepository.save(createUser("crush@mail.com", "NAVER"));
 		profile = profileRepository.save(createProfile(user, "crush"));
 
-		final LinkMetadata linkMetadata1 =
-			linkMetadataRepository.save(new LinkMetadata("www.naver.com", "naver", "naver.png"));
-		final LinkMetadata linkMetadata2 =
-			linkMetadataRepository.save(new LinkMetadata("www.google.com", "google", "google.png"));
-		final LinkMetadata linkMetadata3 =
-			linkMetadataRepository.save(new LinkMetadata("www.github.com", "github", "github.png"));
+		// 링크 메타 데이터 3개 셋업
+		final LinkMetadata naver = new LinkMetadata("www.naver.com", "naver", "naver.png");
+		final LinkMetadata google = new LinkMetadata("www.google.com", "google", "google.png");
+		final LinkMetadata github = new LinkMetadata("www.github.com", "github", "github.png");
 
+		final LinkMetadata linkMetadata1 = linkMetadataRepository.save(naver);
+		final LinkMetadata linkMetadata2 = linkMetadataRepository.save(google);
+		final LinkMetadata linkMetadata3 = linkMetadataRepository.save(github);
+
+		// 태그 두개 셋업
 		final Tag tag1 = tagRepository.save(new Tag("tag1"));
 		final Tag tag2 = tagRepository.save(new Tag("tag2"));
 
+		// 크러쉬가 북마크 1개 저장 - 네이버, IT, 전체 공개, #tag1, #tag2
 		final Bookmark bookmark1 = builder()
 			.profile(profile)
 			.linkMetadata(linkMetadata1)
@@ -88,8 +98,9 @@ class CustomBookmarkRepositoryImplTest {
 			.build();
 		bookmark1.addBookmarkTag(tag1);
 		bookmark1.addBookmarkTag(tag2);
-		savedBookmark1 = bookmarkRepository.save(bookmark1);
+		final Bookmark savedBookmark1 = bookmarkRepository.save(bookmark1);
 
+		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
 		final Bookmark bookmark2 = builder()
 			.profile(profile)
 			.linkMetadata(linkMetadata2)
@@ -100,8 +111,9 @@ class CustomBookmarkRepositoryImplTest {
 			.url("www.google.com")
 			.build();
 		bookmark2.addBookmarkTag(tag1);
-		savedBookmark2 = bookmarkRepository.save(bookmark2);
+		final Bookmark savedBookmark2 = bookmarkRepository.save(bookmark2);
 
+		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
 		final Bookmark bookmark3 = builder()
 			.profile(profile)
 			.linkMetadata(linkMetadata3)
@@ -111,254 +123,255 @@ class CustomBookmarkRepositoryImplTest {
 			.openType("private")
 			.url("www.github.com")
 			.build();
-		savedBookmark3 = bookmarkRepository.save(bookmark3);
+		final Bookmark savedBookmark3 = bookmarkRepository.save(bookmark3);
 
+		// 크러쉬가 네이버에 좋아요를 누름
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
 		bookmark1.changeLikeCount(1L);
+
+		// 크러쉬가 구글에 싫어요를 누름
 		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
 
+		// 크러쉬가 네이버와 구글에 즐겨찾기를 누름
 		favoriteRepository.save(new Favorite(savedBookmark1, profile));
 		favoriteRepository.save(new Favorite(savedBookmark2, profile));
 
 		em.flush();
 		em.clear();
+
+		bookmarkId1 = savedBookmark1.getId();
+		bookmarkId2 = savedBookmark2.getId();
+		bookmarkId3 = savedBookmark3.getId();
 	}
 
-	@Test
-	void 내_북마크_카테고리로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(Category.IT,
-			cond(null, profile.getId(), null));
+	@Nested
+	class 북마크_카테고리로_조회 {
 
-		//then
-		assertThat(totalCount).isEqualTo(2L);
+		@Test
+		void 북마크_카테고리로_조회_성공() {
+			//given
+			final Category findCategory = Category.IT;
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(2)
+				.extracting(Bookmark::getId, Bookmark::getCategory)
+				.containsExactly(
+					tuple(bookmarkId3, "IT"),
+					tuple(bookmarkId1, "IT")
+				);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
+		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
+			//given
+			final Category findCategory = Category.IT;
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
+
+			//when
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(2)
+				.extracting(Bookmark::getId, Bookmark::getCategory)
+				.containsExactly(
+					tuple(bookmarkId1, "IT"),
+					tuple(bookmarkId3, "IT")
+				);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
+		void 북마크_카테고리로_조회_제목으로_필터링() {
+			//given
+			final Category findCategory = Category.IT;
+			final BookmarkFindCond cond = cond("1");
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, cond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(1)
+				.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
+				.containsExactly(
+					tuple(bookmarkId1, "IT", "title1")
+				);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(1);
+		}
 	}
 
-	@Test
-	void 내_북마크_카테고리와_검색어로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByCategoryAndDefaultCond(Category.IT,
-			cond(null, profile.getId(), "1"));
+	@Nested
+	class 북마크_즐겨찾기_조회 {
 
-		//then
-		assertThat(totalCount).isEqualTo(1L);
+		@Test
+		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
+			//given
+			final BookmarkFindCond cond = cond("1");
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findFavoriteBookmarks(cond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(1)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId1);
+			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByOwnerAndBookmark(profile, b));
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
+		}
+
+		@Test
+		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
+			//given
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
+
+			// when
+			final Page<Bookmark> bookmarks = bookmarkRepository.findFavoriteBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(2)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId1, bookmarkId2);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
+		}
 	}
 
-	@Test
-	void 내_북마크_조회_카테고리로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("upload", profile.getId(), null));
+	@Nested
+	class 북마크_태그로_조회 {
 
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId, Bookmark::getCategory)
-			.containsExactly(
-				tuple(savedBookmark3.getId(), savedBookmark3.getCategory()),
-				tuple(savedBookmark1.getId(), savedBookmark3.getCategory()));
+		@Test
+		void 북마크_태그로_조회_성공() {
+			//given
+			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2)
+				.extracting(Bookmark::getId, Bookmark::getTagNames)
+				.containsExactly(
+					tuple(bookmarkId2, List.of("tag1")),
+					tuple(bookmarkId1, List.of("tag1", "tag2"))
+				);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
+		void 북마크_태그로_조회_좋아요_정렬_성공() {
+			//given
+			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2)
+				.extracting(Bookmark::getId, Bookmark::getTagNames)
+				.containsExactly(
+					tuple(bookmarkId1, List.of("tag1", "tag2")),
+					tuple(bookmarkId2, List.of("tag1"))
+				);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
+		void 북마크_태그로_조회_제목_필터링_성공() {
+			//given
+			final List<String> searchTags = List.of("tag1");
+			final BookmarkFindCond findCond = cond("1");
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(1)
+				.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
+				.containsExactly(tuple(bookmarkId1, List.of("tag1", "tag2"), "title1"));
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+		}
 	}
 
-	@Test
-	void 내_북마크_조회_카테고리_필터링_좋아요_정렬() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("like", profile.getId(), null));
+	@Nested
+	class 북마크_기본_조회 {
 
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId, Bookmark::getCategory)
-			.containsExactly(
-				tuple(savedBookmark1.getId(), savedBookmark1.getCategory()),
-				tuple(savedBookmark3.getId(), savedBookmark3.getCategory()));
+		@Test
+		void 북마크_기본_조회_성공() {
+			//given
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(3)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId3, bookmarkId2, bookmarkId1);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
+		}
+
+		@Test
+		void 북마크_기본_조회_좋아요_정렬_성공() {
+			//given
+			final BookmarkFindCond findCond = cond();
+			final Pageable pageable = likePageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(3)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId1, bookmarkId3, bookmarkId2);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
+		}
+
+		@Test
+		void 북마크_기본_조회_제목으로_필터링() {
+			//given
+			final BookmarkFindCond findCond = cond("1");
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(1)
+				.extracting(Bookmark::getId, Bookmark::getTitle)
+				.containsExactly(tuple(bookmarkId1, "title1"));
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+		}
+
 	}
 
-	@Test
-	void 내_북마크_조회_카테고리와_제목으로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByCategoryAndDefaultCond(Category.IT,
-			cond("upload", profile.getId(), "1"));
-
-		//then
-		assertThat(bookmarks).hasSize(1)
-			.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
-			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getCategory(), savedBookmark1.getTitle()));
+	private BookmarkFindCond cond(final String searchTitle) {
+		return new BookmarkFindCond(profile.getId(), searchTitle);
 	}
 
-	@Test
-	void 내_북마크_조회_즐겨찾기로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(true,
-			cond(null, profile.getId(), null));
-
-		//then
-		assertThat(totalCount).isEqualTo(2L);
+	private BookmarkFindCond cond() {
+		return cond(null);
 	}
 
-	@Test
-	void 내_북마크_조회_즐겨찾기와_제목으로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByFavoriteAndDefaultCond(true,
-			cond(null, profile.getId(), "1"));
-
-		//then
-		assertThat(totalCount).isEqualTo(1L);
+	private PageRequest defaultPageable() {
+		return PageRequest.of(0, 8, Sort.by("upload"));
 	}
 
-	@Test
-	void 내_북마크_조회_즐겨찾기로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("upload", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId)
-			.containsExactly(savedBookmark2.getId(), savedBookmark1.getId());
-
-		bookmarks.forEach(
-			bookmark -> assertThat(favoriteRepository.existsByOwnerAndBookmark(profile, bookmark)).isTrue()
-		);
+	private PageRequest likePageable() {
+		return PageRequest.of(0, 8, Sort.by("like", "upload"));
 	}
 
-	@Test
-	void 내_북마크_조회_즐겨찾기로_필터링_좋아요_정렬() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("like", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId)
-			.containsExactly(savedBookmark1.getId(), savedBookmark2.getId());
-	}
-
-	@Test
-	void 내_북마크_조회_즐겨찾기와_제목으로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByFavoriteAndDefaultCond(true,
-			cond("upload", profile.getId(), "1"));
-
-		//then
-		assertThat(bookmarks).hasSize(1)
-			.extracting(Bookmark::getId, Bookmark::getTitle)
-			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTitle()));
-	}
-
-	@Test
-	void 내_북마크_조회_태그_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByTagsAndDefaultCond(List.of("tag1"),
-			cond(null, profile.getId(), null));
-
-		//then
-		assertThat(totalCount).isEqualTo(2L);
-	}
-
-	@Test
-	void 내_북마크_조회_태그와_제목으로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByTagsAndDefaultCond(List.of("tag1"),
-			cond(null, profile.getId(), "1"));
-
-		//then
-		assertThat(totalCount).isEqualTo(1L);
-	}
-
-	@Test
-	void 내_북마크_조회_태그로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("upload", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId, Bookmark::getTagNames)
-			.containsExactly(
-				tuple(savedBookmark2.getId(), savedBookmark2.getTagNames()),
-				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()));
-	}
-
-	@Test
-	void 내_북마크_조회_태그로_필터링_좋아요_정렬() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("like", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(2)
-			.extracting(Bookmark::getId, Bookmark::getTagNames)
-			.containsExactly(
-				tuple(savedBookmark1.getId(), savedBookmark1.getTagNames()),
-				tuple(savedBookmark2.getId(), savedBookmark2.getTagNames()));
-	}
-
-	@Test
-	void 내_북마크_조회_태그와_제목으로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByTagsAndDefaultCond(List.of("tag1"),
-			cond("upload", profile.getId(), "1"));
-
-		//then
-		assertThat(bookmarks).hasSize(1)
-			.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
-			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTagNames(), savedBookmark1.getTitle()));
-	}
-
-	@Test
-	void 내_북마크_조회_총_개수() {
-		//give when
-		final long totalCount = bookmarkRepository.countByDefaultCond(cond(null, profile.getId(), null));
-
-		//then
-		assertThat(totalCount).isEqualTo(3L);
-	}
-
-	@Test
-	void 내_북마크_조회_제목으로_필터링_총_개수() {
-		//given when
-		final long totalCount = bookmarkRepository.countByDefaultCond(cond(null, profile.getId(), "1"));
-
-		//then
-		assertThat(totalCount).isEqualTo(1L);
-	}
-
-	@Test
-	void 내_북마크_조회() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("upload", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(3)
-			.extracting(Bookmark::getId)
-			.containsExactly(savedBookmark3.getId(), savedBookmark2.getId(), savedBookmark1.getId());
-	}
-
-	@Test
-	void 내_북마크_조회_좋아요_정렬() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("like", profile.getId(), null));
-
-		//then
-		assertThat(bookmarks).hasSize(3)
-			.extracting(Bookmark::getId)
-			.containsExactly(savedBookmark1.getId(), savedBookmark3.getId(), savedBookmark2.getId());
-	}
-
-	@Test
-	void 내_북마크_조회_제목으로_필터링() {
-		//given when
-		final List<Bookmark> bookmarks = bookmarkRepository.searchByDefaultCond(
-			cond("upload", profile.getId(), "1"));
-
-		//then
-		assertThat(bookmarks).hasSize(1)
-			.extracting(Bookmark::getId, Bookmark::getTitle)
-			.containsExactly(tuple(savedBookmark1.getId(), savedBookmark1.getTitle()));
-	}
-
-	private FindBookmarksDefaultCond cond(final String order, final long profileId, final String searchTitle) {
-		return new FindBookmarksDefaultCond(1, 8, order, profileId, searchTitle);
-	}
 }

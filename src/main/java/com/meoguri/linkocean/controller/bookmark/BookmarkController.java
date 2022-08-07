@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,6 @@ import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,16 +55,17 @@ public class BookmarkController {
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams params
 	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getMyBookmarks(user.getId(),
-			queryParams.toMySearchCond(user.getId()));
+		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
+			params.toMySearchCond(user.getId()),
+			params.toPage()
+		);
 
-		final List<GetBookmarksResponse> response = result.getData()
-			.stream()
+		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(result.getTotalCount(), "bookmarks", response);
+		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
 	}
 
 	/**
