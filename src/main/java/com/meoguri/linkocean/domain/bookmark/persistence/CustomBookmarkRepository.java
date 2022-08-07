@@ -4,24 +4,23 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindBookmarksDefaultCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 
 public interface CustomBookmarkRepository {
 
-	long countByCategoryAndDefaultCond(final Category category, final FindBookmarksDefaultCond cond);
+	/* 카테고리로 조회 */
+	Page<Bookmark> findByCategory(Category category, BookmarkFindCond findCond, Pageable pageable);
 
-	List<Bookmark> searchByCategoryAndDefaultCond(final Category of, final FindBookmarksDefaultCond cond);
+	/* 즐겨찾기 된 북마크 조회 */
+	Page<Bookmark> findFavoriteBookmarks(BookmarkFindCond findCond, Pageable pageable);
 
-	long countByFavoriteAndDefaultCond(final boolean favorite, final FindBookmarksDefaultCond cond);
+	/* 태그로 조회 */
+	Page<Bookmark> findByTags(List<String> tags, BookmarkFindCond findCond, Pageable pageable);
 
-	List<Bookmark> searchByFavoriteAndDefaultCond(boolean favorite, final FindBookmarksDefaultCond cond);
-
-	long countByTagsAndDefaultCond(final List<String> tags, final FindBookmarksDefaultCond cond);
-
-	List<Bookmark> searchByTagsAndDefaultCond(final List<String> tags, final FindBookmarksDefaultCond cond);
-
-	long countByDefaultCond(final FindBookmarksDefaultCond cond);
-
-	List<Bookmark> searchByDefaultCond(final FindBookmarksDefaultCond cond);
+	/* 기본 조회 */
+	Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, Pageable pageable);
 }

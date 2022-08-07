@@ -17,7 +17,7 @@ import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.profile.persistence.dto.FindProfileCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
@@ -110,7 +110,7 @@ public class ProfileServiceImpl implements ProfileService {
 		// 1 단계 - 검색 대상 프로필의 팔로워 목록 조회
 		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
 		final List<Profile> followerProfiles = profileRepository.findFollowerProfilesBy(
-			new FindProfileCond(
+			new ProfileFindCond(
 				profileId,
 				searchCond.getPage(),
 				searchCond.getSize(),
@@ -130,7 +130,7 @@ public class ProfileServiceImpl implements ProfileService {
 		// 1 단계 - 검색 대상 프로필의 팔로이 목록 조회
 		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
 		final List<Profile> followeeProfiles = profileRepository.findFolloweeProfilesBy(
-			new FindProfileCond(
+			new ProfileFindCond(
 				profileId,
 				searchCond.getPage(),
 				searchCond.getSize(),
@@ -161,7 +161,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		final Long currentUserProfileId = findProfileByUserIdQuery.findByUserId(searchCond.getUserId()).getId();
 		List<Profile> profiles = profileRepository.findByUsernameLike(
-			new FindProfileCond(
+			new ProfileFindCond(
 				searchCond.getPage(),
 				searchCond.getSize(),
 				searchCond.getUsername()

@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,6 +205,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 	}
 
+	@Disabled
 	@Nested
 	class 다른_유저_북마크_목록_조회_테스트 {
 

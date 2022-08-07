@@ -2,6 +2,9 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -27,7 +30,7 @@ public interface BookmarkService {
 	GetDetailedBookmarkResult getDetailedBookmark(long userId, long bookmarkId);
 
 	/* 내 북마크 목록 */
-	PageResult<GetBookmarksResult> getMyBookmarks(long userId, MyBookmarkSearchCond searchCond);
+	Page<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond, Pageable pageable);
 
 	/* 다른 사람 북마크 목록 */
 	PageResult<GetBookmarksResult> getOtherBookmarks(long userId, OtherBookmarkSearchCond searchCond);

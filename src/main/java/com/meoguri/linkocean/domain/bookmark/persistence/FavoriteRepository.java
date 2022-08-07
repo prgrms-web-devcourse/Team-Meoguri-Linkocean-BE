@@ -17,8 +17,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 	boolean existsByOwnerAndBookmark(Profile owner, Bookmark bookmark);
 
 	/**
-	 * bookmarks에 대한 owner의 즐겨찾기 PK 집합을 가져오는데 사용한다.
+	 * bookmarks 에 대한 owner 의 즐겨찾기 PK 집합을 가져오는데 사용한다.
 	 */
 	@Query("select f.bookmark.id from Favorite f where f.owner = :owner and f.bookmark in :bookmarks")
-	Set<Long> findAllFavoriteByProfileAndBookmarks(Profile owner, List<Bookmark> bookmarks);
+	Set<Long> findByOwnerAndBookmark(Profile owner, List<Bookmark> bookmarks);
 }
