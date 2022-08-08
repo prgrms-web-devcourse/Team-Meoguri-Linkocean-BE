@@ -24,10 +24,10 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
 	Optional<Reaction> findByProfileAndBookmark(Profile profile, Bookmark bookmark);
 
-	@Query("select r.type as type, count(r) as cnt " +
-		"from Reaction r " +
-		"where r.bookmark = ?1 " +
-		"group by r.type"
+	@Query("select r.type as type, count(r) as cnt "
+		+ "from Reaction r "
+		+ "where r.bookmark = ?1 "
+		+ "group by r.type"
 	)
 	List<Tuple> countReactionGroupInternal(Bookmark bookmark);
 
