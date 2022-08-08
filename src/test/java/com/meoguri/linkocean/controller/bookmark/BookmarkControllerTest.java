@@ -73,11 +73,12 @@ class BookmarkControllerTest extends BaseControllerTest {
 			.andExpect(status().isOk())
 			.andDo(print());
 
-		// TODO 다른 조치 필
-		// 북마크 조회 -> LinkedOceanRuntimcException 발생, 북마크가 존재하지 않음
-		// mockMvc.perform(get(basePath + "/" + bookmarkId)
-		// 		.header(AUTHORIZATION, token))
-		// 	.andExpect(status().isBadRequest());
+		// 삭제한 북마크 조회
+		mockMvc.perform(get(basePath + "/" + bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			//then
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
