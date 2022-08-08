@@ -23,7 +23,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -38,17 +37,19 @@ import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class BookmarkServiceImpl implements BookmarkService {
 
+	private TagService tagService;
+
 	private final BookmarkRepository bookmarkRepository;
-	private final TagRepository tagRepository;
 	private final ReactionRepository reactionRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
@@ -57,32 +58,31 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 
-	//TODO : 쿼리 튜닝
+	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
-
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
 		final List<Tag> tags = Optional.ofNullable(command.getTagNames())
-			.map(wrapper -> convertTagNamesToTags(wrapper))
-			.orElseGet(() -> Collections.emptyList());
+			.map(tagService::getOrSaveList)
+			.orElseGet(Collections::emptyList);
 
 		/* 북마크 생성 & 저장 */
-		final Bookmark newBookmark = Bookmark.builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata)
-			.title(command.getTitle())
-			.memo(command.getMemo())
-			.openType(command.getOpenType())
-			.category(command.getCategory())
-			.url(command.getUrl())
-			.tags(tags)
-			.build();
+		final Bookmark bookmark = new Bookmark(
+			profile, linkMetadata,
+			command.getTitle(),
+			command.getMemo(),
+			command.getOpenType(),
+			command.getCategory(),
+			command.getUrl(),
+			tags
+		);
 
-		return bookmarkRepository.save(newBookmark).getId();
+		return bookmarkRepository.save(bookmark).getId();
 	}
 
+	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
@@ -93,16 +93,19 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.findByProfileAndId(profile, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
+		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
+
 		//update 진행
 		bookmark.update(
 			command.getTitle(),
 			command.getMemo(),
 			command.getCategory(),
 			command.getOpenType(),
-			convertTagNamesToTags(command.getTagNames())
+			tags
 		);
 	}
 
+	@Transactional
 	@Override
 	public void removeBookmark(final long profileId, final long bookmarkId) {
 		final Profile profile = findProfileByIdQuery.findById(profileId);
@@ -116,7 +119,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO : 쿼리 튜닝
-	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 
@@ -145,17 +147,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.reaction(getReactionMap(profile, bookmark))
 			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
-	}
-
-	/**
-	 * TagName 정보를 이용해 Tag를 만든다.
-	 * 1. tag 이름이 존재하면 만들지 않고 db에서 가져온다.
-	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db에 저장한다.
-	 */
-	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
-		return tagNames.stream()
-			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
-			.collect(toList());
 	}
 
 	//TODO 리액션 요청에서 북마크 좋아요 개수도 같이 수정하는 로직이 추가되면 이 부분 수정하기.
