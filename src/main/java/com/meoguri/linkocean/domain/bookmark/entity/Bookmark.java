@@ -24,6 +24,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -74,6 +75,10 @@ public class Bookmark extends BaseIdEntity {
 	private Category category;
 
 	@Column(nullable = false)
+	@Enumerated(STRING)
+	private BookmarkStatus status;
+
+	@Column(nullable = false)
 	@ColumnDefault("0")
 	private long likeCount;
 
@@ -101,6 +106,7 @@ public class Bookmark extends BaseIdEntity {
 		this.memo = memo;
 		this.openType = OpenType.of(openType);
 		this.category = Category.of(category);
+		this.status = BookmarkStatus.ACTIVATED;
 		this.url = url;
 
 		setBookmarkTags(tags);
@@ -130,6 +136,11 @@ public class Bookmark extends BaseIdEntity {
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
 			.collect(toList());
+	}
+
+	public void remove() {
+		this.status = BookmarkStatus.REMOVED;
+		this.updatedAt = now();
 	}
 
 	public List<String> getTagNames() {
