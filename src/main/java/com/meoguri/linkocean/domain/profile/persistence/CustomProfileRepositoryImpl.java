@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.profile.persistence;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import static com.meoguri.linkocean.util.JoinInfoListBuilder.Initializer.*;
-import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
 
@@ -13,24 +12,19 @@ import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.JPQLQueryFactory;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
-public class CustomProfileRepositoryImpl implements CustomProfileRepository {
-
-	private final JPQLQueryFactory query;
+public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport implements CustomProfileRepository {
 
 	public CustomProfileRepositoryImpl(final EntityManager em) {
-		this.query = new JPAQueryFactory(em);
+		super(Profile.class);
 	}
 
 	@Override
 	public List<Profile> findFollowerProfilesBy(final ProfileFindCond findCond) {
-
-		return query
-			.selectFrom(profile)
+		return selectFrom(profile)
 			.where(
 				followerOfUsername(findCond.getProfileId(), findCond.getUsername())
 			)
@@ -41,8 +35,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 
 	@Override
 	public List<Profile> findFolloweeProfilesBy(final ProfileFindCond findCond) {
-		return query
-			.selectFrom(profile)
+		return selectFrom(profile)
 			.where(
 				followeeOfUsername(findCond.getProfileId(), findCond.getUsername())
 			)
@@ -53,8 +46,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 
 	@Override
 	public List<Profile> findByUsernameLike(final ProfileFindCond findCond) {
-		return query
-			.selectFrom(profile)
+		return selectFrom(profile)
 			.where(
 				usernameLike(findCond.getUsername())
 			)
@@ -66,8 +58,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 	private BooleanBuilder followerOfUsername(long profileId, String username) {
 
 		return nullSafeBuilder(() -> profile.in(
-			joinIf(query
-					.select(follow.follower)
+			joinIf(select(follow.follower)
 					.from(follow),
 				() -> join(follow.follower, profile),
 				on(follow.follower.id.eq(profile.id)),
@@ -82,8 +73,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository {
 	private BooleanBuilder followeeOfUsername(long profileId, String username) {
 
 		return nullSafeBuilder(() -> profile.in(
-			joinIf(query
-					.select(follow.followee)
+			joinIf(select(follow.followee)
 					.from(follow),
 				() -> join(follow.followee, profile),
 				on(follow.followee.id.eq(profile.id)),
