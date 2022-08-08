@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
@@ -37,6 +38,7 @@ class BookmarkTest {
 			.memo(memo)
 			.category(category)
 			.openType(openType)
+			.tags(Collections.emptyList())
 			.build();
 
 		//then
@@ -86,35 +88,49 @@ class BookmarkTest {
 	}
 
 	@Test
-	void 북마크_태그_추가_성공() {
+	void 북마크_생성_태그_테스트() {
 		//given
-		final Bookmark bookmark = createBookmark();
+		final Tag tag1 = new Tag("tag1");
+		final Tag tag2 = new Tag("tag2");
 
-		final Tag tag = createTag();
-
-		//when
-		bookmark.addBookmarkTag(tag);
+		// when
+		final Bookmark bookmark = Bookmark.builder()
+			.profile(createProfile())
+			.title("title")
+			.linkMetadata(createLinkMetadata())
+			.memo("memo")
+			.category("인문")
+			.openType("all")
+			.tags(List.of(tag1, tag2))
+			.build();
 
 		//then
-		assertThat(bookmark.getTagNames()).hasSize(1);
+		assertThat(bookmark.getTagNames()).hasSize(2).containsExactly("tag1", "tag2");
 	}
 
 	@Test
 	void 북마크_태그_추가_실패_태그_개수_한도_초과() {
 		//given
-		final Bookmark bookmark = createBookmark();
 		List<Tag> tags = List.of(
 			new Tag("tag1"),
 			new Tag("tag2"),
 			new Tag("tag3"),
 			new Tag("tag4"),
-			new Tag("tag5"));
-
-		tags.forEach(bookmark::addBookmarkTag);
+			new Tag("tag5"),
+			new Tag("tag6")
+		);
 
 		//when then
 		assertThatExceptionOfType(LinkoceanRuntimeException.class)
-			.isThrownBy(() -> bookmark.addBookmarkTag(new Tag("tag6")));
+			.isThrownBy(() -> Bookmark.builder()
+				.profile(createProfile())
+				.title("title")
+				.linkMetadata(createLinkMetadata())
+				.memo("memo")
+				.category("인문")
+				.openType("all")
+				.tags(tags)
+				.build());
 	}
 
 	@Test

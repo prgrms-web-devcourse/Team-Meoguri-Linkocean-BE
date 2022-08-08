@@ -1,5 +1,8 @@
 package com.meoguri.linkocean.domain.util;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -45,11 +48,18 @@ public final class Fixture {
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category) {
 
-		return createBookmark(profile, linkMetadata, category, category, "https://www.google.com");
+		return createBookmark(profile, linkMetadata, title, category, "https://www.google.com",
+			Collections.emptyList());
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category,
 		String url) {
+		return createBookmark(profile, linkMetadata, title, category, url,
+			Collections.emptyList());
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category,
+		String url, List<Tag> tags) {
 
 		return Bookmark.builder()
 			.profile(profile)
@@ -59,6 +69,7 @@ public final class Fixture {
 			.openType("all")
 			.category(category)
 			.url(url)
+			.tags(tags)
 			.build();
 	}
 
