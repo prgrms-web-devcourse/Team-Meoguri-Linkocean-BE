@@ -19,11 +19,6 @@ public class JoinInfoBuilder {
 	// join 목록
 	List<Join> joinList = new ArrayList<>();
 
-	// on 절 사용 여부
-	boolean on;
-
-	// on 절에 사용되는 Predicate 목록
-	List<Predicate> condition;
 
 	private static JoinInfoBuilder builder() {
 		return new JoinInfoBuilder();
@@ -90,13 +85,13 @@ public class JoinInfoBuilder {
 	}
 
 	public JoinInfoBuilder fetchJoin() {
-		this.joinList.get(this.joinList.size() - 1).isFetchJoin = true;
+		this.joinList.get(this.joinList.size() - 1).fetchJoin = true;
 		return this;
 	}
 
 	public JoinInfoBuilder on(final Predicate... condition) {
-		this.on = true;
-		this.condition = Arrays.asList(condition);
+		this.joinList.get(this.joinList.size() - 1).on = true;
+		this.joinList.get(this.joinList.size() - 1).condition = Arrays.asList(condition);
 		return this;
 	}
 

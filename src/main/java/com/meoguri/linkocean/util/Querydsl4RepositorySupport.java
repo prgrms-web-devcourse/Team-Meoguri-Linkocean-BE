@@ -181,7 +181,6 @@ public abstract class Querydsl4RepositorySupport {
 		JPQLQuery<T> base,
 		final Supplier<JoinInfoBuilder> joinInfoBuilder
 	) {
-
 		if (expression) {
 			final JoinInfoBuilder joinInfo = joinInfoBuilder.get().build();
 
@@ -200,13 +199,13 @@ public abstract class Querydsl4RepositorySupport {
 					base = base.join(join.targetMap, join.alias);
 				}
 
-				if (join.isFetchJoin) {
+				if (join.fetchJoin) {
 					base = base.fetchJoin();
 				}
-			}
 
-			if (joinInfo.on) {
-				base = base.on(joinInfo.condition.toArray(Predicate[]::new));
+				if (join.on) {
+					base = base.on(join.condition.toArray(Predicate[]::new));
+				}
 			}
 		}
 		return base;
