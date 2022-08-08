@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -182,14 +184,14 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
-		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+		final Optional<Bookmark> oBookmark = bookmarkService.getBookmarkToCheck(user.getId(), url);
+
 		HttpHeaders headers = new HttpHeaders();
 
-		//TODO: haeder에 bookmarkid 반환
-		if (isDuplicated) {
-			headers.setLocation(URI.create(url));
-		}
+		oBookmark.ifPresent(bookmark -> {
+			headers.setLocation(URI.create("api/v1/bookmarks/" + bookmark.getId()));
+		});
 
-		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", isDuplicated));
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", oBookmark.isPresent()));
 	}
 }
