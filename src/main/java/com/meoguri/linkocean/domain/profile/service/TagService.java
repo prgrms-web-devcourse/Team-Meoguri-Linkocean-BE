@@ -7,7 +7,7 @@ import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 public interface TagService {
 
 	/* 내 태그 목록 조회 */
-	List<GetProfileTagsResult> getMyTags(long userId);
+	List<GetProfileTagsResult> getMyTags(long profileId);
 
 	/* 태그 목록 조회 */
 	List<GetProfileTagsResult> getTags(long profileId);

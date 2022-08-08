@@ -65,9 +65,9 @@ public class ProfileController {
 	public GetMyProfileResponse getMyProfile(
 		@AuthenticationPrincipal SecurityUser user
 	) {
-		final GetMyProfileResult profile = profileService.getMyProfile(user.getId());
-		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getId());
-		final List<String> categories = categoryService.getMyUsedCategories(user.getId());
+		final GetMyProfileResult profile = profileService.getMyProfile(user.getProfileId());
+		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getProfileId());
+		final List<String> categories = categoryService.getMyUsedCategories(user.getProfileId());
 
 		return GetMyProfileResponse.of(profile, tags, categories);
 	}
@@ -78,7 +78,7 @@ public class ProfileController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId
 	) {
-		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getId(), profileId);
+		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getProfileId(), profileId);
 		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
 		final List<String> categories = categoryService.getUsedCategories(profileId);
 
@@ -93,7 +93,7 @@ public class ProfileController {
 		@RequestPart(required = false, name = "image") MultipartFile profileImage
 	) {
 		final String imageUrl = s3Uploader.upload(profileImage, "profile");
-		profileService.updateProfile(request.toCommand(user.getId(), imageUrl));
+		profileService.updateProfile(request.toCommand(user.getProfileId(), imageUrl));
 	}
 
 	/* 프로필 목록 조회 - 머구리 찾기 */

@@ -59,8 +59,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public GetMyProfileResult getMyProfile(final long userId) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+	public GetMyProfileResult getMyProfile(final long profileId) {
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		return new GetMyProfileResult(
 			profile.getId(),
@@ -75,25 +75,26 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public GetDetailedProfileResult getByProfileId(final long userId, final long profileId) {
-		final Profile currentUser = findProfileByUserIdQuery.findByUserId(userId);
-		final Profile profile = findProfileByIdQuery.findById(profileId);
+	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
+		// final Profile currentUser = findProfileByUserIdQuery.findByUserId(userId);
+		final Profile currentProfile = findProfileByIdQuery.findById(currentProfileId);
+		final Profile targetProfile = findProfileByIdQuery.findById(targetProfileId);
 
 		return new GetDetailedProfileResult(
-			profile.getId(),
-			profile.getUsername(),
-			profile.getImage(),
-			profile.getBio(),
-			profile.getMyFavoriteCategories(),
-			checkIsFollowQuery.isFollow(currentUser, profile),
-			followRepository.countFollowerByProfile(profile),
-			followRepository.countFolloweeByProfile(profile)
+			targetProfile.getId(),
+			targetProfile.getUsername(),
+			targetProfile.getImage(),
+			targetProfile.getBio(),
+			targetProfile.getMyFavoriteCategories(),
+			checkIsFollowQuery.isFollow(currentProfile, targetProfile),
+			followRepository.countFollowerByProfile(targetProfile),
+			followRepository.countFolloweeByProfile(targetProfile)
 		);
 	}
 
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final String origUsername = profile.getUsername();
 
 		// 프로필 업데이트
@@ -141,8 +142,9 @@ public class ProfileServiceImpl implements ProfileService {
 		// 2단계 - 경우에 따라 현재 사용자의 팔로우 여부를 획득한다
 		final List<Long> followeeProfileIds = followeeProfiles.stream().map(Profile::getId).collect(toList());
 		final List<Boolean> isFollows = currentUserProfileId == profileId
-			? new ArrayList<>(nCopies(followeeProfiles.size(), true)) //	자기자신의 팔로이 탭을 누른 경우 팔로우 여부는 항상 true 이다
-			: checkIsFollows(currentUserProfileId, followeeProfileIds);
+										? new ArrayList<>(nCopies(followeeProfiles.size(), true))
+										//	자기자신의 팔로이 탭을 누른 경우 팔로우 여부는 항상 true 이다
+										: checkIsFollows(currentUserProfileId, followeeProfileIds);
 
 		// 3단계 - 결과를 말아 준다
 		return getResult(followeeProfiles, isFollows);
