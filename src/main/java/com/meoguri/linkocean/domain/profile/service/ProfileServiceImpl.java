@@ -139,10 +139,10 @@ public class ProfileServiceImpl implements ProfileService {
 
 		// 2단계 - 경우에 따라 현재 사용자의 팔로우 여부를 획득한다
 		final List<Long> followeeProfileIds = followeeProfiles.stream().map(Profile::getId).collect(toList());
-		final List<Boolean> isFollows
-			= currentUserProfileId == profileId
-			  ? new ArrayList<>(nCopies(followeeProfiles.size(), true)) //자신의 팔로이 탭을 누른 경우 팔로우 여부는 항상 true 이다
-			  : checkIsFollows(currentUserProfileId, followeeProfileIds);
+		final List<Boolean> isFollows =
+			currentUserProfileId == profileId
+			? new ArrayList<>(nCopies(followeeProfiles.size(), true)) //자신의 팔로이 탭을 누른 경우 팔로우 여부는 항상 true 이다
+			: checkIsFollows(currentUserProfileId, followeeProfileIds);
 
 		// 3단계 - 결과를 말아 준다
 		return getResult(followeeProfiles, isFollows);
