@@ -125,7 +125,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		);
 	}
 
-	//TODO 궁극의 북마크 조회 구현
 	@Override
 	public Page<Bookmark> ultimateFindBookmarks(final UltimateBookmarkFindCond findCond, final Pageable pageable) {
 
@@ -157,7 +156,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			base.where(
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
-				// profileIdEq(targetProfileId),
+				profileIdEq(targetProfileId),
 				titleContains(title)
 			),
 			Bookmark::getTagNames
