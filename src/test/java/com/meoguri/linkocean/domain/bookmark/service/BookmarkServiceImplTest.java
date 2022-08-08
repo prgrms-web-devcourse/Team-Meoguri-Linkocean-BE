@@ -143,7 +143,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_등록_실패_유효하지_않은_사용자() {
 			//given
-			final long invalidId = 10L;
+			final long invalidId = -1L;
 			final RegisterBookmarkCommand command = command(invalidId, url);
 
 			//when then
@@ -234,7 +234,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_업데이트_실패_존재하지_않는_북마크() {
 			//given
-			final long invalidBookmarkId = 10L;
+			final long invalidBookmarkId = -1L;
 			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
 				userId,
 				invalidBookmarkId,
@@ -302,7 +302,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_삭제_실패_존재하지_않는_북마크() {
 			//given
-			final long invalidBookmarkId = 10L;
+			final long invalidBookmarkId = -1L;
 
 			//when then
 			assertThatLinkoceanRuntimeException()
