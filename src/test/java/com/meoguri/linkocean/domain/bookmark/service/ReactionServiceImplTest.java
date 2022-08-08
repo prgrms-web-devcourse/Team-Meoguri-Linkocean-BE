@@ -177,6 +177,7 @@ class ReactionServiceImplTest {
 	void 좋아요_개수_수정_성공_좋아요_좋아요_경우() {
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+		bookmark2.addLikeOne();
 
 		//when
 		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));

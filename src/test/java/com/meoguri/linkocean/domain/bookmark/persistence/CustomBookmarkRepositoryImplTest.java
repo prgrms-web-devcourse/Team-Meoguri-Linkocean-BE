@@ -131,7 +131,7 @@ class CustomBookmarkRepositoryImplTest {
 
 		// 크러쉬가 네이버에 좋아요를 누름
 		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
-		bookmark1.changeLikeCount(1L);
+		bookmark1.addLikeOne();
 
 		// 크러쉬가 구글에 싫어요를 누름
 		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
