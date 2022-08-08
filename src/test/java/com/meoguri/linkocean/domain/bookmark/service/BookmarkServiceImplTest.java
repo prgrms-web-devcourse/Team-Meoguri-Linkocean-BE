@@ -526,19 +526,19 @@ class BookmarkServiceImplTest {
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
-		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, bookmark.getUrl());
+		final Optional<Bookmark> duplicatedUrlBookmark = bookmarkService.getBookmarkToCheck(userId, bookmark.getUrl());
 
 		//then
-		assertThat(isDuplicateUrl).isTrue();
+		assertThat(duplicatedUrlBookmark).isPresent();
 	}
 
 	@Test
 	void 중복_Url_없을_때() {
 
 		//when
-		final boolean isDuplicateUrl = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
+		final Optional<Bookmark> duplicatedUrlBookmark = bookmarkService.getBookmarkToCheck(userId, "https://www.does.not.exist");
 
 		//then
-		assertThat(isDuplicateUrl).isFalse();
+		assertThat(duplicatedUrlBookmark).isEmpty();
 	}
 }
