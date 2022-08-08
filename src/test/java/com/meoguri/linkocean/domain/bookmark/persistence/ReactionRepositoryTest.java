@@ -4,6 +4,8 @@ import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Collections;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -57,6 +59,7 @@ class ReactionRepositoryTest {
 				.category("인문")
 				.openType("all")
 				.url("www.google.com")
+				.tags(Collections.emptyList())
 				.build());
 	}
 

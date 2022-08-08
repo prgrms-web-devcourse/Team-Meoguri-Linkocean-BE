@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -109,18 +110,11 @@ class BookmarkRepositoryTest {
 	@Test
 	void 사용자의_전체_북마크조회_태그_까지_페치_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문", "www.naver.com");
-		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문", "www.google.com");
-		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문", "www.haha.com");
-
-		bookmark1.addBookmarkTag(tag1);
-		bookmark1.addBookmarkTag(tag2);
-		bookmark1.addBookmarkTag(tag3);
-
-		bookmark2.addBookmarkTag(tag2);
-		bookmark2.addBookmarkTag(tag3);
-
-		bookmark3.addBookmarkTag(tag3);
+		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문", "www.naver.com",
+			List.of(tag1, tag2, tag3));
+		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문", "www.google.com",
+			List.of(tag2, tag3));
+		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문", "www.haha.com", List.of(tag3));
 
 		bookmarkRepository.save(bookmark1);
 		bookmarkRepository.save(bookmark2);
@@ -145,11 +139,11 @@ class BookmarkRepositoryTest {
 			);
 	}
 
+	@Disabled
 	@Test
 	void 북마크와_연관관계_맺은_엔티티_페치_조인_이용해_같이_조회() {
 		//given
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, link));
-		bookmark.addBookmarkTag(tag1);
 
 		em.flush();
 		em.clear();

@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -95,9 +96,8 @@ class CustomBookmarkRepositoryImplTest {
 			.category("IT")
 			.openType("all")
 			.url("www.naver.com")
+			.tags(List.of(tag1, tag2))
 			.build();
-		bookmark1.addBookmarkTag(tag1);
-		bookmark1.addBookmarkTag(tag2);
 		final Bookmark savedBookmark1 = bookmarkRepository.save(bookmark1);
 
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
@@ -109,8 +109,8 @@ class CustomBookmarkRepositoryImplTest {
 			.category("가정")
 			.openType("partial")
 			.url("www.google.com")
+			.tags(List.of(tag1))
 			.build();
-		bookmark2.addBookmarkTag(tag1);
 		final Bookmark savedBookmark2 = bookmarkRepository.save(bookmark2);
 
 		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
@@ -122,6 +122,7 @@ class CustomBookmarkRepositoryImplTest {
 			.category("IT")
 			.openType("private")
 			.url("www.github.com")
+			.tags(Collections.emptyList())
 			.build();
 		final Bookmark savedBookmark3 = bookmarkRepository.save(bookmark3);
 
