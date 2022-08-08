@@ -36,8 +36,6 @@ import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -496,12 +494,13 @@ class BookmarkServiceImplTest {
 
 		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all 인 글만 볼 수 있다 */
 		@Disabled("due to not implementation of Open Type filtering - 북마크 3개 모두 조회되면 정상")
-		@Ultimate
 		@Test
 		void 다른_사람_북마크_목록_조회() {
 			//given
-			final UltimateBookmarkFindCond findCond =
-				new UltimateBookmarkFindCond(userId, profileId2, null, false, null, false, null);
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.currentUserProfileId(userId)
+				.targetProfileId(profileId2)
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -515,19 +514,22 @@ class BookmarkServiceImplTest {
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
+		@Disabled("due to not implementation of Open Type filtering - 북마크 3개 모두 조회되면 정상")
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
 			followRepository.save(new Follow(profile, profile2));
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.currentUserProfileId(userId)
+				.targetProfileId(profileId2)
+				.build();
+			final Pageable pageable = defaultPageable();
 
 			//when
-			final PageResult<GetBookmarksResult> otherBookmarkResults =
-				bookmarkService.getOtherBookmarks(userId,
-					new OtherBookmarkSearchCond(
-						profileId2, null, null, null, null, false, null, null));
+			final Page<GetBookmarksResult> resultPage = bookmarkService.ultimateGetBookmarks(findCond, pageable);
 
 			//then
-			assertThat(otherBookmarkResults.getData()).hasSize(2)
+			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId2, "partial"), tuple(bookmarkId1, "all"));
 		}

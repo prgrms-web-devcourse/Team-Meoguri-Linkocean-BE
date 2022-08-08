@@ -10,9 +10,6 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 
@@ -30,11 +27,6 @@ public interface BookmarkService {
 	/* 북마크 상세 조회 */
 	GetDetailedBookmarkResult getDetailedBookmark(long profileId, long bookmarkId);
 
-	/* 내 북마크 목록 */
-	Page<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond, Pageable pageable);
-
-	/* 다른 사람 북마크 목록 */
-	PageResult<GetBookmarksResult> getOtherBookmarks(long profileId, OtherBookmarkSearchCond searchCond);
 
 	/* 피드 북마크 목록 */
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);

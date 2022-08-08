@@ -220,7 +220,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			).andDo(print());
 	}
 
-	@Disabled
+	@Disabled("due to not implementation of Open Type filtering")
 	@Nested
 	class 다른_유저_북마크_목록_조회_테스트 {
 
