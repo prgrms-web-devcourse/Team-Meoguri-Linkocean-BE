@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence.dto;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public final class UltimateBookmarkFindCond {
 	private final Long targetProfileId;
 
 	/* 카테고리 필터링 조회인 경우 카테고리 아니라면 null */
-	private final Bookmark.Category category;
+	private final Category category;
 
 	/* 즐겨찾기 필터링 조회인 경우 true 아니라면 false */
 	private final boolean favorite;

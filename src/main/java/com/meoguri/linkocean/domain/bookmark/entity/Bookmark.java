@@ -10,7 +10,6 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -25,14 +24,14 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 /**
  * 북마크 (인터넷 즐겨찾기)
@@ -162,67 +161,4 @@ public class Bookmark extends BaseIdEntity {
 		this.likeCount = likeCount;
 	}
 
-	/**
-	 * 북마크의 공개 범위
-	 */
-	public enum OpenType {
-		/* 전체공개 */
-		ALL,
-
-		/* 팔로워 대상 공개 */
-		PARTIAL,
-
-		/* 개인 공개 */
-		PRIVATE;
-
-		public String getName() {
-			return name().toLowerCase();
-		}
-
-		static OpenType of(String arg) {
-			return OpenType.valueOf(arg.toUpperCase());
-		}
-	}
-
-	/**
-	 * 북마크의 카테고리
-	 */
-	@Getter
-	@RequiredArgsConstructor
-	public enum Category {
-
-		SELF_DEVELOPMENT("자기계발"),
-		HUMANITIES("인문"),
-		POLITICS("정치"),
-		SOCIAL("사회"),
-		ART("예술"),
-		SCIENCE("과학"),
-		TECHNOLOGY("기술"),
-		IT("IT"),
-		HOME("가정"),
-		HEALTH("건강"),
-		TRAVEL("여행"),
-		COOKING("요리");
-
-		private final String korName;
-
-		public static List<String> getEnglishNames() {
-			return Arrays.stream(Category.values()).map(v -> v.korName).collect(toList());
-		}
-
-		public static List<String> getKoreanNames() {
-			return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
-		}
-
-		public String getKorName() {
-			return this.korName;
-		}
-
-		public static Category of(String arg) {
-			return arg == null ? null : Arrays.stream(Category.values())
-				.filter(category -> category.korName.equals(arg))
-				.findAny()
-				.orElseThrow(LinkoceanRuntimeException::new);
-		}
-	}
 }
