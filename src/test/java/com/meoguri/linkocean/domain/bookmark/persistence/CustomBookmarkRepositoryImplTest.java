@@ -26,7 +26,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -313,17 +312,19 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
+	@Ultimate
 	@Nested
 	class 북마크_기본_조회 {
 
+		@Ultimate
 		@Test
 		void 북마크_기본_조회_성공() {
 			//given
-			final BookmarkFindCond findCond = cond();
+			final UltimateBookmarkFindCond findCond = ultimateFindCond();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -332,14 +333,15 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
-			final BookmarkFindCond findCond = cond();
+			final UltimateBookmarkFindCond findCond = ultimateFindCond();
 			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -348,14 +350,15 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
-			final BookmarkFindCond findCond = cond("1");
+			final UltimateBookmarkFindCond findCond = ultimateFindCond("1");
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -363,17 +366,9 @@ class CustomBookmarkRepositoryImplTest {
 				.containsExactly(tuple(bookmarkId1, "title1"));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
 		}
-
 	}
 
-	private BookmarkFindCond cond(final String searchTitle) {
-		return new BookmarkFindCond(profile.getId(), searchTitle);
-	}
-
-	private BookmarkFindCond cond() {
-		return cond(null);
-	}
-
+	// 검색 조건, 페이지 픽스쳐
 	private UltimateBookmarkFindCond ultimateCategoryFindCond(final Category category) {
 		return ultimateCategoryFindCond(category, null);
 	}
@@ -396,6 +391,14 @@ class CustomBookmarkRepositoryImplTest {
 
 	private UltimateBookmarkFindCond ultimateTagFindCond(final List<String> tags) {
 		return ultimateTagFindCond(tags, null);
+	}
+
+	private UltimateBookmarkFindCond ultimateFindCond() {
+		return ultimateFindCond(null);
+	}
+
+	private UltimateBookmarkFindCond ultimateFindCond(final String title) {
+		return new UltimateBookmarkFindCond(0, profile.getId(), null, false, null, false, title);
 	}
 
 	private PageRequest defaultPageable() {
