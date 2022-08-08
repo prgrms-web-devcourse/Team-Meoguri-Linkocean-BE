@@ -3,6 +3,9 @@ package com.meoguri.linkocean.domain.util;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -89,4 +92,13 @@ public final class Fixture {
 
 		return new Tag("tag");
 	}
+
+	public static PageRequest defaultPageable() {
+		return PageRequest.of(0, 8, Sort.by("upload"));
+	}
+
+	public static PageRequest likePageable() {
+		return PageRequest.of(0, 8, Sort.by("like", "upload"));
+	}
+
 }

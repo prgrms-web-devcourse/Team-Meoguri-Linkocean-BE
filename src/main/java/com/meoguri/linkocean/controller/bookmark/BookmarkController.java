@@ -7,6 +7,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -31,11 +32,11 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,35 +64,35 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
-			queryParams.toMySearchCond(user.getProfileId()),
-			queryParams.toPage()
+		return getBookmarks(user, user.getProfileId(), queryParams);
+	}
+
+	/**
+	 * 북마크 목록 조회
+	 */
+	@GetMapping("/others/{profileId}")
+	public PageResponse<GetBookmarksResponse> getBookmarks(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @PathVariable("profileId") long profileId,
+		final GetBookmarkQueryParams queryParams
+	) {
+		final Page<GetBookmarksResult> result = bookmarkService.ultimateGetBookmarks(
+			new UltimateBookmarkFindCond(
+				user.getId(),
+				profileId,
+				queryParams.getCategory(),
+				queryParams.isFavorite(),
+				queryParams.getTags(),
+				queryParams.isFollow(),
+				queryParams.getSearchTitle()
+			),
+			queryParams.toPageable()
 		);
 
 		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
 		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
-	}
-
-	/**
-	 * 다른 사람 북마크 목록 조회
-	 */
-	@GetMapping("/others/{profileId}")
-	public PageResponse<GetBookmarksResponse> getOtherBookmarks(
-		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long otherProfileId,
-		final GetBookmarkQueryParams queryParams
-	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-			queryParams.toOtherSearchCond(otherProfileId));
-
-		final List<GetBookmarksResponse> response = result.getData()
-			.stream()
-			.map(GetBookmarksResponse::of)
-			.collect(toList());
-
-		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/**
@@ -164,7 +165,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
@@ -173,7 +174,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.removeBookmark(user.getId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 
 	@GetMapping
@@ -181,14 +182,14 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
-		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkToCheck(user.getId(), url);
+
 		HttpHeaders headers = new HttpHeaders();
 
-		//TODO: haeder에 bookmarkid 반환
-		if (isDuplicated) {
-			headers.setLocation(URI.create(url));
-		}
+		oBookmarkId.ifPresent(bookmarkId -> {
+			headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId));
+		});
 
-		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", isDuplicated));
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
 	}
 }

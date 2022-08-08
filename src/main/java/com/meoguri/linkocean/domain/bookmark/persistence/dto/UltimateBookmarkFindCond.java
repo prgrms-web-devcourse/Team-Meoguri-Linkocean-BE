@@ -2,8 +2,9 @@ package com.meoguri.linkocean.domain.bookmark.persistence.dto;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,11 +18,12 @@ import lombok.RequiredArgsConstructor;
  * </pre>
  */
 @Getter
+@Builder
 @RequiredArgsConstructor
 public final class UltimateBookmarkFindCond {
 
 	/* 현재 사용자의 프로필 id
-	   DTO 를 이용한 projection 사용 시 필요 - 아직은 사용하지 않는다 */
+	   DTO 를 이용한 projection 사용 시 필요 - 아직은 리포지토리에서 사용하지 않는다 */
 	private final long currentUserProfileId;
 
 	/*작성자를 지정한 북마크 조회인 경우 대상 프로필 id
@@ -29,7 +31,7 @@ public final class UltimateBookmarkFindCond {
 	private final Long targetProfileId;
 
 	/* 카테고리 필터링 조회인 경우 카테고리 아니라면 null */
-	private final Bookmark.Category category;
+	private final Category category;
 
 	/* 즐겨찾기 필터링 조회인 경우 true 아니라면 false */
 	private final boolean favorite;
