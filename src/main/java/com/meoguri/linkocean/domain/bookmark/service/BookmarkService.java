@@ -1,10 +1,12 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -40,5 +42,5 @@ public interface BookmarkService {
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
 
 	/* 중복Url 확인 */
-	boolean checkDuplicatedUrl(long userId, String url);
+	Optional<Long> getBookmarkToCheck(long userId, String url);
 }

@@ -276,8 +276,13 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public boolean checkDuplicatedUrl(final long userId, String url) {
+	public Optional<Long> getBookmarkToCheck(final long userId, String url) {
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
-		return bookmarkRepository.existsByProfileAndUrl(profile, url);
+		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndUrl(profile, url);
+
+		if (oBookmark.isPresent()) {
+			return Optional.of(profile.getId());
+		}
+		return Optional.empty();
 	}
 }
