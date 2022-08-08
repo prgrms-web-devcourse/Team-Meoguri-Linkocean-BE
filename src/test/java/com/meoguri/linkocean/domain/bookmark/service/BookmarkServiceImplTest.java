@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.common.Ultimate;
@@ -440,7 +442,7 @@ class BookmarkServiceImplTest {
 		}
 	}
 
-	@Disabled("disable due to refactoring")
+	@Ultimate
 	@Nested
 	class 다른_사람_북마크_목록_조회_테스트 {
 
@@ -454,8 +456,10 @@ class BookmarkServiceImplTest {
 		@BeforeEach
 		void setUp() {
 			User user2 = userRepository.save(new User("crush@gmail.com", "GOOGLE"));
-			profileRepository.save(new Profile(user2, "crush"));
+			profileId2 = profileRepository.save(new Profile(user2, "crush")).getId();
 			linkMetadataRepository.save(new LinkMetadata("http://www.naver.com", "네이버", "naver.png"));
+			linkMetadataRepository.save(new LinkMetadata("http://www.daum.com", "다음", "daum.png"));
+			linkMetadataRepository.save(new LinkMetadata("http://www.kakao.com", "카카오", "kakao.png"));
 
 			final RegisterBookmarkCommand command1 = new RegisterBookmarkCommand(
 				user2.getId(),
@@ -469,7 +473,7 @@ class BookmarkServiceImplTest {
 
 			final RegisterBookmarkCommand command2 = new RegisterBookmarkCommand(
 				user2.getId(),
-				"http://www.naver.com",
+				"http://www.kakao.com",
 				"title2",
 				null,
 				"IT",
@@ -479,42 +483,38 @@ class BookmarkServiceImplTest {
 
 			final RegisterBookmarkCommand command3 = new RegisterBookmarkCommand(
 				user2.getId(),
-				"http://www.naver.com",
+				"http://www.google.com",
 				"title3",
 				null,
 				"가정",
 				"private",
 				List.of("tag1"));
 			bookmarkId3 = bookmarkService.registerBookmark(command3);
+
+			System.out.println("set up complete");
 		}
 
-		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all인 글만 볼 수 있다 */
+		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all 인 글만 볼 수 있다 */
+		@Disabled("due to not implementation of Open Type filtering - 북마크 3개 모두 조회되면 정상")
+		@Ultimate
 		@Test
 		void 다른_사람_북마크_목록_조회() {
 			//given
-			//when
-			final PageResult<GetBookmarksResult> otherBookmarkResults = bookmarkService.getOtherBookmarks(userId,
-				new OtherBookmarkSearchCond(profileId2, null, null, null, null, false, null, null));
-
-			//then
-			assertThat(otherBookmarkResults.getData()).hasSize(1)
-				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId1, "all"));
-		}
-
-		@Ultimate
-		@Test
-		void name() {
-			//given
 			final UltimateBookmarkFindCond findCond =
 				new UltimateBookmarkFindCond(userId, profileId2, null, false, null, false, null);
+			final Pageable pageable = defaultPageable();
 
 			//when
-			// bookmarkService.ultimateGetBookmarks(findCond, )
+			final Page<GetBookmarksResult> resultPage = bookmarkService.ultimateGetBookmarks(findCond, pageable);
+
+			//then
+			assertThat(resultPage.getContent()).hasSize(1)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
+				.containsExactly(tuple(bookmarkId1, "all"));
 
 		}
 
-		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial인 글을 볼 수 있다 */
+		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given

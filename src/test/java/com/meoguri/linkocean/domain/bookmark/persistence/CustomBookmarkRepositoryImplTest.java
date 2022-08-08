@@ -33,6 +33,7 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
+@Ultimate
 @Import(P6spyLogMessageFormatConfiguration.class)
 @DataJpaTest
 class CustomBookmarkRepositoryImplTest {
@@ -148,15 +149,16 @@ class CustomBookmarkRepositoryImplTest {
 		System.out.println("set up complete");
 	}
 
-	@Ultimate
 	@Nested
 	class 북마크_카테고리로_조회 {
 
-		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(profileId, Category.IT);
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.category(Category.IT)
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -172,11 +174,13 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(profileId, Category.IT);
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.category(Category.IT)
+				.build();
 			final Pageable pageable = likePageable();
 
 			//when
@@ -192,11 +196,14 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(profileId, Category.IT, "1");
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.category(Category.IT)
+				.title("1")
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -212,14 +219,15 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
-	@Ultimate
 	@Nested
 	class 북마크_즐겨찾기_조회 {
 
-		@Ultimate
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
-			final UltimateBookmarkFindCond findCond = ultimateFavoriteFindCond(profileId, "1");
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.title("1")
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -233,10 +241,13 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
-			final UltimateBookmarkFindCond findCond = ultimateFavoriteFindCond(profileId);
+			//given
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.favorite(true)
+				.build();
 			final Pageable pageable = likePageable();
 
 			// when
@@ -250,15 +261,16 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
-	@Ultimate
 	@Nested
 	class 북마크_태그로_조회 {
 
-		@Ultimate
 		@Test
 		void 북마크_태그로_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(profileId, List.of("tag1"));
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("tag1"))
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -274,12 +286,13 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
-
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(profileId, List.of("tag1"));
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("tag1"))
+				.build();
 			final Pageable pageable = likePageable();
 
 			//when
@@ -299,7 +312,11 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_태그로_조회_제목_필터링_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(profileId, List.of("tag1"), "1");
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("tag1"))
+				.title("1")
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -313,15 +330,15 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
-	@Ultimate
 	@Nested
 	class 북마크_기본_조회 {
 
-		@Ultimate
 		@Test
 		void 북마크_기본_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(profileId);
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -334,11 +351,12 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(profileId);
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.build();
 			final Pageable pageable = likePageable();
 
 			//when
@@ -351,11 +369,13 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(profileId, "1");
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.title("1")
+				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
