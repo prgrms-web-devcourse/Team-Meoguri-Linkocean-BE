@@ -20,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class UltimateBookmarkFindCond {
 
-	/* 현재 사용자의 프로필 id */
+	/* 현재 사용자의 프로필 id
+	   DTO 를 이용한 projection 사용 시 필요 - 아직은 사용하지 않는다 */
 	private final long currentUserProfileId;
 
 	/*작성자를 지정한 북마크 조회인 경우 대상 프로필 id

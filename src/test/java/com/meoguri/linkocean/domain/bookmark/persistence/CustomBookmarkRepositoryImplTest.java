@@ -21,11 +21,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
+import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -142,6 +144,8 @@ class CustomBookmarkRepositoryImplTest {
 		bookmarkId1 = savedBookmark1.getId();
 		bookmarkId2 = savedBookmark2.getId();
 		bookmarkId3 = savedBookmark3.getId();
+
+		System.out.println("set up complete");
 	}
 
 	@Nested
@@ -156,6 +160,26 @@ class CustomBookmarkRepositoryImplTest {
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
+
+			//then
+			assertThat(bookmarks).hasSize(2)
+				.extracting(Bookmark::getId, Bookmark::getCategory)
+				.containsExactly(
+					tuple(bookmarkId3, "IT"),
+					tuple(bookmarkId1, "IT")
+				);
+			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
+		}
+
+		@Ultimate
+		@Test
+		void name() {
+			//given
+			final UltimateBookmarkFindCond findCond = ultimateCond(Category.IT);
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -364,6 +388,15 @@ class CustomBookmarkRepositoryImplTest {
 
 	private BookmarkFindCond cond() {
 		return cond(null);
+	}
+
+	private UltimateBookmarkFindCond ultimateCond(final Category category, final boolean favorite,
+		final List<String> tags, final boolean follow, final String title) {
+		return new UltimateBookmarkFindCond(0, profile.getId(), category, favorite, tags, follow, title);
+	}
+
+	private UltimateBookmarkFindCond ultimateCond(final Category category) {
+		return new UltimateBookmarkFindCond(0, profile.getId(), category, false, null, false, null);
 	}
 
 	private PageRequest defaultPageable() {

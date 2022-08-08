@@ -117,6 +117,26 @@ public abstract class Querydsl4RepositorySupport {
 		return PageableExecutionUtils.getPage(content, pageable, () -> countResult.stream().count());
 	}
 
+	protected <T> Page<T> applyPagination(
+		Pageable pageable,
+		JPAQuery<T> jpaContentQuery,
+		Consumer<T> lazyLoader
+	) {
+		return applyPagination(pageable, jpaContentQuery, lazyLoader, jpaContentQuery);
+	}
+
+	protected <T> Page<T> applyPagination(
+		Pageable pageable,
+		JPAQuery<T> jpaContentQuery,
+		Consumer<T> lazyLoader,
+		JPAQuery<T> jpaCountQuery
+	) {
+		pageable = convertBookmarkSort(pageable);
+		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+		content.forEach(lazyLoader);
+		return PageableExecutionUtils.getPage(content, pageable, () -> jpaCountQuery.stream().count());
+	}
+
 	private Pageable convertBookmarkSort(Pageable pageable) {
 		return QPageRequest.of(
 			pageable.getPageNumber(),
