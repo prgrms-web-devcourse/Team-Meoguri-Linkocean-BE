@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 
 public interface CustomBookmarkRepository {
 
@@ -23,4 +24,7 @@ public interface CustomBookmarkRepository {
 
 	/* 기본 조회 */
 	Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, Pageable pageable);
+
+	/* 북마크 조회 */
+	Page<Bookmark> ultimateFindBookmarks(UltimateBookmarkFindCond findCond, Pageable pageable);
 }

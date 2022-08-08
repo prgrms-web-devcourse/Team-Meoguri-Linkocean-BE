@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -122,6 +123,13 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				),
 			Bookmark::getTagNames
 		);
+	}
+
+	//TODO 궁극의 북마크 조회 구현
+	@Override
+	public Page<Bookmark> ultimateFindBookmarks(final UltimateBookmarkFindCond findCond, final Pageable pageable) {
+
+		return null;
 	}
 
 	private BooleanExpression profileIdEq(final long profileId) {
