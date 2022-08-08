@@ -15,7 +15,9 @@ import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/login")
 @RestController
@@ -38,4 +40,5 @@ public class LoginController {
 	public Map<String, Object> loginSuccess(@AuthenticationPrincipal SecurityUser user) {
 		return Map.of("hasProfile", profileService.existsByUserId(user.getId()));
 	}
+
 }
