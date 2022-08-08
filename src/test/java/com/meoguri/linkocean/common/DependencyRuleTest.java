@@ -21,7 +21,6 @@ class DependencyRuleTest {
 
 	@Test
 	void 계층형_아키텍처_의존성_테스트() {
-
 		layeredArchitecture()
 			.layer("Configuration").definedBy("..configuration..")
 			.layer("Controller").definedBy("..controller..")
@@ -29,8 +28,7 @@ class DependencyRuleTest {
 			.layer("Persistence").definedBy("..persistence..")
 			.whereLayer("Controller").mayNotBeAccessedByAnyLayer()
 			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration", "Controller")
-			// TODO "컨트롤러 테스트시 영속성 계층을 직접 참조하는 부분을 리팩터링 하면 아래 주석을 풀어주세요"
-			// .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
+			.whereLayer("Persistence").mayOnlyBeAccessedByLayers("Controller", "Service")
 			.check(importPackages);
 	}
 
