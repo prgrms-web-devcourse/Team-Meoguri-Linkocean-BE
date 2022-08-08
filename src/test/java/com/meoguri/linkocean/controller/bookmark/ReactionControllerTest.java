@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 
@@ -35,7 +37,7 @@ class ReactionControllerTest extends BaseControllerTest {
 
 		/* "bookmarkId" from bookmarkService */
 		final long savedBookmarkId = bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(userId, 링크_메타데이터_얻기("http://www.naver.com"), "title", "memo", "인문", "all",
+			new RegisterBookmarkCommand(userId, 링크_메타데이터_얻기("http://www.naver.com"), "title", "memo", Category.IT, OpenType.ALL,
 				List.of("tag1", "tag2"))
 		);
 

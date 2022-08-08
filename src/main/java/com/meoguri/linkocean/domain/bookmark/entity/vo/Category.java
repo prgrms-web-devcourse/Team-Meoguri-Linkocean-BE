@@ -44,6 +44,10 @@ public enum Category {
 		return this.korName;
 	}
 
+	public static String toString(Category category) {
+		return category.korName;
+	}
+
 	public static Category of(String arg) {
 		return arg == null ? null : Arrays.stream(Category.values())
 			.filter(category -> category.korName.equals(arg))

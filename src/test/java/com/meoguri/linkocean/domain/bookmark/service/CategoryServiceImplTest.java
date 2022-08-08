@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -59,18 +60,18 @@ class CategoryServiceImplTest {
 	@Test
 	void 사용자가_작성한_북마크가있는_카테고리_조회_성공() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.naver.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.prgrms.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "www.daum.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.hello.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "사회", "www.linkocean.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "과학", "www.jacob.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.naver.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.prgrms.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.daum.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.SOCIAL, "www.hello.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.SOCIAL, "www.linkocean.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.HEALTH, "www.jacob.com"));
 
 		//when
 		final List<String> categories = categoryService.getUsedCategories(user.getId());
 
 		//then
-		assertThat(categories).contains("인문", "사회", "과학");
+		assertThat(categories).contains("IT", "사회", "건강");
 	}
 
 	@Test

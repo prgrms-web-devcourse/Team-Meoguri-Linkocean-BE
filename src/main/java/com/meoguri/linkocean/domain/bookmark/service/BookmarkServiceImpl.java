@@ -47,7 +47,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class BookmarkServiceImpl implements BookmarkService {
 
-	private TagService tagService;
+	private final TagService tagService;
 
 	private final BookmarkRepository bookmarkRepository;
 	private final ReactionRepository reactionRepository;

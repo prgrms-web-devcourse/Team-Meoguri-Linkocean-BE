@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +21,9 @@ public final class GetDetailedBookmarkResult {
 	private final String title;
 	private final String url;
 	private final String image;
-	private final String category;
+	private final Category category;
 	private final String memo;
-	private final String openType;
+	private final OpenType openType;
 	private final LocalDateTime updatedAt;
 
 	private final boolean isFavorite;

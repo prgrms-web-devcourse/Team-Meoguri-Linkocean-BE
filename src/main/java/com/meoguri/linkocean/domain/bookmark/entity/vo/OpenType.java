@@ -13,8 +13,8 @@ public enum OpenType {
 	/* 개인 공개 */
 	PRIVATE;
 
-	public String getName() {
-		return name().toLowerCase();
+	public static String toString(OpenType openType) {
+		return openType.name().toLowerCase();
 	}
 
 	public static OpenType of(String arg) {

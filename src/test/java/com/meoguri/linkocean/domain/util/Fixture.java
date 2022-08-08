@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
@@ -36,44 +38,35 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 
-		return createBookmark(createProfile(), createLinkMetadata(), "인문");
+		return createBookmark(createProfile(), createLinkMetadata(), null);
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata) {
 
-		return createBookmark(profile, linkMetadata, "title", "인문");
+		return createBookmark(profile, linkMetadata, "title", null);
 	}
 
-	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String category) {
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, Category category) {
 
 		return createBookmark(profile, linkMetadata, "title", category);
 	}
 
-	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category) {
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category) {
 
 		return createBookmark(profile, linkMetadata, title, category, "https://www.google.com",
 			Collections.emptyList());
 	}
 
-	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category,
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url) {
 		return createBookmark(profile, linkMetadata, title, category, url,
 			Collections.emptyList());
 	}
 
-	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, String category,
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url, List<Tag> tags) {
 
-		return Bookmark.builder()
-			.profile(profile)
-			.title(title)
-			.linkMetadata(linkMetadata)
-			.memo("dream company")
-			.openType("all")
-			.category(category)
-			.url(url)
-			.tags(tags)
-			.build();
+		return new Bookmark(profile, linkMetadata, title, "dream company", OpenType.ALL, category, url, tags);
 	}
 
 	public static LinkMetadata createLinkMetadata() {

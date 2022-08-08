@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 
@@ -95,9 +97,9 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.title").value(savedBookmark.getTitle()),
 				jsonPath("$.url").value(savedBookmark.getUrl()),
 				jsonPath("$.imageUrl").value(savedBookmark.getLinkMetadata().getImage()),
-				jsonPath("$.category").value(savedBookmark.getCategory()),
+				jsonPath("$.category").value(Category.toString(savedBookmark.getCategory())),
 				jsonPath("$.memo").value(savedBookmark.getMemo()),
-				jsonPath("$.openType").value(savedBookmark.getOpenType()),
+				jsonPath("$.openType").value(OpenType.toString(savedBookmark.getOpenType())),
 				jsonPath("$.isFavorite").value(false),
 				jsonPath("$.updatedAt").value(savedBookmark.getUpdatedAt().format(ofPattern("yyyy-MM-dd"))),
 				jsonPath("$.tags").isArray(),
@@ -147,7 +149,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[0].id").value(bookmark2.getId()),
 					jsonPath("$.bookmarks[0].title").value(bookmark2.getTitle()),
 					jsonPath("$.bookmarks[0].url").value(bookmark2.getUrl()),
-					jsonPath("$.bookmarks[0].openType").value(bookmark2.getOpenType()),
+					jsonPath("$.bookmarks[0].openType").value(OpenType.toString(bookmark2.getOpenType())),
 					jsonPath("$.bookmarks[0].updatedAt").value(bookmark2.getUpdatedAt().toLocalDate().toString()),
 					jsonPath("$.bookmarks[0].imageUrl").value(bookmark2.getLinkMetadata().getImage()),
 					jsonPath("$.bookmarks[0].likeCount").value(0),

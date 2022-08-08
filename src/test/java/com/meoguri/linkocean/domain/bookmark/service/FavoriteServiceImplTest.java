@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
@@ -100,7 +101,7 @@ class FavoriteServiceImplTest {
 	}
 
 	private RegisterBookmarkCommand command(final User user, final String url) {
-		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, "all", emptyList());
+		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, OpenType.ALL, emptyList());
 	}
 
 	private RegisterProfileCommand command(Profile profile) {
