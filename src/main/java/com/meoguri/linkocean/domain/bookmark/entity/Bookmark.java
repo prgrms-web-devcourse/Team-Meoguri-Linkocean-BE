@@ -46,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 public class Bookmark extends BaseIdEntity {
 
 	public static final int MAX_BOOKMARK_TITLE_LENGTH = 50;
+	public static final int MAX_TAGS_COUNT = 5;
 
 	@ManyToOne(fetch = LAZY)
 	private Profile profile;
@@ -125,7 +126,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	private void setBookmarkTags(List<Tag> tags) {
-		checkCondition(tags.size() <= 5);
+		checkCondition(tags.size() <= MAX_TAGS_COUNT);
 
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
