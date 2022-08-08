@@ -160,10 +160,16 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	/**
-	 * 좋아요 수 변경
+	 * 좋아요 수 + 1
 	 */
-	public void changeLikeCount(long likeCount) {
-		this.likeCount = likeCount;
+	public void addLikeOne() {
+		this.likeCount += 1;
 	}
 
+	/**
+	 * 좋아요 수 - 1
+	 */
+	public void subtractLikeOne() {
+		this.likeCount -= 1;
+	}
 }
