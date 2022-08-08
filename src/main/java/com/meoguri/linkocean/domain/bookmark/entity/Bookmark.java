@@ -92,7 +92,7 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	@Builder
 	private Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
-		final String openType, final String category, final String url) {
+		final String openType, final String category, final String url, final List<Tag> tags) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
@@ -103,17 +103,10 @@ public class Bookmark extends BaseIdEntity {
 		this.category = Category.of(category);
 		this.url = url;
 
+		setBookmarkTags(tags);
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
-	}
-
-	/**
-	 * Bookmark - BookmarkTag의 연관관계 편의 메서드
-	 */
-	public void addBookmarkTag(Tag tag) {
-		this.bookmarkTags.add(new BookmarkTag(this, tag));
-		checkCondition(this.bookmarkTags.size() <= 5);
 	}
 
 	/**
@@ -128,10 +121,10 @@ public class Bookmark extends BaseIdEntity {
 		this.category = Category.of(category);
 		this.openType = OpenType.of(openType);
 		this.updatedAt = now();
-		updateBookmarkTags(tags);
+		setBookmarkTags(tags);
 	}
 
-	private void updateBookmarkTags(List<Tag> tags) {
+	private void setBookmarkTags(List<Tag> tags) {
 		checkCondition(tags.size() <= 5);
 
 		this.bookmarkTags = tags.stream()
