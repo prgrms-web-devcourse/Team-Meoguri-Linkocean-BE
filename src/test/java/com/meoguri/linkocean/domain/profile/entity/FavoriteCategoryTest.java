@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 class FavoriteCategoryTest {
@@ -22,7 +22,7 @@ class FavoriteCategoryTest {
 		//then
 		assertThat(favoriteCategory).isNotNull()
 			.extracting(FavoriteCategory::getProfile, FavoriteCategory::getCategory)
-			.containsExactly(profile, Bookmark.Category.of(category));
+			.containsExactly(profile, Category.of(category));
 	}
 
 	@Test

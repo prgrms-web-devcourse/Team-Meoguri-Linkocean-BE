@@ -5,6 +5,7 @@ create table if not exists bookmark
     created_at       datetime(6)  not null,
     memo             longtext,
     open_type        varchar(50)  not null,
+    status           varchar(50)  not null,
     title            varchar(50),
     updated_at       datetime(6)  not null,
     link_metadata_id bigint,
