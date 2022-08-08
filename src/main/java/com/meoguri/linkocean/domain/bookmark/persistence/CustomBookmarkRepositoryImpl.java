@@ -164,12 +164,12 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private List<Long> getBookmarkIds(final List<String> tags) {
-		return tags != null ?
-			   select(bookmarkTag.bookmark.id).distinct()
-				   .from(bookmarkTag)
-				   .join(bookmarkTag.tag)
-				   .where(bookmarkTag.tag.name.in(tags))
-				   .fetch() : null;
+		return tags != null ? select(bookmarkTag.bookmark.id)
+			.distinct()
+			.from(bookmarkTag)
+			.join(bookmarkTag.tag)
+			.where(bookmarkTag.tag.name.in(tags))
+			.fetch() : null;
 	}
 
 	private BooleanBuilder profileIdEq(final long profileId) {
