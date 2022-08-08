@@ -101,7 +101,7 @@ class BookmarkServiceImplTest {
 	}
 
 	@Nested
-	class 북마크_CRUD_테스트 {
+	class 북마크_Crud_테스트 {
 
 		@Nested
 		class 북마크_등록 {
