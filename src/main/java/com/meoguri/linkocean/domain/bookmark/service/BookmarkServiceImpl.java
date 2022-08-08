@@ -2,8 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
-import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.util.Objects.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -22,18 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.MyBookmarkSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.OtherBookmarkSearchCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -186,57 +181,26 @@ public class BookmarkServiceImpl implements BookmarkService {
 		);
 	}
 
-	@Transactional(readOnly = true)
-	@Override
-	public Page<GetBookmarksResult> getMyBookmarks(final MyBookmarkSearchCond searchCond, final Pageable pageable) {
-		final Category searchCategory = Category.of(searchCond.getCategory());
-		final boolean searchFavorite = searchCond.isFavorite();
-		final List<String> searchTags = searchCond.getTags();
-
-		final Profile profile = findProfileByIdQuery.findById(searchCond.getProfileId());
-		final BookmarkFindCond findCond = searchCond.toFindCond(profile.getId());
-
-		final Page<Bookmark> bookmarkPage =
-			// Case 1 - 카테고리 필터링 조회
-			searchCategory != null ? bookmarkRepository.findByCategory(searchCategory, findCond, pageable) :
-			// Case 2 - 즐겨찾기 필터링 조회
-			searchFavorite ? bookmarkRepository.findFavoriteBookmarks(findCond, pageable) :
-			// Case 3 - 태그 필터링 조회
-			searchTags != null ? bookmarkRepository.findByTags(searchTags, findCond, pageable) :
-			// Case 4 - 기본 조회
-			bookmarkRepository.findBookmarks(findCond, pageable);
-
-		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
-		return toResultPage(bookmarkPage, isFavorites, pageable);
-	}
-
-	@Override
-	public PageResult<GetBookmarksResult> getOtherBookmarks(final long profileId, final OtherBookmarkSearchCond cond) {
-
-		if (nonNull(cond.getCategory())) {
-			/* 카테고리 필터링이 들어오면 즐겨찾기와 태그 필터링은 없어야한다. */
-			checkCondition(!cond.isFavorite() && isNull(cond.getTags()));
-			return null;
-		}
-
-		if (cond.isFavorite()) {
-			/* 즐겨찾기 필터링이 들어오면 카테고리와 태그 필터링은 없어야한다. */
-			checkCondition(isNull(cond.getTags()));
-			return null;
-		}
-
-		if (nonNull(cond.getTags())) {
-			/* 태그는 최대 3개 까지 필터링 가능하다 */
-			checkCondition(cond.getTags().size() <= 3);
-			return null;
-		}
-
-		return null;
-	}
-
 	@Override
 	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
 		return null;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<GetBookmarksResult> ultimateGetBookmarks(
+		final UltimateBookmarkFindCond findCond,
+		final Pageable pageable
+	) {
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
+
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+
+		final List<Boolean> isFavorites =
+			checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarkPage.getContent());
+		final List<Boolean> isWriters = new ArrayList<>(nCopies(bookmarkPage.getSize(), true)); // 일단 항상 true 로 전달
+
+		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
 	}
 
 	/**
@@ -249,6 +213,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
+		final List<Boolean> isWriter,
 		final Pageable pageable
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -266,7 +231,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmarks.get(i).getLikeCount(),
 				bookmarks.get(i).getLinkMetadata().getImage(),
-				true,        // 자신의 북마크 조회이므로 항상 참
+				isWriter.get(i),
 				bookmarks.get(i).getTagNames()
 			));
 		}
@@ -276,7 +241,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Optional<Long> getBookmarkToCheck(final long userId, String url) {
+	public Optional<Long> getBookmarkToCheck(final long userId, final String url) {
 		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
 		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndUrl(profile, url);
 

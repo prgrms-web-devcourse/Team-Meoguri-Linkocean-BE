@@ -15,6 +15,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+
 @Component
 public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -48,7 +50,7 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 			toInt(page, DEFAULT_PAGE),
 			toInt(size, DEFAULT_SIZE),
 			orderProperties,
-			category,
+			Category.of(category),
 			searchTitle,
 			toBoolean(favorite),
 			toBoolean(follow),

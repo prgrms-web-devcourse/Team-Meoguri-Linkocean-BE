@@ -32,12 +32,11 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.PageResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,35 +64,35 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.getMyBookmarks(
-			queryParams.toMySearchCond(user.getProfileId()),
-			queryParams.toPage()
+		return getBookmarks(user, user.getProfileId(), queryParams);
+	}
+
+	/**
+	 * 북마크 목록 조회
+	 */
+	@GetMapping("/others/{profileId}")
+	public PageResponse<GetBookmarksResponse> getBookmarks(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @PathVariable("profileId") long profileId,
+		final GetBookmarkQueryParams queryParams
+	) {
+		final Page<GetBookmarksResult> result = bookmarkService.ultimateGetBookmarks(
+			new UltimateBookmarkFindCond(
+				user.getId(),
+				profileId,
+				queryParams.getCategory(),
+				queryParams.isFavorite(),
+				queryParams.getTags(),
+				queryParams.isFollow(),
+				queryParams.getSearchTitle()
+			),
+			queryParams.toPageable()
 		);
 
 		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
 		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
-	}
-
-	/**
-	 * 다른 사람 북마크 목록 조회
-	 */
-	@GetMapping("/others/{profileId}")
-	public PageResponse<GetBookmarksResponse> getOtherBookmarks(
-		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long otherProfileId,
-		final GetBookmarkQueryParams queryParams
-	) {
-		final PageResult<GetBookmarksResult> result = bookmarkService.getOtherBookmarks(user.getId(),
-			queryParams.toOtherSearchCond(otherProfileId));
-
-		final List<GetBookmarksResponse> response = result.getData()
-			.stream()
-			.map(GetBookmarksResponse::of)
-			.collect(toList());
-
-		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/**
