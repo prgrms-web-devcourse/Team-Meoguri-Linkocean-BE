@@ -106,7 +106,7 @@ public class Bookmark extends BaseIdEntity {
 		this.memo = memo;
 		this.openType = OpenType.of(openType);
 		this.category = Category.of(category);
-		this.status = BookmarkStatus.ACTIVATED;
+		this.status = BookmarkStatus.REGISTERED;
 		this.url = url;
 
 		setBookmarkTags(tags);
