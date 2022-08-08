@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -47,7 +48,6 @@ import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @SpringBootTest
 @Transactional
@@ -139,7 +139,7 @@ class BookmarkServiceImplTest {
 		final RegisterBookmarkCommand command = command(invalidId, url);
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> bookmarkService.registerBookmark(command));
 	}
 
@@ -221,7 +221,7 @@ class BookmarkServiceImplTest {
 			);
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.updateBookmark(command));
 		}
 
@@ -240,7 +240,7 @@ class BookmarkServiceImplTest {
 			);
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.updateBookmark(command));
 		}
 
@@ -264,7 +264,7 @@ class BookmarkServiceImplTest {
 			);
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.updateBookmark(command));
 		}
 	}
@@ -298,7 +298,7 @@ class BookmarkServiceImplTest {
 			final long invalidBookmarkId = 10L;
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.removeBookmark(userId, invalidBookmarkId));
 		}
 
@@ -312,7 +312,7 @@ class BookmarkServiceImplTest {
 			profileRepository.save(anotherProfile);
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.removeBookmark(anotherUser.getId(), bookmark.getId()));
 		}
 
@@ -422,7 +422,7 @@ class BookmarkServiceImplTest {
 			final long invalidBookmarkId = 10L;
 
 			//when then
-			assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
 		}
 	}

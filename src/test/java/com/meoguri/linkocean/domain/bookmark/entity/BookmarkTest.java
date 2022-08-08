@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -14,7 +15,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 class BookmarkTest {
 
@@ -121,7 +121,7 @@ class BookmarkTest {
 		);
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> Bookmark.builder()
 				.profile(createProfile())
 				.title("title")
@@ -190,7 +190,7 @@ class BookmarkTest {
 			new Tag("tag6"));
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> bookmark.update(updatedTitle, updatedMemo, category, openType, tags));
 	}
 }

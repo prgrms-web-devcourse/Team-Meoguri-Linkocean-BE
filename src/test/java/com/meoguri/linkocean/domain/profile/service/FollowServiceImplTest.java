@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,7 +15,6 @@ import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Transactional
 @SpringBootTest
@@ -92,7 +92,7 @@ class FollowServiceImplTest {
 		// no follow exists
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> followService.unfollow(command));
 	}
 }

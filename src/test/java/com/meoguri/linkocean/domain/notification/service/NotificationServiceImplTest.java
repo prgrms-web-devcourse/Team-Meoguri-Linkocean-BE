@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.notification.service;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -28,7 +29,6 @@ import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Transactional
 @SpringBootTest
@@ -119,7 +119,7 @@ class NotificationServiceImplTest {
 		);
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> notificationService.shareNotification(command));
 	}
 
@@ -133,7 +133,7 @@ class NotificationServiceImplTest {
 		);
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> notificationService.shareNotification(command));
 	}
 }
