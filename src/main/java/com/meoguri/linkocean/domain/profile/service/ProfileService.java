@@ -15,10 +15,10 @@ public interface ProfileService {
 	long registerProfile(RegisterProfileCommand command);
 
 	/* 내 프로필 조회 */
-	GetMyProfileResult getMyProfile(long userId);
+	GetMyProfileResult getMyProfile(long profileId);
 
 	/* 프로필 상세 조회 */
-	GetDetailedProfileResult getByProfileId(long userId, long profileId);
+	GetDetailedProfileResult getByProfileId(long currentProfileId, long targetProfileId);
 
 	/* 프로필 업데이트 */
 	void updateProfile(UpdateProfileCommand command);

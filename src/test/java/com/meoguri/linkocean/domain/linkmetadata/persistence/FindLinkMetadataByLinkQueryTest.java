@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Import(FindLinkMetadataByUrlQuery.class)
 @DataJpaTest
@@ -37,7 +37,7 @@ class FindLinkMetadataByLinkQueryTest {
 	@Test
 	void 존재하지_않는_url_조회() {
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> findLinkMetadataByUrlQuery.findByUrl("invalid.com"));
 	}
 }

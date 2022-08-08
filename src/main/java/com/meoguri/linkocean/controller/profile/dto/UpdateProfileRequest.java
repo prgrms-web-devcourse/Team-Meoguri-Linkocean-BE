@@ -14,8 +14,8 @@ public final class UpdateProfileRequest {
 	private List<String> categories;
 	private String bio;
 
-	public UpdateProfileCommand toCommand(final long userId, final String image) {
-		return new UpdateProfileCommand(userId, username, image, bio, categories);
+	public UpdateProfileCommand toCommand(final long profileId, final String image) {
+		return new UpdateProfileCommand(profileId, username, image, bio, categories);
 	}
 
 }

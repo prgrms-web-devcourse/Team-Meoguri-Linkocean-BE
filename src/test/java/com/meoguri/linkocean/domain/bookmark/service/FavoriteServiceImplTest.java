@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -20,7 +21,6 @@ import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Transactional
 @SpringBootTest
@@ -95,7 +95,7 @@ class FavoriteServiceImplTest {
 
 	@Test
 	void 즐겨찾기_해제_실패_즐겨찾기로_추가되어_있지_않음() {
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> favoriteService.unfavorite(userId, bookmarkId));
 	}
 

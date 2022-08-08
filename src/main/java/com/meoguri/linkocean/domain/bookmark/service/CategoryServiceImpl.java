@@ -10,7 +10,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,12 +20,11 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private final BookmarkRepository bookmarkRepository;
 
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public List<String> getMyUsedCategories(final long userId) {
-		final Profile writer = findProfileByUserIdQuery.findByUserId(userId);
+	public List<String> getMyUsedCategories(final long profileId) {
+		final Profile writer = findProfileByIdQuery.findById(profileId);
 
 		return convert(writer);
 	}

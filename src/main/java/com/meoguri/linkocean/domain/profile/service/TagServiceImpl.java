@@ -15,7 +15,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 
 import lombok.RequiredArgsConstructor;
@@ -27,12 +26,12 @@ public class TagServiceImpl implements TagService {
 
 	private final BookmarkRepository bookmarkRepository;
 
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public List<GetProfileTagsResult> getMyTags(final long userId) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
+	public List<GetProfileTagsResult> getMyTags(final long profileId) {
+		final Profile profile = findProfileByIdQuery.findById(profileId);
+
 		return convert(profile);
 	}
 
@@ -50,7 +49,7 @@ public class TagServiceImpl implements TagService {
 		return getResult(tagCountMap);
 	}
 
-	/* 북마크를 순회하며 태그별 북마크 카운트 맵 생성*/
+	/* 북마크를 순회하며 태그별 북마크 카운트 맵 생성 */
 	private Map<String, Integer> getTagCountMap(final List<Bookmark> bookmarks) {
 		final Map<String, Integer> result = new HashMap<>();
 		bookmarks.stream()

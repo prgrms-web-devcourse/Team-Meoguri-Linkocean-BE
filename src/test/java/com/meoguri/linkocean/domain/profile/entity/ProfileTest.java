@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -26,6 +27,16 @@ class ProfileTest {
 		assertThat(profile).isNotNull()
 			.extracting(Profile::getUser, Profile::getUsername)
 			.containsExactly(user, username);
+	}
+
+	@Test
+	void user가_null인_경우_프로필_생성_실패() {
+		//given
+		User nullUser = null;
+
+		//when then
+		assertThatLinkoceanRuntimeException()
+			.isThrownBy(() -> new Profile(nullUser, "crush"));
 	}
 
 	@ParameterizedTest

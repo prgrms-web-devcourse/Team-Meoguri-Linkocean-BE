@@ -8,6 +8,7 @@ import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,11 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자와 관련된 정보를 저장하는 엔티티
+ * - username은 필수 값이다.
+ * - bio(자기 소개), image(프로필 이미지)는 없어도 된다.
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
@@ -54,6 +60,7 @@ public class Profile extends BaseIdEntity {
 	 * 회원 가입시 사용하는 생성자
 	 */
 	public Profile(final User user, final String username) {
+		checkCondition(Objects.nonNull(user));
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
 		this.user = user;
