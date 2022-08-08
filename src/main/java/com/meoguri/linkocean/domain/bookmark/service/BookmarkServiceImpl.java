@@ -241,12 +241,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public Optional<Long> getBookmarkToCheck(final long profileId, final String url) {
-		final Profile profile = findProfileByIdQuery.findById(profileId);
-		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndUrl(profile, url);
-
-		if (oBookmark.isPresent()) {
-			return Optional.of(profile.getId());
-		}
-		return Optional.empty();
+		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
 	}
 }
