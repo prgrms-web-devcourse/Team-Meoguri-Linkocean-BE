@@ -34,7 +34,6 @@ public class ReactionServiceImpl implements ReactionService {
 		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 
 		updateBookmarkReaction(profile, bookmark, requestReactionType);
-		updateBookmarkLikeCount(bookmark);
 	}
 
 	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
@@ -45,19 +44,32 @@ public class ReactionServiceImpl implements ReactionService {
 			reaction -> {
 				ReactionType existedReactionType = ReactionType.of(reaction.getType());
 
+				if (existedReactionType == ReactionType.LIKE) {
+					bookmark.subtractLikeOne();
+				}
+
 				/* 기존의 리액션 타입이 요청 리액션 타입과 같은경우 */
 				if (existedReactionType == requestReactionType) {
 					cancelReaction(profile, bookmark, existedReactionType);
-
 				/* 기존의 리액션이 요청과 다른경우 */
 				} else {
 					reaction.changeTypeTo(requestReactionType);
+
+					if (existedReactionType == ReactionType.HATE && requestReactionType == ReactionType.LIKE) {
+						bookmark.addLikeOne();
+					}
+
 				}
 			},
 
 			/* 리액션이 존재하지 않은 경우 */
 			() -> {
 				addReaction(profile, bookmark, requestReactionType);
+
+				if (requestReactionType == ReactionType.LIKE) {
+					bookmark.addLikeOne();
+				}
+
 			}
 		);
 	}
@@ -71,10 +83,5 @@ public class ReactionServiceImpl implements ReactionService {
 		final boolean isDeleted
 			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;
 		checkCondition(isDeleted);
-	}
-
-	private void updateBookmarkLikeCount(Bookmark bookmark) {
-		final long likeCount = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
-		bookmark.changeLikeCount(likeCount);
 	}
 }
