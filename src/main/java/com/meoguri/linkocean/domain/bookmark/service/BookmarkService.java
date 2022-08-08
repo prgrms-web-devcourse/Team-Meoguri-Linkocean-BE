@@ -41,5 +41,5 @@ public interface BookmarkService {
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
 
 	/* 중복Url 확인 */
-	Optional<Bookmark> getBookmarkToCheck(long userId, String url);
+	Optional<Long> getBookmarkToCheck(long userId, String url);
 }
