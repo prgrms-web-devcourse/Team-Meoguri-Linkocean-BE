@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
-import static com.meoguri.linkocean.util.JoinInfoListBuilder.Initializer.*;
+import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 
 import java.util.List;
 
@@ -58,11 +58,12 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 	private BooleanBuilder followerOfUsername(long profileId, String username) {
 
 		return nullSafeBuilder(() -> profile.in(
-			joinIf(select(follow.follower)
+			joinIf(
+				username != null,
+				select(follow.follower)
 					.from(follow),
-				() -> join(follow.follower, profile),
-				on(follow.follower.id.eq(profile.id)),
-				when(username != null)
+				() -> join(follow.follower, profile)
+					.on(follow.follower.id.eq(profile.id))
 			).where(
 				follow.followee.id.eq(profileId),
 				usernameLike(username)
@@ -73,11 +74,12 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 	private BooleanBuilder followeeOfUsername(long profileId, String username) {
 
 		return nullSafeBuilder(() -> profile.in(
-			joinIf(select(follow.followee)
+			joinIf(
+				username != null,
+				select(follow.followee)
 					.from(follow),
-				() -> join(follow.followee, profile),
-				on(follow.followee.id.eq(profile.id)),
-				when(username != null)
+				() -> join(follow.followee, profile)
+					.on(follow.followee.id.eq(profile.id))
 			).where(
 				follow.follower.id.eq(profileId),
 				usernameLike(username)

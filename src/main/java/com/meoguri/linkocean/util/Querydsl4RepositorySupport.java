@@ -3,7 +3,6 @@ package com.meoguri.linkocean.util;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -158,47 +157,39 @@ public abstract class Querydsl4RepositorySupport {
 	 * 동적 join 을 지원하기 위한 유틸리티 메서드
 	 */
 	protected static <T> JPQLQuery<T> joinIf(
+		final boolean expression,
 		JPQLQuery<T> base,
-		final Supplier<JoinInfoListBuilder> joinInfoListBuilder,
-		final List<Predicate> on,
-		final boolean when
+		final Supplier<JoinInfoBuilder> joinInfoBuilder
 	) {
 
-		if (when) {
-			final List<JoinInfo> joinInfoList = joinInfoListBuilder.get().build();
-			for (JoinInfo joinInfo : joinInfoList) {
+		if (expression) {
+			final JoinInfoBuilder joinInfo = joinInfoBuilder.get().build();
 
-				if (joinInfo.joinType == 1) {
-					base = base.join(joinInfo.targetEntityPath);
-				} else if (joinInfo.joinType == 2) {
-					base = base.join(joinInfo.targetEntityPath, joinInfo.alias);
-				} else if (joinInfo.joinType == 3) {
-					base = base.join(joinInfo.targetCollection);
-				} else if (joinInfo.joinType == 4) {
-					base = base.join(joinInfo.targetCollection, joinInfo.alias);
-				} else if (joinInfo.joinType == 5) {
-					base = base.join(joinInfo.targetMap);
-				} else if (joinInfo.joinType == 6) {
-					base = base.join(joinInfo.targetMap, joinInfo.alias);
+			for (Join join : joinInfo.joinList) {
+				if (join.joinType == 1) {
+					base = base.join(join.targetEntityPath);
+				} else if (join.joinType == 2) {
+					base = base.join(join.targetEntityPath, join.alias);
+				} else if (join.joinType == 3) {
+					base = base.join(join.targetCollection);
+				} else if (join.joinType == 4) {
+					base = base.join(join.targetCollection, join.alias);
+				} else if (join.joinType == 5) {
+					base = base.join(join.targetMap);
+				} else if (join.joinType == 6) {
+					base = base.join(join.targetMap, join.alias);
 				}
 
-				if (joinInfo.isFetchJoin) {
+				if (join.isFetchJoin) {
 					base = base.fetchJoin();
 				}
 			}
 
-			base = base.on(on.toArray(Predicate[]::new));
+			if (joinInfo.on) {
+				base = base.on(joinInfo.condition.toArray(Predicate[]::new));
+			}
 		}
 		return base;
-	}
-
-	protected static boolean when(final boolean cond) {
-		return cond;
-	}
-
-	protected static List<Predicate> on(final Predicate... condition) {
-
-		return Arrays.asList(condition);
 	}
 
 }

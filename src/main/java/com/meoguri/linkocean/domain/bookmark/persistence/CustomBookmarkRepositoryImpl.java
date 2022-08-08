@@ -4,7 +4,6 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
-import static com.meoguri.linkocean.util.QueryDslUtil.*;
 
 import java.util.List;
 

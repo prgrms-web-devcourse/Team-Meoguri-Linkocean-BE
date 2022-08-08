@@ -9,7 +9,7 @@ import com.querydsl.core.types.Path;
  * JPAQueryBase의 join의 파라미터 정보를 담는 클래스
  * @see com.querydsl.jpa.JPAQueryBase
  */
-public class JoinInfo {
+public class Join {
 
 	EntityPath targetEntityPath;
 
@@ -19,38 +19,39 @@ public class JoinInfo {
 
 	Path alias;
 
+	// 페치 조인 여부
 	boolean isFetchJoin;
 
 	int joinType;
 
-	public JoinInfo(EntityPath target) {
+	public Join(EntityPath target) {
 		this.targetEntityPath = target;
 		this.joinType = 1;
 	}
 
-	public JoinInfo(EntityPath target, Path alias) {
+	public Join(EntityPath target, Path alias) {
 		this.targetEntityPath = target;
 		this.alias = alias;
 		this.joinType = 2;
 	}
 
-	public JoinInfo(CollectionExpression target) {
+	public Join(CollectionExpression target) {
 		this.targetCollection = target;
 		this.joinType = 3;
 	}
 
-	public JoinInfo(CollectionExpression target, Path alias) {
+	public Join(CollectionExpression target, Path alias) {
 		this.targetCollection = target;
 		this.alias = alias;
 		this.joinType = 4;
 	}
 
-	public JoinInfo(MapExpression target) {
+	public Join(MapExpression target) {
 		this.targetMap = target;
 		this.joinType = 5;
 	}
 
-	public JoinInfo(MapExpression target, Path alias) {
+	public Join(MapExpression target, Path alias) {
 		this.targetMap = target;
 		this.alias = alias;
 		this.joinType = 6;
