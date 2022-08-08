@@ -103,7 +103,7 @@ public class ProfileController {
 		final GetProfileQueryParams queryParams
 	) {
 		final List<SearchProfileResult> results =
-			profileService.searchProfilesByUsername(queryParams.toSearchCond(user.getId()));
+			profileService.searchProfilesByUsername(queryParams.toSearchCond(user.getProfileId()));
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
@@ -119,7 +119,7 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
+		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
 		final List<SearchProfileResult> results = profileService.searchFollowerProfiles(cond, profileId);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -136,7 +136,7 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final ProfileSearchCond cond = queryParams.toSearchCond(user.getId());
+		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
 		final List<SearchProfileResult> results = profileService.searchFolloweeProfiles(cond, profileId);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());

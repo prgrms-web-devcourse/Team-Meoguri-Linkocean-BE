@@ -11,7 +11,7 @@ public final class GetProfileQueryParams {
 	private final int size;
 	private final String username;
 
-	public ProfileSearchCond toSearchCond(final long userId) {
-		return new ProfileSearchCond(userId, page, size, username);
+	public ProfileSearchCond toSearchCond(final long profileId) {
+		return new ProfileSearchCond(profileId, page, size, username);
 	}
 }
