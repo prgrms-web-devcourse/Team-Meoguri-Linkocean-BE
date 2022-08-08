@@ -164,7 +164,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
@@ -173,7 +173,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.removeBookmark(user.getId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 
 	@GetMapping
