@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 
@@ -27,6 +28,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -206,8 +208,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 			// Case 4 - 기본 조회
 			bookmarkRepository.findBookmarks(findCond, pageable);
 
-		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile, bookmarkPage.getContent());
-		return toResultPage(bookmarkPage, isFavorites, pageable);
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(profile.getId(), bookmarkPage.getContent());
+		final List<Boolean> isWriters = new ArrayList<>(nCopies(bookmarkPage.getSize(), true)); // 일단 항상 true 로 전달
+
+		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
 	}
 
 	@Override
@@ -239,6 +243,23 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return null;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public Page<GetBookmarksResult> ultimateGetBookmarks(
+		final UltimateBookmarkFindCond findCond,
+		final Pageable pageable
+	) {
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
+
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+
+		final List<Boolean> isFavorites =
+			checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarkPage.getContent());
+		final List<Boolean> isWriters = new ArrayList<>(nCopies(bookmarkPage.getSize(), true)); // 일단 항상 true 로 전달
+
+		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
+	}
+
 	/**
 	 * 북마크 페이지를 즐겨찾기 여부를 포함한 북마크 조회 결과 페이지로 전환 한다
 	 * @param bookmarkPage   북마크 페이지를
@@ -249,6 +270,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
+		final List<Boolean> isWriter,
 		final Pageable pageable
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -266,7 +288,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmarks.get(i).getLikeCount(),
 				bookmarks.get(i).getLinkMetadata().getImage(),
-				true,        // 자신의 북마크 조회이므로 항상 참
+				isWriter.get(i),
 				bookmarks.get(i).getTagNames()
 			));
 		}

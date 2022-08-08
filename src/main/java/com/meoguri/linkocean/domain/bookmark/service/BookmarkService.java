@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -32,12 +33,14 @@ public interface BookmarkService {
 	/* 내 북마크 목록 */
 	Page<GetBookmarksResult> getMyBookmarks(MyBookmarkSearchCond searchCond, Pageable pageable);
 
-	// TODO - 구현
 	/* 다른 사람 북마크 목록 */
 	PageResult<GetBookmarksResult> getOtherBookmarks(long profileId, OtherBookmarkSearchCond searchCond);
 
 	/* 피드 북마크 목록 */
 	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
+
+	/* 궁극의 북마크 조회 */
+	Page<GetBookmarksResult> ultimateGetBookmarks(UltimateBookmarkFindCond findCond, Pageable pageable);
 
 	/* 중복Url 확인 */
 	boolean checkDuplicatedUrl(long userId, String url);
