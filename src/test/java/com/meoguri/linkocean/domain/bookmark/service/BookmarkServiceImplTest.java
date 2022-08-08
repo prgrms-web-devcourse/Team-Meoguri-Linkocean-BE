@@ -29,6 +29,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
@@ -293,7 +294,7 @@ class BookmarkServiceImplTest {
 				em.clear();
 
 				final Optional<Bookmark> updatedBookmark = bookmarkRepository.findById(bookmark.getId());
-				assertThat(updatedBookmark).isEmpty();
+				assertThat(updatedBookmark.get().getStatus()).isEqualTo(BookmarkStatus.REMOVED);
 			}
 
 			@Test
