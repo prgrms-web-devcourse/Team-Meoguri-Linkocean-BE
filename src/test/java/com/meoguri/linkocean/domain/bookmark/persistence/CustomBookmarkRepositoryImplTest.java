@@ -156,7 +156,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT);
+			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(Category.IT);
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -176,7 +176,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT);
+			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(Category.IT);
 			final Pageable pageable = likePageable();
 
 			//when
@@ -196,7 +196,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
-			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT, "1");
+			final UltimateBookmarkFindCond findCond = ultimateCategoryFindCond(Category.IT, "1");
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -250,18 +250,19 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
+	@Ultimate
 	@Nested
 	class 북마크_태그로_조회 {
 
+		@Ultimate
 		@Test
 		void 북마크_태그로_조회_성공() {
 			//given
-			final List<String> searchTags = List.of("tag1");
-			final BookmarkFindCond findCond = cond();
+			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(List.of("tag1"));
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -273,15 +274,16 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
+
 			//given
-			final List<String> searchTags = List.of("tag1");
-			final BookmarkFindCond findCond = cond();
+			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(List.of("tag1"));
 			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -293,15 +295,15 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_태그로_조회_제목_필터링_성공() {
 			//given
-			final List<String> searchTags = List.of("tag1");
-			final BookmarkFindCond findCond = cond("1");
+			final UltimateBookmarkFindCond findCond = ultimateTagFindCond(List.of("tag1"), "1");
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTags(searchTags, findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -372,11 +374,11 @@ class CustomBookmarkRepositoryImplTest {
 		return cond(null);
 	}
 
-	private UltimateBookmarkFindCond ultimateFindCond(final Category category) {
-		return ultimateFindCond(category, null);
+	private UltimateBookmarkFindCond ultimateCategoryFindCond(final Category category) {
+		return ultimateCategoryFindCond(category, null);
 	}
 
-	private UltimateBookmarkFindCond ultimateFindCond(final Category category, final String title) {
+	private UltimateBookmarkFindCond ultimateCategoryFindCond(final Category category, final String title) {
 		return new UltimateBookmarkFindCond(0, profile.getId(), category, false, null, false, title);
 	}
 
@@ -386,6 +388,14 @@ class CustomBookmarkRepositoryImplTest {
 
 	private UltimateBookmarkFindCond ultimateFavoriteFindCond() {
 		return ultimateFavoriteFindCond(null);
+	}
+
+	private UltimateBookmarkFindCond ultimateTagFindCond(final List<String> tags, final String title) {
+		return new UltimateBookmarkFindCond(0, profile.getId(), null, false, tags, false, title);
+	}
+
+	private UltimateBookmarkFindCond ultimateTagFindCond(final List<String> tags) {
+		return ultimateTagFindCond(tags, null);
 	}
 
 	private PageRequest defaultPageable() {
