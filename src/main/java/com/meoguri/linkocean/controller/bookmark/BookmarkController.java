@@ -153,7 +153,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getId(), bookmarkId);
+		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId);
 		return GetDetailedBookmarkResponse.of(result);
 	}
 
