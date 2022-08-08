@@ -101,24 +101,21 @@ class BookmarkServiceImplTest {
 	}
 
 	@Nested
-	class 북마크_Crud_테스트 {
+	class 북마크_등록 {
+		@Test
+		void 북마크_등록_성공() {
+			//given
+			final RegisterBookmarkCommand command =
 
-		@Nested
-		class 북마크_등록 {
-			@Test
-			void 북마크_등록_성공() {
-				//given
-				final RegisterBookmarkCommand command =
+				new RegisterBookmarkCommand(userId, url, "title", "memo", "인문", "all", List.of("tag1", "tag2"));
 
-					new RegisterBookmarkCommand(userId, url, "title", "memo", "인문", "all", List.of("tag1", "tag2"));
+			//when
+			final long savedBookmarkId = bookmarkService.registerBookmark(command);
 
-				//when
-				final long savedBookmarkId = bookmarkService.registerBookmark(command);
+			em.flush();
+			em.clear();
 
-				em.flush();
-				em.clear();
-
-				//then
+			//then
 				final Optional<Bookmark> oBookmark = bookmarkRepository.findById(savedBookmarkId);
 				assertThat(oBookmark).isPresent().get()
 					.extracting(
@@ -438,7 +435,7 @@ class BookmarkServiceImplTest {
 		private RegisterBookmarkCommand command(long userId, final String url) {
 			return new RegisterBookmarkCommand(userId, url, null, null, null, "all", emptyList());
 		}
-	}
+
 
 	@Ultimate
 	@Nested
@@ -542,11 +539,11 @@ class BookmarkServiceImplTest {
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
-		final boolean duplicated = bookmarkService.checkDuplicatedUrl(userId, bookmark.getUrl());
-		final boolean notDuplicated = bookmarkService.checkDuplicatedUrl(userId, "https://www.does.not.exist");
+		final Optional<Long> duplicated = bookmarkService.getBookmarkToCheck(userId, bookmark.getUrl());
+		final Optional<Long> notDuplicated = bookmarkService.getBookmarkToCheck(userId, "https://www.does.not.exist");
 
 		//then
-		assertThat(duplicated).isTrue();
-		assertThat(notDuplicated).isFalse();
+		assertThat(duplicated).isPresent().get().isEqualTo(bookmark.getId());
+		assertThat(notDuplicated).isEmpty();
 	}
 }

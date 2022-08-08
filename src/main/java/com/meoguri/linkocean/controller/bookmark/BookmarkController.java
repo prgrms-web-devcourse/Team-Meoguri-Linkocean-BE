@@ -7,6 +7,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -164,7 +165,7 @@ public class BookmarkController {
 		final @RequestBody UpdateBookmarkRequest request,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.updateBookmark(request.toCommand(user.getId(), bookmarkId));
+		bookmarkService.updateBookmark(request.toCommand(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 삭제 */
@@ -173,7 +174,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		bookmarkService.removeBookmark(user.getId(), bookmarkId);
+		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 
 	@GetMapping
@@ -181,14 +182,14 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
-		final boolean isDuplicated = bookmarkService.checkDuplicatedUrl(user.getId(), url);
+		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkToCheck(user.getId(), url);
+
 		HttpHeaders headers = new HttpHeaders();
 
-		//TODO: haeder에 bookmarkid 반환
-		if (isDuplicated) {
-			headers.setLocation(URI.create(url));
-		}
+		oBookmarkId.ifPresent(bookmarkId -> {
+			headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId));
+		});
 
-		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", isDuplicated));
+		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
 	}
 }

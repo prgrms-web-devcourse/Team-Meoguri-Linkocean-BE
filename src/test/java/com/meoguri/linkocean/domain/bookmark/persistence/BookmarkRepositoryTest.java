@@ -188,19 +188,21 @@ class BookmarkRepositoryTest {
 		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "https://www.google.com"));
 
 		//when
-		final boolean isExist = bookmarkRepository.existsByProfileAndUrl(profile, "https://www.google.com");
+		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
+			"https://www.google.com");
 
 		//then
-		assertThat(isExist).isTrue();
+		assertThat(sameUrlBookmark).isPresent();
 	}
 
 	@Test
 	void Url_검색시_해당_Url_없음() {
 
 		//when
-		final boolean isExist = bookmarkRepository.existsByProfileAndUrl(profile, "https://www.linkocean.com");
+		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
+			"https://www.google.com");
 
 		//then
-		assertThat(isExist).isFalse();
+		assertThat(sameUrlBookmark).isEmpty();
 	}
 }
