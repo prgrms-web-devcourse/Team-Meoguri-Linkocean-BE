@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 
 import lombok.Getter;
@@ -19,7 +19,7 @@ public final class GetBookmarkQueryParams {
 	private final int page;
 	private final int size;
 	private final List<String> orderProperties;
-	private final Bookmark.Category category;
+	private final Category category;
 	private final String searchTitle;
 
 	private final boolean favorite;

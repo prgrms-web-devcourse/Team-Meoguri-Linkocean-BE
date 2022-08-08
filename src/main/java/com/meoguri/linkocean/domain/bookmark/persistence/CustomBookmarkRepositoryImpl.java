@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
@@ -13,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
