@@ -157,7 +157,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			base.where(
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
-				profileIdEq(targetProfileId),
+				// profileIdEq(targetProfileId),
 				titleContains(title)
 			),
 			Bookmark::getTagNames

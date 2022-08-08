@@ -95,7 +95,7 @@ public class JoinInfoBuilder {
 	}
 
 	public JoinInfoBuilder on(final Predicate... condition) {
-		this.on = on;
+		this.on = true;
 		this.condition = Arrays.asList(condition);
 		return this;
 	}

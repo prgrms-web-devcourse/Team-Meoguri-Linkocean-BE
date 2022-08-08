@@ -148,34 +148,15 @@ class CustomBookmarkRepositoryImplTest {
 		System.out.println("set up complete");
 	}
 
+	@Ultimate
 	@Nested
 	class 북마크_카테고리로_조회 {
 
+		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_성공() {
 			//given
-			final Category findCategory = Category.IT;
-			final BookmarkFindCond findCond = cond();
-			final Pageable pageable = defaultPageable();
-
-			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
-
-			//then
-			assertThat(bookmarks).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getCategory)
-				.containsExactly(
-					tuple(bookmarkId3, "IT"),
-					tuple(bookmarkId1, "IT")
-				);
-			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
-		}
-
-		@Ultimate
-		@Test
-		void name() {
-			//given
-			final UltimateBookmarkFindCond findCond = ultimateCond(Category.IT);
+			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT);
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -191,30 +172,11 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
-			final Category findCategory = Category.IT;
-			final BookmarkFindCond findCond = cond();
-			final Pageable pageable = likePageable();
-
-			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, findCond, pageable);
-
-			//then
-			assertThat(bookmarks).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getCategory)
-				.containsExactly(
-					tuple(bookmarkId1, "IT"),
-					tuple(bookmarkId3, "IT")
-				);
-			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
-		}
-
-		@Test
-		void name1() {
-			//given
-			final UltimateBookmarkFindCond findCond = ultimateCond(Category.IT);
+			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT);
 			final Pageable pageable = likePageable();
 
 			//when
@@ -230,30 +192,11 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
-			final Category findCategory = Category.IT;
-			final BookmarkFindCond cond = cond("1");
-			final Pageable pageable = defaultPageable();
-
-			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByCategory(findCategory, cond, pageable);
-
-			//then
-			assertThat(bookmarks).hasSize(1)
-				.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
-				.containsExactly(
-					tuple(bookmarkId1, "IT", "title1")
-				);
-			assertThat(bookmarks.getTotalElements()).isEqualTo(1);
-		}
-
-		@Ultimate
-		@Test
-		void name2() {
-			//given
-			final UltimateBookmarkFindCond findCond = ultimateCond(Category.IT, "1");
+			final UltimateBookmarkFindCond findCond = ultimateFindCond(Category.IT, "1");
 			final Pageable pageable = defaultPageable();
 
 			//when
@@ -269,17 +212,18 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
+	@Ultimate
 	@Nested
 	class 북마크_즐겨찾기_조회 {
 
+		@Ultimate
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
-			//given
-			final BookmarkFindCond cond = cond("1");
+			final UltimateBookmarkFindCond findCond = ultimateFavoriteFindCond("1");
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findFavoriteBookmarks(cond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -289,14 +233,14 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
 
+		@Ultimate
 		@Test
 		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
-			//given
-			final BookmarkFindCond findCond = cond();
+			final UltimateBookmarkFindCond findCond = ultimateFavoriteFindCond();
 			final Pageable pageable = likePageable();
 
 			// when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findFavoriteBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -428,17 +372,20 @@ class CustomBookmarkRepositoryImplTest {
 		return cond(null);
 	}
 
-	private UltimateBookmarkFindCond ultimateCond(final Category category, final boolean favorite,
-		final List<String> tags, final boolean follow, final String title) {
-		return new UltimateBookmarkFindCond(0, profile.getId(), category, favorite, tags, follow, title);
+	private UltimateBookmarkFindCond ultimateFindCond(final Category category) {
+		return ultimateFindCond(category, null);
 	}
 
-	private UltimateBookmarkFindCond ultimateCond(final Category category) {
-		return new UltimateBookmarkFindCond(0, profile.getId(), category, false, null, false, null);
-	}
-
-	private UltimateBookmarkFindCond ultimateCond(final Category category, final String title) {
+	private UltimateBookmarkFindCond ultimateFindCond(final Category category, final String title) {
 		return new UltimateBookmarkFindCond(0, profile.getId(), category, false, null, false, title);
+	}
+
+	private UltimateBookmarkFindCond ultimateFavoriteFindCond(final String title) {
+		return new UltimateBookmarkFindCond(0, profile.getId(), null, true, null, false, title);
+	}
+
+	private UltimateBookmarkFindCond ultimateFavoriteFindCond() {
+		return ultimateFavoriteFindCond(null);
 	}
 
 	private PageRequest defaultPageable() {
