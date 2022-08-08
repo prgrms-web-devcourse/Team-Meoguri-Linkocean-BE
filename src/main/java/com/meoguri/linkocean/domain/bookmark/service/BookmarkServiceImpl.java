@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,6 +69,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
+		final List<Tag> tags = Optional.ofNullable(command.getTagNames())
+			.map(wrapper -> convertTagNamesToTags(wrapper))
+			.orElseGet(() -> Collections.emptyList());
+
 		/* 북마크 생성 & 저장 */
 		final Bookmark newBookmark = Bookmark.builder()
 			.profile(profile)
@@ -77,15 +82,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.openType(command.getOpenType())
 			.category(command.getCategory())
 			.url(command.getUrl())
+			.tags(tags)
 			.build();
 
-		final Bookmark savedBookmark = bookmarkRepository.save(newBookmark);
-
-		Optional.ofNullable(command.getTagNames())
-			.ifPresent(tagNames -> convertTagNamesToTags(tagNames)
-				.forEach(savedBookmark::addBookmarkTag));
-
-		return savedBookmark.getId();
+		return bookmarkRepository.save(newBookmark).getId();
 	}
 
 	@Override

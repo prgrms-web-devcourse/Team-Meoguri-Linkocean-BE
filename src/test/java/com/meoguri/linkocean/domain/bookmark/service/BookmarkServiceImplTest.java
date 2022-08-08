@@ -325,6 +325,8 @@ class BookmarkServiceImplTest {
 
 		@BeforeEach
 		void setUp() {
+			final Tag tag = tagRepository.save(new Tag("tag1"));
+
 			bookmark = Bookmark.builder()
 				.profile(profile)
 				.title("title")
@@ -333,10 +335,8 @@ class BookmarkServiceImplTest {
 				.category("인문")
 				.openType("all")
 				.url("www.google.com")
+				.tags(List.of(tag))
 				.build();
-
-			final Tag tag = tagRepository.save(new Tag("tag1"));
-			bookmark.addBookmarkTag(tag);
 
 			final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
 

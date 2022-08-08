@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -23,11 +24,15 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -112,6 +117,26 @@ public abstract class Querydsl4RepositorySupport {
 		return PageableExecutionUtils.getPage(content, pageable, () -> countResult.stream().count());
 	}
 
+	protected <T> Page<T> applyPagination(
+		Pageable pageable,
+		JPAQuery<T> jpaContentQuery,
+		Consumer<T> lazyLoader
+	) {
+		return applyPagination(pageable, jpaContentQuery, lazyLoader, jpaContentQuery);
+	}
+
+	protected <T> Page<T> applyPagination(
+		Pageable pageable,
+		JPAQuery<T> jpaContentQuery,
+		Consumer<T> lazyLoader,
+		JPAQuery<T> jpaCountQuery
+	) {
+		pageable = convertBookmarkSort(pageable);
+		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+		content.forEach(lazyLoader);
+		return PageableExecutionUtils.getPage(content, pageable, () -> jpaCountQuery.stream().count());
+	}
+
 	private Pageable convertBookmarkSort(Pageable pageable) {
 		return QPageRequest.of(
 			pageable.getPageNumber(),
@@ -136,5 +161,56 @@ public abstract class Querydsl4RepositorySupport {
 		}
 		return result;
 	}
+
+	/**
+	 * 동적 where 절을 지원하기 위한 유틸리티 메서드
+	 */
+	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
+		try {
+			return new BooleanBuilder(cond.get());
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return new BooleanBuilder();
+		}
+	}
+
+	/**
+	 * 동적 join 을 지원하기 위한 유틸리티 메서드
+	 */
+	protected static <T> JPQLQuery<T> joinIf(
+		final boolean expression,
+		JPQLQuery<T> base,
+		final Supplier<JoinInfoBuilder> joinInfoBuilder
+	) {
+
+		if (expression) {
+			final JoinInfoBuilder joinInfo = joinInfoBuilder.get().build();
+
+			for (Join join : joinInfo.joinList) {
+				if (join.joinType == 1) {
+					base = base.join(join.targetEntityPath);
+				} else if (join.joinType == 2) {
+					base = base.join(join.targetEntityPath, join.alias);
+				} else if (join.joinType == 3) {
+					base = base.join(join.targetCollection);
+				} else if (join.joinType == 4) {
+					base = base.join(join.targetCollection, join.alias);
+				} else if (join.joinType == 5) {
+					base = base.join(join.targetMap);
+				} else if (join.joinType == 6) {
+					base = base.join(join.targetMap, join.alias);
+				}
+
+				if (join.isFetchJoin) {
+					base = base.fetchJoin();
+				}
+			}
+
+			if (joinInfo.on) {
+				base = base.on(joinInfo.condition.toArray(Predicate[]::new));
+			}
+		}
+		return base;
+	}
+
 }
 

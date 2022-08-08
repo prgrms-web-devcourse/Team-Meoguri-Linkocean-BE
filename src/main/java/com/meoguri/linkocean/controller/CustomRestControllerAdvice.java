@@ -25,6 +25,8 @@ public class CustomRestControllerAdvice {
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
+		log.warn(ex.getMessage(), ex);
+
 		return ErrorResponse.of(BAD_REQUEST, ex.getMessage(), ex);
 	}
 
@@ -33,7 +35,7 @@ public class CustomRestControllerAdvice {
 		TypeMismatchException.class, HttpMessageNotReadableException.class,
 		MissingServletRequestParameterException.class, NoHandlerFoundException.class})
 	public ErrorResponse handleBadRequestException(RuntimeException ex) { //TODO RuntimeException -> Exception
-		log.debug(ex.getMessage(), ex);
+		log.warn(ex.getMessage(), ex);
 
 		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.", ex);
 	}
@@ -41,7 +43,7 @@ public class CustomRestControllerAdvice {
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-		log.debug(ex.getMessage(), ex);
+		log.warn(ex.getMessage(), ex);
 
 		// TODO - 정당한 요청에 대해서 예외 메시지 남기기
 		// 1. 중복 팔로우 요청 (Illegal 요청) -> "잘못된 요청입니다."
@@ -52,7 +54,7 @@ public class CustomRestControllerAdvice {
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public ErrorResponse handleServerException(RuntimeException ex) { //TODO RuntimeException to Exception
-		log.error(ex.getMessage(), ex);
+		log.warn(ex.getMessage(), ex);
 
 		return ErrorResponse.of(INTERNAL_SERVER_ERROR, "알 수 없는 에러가 발생했습니다. 고객센터에 문의하세요.", ex);
 	}
