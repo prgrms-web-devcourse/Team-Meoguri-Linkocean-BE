@@ -1,6 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.persistence.Tuple;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +22,20 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 	long countReactionByBookmarkAndType(Bookmark bookmark, ReactionType reactionType);
 
 	Optional<Reaction> findByProfileAndBookmark(Profile profile, Bookmark bookmark);
+
+	@Query("select r.type as type, count(r) as cnt " +
+		"from Reaction r " +
+		"where r.bookmark = ?1 " +
+		"group by r.type"
+	)
+	List<Tuple> countReactionGroupInternal(Bookmark bookmark);
+
+	default Map<ReactionType, Long> countReactionGroup(Bookmark bookmark) {
+		return countReactionGroupInternal(bookmark)
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> ((ReactionType)tuple.get("type")),
+				tuple -> ((long)tuple.get("cnt")))
+			);
+	}
 }
