@@ -19,6 +19,7 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
 	int deleteByProfileAndBookmarkAndType(Profile profile, Bookmark bookmark, ReactionType type);
 
+	/* TODO - 리팩터링 제거 대상입니당, 항상 LIKE 로만 호출 되는데 ReactionType 을 받는 점이 아쉽네용 */
 	long countReactionByBookmarkAndType(Bookmark bookmark, ReactionType reactionType);
 
 	Optional<Reaction> findByProfileAndBookmark(Profile profile, Bookmark bookmark);
