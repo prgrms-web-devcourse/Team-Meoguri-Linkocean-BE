@@ -94,7 +94,7 @@ dependencies {
     // Database
     implementation 'mysql:mysql-connector-java'
     implementation 'org.flywaydb:flyway-mysql'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
     // Query DSL
     implementation "com.querydsl:querydsl-jpa"
