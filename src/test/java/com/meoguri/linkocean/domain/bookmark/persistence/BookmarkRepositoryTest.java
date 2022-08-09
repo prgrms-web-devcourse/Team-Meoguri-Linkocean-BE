@@ -95,12 +95,12 @@ class BookmarkRepositoryTest {
 		final Bookmark savedBookmark = bookmarkRepository.save(bookmark);
 
 		//when
-		final Optional<Bookmark> retrievedBookmark =
-			bookmarkRepository.findByProfileAndId(bookmark.getProfile(), bookmark.getId());
+		final Optional<Bookmark> oBookmark =
+			bookmarkRepository.findByProfileIdAndId(profile.getId(), bookmark.getId());
 
 		//then
-		assertThat(retrievedBookmark).isNotNull();
-		assertThat(retrievedBookmark.get()).isEqualTo(savedBookmark);
+		assertThat(oBookmark).isPresent().get()
+			.isEqualTo(savedBookmark);
 	}
 
 	@Test

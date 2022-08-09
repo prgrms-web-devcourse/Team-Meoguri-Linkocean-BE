@@ -82,14 +82,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
-		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
-		final long bookmarkId = command.getBookmarkId();
-
-		//userId, bookmarkId 유효성 검사
+		// 수정 할 북마크 조회
 		Bookmark bookmark = bookmarkRepository
-			.findByProfileAndId(profile, bookmarkId)
+			.findByProfileIdAndId(command.getProfileId(), command.getBookmarkId())
 			.orElseThrow(LinkoceanRuntimeException::new);
 
+		// 태그 조회/저장
 		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
 
 		//update 진행
@@ -105,13 +103,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void removeBookmark(final long profileId, final long bookmarkId) {
-		final Profile profile = findProfileByIdQuery.findById(profileId);
-
-		// 자신의 북마크 쓴 북마크를 가져옴
+		// 제거 할 북마크 조회
 		final Bookmark bookmark = bookmarkRepository
-			.findByProfileAndId(profile, bookmarkId)
+			.findByProfileIdAndId(profileId, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
+		// remove 진행
 		bookmark.remove();
 	}
 
