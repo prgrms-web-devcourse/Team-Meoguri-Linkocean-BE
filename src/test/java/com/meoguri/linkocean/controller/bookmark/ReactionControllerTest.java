@@ -41,18 +41,18 @@ class ReactionControllerTest extends BaseControllerTest {
 			.andDo(print());
 
 		//then
-		/*final GetDetailedBookmarkResponse response = 북마크_상세_조회(bookmarkId);
+		final GetDetailedBookmarkResponse response = 북마크_상세_조회(bookmarkId);
 
 		assertThat(response.getReactionCount())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", 1L,
-				"HATE", 0L
+				LIKE, 1L,
+				HATE, 0L
 			));
 		assertThat(response.getReaction())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", true,
-				"HATE", false
-			));*/
+				LIKE, true,
+				HATE, false
+			));
 	}
 
 	@Disabled("json deserialize issue")

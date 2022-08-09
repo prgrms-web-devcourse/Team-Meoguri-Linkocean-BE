@@ -178,6 +178,7 @@ public class BaseControllerTest {
 			.andReturn();
 
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.findAndRegisterModules();
 		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetDetailedBookmarkResponse.class);
 	}
 
