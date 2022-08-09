@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -31,7 +30,7 @@ public interface BookmarkService {
 	Page<GetBookmarksResult> getByWriterId(BookmarkFindCond findCond, Pageable pageable);
 
 	/* 피드 북마크 목록 */
-	Page<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond, Pageable pageable);
+	Page<GetFeedBookmarksResult> getFeedBookmarks(BookmarkFindCond searchCond, Pageable pageable);
 
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);

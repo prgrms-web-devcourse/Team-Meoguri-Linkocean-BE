@@ -74,6 +74,11 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		);
 	}
 
+	@Override
+	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
+		return null;
+	}
+
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? select(bookmarkTag.bookmark.id)
 			.distinct()

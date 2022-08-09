@@ -33,7 +33,6 @@ import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
-import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -105,10 +104,14 @@ public class BookmarkController {
 		final GetBookmarkQueryParams queryParams
 	) {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
-			new FeedBookmarksSearchCond(
+			new BookmarkFindCond(
+				user.getId(),
+				null, //작성자가 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
-				queryParams.getTitle(),
-				queryParams.isFollow()
+				queryParams.isFavorite(),
+				queryParams.getTags(),
+				queryParams.isFollow(),
+				queryParams.getTitle()
 			),
 			queryParams.toPageable()
 		);

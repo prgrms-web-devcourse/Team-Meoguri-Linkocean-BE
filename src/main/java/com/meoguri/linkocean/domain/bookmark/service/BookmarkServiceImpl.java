@@ -21,7 +21,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -176,9 +175,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public Page<GetFeedBookmarksResult> getFeedBookmarks(
-		final FeedBookmarksSearchCond searchCond,
+		final BookmarkFindCond findCond,
 		final Pageable pageable
 	) {
+
 		return null;
 	}
 
