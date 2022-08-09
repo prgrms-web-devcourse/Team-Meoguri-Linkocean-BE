@@ -1,9 +1,10 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -26,7 +28,9 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -63,6 +67,10 @@ class CustomBookmarkRepositoryImplTest {
 	private long bookmarkId2;
 	private long bookmarkId3;
 
+	private LinkMetadata naver;
+	private LinkMetadata google;
+	private LinkMetadata github;
+
 	@BeforeEach
 	void setUp() {
 		// 사용자 1명 셋업 - 크러쉬
@@ -71,13 +79,13 @@ class CustomBookmarkRepositoryImplTest {
 		profileId = profile.getId();
 
 		// 링크 메타 데이터 3개 셋업
-		final LinkMetadata naver = new LinkMetadata("www.naver.com", "naver", "naver.png");
-		final LinkMetadata google = new LinkMetadata("www.google.com", "google", "google.png");
-		final LinkMetadata github = new LinkMetadata("www.github.com", "github", "github.png");
+		naver = new LinkMetadata("www.naver.com", "naver", "naver.png");
+		google = new LinkMetadata("www.google.com", "google", "google.png");
+		github = new LinkMetadata("www.github.com", "github", "github.png");
 
-		final LinkMetadata linkMetadata1 = linkMetadataRepository.save(naver);
-		final LinkMetadata linkMetadata2 = linkMetadataRepository.save(google);
-		final LinkMetadata linkMetadata3 = linkMetadataRepository.save(github);
+		naver = linkMetadataRepository.save(naver);
+		google = linkMetadataRepository.save(google);
+		github = linkMetadataRepository.save(github);
 
 		// 태그 두개 셋업
 		final Tag tag1 = tagRepository.save(new Tag("tag1"));
@@ -86,10 +94,10 @@ class CustomBookmarkRepositoryImplTest {
 		// 크러쉬가 북마크 1개 저장 - 네이버, IT, 전체 공개, #tag1, #tag2
 		final Bookmark bookmark1 = bookmarkRepository.save(new Bookmark(
 			profile,
-			linkMetadata1,
+			naver,
 			"title1",
 			"memo1",
-			OpenType.ALL,
+			ALL,
 			Category.IT,
 			"www.naver.com",
 			List.of(tag1, tag2)
@@ -98,7 +106,7 @@ class CustomBookmarkRepositoryImplTest {
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
 		final Bookmark bookmark2 = bookmarkRepository.save(new Bookmark(
 			profile,
-			linkMetadata2,
+			google,
 			"title2",
 			"memo2",
 			OpenType.PARTIAL,
@@ -110,13 +118,13 @@ class CustomBookmarkRepositoryImplTest {
 		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
 		final Bookmark bookmark3 = bookmarkRepository.save(new Bookmark(
 			profile,
-			linkMetadata3,
+			github,
 			"title3",
 			"memo3",
 			OpenType.PRIVATE,
 			Category.IT,
 			"www.github.com",
-			Collections.emptyList()
+			emptyList()
 		));
 
 		// 크러쉬가 네이버에 좋아요를 누름
@@ -397,4 +405,92 @@ class CustomBookmarkRepositoryImplTest {
 		}
 	}
 
+	@Nested
+	class 피드_북마크_조회 {
+
+		@Autowired
+		private FollowRepository followRepository;
+
+		private long profileId1;
+
+		private Bookmark bookmark4;
+		private Bookmark bookmark5;
+		private Bookmark bookmark6;
+
+		private Bookmark bookmark7;
+		private Bookmark bookmark8;
+
+		private Bookmark bookmark10;
+
+		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
+		// bookmark4 all,    		bookmark7 all, 		bookmark10 all
+		// bookmark5 partial,		bookmark8 partial	bookmark11 partial
+		// bookmark6 private,       bookmark9 private   bookmark12 private
+		@BeforeEach
+		void setUp() {
+			reactionRepository.deleteAll();
+			favoriteRepository.deleteAll();
+			bookmarkRepository.deleteAll(); // clean data by crush @ above setUp method
+
+			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
+			final User user2 = userRepository.save(new User("user2@gmail.com", "GOOGLE"));
+			final User user3 = userRepository.save(new User("user3@gmail.com", "GOOGLE"));
+
+			final Profile profile1 = profileRepository.save(new Profile(user1, "user1"));
+			final Profile profile2 = profileRepository.save(new Profile(user2, "user2"));
+			final Profile profile3 = profileRepository.save(new Profile(user3, "user3"));
+			profileId1 = profile1.getId();
+
+			bookmarkRepository.save(createBookmark(profile3, github, PRIVATE, "github.com"));
+			bookmarkRepository.save(createBookmark(profile3, google, PARTIAL, "google.com"));
+			bookmark10 = bookmarkRepository.save(createBookmark(profile3, naver, ALL, "naver.com"));
+
+			bookmarkRepository.save(createBookmark(profile2, github, PRIVATE, "github.com"));
+			bookmark8 = bookmarkRepository.save(createBookmark(profile2, google, PARTIAL, "google.com"));
+			bookmark7 = bookmarkRepository.save(createBookmark(profile2, naver, ALL, "naver.com"));
+
+			bookmark6 = bookmarkRepository.save(createBookmark(profile1, github, PRIVATE, "github.com"));
+			bookmark5 = bookmarkRepository.save(createBookmark(profile1, google, PARTIAL, "google.com"));
+			bookmark4 = bookmarkRepository.save(createBookmark(profile1, naver, ALL, "naver.com"));
+
+			followRepository.save(new Follow(profile1, profile2));
+		}
+
+		@Test
+		void 피드_북마크_조회_성공() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.build();
+			final PageRequest pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(6);
+			assertThat(bookmarkPage.getContent())
+				.containsExactly(bookmark4, bookmark5, bookmark6, bookmark7, bookmark8, bookmark10);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+		}
+
+		@Test
+		void 피드_북마크_조회_팔로우_여부로_성공() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.follow(true)
+				.build();
+			final PageRequest pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent())
+				.containsExactly(bookmark7, bookmark8);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
+	}
 }
