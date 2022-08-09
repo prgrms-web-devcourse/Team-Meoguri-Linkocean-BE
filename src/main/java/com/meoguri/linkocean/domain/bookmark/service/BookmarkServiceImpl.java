@@ -6,7 +6,6 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
@@ -49,12 +47,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final BookmarkRepository bookmarkRepository;
 
 	private final TagRepository tagRepository;
-	private final ReactionRepository reactionRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
 	private final CheckIsFavoriteQuery checkIsFavoriteQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
+	private final ReactionQuery reactionQuery;
 
 	//TODO : 쿼리 튜닝
 	@Override
@@ -130,9 +128,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(owner, bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
 
+		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
+		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile, bookmark);
+
 		return GetDetailedBookmarkResult.builder()
 			.title(bookmark.getTitle())
-			.url(bookmark.getLinkMetadata().getLink().getFullLink())
+			.url(bookmark.getUrl())
 			.image(bookmark.getLinkMetadata().getImage())
 			.category(bookmark.getCategory())
 			.memo(bookmark.getMemo())
@@ -140,8 +141,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.isFavorite(isFavorite)
 			.updatedAt(bookmark.getUpdatedAt())
 			.tags(bookmark.getTagNames())
-			.reactionCount(getReactionCountMap(bookmark))
-			.reaction(getReactionMap(profile, bookmark))
+			.reactionCount(reactionCountMap)
+			.reaction(reactionMap)
 			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
 			.build();
 	}
@@ -155,23 +156,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return tagNames.stream()
 			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
 			.collect(toList());
-	}
-
-	//TODO 리액션 요청에서 북마크 좋아요 개수도 같이 수정하는 로직이 추가되면 이 부분 수정하기.
-	private Map<String, Long> getReactionCountMap(Bookmark bookmark) {
-		return Arrays.stream(ReactionType.values())
-			.collect(toMap(ReactionType::getName, reactionType ->
-				reactionRepository.countReactionByBookmarkAndType(bookmark, reactionType))
-			);
-	}
-
-	private Map<String, Boolean> getReactionMap(final Profile profile, final Bookmark bookmark) {
-		final Optional<Reaction> oMyReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
-
-		return Arrays.stream(ReactionType.values())
-			.collect(toMap(ReactionType::getName, reactionType ->
-				oMyReaction.map(reaction -> ReactionType.of(reaction.getType()).equals(reactionType)).orElse(false)
-			));
 	}
 
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {

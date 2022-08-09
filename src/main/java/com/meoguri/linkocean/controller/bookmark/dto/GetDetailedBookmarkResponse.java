@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.GetBookmarkProfileResult;
 
@@ -26,8 +27,8 @@ public final class GetDetailedBookmarkResponse {
 	private final Boolean isFavorite;
 	private final LocalDateTime updatedAt;
 	private final List<String> tags;
-	private final Map<String, Long> reactionCount;
-	private final Map<String, Boolean> reaction;
+	private final Map<ReactionType, Long> reactionCount;
+	private final Map<ReactionType, Boolean> reaction;
 	private final GetBookmarkProfileResponse profile;
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {

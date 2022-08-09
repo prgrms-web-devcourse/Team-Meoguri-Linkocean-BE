@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.common.LinkoceanAssert.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -366,7 +367,7 @@ class BookmarkServiceImplTest {
 					GetDetailedBookmarkResult::getUpdatedAt
 				).containsExactly(
 					bookmark.getTitle(),
-					bookmark.getLinkMetadata().getLink().getFullLink(),
+					bookmark.getUrl(),
 					bookmark.getLinkMetadata().getImage(),
 					bookmark.getCategory(),
 					bookmark.getMemo(),
@@ -377,11 +378,11 @@ class BookmarkServiceImplTest {
 				assertThat(result.getTags())
 					.contains("tag1");
 
-				assertThat(result.getReactionCount().get("like")).isZero();
-				assertThat(result.getReactionCount().get("hate")).isZero();
+				assertThat(result.getReactionCount().get(LIKE)).isZero();
+				assertThat(result.getReactionCount().get(HATE)).isZero();
 
-				assertThat(result.getReaction().get("like")).isFalse();
-				assertThat(result.getReaction().get("hate")).isFalse();
+				assertThat(result.getReaction().get(LIKE)).isFalse();
+				assertThat(result.getReaction().get(HATE)).isFalse();
 
 				assertThat(result.getProfile())
 					.extracting(
@@ -403,9 +404,9 @@ class BookmarkServiceImplTest {
 				//then
 				assertAll(
 					() -> assertThat(result.getReactionCount())
-						.containsExactlyInAnyOrderEntriesOf(Map.of("like", 1L, "hate", 0L)),
+						.containsExactlyInAnyOrderEntriesOf(Map.of(LIKE, 1L, HATE, 0L)),
 					() -> assertThat(result.getReaction())
-						.containsExactlyInAnyOrderEntriesOf(Map.of("like", true, "hate", false))
+						.containsExactlyInAnyOrderEntriesOf(Map.of(LIKE, true, HATE, false))
 				);
 			}
 
