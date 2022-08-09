@@ -83,7 +83,7 @@ class FavoriteRepositoryTest {
 		favoriteRepository.save(new Favorite(bookmark, owner));
 
 		//when
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findByOwnerIdAndBookmark(owner.getId(),
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByOwnerIdAndBookmark(owner.getId(),
 			List.of(this.bookmark, bookmark));
 
 		//then

@@ -190,7 +190,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		// 추가 정보 조회
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final List<Boolean> isWriters = Collections.emptyList(); // checkIsWriterQuery.checkIsWriter(currentUserProfileId, bookmarks);
-		final List<Boolean> isFollows = checkIsFollowQuery.isFollow(currentUserProfileId, writers);
+		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
 		return toResultPage(bookmarkPage, isFavorites, isWriters, isFollows, pageable);
 	}

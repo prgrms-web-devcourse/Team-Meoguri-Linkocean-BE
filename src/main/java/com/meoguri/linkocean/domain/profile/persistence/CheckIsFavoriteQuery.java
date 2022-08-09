@@ -23,7 +23,7 @@ public class CheckIsFavoriteQuery {
 	/* owner 가 북마크 목록에 대해 즐겨찾기를 했는지 입력받은 순서대로 말아준다 */
 	public List<Boolean> isFavorites(final long ownerId, final List<Bookmark> bookmarks) {
 
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findByOwnerIdAndBookmark(ownerId, bookmarks);
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByOwnerIdAndBookmark(ownerId, bookmarks);
 
 		return bookmarks.stream()
 			.map(Bookmark::getId)
