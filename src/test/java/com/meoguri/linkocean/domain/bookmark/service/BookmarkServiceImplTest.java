@@ -494,12 +494,12 @@ class BookmarkServiceImplTest {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(userId)
-				.targetProfileId(profileId2)
+				.writerProfileId(profileId2)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterId(findCond, pageable);
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
 
 			//then
 			assertThat(resultPage.getContent()).hasSize(1)
@@ -516,12 +516,12 @@ class BookmarkServiceImplTest {
 			followRepository.save(new Follow(profile, profile2));
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(userId)
-				.targetProfileId(profileId2)
+				.writerProfileId(profileId2)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterId(findCond, pageable);
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
 
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)

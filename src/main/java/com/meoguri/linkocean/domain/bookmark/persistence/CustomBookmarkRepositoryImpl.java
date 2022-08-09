@@ -37,7 +37,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	public Page<Bookmark> findByWriterId(final BookmarkFindCond findCond, final Pageable pageable) {
 
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-		final Long targetProfileId = findCond.getTargetProfileId();
+		final Long targetProfileId = findCond.getWriterProfileId();
 		final Category category = findCond.getCategory();
 		final boolean isFavorite = findCond.isFavorite();
 		final List<String> tags = findCond.getTags();

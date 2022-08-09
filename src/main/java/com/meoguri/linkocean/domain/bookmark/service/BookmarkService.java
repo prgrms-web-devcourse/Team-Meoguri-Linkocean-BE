@@ -26,8 +26,8 @@ public interface BookmarkService {
 	/* 북마크 상세 조회 */
 	GetDetailedBookmarkResult getDetailedBookmark(long profileId, long bookmarkId);
 
-	/* 작성자의 id 로 북마크 페이징 조회 */
-	Page<GetBookmarksResult> getByWriterId(BookmarkFindCond findCond, Pageable pageable);
+	/* 작성자의 프로필 id 로 북마크 페이징 조회 */
+	Page<GetBookmarksResult> getByWriterProfileId(BookmarkFindCond findCond, Pageable pageable);
 
 	/* 피드 북마크 목록 */
 	Page<GetFeedBookmarksResult> getFeedBookmarks(BookmarkFindCond searchCond, Pageable pageable);

@@ -146,7 +146,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.category(Category.IT)
 				.build();
 			final Pageable pageable = defaultPageable();
@@ -168,7 +168,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.category(Category.IT)
 				.build();
 			final Pageable pageable = likePageable();
@@ -190,7 +190,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.category(Category.IT)
 				.title("1")
 				.build();
@@ -215,7 +215,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.title("1")
 				.build();
 			final Pageable pageable = defaultPageable();
@@ -235,7 +235,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.favorite(true)
 				.build();
 			final Pageable pageable = likePageable();
@@ -258,7 +258,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_태그로_조회_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
 			final Pageable pageable = defaultPageable();
@@ -280,7 +280,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
 			final Pageable pageable = likePageable();
@@ -302,7 +302,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_태그로_조회_제목_필터링_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.tags(List.of("tag1"))
 				.title("1")
 				.build();
@@ -326,7 +326,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_기본_조회_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.build();
 			final Pageable pageable = defaultPageable();
 
@@ -344,7 +344,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_기본_조회_Partial_공개범위_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.openType(OpenType.PARTIAL)
 				.build();
 			final Pageable pageable = defaultPageable();
@@ -363,7 +363,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.build();
 			final Pageable pageable = likePageable();
 
@@ -381,7 +381,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.targetProfileId(profileId)
+				.writerProfileId(profileId)
 				.title("1")
 				.build();
 			final Pageable pageable = defaultPageable();

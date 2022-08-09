@@ -67,18 +67,18 @@ public class BookmarkController {
 	}
 
 	/**
-	 * 북마크 목록 조회
+	 * 	작성자의 프로필 id 로 북마크 페이징 조회
 	 */
 	@GetMapping("/others/{profileId}")
 	public PageResponse<GetBookmarksResponse> getBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long profileId,
+		final @PathVariable("profileId") long writerProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.getByWriterId(
+		final Page<GetBookmarksResult> result = bookmarkService.getByWriterProfileId(
 			new BookmarkFindCond(
 				user.getId(),
-				profileId,
+				writerProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),

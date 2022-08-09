@@ -151,12 +151,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Page<GetBookmarksResult> getByWriterId(
+	public Page<GetBookmarksResult> getByWriterProfileId(
 		final BookmarkFindCond findCond,
 		final Pageable pageable
 	) {
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
+		final Long targetProfileId = findCond.getWriterProfileId();
+
 		// 이용 가능한 open type 설정
-		findCond.setOpenType(getAvailableBookmarkOpenType(findCond));
+		findCond.setOpenType(getAvailableBookmarkOpenType(currentUserProfileId, targetProfileId));
 
 		// 북마크 조회
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -164,9 +167,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final int size = bookmarkPage.getSize();
 
 		// 추가 정보 조회
-		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
+		boolean isWriter = currentUserProfileId == findCond.getWriterProfileId();
 
 		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);
@@ -194,13 +196,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 * 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
 	 * @see BookmarkFindCond
 	 */
-	private OpenType getAvailableBookmarkOpenType(final BookmarkFindCond findCond) {
-		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-		final long targetProfileId = findCond.getTargetProfileId();
-
-		if (currentUserProfileId == targetProfileId) {
+	private OpenType getAvailableBookmarkOpenType(final long currentUserProfileId, final long writerProfileId) {
+		if (currentUserProfileId == writerProfileId) {
 			return OpenType.PRIVATE;
-		} else if (checkIsFollowQuery.isFollow(currentUserProfileId, findProfileByIdQuery.findById(targetProfileId))) {
+		} else if (checkIsFollowQuery.isFollow(currentUserProfileId, findProfileByIdQuery.findById(writerProfileId))) {
 			return OpenType.PARTIAL;
 		} else {
 			return OpenType.ALL;

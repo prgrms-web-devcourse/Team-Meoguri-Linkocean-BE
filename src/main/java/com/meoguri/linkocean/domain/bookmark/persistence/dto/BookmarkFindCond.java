@@ -26,7 +26,7 @@ public final class BookmarkFindCond {
 
 	/*작성자를 지정한 북마크 조회인 경우 대상 프로필 id
 	 만약 피드 페이지 조회 등의 작성자가 다양한 조회의 경우 null*/
-	private final Long targetProfileId;
+	private final Long writerProfileId;
 
 	/* 카테고리 필터링 조회인 경우 카테고리 아니라면 null */
 	private final Category category;
