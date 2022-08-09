@@ -27,5 +27,5 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
 	/* profileId 가 팔로우 중인 사용자의 id 집합 조회 */
 	@Query("select f.followee.id from Follow f where f.follower.id = :profileId and f.followee in :targets")
-	Set<Long> findFolloweeIdByFollowerIdAndFollowee(long profileId, List<Profile> targets);
+	Set<Long> findFolloweeIdsFollowedBy(long profileId, List<Profile> targets);
 }
