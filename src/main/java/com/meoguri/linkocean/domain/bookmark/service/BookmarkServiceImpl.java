@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookm
 import static java.util.Collections.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,29 +53,31 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final ReactionQuery reactionQuery;
 
+	/**
+	 * 북마크 등록
+	 * - 북마크 등록을 위해 항상 linkMetadata 가 먼저 저장 되어 있어야 한다.
+	 */
 	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
-
+		// 연관 필드 조회
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
-		final List<Tag> tags = Optional.ofNullable(command.getTagNames())
-			.map(tagService::getOrSaveList)
-			.orElseGet(Collections::emptyList);
+		// 태그 조회/저장
+		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
 
-		/* 북마크 생성 & 저장 */
-		final Bookmark bookmark = new Bookmark(
-			profile, linkMetadata,
+		// 북마크 등록 진행
+		return bookmarkRepository.save(new Bookmark(
+			profile,
+			linkMetadata,
 			command.getTitle(),
 			command.getMemo(),
 			command.getOpenType(),
 			command.getCategory(),
 			command.getUrl(),
 			tags
-		);
-
-		return bookmarkRepository.save(bookmark).getId();
+		)).getId();
 	}
 
 	@Transactional

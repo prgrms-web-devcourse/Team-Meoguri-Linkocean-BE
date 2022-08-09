@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
+import static java.util.Collections.*;
+
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
@@ -21,6 +23,10 @@ public final class RegisterBookmarkRequest {
 	private List<String> tags;
 
 	public RegisterBookmarkCommand toCommand(final Long profileId) {
+		if (tags == null) {
+			tags = emptyList();
+		}
+
 		return new RegisterBookmarkCommand(profileId, url, title, memo, Category.of(category),
 			OpenType.of(openType), tags);
 	}
