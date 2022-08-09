@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
@@ -82,10 +81,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private BooleanBuilder categoryEq(final Category category) {
 		return nullSafeBuilder(() -> bookmark.category.eq(category));
-	}
-
-	private BooleanBuilder inOpenTypes(final List<OpenType> openTypes) {
-		return nullSafeBuilder(() -> bookmark.openType.in(openTypes));
 	}
 
 	private BooleanBuilder titleContains(final String title) {
