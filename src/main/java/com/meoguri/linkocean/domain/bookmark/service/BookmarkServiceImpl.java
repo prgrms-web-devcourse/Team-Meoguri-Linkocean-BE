@@ -115,19 +115,21 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
-
+		// 북마크 조회
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		final Profile owner = bookmark.getProfile();
+		// 추가 정보 조회
+		final Profile writer = bookmark.getProfile();
 
-		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(owner, bookmark);
-		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, owner);
+		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(profileId, bookmark);
+		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
 
+		// 결과 반환
 		return new GetDetailedBookmarkResult(
 			bookmarkId,
 			bookmark.getTitle(),
@@ -142,9 +144,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 			reactionCountMap,
 			reactionMap,
 			new GetBookmarkProfileResult(
-				owner.getId(),
-				owner.getUsername(),
-				owner.getImage(),
+				writer.getId(),
+				writer.getUsername(),
+				writer.getImage(),
 				isFollow
 			)
 		);
@@ -175,6 +177,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
+	}
+
+	@Override
+	public Optional<Long> getBookmarkIdIfExist(final long profileId, final String url) {
+		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
 	}
 
 	/**
@@ -229,10 +236,5 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long totalCount = bookmarkPage.getTotalElements();
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
-	}
-
-	@Override
-	public Optional<Long> getBookmarkIdIfExist(final long profileId, final String url) {
-		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
 	}
 }

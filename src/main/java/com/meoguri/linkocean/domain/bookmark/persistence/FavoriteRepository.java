@@ -14,7 +14,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
 	int deleteByOwnerAndBookmark(Profile owner, Bookmark bookmark);
 
-	boolean existsByOwnerAndBookmark(Profile owner, Bookmark bookmark);
+	boolean existsByOwner_idAndBookmark(long ownerId, Bookmark bookmark);
 
 	/**
 	 * bookmarks 에 대한 owner 의 즐겨찾기 PK 집합을 가져오는데 사용한다.

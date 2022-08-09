@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,8 +16,8 @@ public class CheckIsFavoriteQuery {
 
 	private final FavoriteRepository favoriteRepository;
 
-	public boolean isFavorite(final Profile owner, final Bookmark bookmark) {
-		return favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
+	public boolean isFavorite(final long ownerId, final Bookmark bookmark) {
+		return favoriteRepository.existsByOwner_idAndBookmark(ownerId, bookmark);
 	}
 
 	/* owner 가 북마크 목록에 대해 즐겨찾기를 했는지 입력받은 순서대로 말아준다 */

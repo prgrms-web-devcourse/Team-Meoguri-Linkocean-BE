@@ -59,8 +59,6 @@ class CustomBookmarkRepositoryImplTest {
 	@PersistenceContext
 	private EntityManager em;
 
-	private Profile profile;
-
 	private long profileId;
 	private long bookmarkId1;
 	private long bookmarkId2;
@@ -70,7 +68,7 @@ class CustomBookmarkRepositoryImplTest {
 	void setUp() {
 		// 사용자 1명 셋업 - 크러쉬
 		final User user = userRepository.save(createUser("crush@mail.com", "NAVER"));
-		profile = profileRepository.save(createProfile(user, "crush"));
+		Profile profile = profileRepository.save(createProfile(user, "crush"));
 		profileId = profile.getId();
 
 		// 링크 메타 데이터 3개 셋업
@@ -230,7 +228,7 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage).hasSize(1)
 				.extracting(Bookmark::getId)
 				.containsExactly(bookmarkId1);
-			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByOwnerAndBookmark(profile, b));
+			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByOwner_idAndBookmark(profileId, b));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
 
