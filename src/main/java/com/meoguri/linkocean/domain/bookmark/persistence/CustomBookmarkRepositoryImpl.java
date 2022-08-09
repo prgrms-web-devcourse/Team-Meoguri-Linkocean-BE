@@ -95,11 +95,12 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private BooleanBuilder availableOpenType(final OpenType openType) {
-		// 전체 조회면 필터링이 필요 없음
-		if (openType == OpenType.ALL) {
+		// PRIVATE 이상을 조회 하는 요청이므로 필터링이 필요 없음
+		if (openType == OpenType.PRIVATE) {
 			return new BooleanBuilder();
 		}
+
+		// 주어진 openType 이하의 모든 openType 을 조회 할 필요가 있음
 		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
 	}
-
 }
