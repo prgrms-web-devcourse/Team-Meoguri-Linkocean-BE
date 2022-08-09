@@ -35,7 +35,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -46,11 +45,11 @@ import lombok.RequiredArgsConstructor;
 public class BookmarkServiceImpl implements BookmarkService {
 
 	private final BookmarkRepository bookmarkRepository;
+
 	private final TagRepository tagRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
 	private final CheckIsFavoriteQuery checkIsFavoriteQuery;
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final ReactionQuery reactionQuery;
@@ -225,13 +224,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Optional<Long> getBookmarkToCheck(final long userId, final String url) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(userId);
-		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndUrl(profile, url);
-
-		if (oBookmark.isPresent()) {
-			return Optional.of(profile.getId());
-		}
-		return Optional.empty();
+	public Optional<Long> getBookmarkToCheck(final long profileId, final String url) {
+		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
 	}
 }
