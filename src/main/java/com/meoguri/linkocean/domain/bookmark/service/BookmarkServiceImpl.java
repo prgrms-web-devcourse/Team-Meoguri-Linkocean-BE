@@ -153,11 +153,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
-		return null;
-	}
-
-	@Override
 	public Page<GetBookmarksResult> ultimateGetBookmarks(
 		final UltimateBookmarkFindCond findCond,
 		final Pageable pageable
@@ -177,6 +172,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
+	}
+
+	@Override
+	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
+		return null;
 	}
 
 	@Override

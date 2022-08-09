@@ -28,11 +28,11 @@ public interface BookmarkService {
 	/* 북마크 상세 조회 */
 	GetDetailedBookmarkResult getDetailedBookmark(long profileId, long bookmarkId);
 
-	/* 피드 북마크 목록 */
-	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
-
 	/* 궁극의 북마크 조회 */
 	Page<GetBookmarksResult> ultimateGetBookmarks(UltimateBookmarkFindCond findCond, Pageable pageable);
+
+	/* 피드 북마크 목록 */
+	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
 
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
