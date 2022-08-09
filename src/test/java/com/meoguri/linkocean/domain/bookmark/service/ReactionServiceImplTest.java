@@ -3,14 +3,12 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,17 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 @Transactional
 @SpringBootTest
@@ -91,7 +86,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
+			bookmark2);
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
 			.containsExactly(profile1, bookmark2, "like");
@@ -116,7 +112,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
+			bookmark2);
 		assertThat(findReaction).isEmpty();
 	}
 
@@ -138,7 +135,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		final Optional<Reaction> findReaction = reactionRepository.findByProfileAndBookmark(profile1, bookmark2);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
+			bookmark2);
 
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)

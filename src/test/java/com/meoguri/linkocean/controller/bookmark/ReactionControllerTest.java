@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -57,7 +56,6 @@ class ReactionControllerTest extends BaseControllerTest {
 			));
 	}
 
-	@Disabled("json deserialize issue")
 	@Test
 	void 리액션_좋아요_싫어요() throws Exception {
 		//when
@@ -79,7 +77,6 @@ class ReactionControllerTest extends BaseControllerTest {
 			));
 	}
 
-	@Disabled("json deserialize issue")
 	@Test
 	void 리액션_좋아요_좋아요() throws Exception {
 		//when

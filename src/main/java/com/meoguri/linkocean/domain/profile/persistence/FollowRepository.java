@@ -11,7 +11,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-	boolean existsByFollowerAndFollowee(Profile follower, Profile followee);
+	boolean existsByFollower_idAndFollowee(long followerId, Profile followee);
 
 	@Query("select f from Follow f where f.follower = :follower and f. followee = :followee")
 	Optional<Follow> findByProfiles(Profile follower, Profile followee);

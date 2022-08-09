@@ -345,6 +345,25 @@ class CustomBookmarkRepositoryImplTest {
 		}
 
 		@Test
+		void 북마크_기본_조회_Partial_공개범위_성공() {
+			//given
+			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.openType(OpenType.PARTIAL)
+				.build();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmarkId2, bookmarkId1);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
 			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()

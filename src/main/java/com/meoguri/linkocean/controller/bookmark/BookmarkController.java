@@ -182,7 +182,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
-		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkToCheck(user.getProfileId(), url);
+		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkIdIfExist(user.getProfileId(), url);
 
 		return ResponseEntity.ok()
 			.headers(getLocationHeaderIfPresent(oBookmarkId))

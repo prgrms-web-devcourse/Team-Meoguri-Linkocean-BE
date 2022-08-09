@@ -3,10 +3,13 @@ package com.meoguri.linkocean.domain.bookmark.persistence.dto;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * <pre>
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 public final class UltimateBookmarkFindCond {
 
@@ -45,4 +49,12 @@ public final class UltimateBookmarkFindCond {
 
 	/* 제목 검색 조건 - contains 로 판별한다 */
 	private final String title;
+
+	/* 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
+	   조건은 계층적이다
+	   현재 사용자가 북마크 조회 대상 사용자 인 경우 PRIVATE 		-> PRIVATE, PARTIAL, ALL 모든 북마크에 접근 가능
+	   현재 사용자가 북마크 조회 대상을 팔로우 중인 경우 PARTIAL 	-> PARTIAL, ALL 북마크에 접근 가능
+	   그 외의 경우 ALL								 	-> ALL 북마크만 접근 가능 .*/
+	@Setter
+	private OpenType openType;
 }

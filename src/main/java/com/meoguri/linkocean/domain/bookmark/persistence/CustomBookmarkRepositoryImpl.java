@@ -38,6 +38,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final List<String> tags = findCond.getTags();
 		final boolean follow = findCond.isFollow();
 		final String title = findCond.getTitle();
+		final OpenType openType = findCond.getOpenType();
 
 		JPAQuery<Bookmark> base = selectFrom(bookmark);
 
@@ -61,7 +62,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				bookmarkIdsIn(bookmarkIds),
 				profileIdEq(targetProfileId),
 				titleContains(title),
-				bookmark.status.eq(BookmarkStatus.REGISTERED)
+				bookmark.status.eq(BookmarkStatus.REGISTERED),
+				availableOpenType(openType)
 			),
 			Bookmark::getTagNames
 		);
@@ -84,10 +86,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.category.eq(category));
 	}
 
-	private BooleanBuilder inOpenTypes(final List<OpenType> openTypes) {
-		return nullSafeBuilder(() -> bookmark.openType.in(openTypes));
-	}
-
 	private BooleanBuilder titleContains(final String title) {
 		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(title));
 	}
@@ -96,4 +94,13 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.id.in(bookmarkIds));
 	}
 
+	private BooleanBuilder availableOpenType(final OpenType openType) {
+		// PRIVATE 이상을 조회 하는 요청이므로 필터링이 필요 없음
+		if (openType == OpenType.PRIVATE) {
+			return new BooleanBuilder();
+		}
+
+		// 주어진 openType 이하의 모든 openType 을 조회 할 필요가 있음
+		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
+	}
 }

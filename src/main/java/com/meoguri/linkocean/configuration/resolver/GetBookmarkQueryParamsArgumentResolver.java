@@ -44,7 +44,7 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 
 		final String orderBy = order == null ? DEFAULT_ORDER : order;
 		final List<String> orderProperties =
-			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(DEFAULT_ORDER, order);
+			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(order, DEFAULT_ORDER);
 
 		return new GetBookmarkQueryParams(
 			toInt(page, DEFAULT_PAGE),

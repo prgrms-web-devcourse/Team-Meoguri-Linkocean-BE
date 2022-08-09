@@ -46,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
 		final boolean isSharable =
-			checkIsFollowQuery.isFollow(target, sender) && bookmark.isOwnedBy(sender);
+			checkIsFollowQuery.isFollow(target.getId(), sender) && bookmark.isOwnedBy(sender);
 		checkCondition(isSharable);
 
 		Map<String, Noti> info = Map.of(

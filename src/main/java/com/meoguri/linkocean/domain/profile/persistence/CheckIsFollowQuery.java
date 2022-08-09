@@ -11,7 +11,8 @@ public class CheckIsFollowQuery {
 
 	private final FollowRepository followRepository;
 
-	public boolean isFollow(final Profile follower, final Profile followee) {
-		return followRepository.existsByFollowerAndFollowee(follower, followee);
+	public boolean isFollow(final long followerId, final Profile followee) {
+		return followRepository.existsByFollower_idAndFollowee(followerId, followee);
 	}
+
 }

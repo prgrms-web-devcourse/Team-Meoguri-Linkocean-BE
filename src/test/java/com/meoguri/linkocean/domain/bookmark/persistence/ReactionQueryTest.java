@@ -85,7 +85,7 @@ class ReactionQueryTest {
 		reactionRepository.save(new Reaction(profile, bookmark, Reaction.ReactionType.LIKE.name()));
 
 		//when
-		final Map<Reaction.ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile, bookmark);
+		final Map<Reaction.ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
 
 		//then
 		assertThat(reactionMap.get(Reaction.ReactionType.LIKE)).isTrue();

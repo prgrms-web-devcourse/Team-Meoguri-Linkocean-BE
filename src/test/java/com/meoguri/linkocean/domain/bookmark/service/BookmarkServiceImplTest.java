@@ -26,7 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
@@ -438,7 +437,6 @@ class BookmarkServiceImplTest {
 		return new RegisterBookmarkCommand(userId, url, null, null, null, OpenType.ALL, emptyList());
 	}
 
-	@Ultimate
 	@Nested
 	class 다른_사람_북마크_목록_조회_테스트 {
 
@@ -491,7 +489,6 @@ class BookmarkServiceImplTest {
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all 인 글만 볼 수 있다 */
-		@Disabled("due to not implementation of Open Type filtering - 북마크 3개 모두 조회되면 정상")
 		@Test
 		void 다른_사람_북마크_목록_조회() {
 			//given
@@ -507,12 +504,12 @@ class BookmarkServiceImplTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(1)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId1, "all"));
+				.containsExactly(tuple(bookmarkId1, OpenType.ALL));
 
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
-		@Disabled("due to not implementation of Open Type filtering - 북마크 3개 모두 조회되면 정상")
+		@Disabled("이상함 나중에 고칠것")
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
@@ -529,9 +526,8 @@ class BookmarkServiceImplTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId2, "partial"), tuple(bookmarkId1, "all"));
+				.containsExactly(tuple(bookmarkId2, OpenType.PARTIAL), tuple(bookmarkId1, OpenType.ALL));
 		}
-
 	}
 
 	@Test
@@ -540,8 +536,8 @@ class BookmarkServiceImplTest {
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
-		final Optional<Long> duplicated = bookmarkService.getBookmarkToCheck(userId, bookmark.getUrl());
-		final Optional<Long> notDuplicated = bookmarkService.getBookmarkToCheck(userId, "https://www.does.not.exist");
+		final Optional<Long> duplicated = bookmarkService.getBookmarkIdIfExist(userId, bookmark.getUrl());
+		final Optional<Long> notDuplicated = bookmarkService.getBookmarkIdIfExist(userId, "https://www.does.not.exist");
 
 		//then
 		assertThat(duplicated).isPresent().get().isEqualTo(bookmark.getId());

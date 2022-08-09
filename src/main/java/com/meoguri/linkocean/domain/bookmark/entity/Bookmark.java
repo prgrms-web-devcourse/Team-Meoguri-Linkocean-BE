@@ -65,8 +65,6 @@ public class Bookmark extends BaseIdEntity {
 	@Lob
 	private String memo;
 
-	@Column(nullable = false, length = MAX_BOOKMARK_TITLE_LENGTH)
-	@Enumerated(STRING)
 	private OpenType openType;
 
 	@Column(nullable = true, length = 20)

@@ -48,8 +48,8 @@ class CheckIsFollowQueryTest {
 		followRepository.save(new Follow(followerProfile, followeeProfile));
 
 		//when
-		final boolean follow1 = query.isFollow(followerProfile, followeeProfile);
-		final boolean follow2 = query.isFollow(followeeProfile, followerProfile);
+		final boolean follow1 = query.isFollow(followerProfile.getId(), followeeProfile);
+		final boolean follow2 = query.isFollow(followeeProfile.getId(), followerProfile);
 
 		//then
 		assertThat(follow1).isTrue();
