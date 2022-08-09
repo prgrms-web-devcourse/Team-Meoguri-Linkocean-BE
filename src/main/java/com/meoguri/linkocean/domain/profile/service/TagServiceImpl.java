@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
@@ -20,13 +22,23 @@ import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class TagServiceImpl implements TagService {
+
+	private final TagRepository tagRepository;
 
 	private final BookmarkRepository bookmarkRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
+
+	@Transactional
+	@Override
+	public List<Tag> getOrSaveList(final List<String> tagNames) {
+		return tagNames.stream()
+			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
+			.collect(toList());
+	}
 
 	@Override
 	public List<GetProfileTagsResult> getMyTags(final long profileId) {

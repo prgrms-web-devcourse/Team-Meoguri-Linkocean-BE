@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Bookmark.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,17 +14,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -34,8 +32,6 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
-@Ultimate
-@Import(P6spyLogMessageFormatConfiguration.class)
 @DataJpaTest
 class CustomBookmarkRepositoryImplTest {
 
@@ -91,61 +87,57 @@ class CustomBookmarkRepositoryImplTest {
 		final Tag tag2 = tagRepository.save(new Tag("tag2"));
 
 		// 크러쉬가 북마크 1개 저장 - 네이버, IT, 전체 공개, #tag1, #tag2
-		final Bookmark bookmark1 = builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata1)
-			.title("title1")
-			.memo("memo1")
-			.category("IT")
-			.openType("all")
-			.url("www.naver.com")
-			.tags(List.of(tag1, tag2))
-			.build();
-		final Bookmark savedBookmark1 = bookmarkRepository.save(bookmark1);
+		final Bookmark bookmark1 = bookmarkRepository.save(new Bookmark(
+			profile,
+			linkMetadata1,
+			"title1",
+			"memo1",
+			OpenType.ALL,
+			Category.IT,
+			"www.naver.com",
+			List.of(tag1, tag2)
+		));
 
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
-		final Bookmark bookmark2 = builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata2)
-			.title("title2")
-			.memo("memo2")
-			.category("가정")
-			.openType("partial")
-			.url("www.google.com")
-			.tags(List.of(tag1))
-			.build();
-		final Bookmark savedBookmark2 = bookmarkRepository.save(bookmark2);
+		final Bookmark bookmark2 = bookmarkRepository.save(new Bookmark(
+			profile,
+			linkMetadata2,
+			"title2",
+			"memo2",
+			OpenType.PARTIAL,
+			Category.HOME,
+			"www.google.com",
+			List.of(tag1)
+		));
 
 		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
-		final Bookmark bookmark3 = builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata3)
-			.title("title3")
-			.memo("memo3")
-			.category("IT")
-			.openType("private")
-			.url("www.github.com")
-			.tags(Collections.emptyList())
-			.build();
-		final Bookmark savedBookmark3 = bookmarkRepository.save(bookmark3);
+		final Bookmark bookmark3 = bookmarkRepository.save(new Bookmark(
+			profile,
+			linkMetadata3,
+			"title3",
+			"memo3",
+			OpenType.PRIVATE,
+			Category.IT,
+			"www.github.com",
+			Collections.emptyList()
+		));
 
 		// 크러쉬가 네이버에 좋아요를 누름
-		reactionRepository.save(new Reaction(profile, savedBookmark1, "like"));
-		bookmark1.changeLikeCount(1L);
-
+		reactionRepository.save(new Reaction(profile, bookmark1, "like"));
 		// 크러쉬가 구글에 싫어요를 누름
-		reactionRepository.save(new Reaction(profile, savedBookmark2, "hate"));
+		reactionRepository.save(new Reaction(profile, bookmark2, "hate"));
 
 		// 크러쉬가 네이버와 구글에 즐겨찾기를 누름
-		favoriteRepository.save(new Favorite(savedBookmark1, profile));
-		favoriteRepository.save(new Favorite(savedBookmark2, profile));
+		bookmark1.changeLikeCount(1L);
+		favoriteRepository.save(new Favorite(bookmark1, profile));
+		favoriteRepository.save(new Favorite(bookmark2, profile));
 
 		em.flush();
 		em.clear();
 
-		bookmarkId1 = savedBookmark1.getId();
-		bookmarkId2 = savedBookmark2.getId();
-		bookmarkId3 = savedBookmark3.getId();
+		bookmarkId1 = bookmark1.getId();
+		bookmarkId2 = bookmark2.getId();
+		bookmarkId3 = bookmark3.getId();
 
 		System.out.println("set up complete");
 	}
@@ -169,8 +161,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId3, "IT"),
-					tuple(bookmarkId1, "IT")
+					tuple(bookmarkId3, Category.IT),
+					tuple(bookmarkId1, Category.IT)
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -191,8 +183,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId1, "IT"),
-					tuple(bookmarkId3, "IT")
+					tuple(bookmarkId1, Category.IT),
+					tuple(bookmarkId3, Category.IT)
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -214,7 +206,7 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(1)
 				.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
 				.containsExactly(
-					tuple(bookmarkId1, "IT", "title1")
+					tuple(bookmarkId1, Category.IT, "title1")
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(1);
 		}

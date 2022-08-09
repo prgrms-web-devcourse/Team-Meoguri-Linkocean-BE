@@ -3,6 +3,8 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 
 import lombok.Getter;
@@ -31,8 +33,8 @@ public final class GetBookmarksResponse {
 			result.getId(),
 			result.getTitle(),
 			result.getUrl(),
-			result.getOpenType(),
-			result.getCategory(),
+			OpenType.toString(result.getOpenType()),
+			Category.toString(result.getCategory()),
 			result.getUpdatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),

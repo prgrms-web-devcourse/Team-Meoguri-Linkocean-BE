@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.GetBookmarkProfileResult;
 
@@ -37,9 +39,9 @@ public final class GetDetailedBookmarkResponse {
 			result.getTitle(),
 			result.getUrl(),
 			result.getImage(),
-			result.getCategory(),
+			Category.toString(result.getCategory()),
 			result.getMemo(),
-			result.getOpenType(),
+			OpenType.toString(result.getOpenType()),
 			result.isFavorite(),
 			result.getUpdatedAt(),
 			result.getTags(),

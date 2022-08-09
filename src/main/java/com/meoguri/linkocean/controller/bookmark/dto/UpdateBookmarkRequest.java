@@ -2,6 +2,8 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 
 import lombok.Getter;
@@ -16,6 +18,7 @@ public final class UpdateBookmarkRequest {
 	private List<String> tags;
 
 	public UpdateBookmarkCommand toCommand(final long profileId, final long bookmarkId) {
-		return new UpdateBookmarkCommand(profileId, bookmarkId, title, memo, category, openType, tags);
+		return new UpdateBookmarkCommand(profileId, bookmarkId, title, memo, Category.of(category),
+			OpenType.of(openType), tags);
 	}
 }

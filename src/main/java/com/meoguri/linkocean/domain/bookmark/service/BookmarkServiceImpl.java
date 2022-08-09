@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static java.util.Collections.*;
-import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
-import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -35,18 +33,19 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class BookmarkServiceImpl implements BookmarkService {
 
-	private final BookmarkRepository bookmarkRepository;
+	private final TagService tagService;
 
-	private final TagRepository tagRepository;
+	private final BookmarkRepository bookmarkRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
 	private final CheckIsFavoriteQuery checkIsFavoriteQuery;
@@ -54,7 +53,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final ReactionQuery reactionQuery;
 
-	//TODO : 쿼리 튜닝
+	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
 
@@ -62,24 +61,24 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
 
 		final List<Tag> tags = Optional.ofNullable(command.getTagNames())
-			.map(wrapper -> convertTagNamesToTags(wrapper))
-			.orElseGet(() -> Collections.emptyList());
+			.map(tagService::getOrSaveList)
+			.orElseGet(Collections::emptyList);
 
 		/* 북마크 생성 & 저장 */
-		final Bookmark newBookmark = Bookmark.builder()
-			.profile(profile)
-			.linkMetadata(linkMetadata)
-			.title(command.getTitle())
-			.memo(command.getMemo())
-			.openType(command.getOpenType())
-			.category(command.getCategory())
-			.url(command.getUrl())
-			.tags(tags)
-			.build();
+		final Bookmark bookmark = new Bookmark(
+			profile, linkMetadata,
+			command.getTitle(),
+			command.getMemo(),
+			command.getOpenType(),
+			command.getCategory(),
+			command.getUrl(),
+			tags
+		);
 
-		return bookmarkRepository.save(newBookmark).getId();
+		return bookmarkRepository.save(bookmark).getId();
 	}
 
+	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
@@ -90,16 +89,19 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.findByProfileAndId(profile, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
+		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
+
 		//update 진행
 		bookmark.update(
 			command.getTitle(),
 			command.getMemo(),
 			command.getCategory(),
 			command.getOpenType(),
-			convertTagNamesToTags(command.getTagNames())
+			tags
 		);
 	}
 
+	@Transactional
 	@Override
 	public void removeBookmark(final long profileId, final long bookmarkId) {
 		final Profile profile = findProfileByIdQuery.findById(profileId);
@@ -113,7 +115,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	//TODO : 쿼리 튜닝
-	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 
@@ -147,17 +148,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.build();
 	}
 
-	/**
-	 * TagName 정보를 이용해 Tag를 만든다.
-	 * 1. tag 이름이 존재하면 만들지 않고 db에서 가져온다.
-	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db에 저장한다.
-	 */
-	private List<Tag> convertTagNamesToTags(final List<String> tagNames) {
-		return tagNames.stream()
-			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
-			.collect(toList());
-	}
-
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
 		return new GetBookmarkProfileResult(
 			profile.getId(), profile.getUsername(), profile.getImage(), isFollow
@@ -169,7 +159,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return null;
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public Page<GetBookmarksResult> ultimateGetBookmarks(
 		final UltimateBookmarkFindCond findCond,

@@ -80,14 +80,14 @@ class FavoriteRepositoryTest {
 		final Profile profile = profileRepository.save(createProfile(user, "crush"));
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
-		final Favorite favorite = favoriteRepository.save(new Favorite(this.bookmark, owner));
+		favoriteRepository.save(new Favorite(bookmark, owner));
 
 		//when
-		final Set<Long> favoriteIds = favoriteRepository.findByOwnerIdAndBookmark(owner.getId(),
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findByOwnerIdAndBookmark(owner.getId(),
 			List.of(this.bookmark, bookmark));
 
 		//then
-		assertThat(favoriteIds).hasSize(1)
-			.containsExactly(favorite.getId());
+		assertThat(favoriteBookmarkIds).hasSize(1)
+			.containsExactly(bookmark.getId());
 	}
 }

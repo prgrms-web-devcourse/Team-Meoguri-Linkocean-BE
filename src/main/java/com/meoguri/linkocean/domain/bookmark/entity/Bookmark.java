@@ -30,7 +30,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -95,17 +94,16 @@ public class Bookmark extends BaseIdEntity {
 	/**
 	 * 북마크 등록시 사용하는 생성자
 	 */
-	@Builder
-	private Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
-		final String openType, final String category, final String url, final List<Tag> tags) {
+	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
+		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
 		this.linkMetadata = linkMetadata;
 		this.title = title;
 		this.memo = memo;
-		this.openType = OpenType.of(openType);
-		this.category = Category.of(category);
+		this.openType = openType;
+		this.category = category;
 		this.status = BookmarkStatus.REGISTERED;
 		this.url = url;
 
@@ -118,14 +116,14 @@ public class Bookmark extends BaseIdEntity {
 	/**
 	 * 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다.
 	 */
-	public void update(final String title, final String memo, final String category, final String openType,
+	public void update(final String title, final String memo, final Category category, final OpenType openType,
 		final List<Tag> tags) {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
 		this.memo = memo;
-		this.category = Category.of(category);
-		this.openType = OpenType.of(openType);
+		this.category = category;
+		this.openType = openType;
 		this.updatedAt = now();
 		setBookmarkTags(tags);
 	}
@@ -145,14 +143,6 @@ public class Bookmark extends BaseIdEntity {
 
 	public List<String> getTagNames() {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
-	}
-
-	public String getCategory() {
-		return category == null ? null : category.getKorName();
-	}
-
-	public String getOpenType() {
-		return openType.getName();
 	}
 
 	public boolean isOwnedBy(final Profile profile) {

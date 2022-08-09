@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -76,11 +77,9 @@ class TagServiceImplTest {
 	@Test
 	void 태그_목록_조회_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", "인문", "www.naver.com",
-			List.of(tag1, tag2, tag3));
-		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", "인문", "www.google.com",
-			List.of(tag2, tag3));
-		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", "인문", "www.prgrms.com", List.of(tag3));
+		final Bookmark bookmark1 = createBookmark(profile, link, "1", IT, "www.nav.com", List.of(tag1, tag2, tag3));
+		final Bookmark bookmark2 = createBookmark(profile, link, "2", IT, "www.goo.com", List.of(tag2, tag3));
+		final Bookmark bookmark3 = createBookmark(profile, link, "3", IT, "www.prg.com", List.of(tag3));
 
 		bookmarkRepository.save(bookmark1);
 		bookmarkRepository.save(bookmark2);

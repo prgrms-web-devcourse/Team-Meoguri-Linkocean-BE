@@ -2,6 +2,8 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ public final class RegisterBookmarkRequest {
 	private List<String> tags;
 
 	public RegisterBookmarkCommand toCommand(final Long profileId) {
-		return new RegisterBookmarkCommand(profileId, url, title, memo, category, openType, tags);
+		return new RegisterBookmarkCommand(profileId, url, title, memo, Category.of(category),
+			OpenType.of(openType), tags);
 	}
 }

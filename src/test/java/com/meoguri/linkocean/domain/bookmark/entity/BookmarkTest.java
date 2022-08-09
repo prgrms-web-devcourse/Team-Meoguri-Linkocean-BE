@@ -3,9 +3,9 @@ package com.meoguri.linkocean.domain.bookmark.entity;
 import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
@@ -27,19 +29,13 @@ class BookmarkTest {
 		//given
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
-		final String openType = "all";
-		final String category = "인문";
+		final OpenType openType = OpenType.ALL;
+		final Category category = Category.IT;
+		final String url = "www.naver.com";
 
 		//when
-		final Bookmark bookmark = Bookmark.builder()
-			.profile(profile)
-			.title(title)
-			.linkMetadata(linkMetadata)
-			.memo(memo)
-			.category(category)
-			.openType(openType)
-			.tags(Collections.emptyList())
-			.build();
+		final Bookmark bookmark =
+			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, emptyList());
 
 		//then
 		assertThat(bookmark).isNotNull()
@@ -50,41 +46,22 @@ class BookmarkTest {
 				Bookmark::getMemo,
 				Bookmark::getCategory,
 				Bookmark::getOpenType
-			).containsExactly(
-				profile,
-				title,
-				linkMetadata,
-				memo,
-				category,
-				openType);
+			).containsExactly(profile, title, linkMetadata, memo, category, openType);
 
 		assertThat(bookmark)
-			.extracting(
-				Bookmark::getCreatedAt,
-				Bookmark::getUpdatedAt
-			).doesNotContainNull();
+			.extracting(Bookmark::getCreatedAt, Bookmark::getUpdatedAt)
+			.doesNotContainNull();
 	}
 
 	@Test
 	void 제목의_길이가_조건에_따른_북마크_생성_실패() {
 		//given
-		final Profile profile = createProfile();
-		final String title = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
-		final LinkMetadata linkMetadata = createLinkMetadata();
-		final String memo = "memo";
-		final String category = "인문";
-		final String openType = "all";
+		final String tooLongTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> Bookmark.builder()
-				.profile(profile)
-				.title(title)
-				.linkMetadata(linkMetadata)
-				.memo(memo)
-				.category(category)
-				.openType(openType)
-				.build());
+			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata(),
+				tooLongTitle, "memo", OpenType.ALL, Category.IT, "www.google.com", emptyList()));
 	}
 
 	@Test
@@ -94,15 +71,16 @@ class BookmarkTest {
 		final Tag tag2 = new Tag("tag2");
 
 		// when
-		final Bookmark bookmark = Bookmark.builder()
-			.profile(createProfile())
-			.title("title")
-			.linkMetadata(createLinkMetadata())
-			.memo("memo")
-			.category("인문")
-			.openType("all")
-			.tags(List.of(tag1, tag2))
-			.build();
+		final Bookmark bookmark = new Bookmark(
+			createProfile(),
+			createLinkMetadata(),
+			"title",
+			"memo",
+			OpenType.ALL,
+			Category.IT,
+			"www.naver.com",
+			List.of(tag1, tag2)
+		);
 
 		//then
 		assertThat(bookmark.getTagNames()).hasSize(2).containsExactly("tag1", "tag2");
@@ -111,7 +89,7 @@ class BookmarkTest {
 	@Test
 	void 북마크_태그_추가_실패_태그_개수_한도_초과() {
 		//given
-		List<Tag> tags = List.of(
+		List<Tag> tooManyTags = List.of(
 			new Tag("tag1"),
 			new Tag("tag2"),
 			new Tag("tag3"),
@@ -122,15 +100,16 @@ class BookmarkTest {
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> Bookmark.builder()
-				.profile(createProfile())
-				.title("title")
-				.linkMetadata(createLinkMetadata())
-				.memo("memo")
-				.category("인문")
-				.openType("all")
-				.tags(tags)
-				.build());
+			.isThrownBy(() -> new Bookmark(
+				createProfile(),
+				createLinkMetadata(),
+				"title",
+				"memo",
+				OpenType.ALL,
+				Category.IT,
+				"www.google.com",
+				tooManyTags
+			));
 	}
 
 	@Test
@@ -139,8 +118,8 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
-		final String category = "인문";
-		final String openType = "partial";
+		final Category category = Category.HUMANITIES;
+		final OpenType openType = OpenType.PRIVATE;
 		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
 		//when
@@ -161,27 +140,18 @@ class BookmarkTest {
 	@Test
 	void 제목의_길이가_조건에_따른_북마크_업데이트_실패() {
 		//given
-		final Bookmark bookmark = createBookmark();
 		final String invalidTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
-		final String updatedMemo = "updatedMemo";
-		final String category = "인문";
-		final String openType = "partial";
-		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> bookmark.update(invalidTitle, updatedMemo, category, openType, tags));
+			.isThrownBy(() -> createBookmark()
+				.update(invalidTitle, "updatedMemo", Category.HUMANITIES, OpenType.PRIVATE, emptyList()));
 	}
 
 	@Test
 	void 북마크_업데이트_실패_태그_개수_초과() {
 		//given
-		final Bookmark bookmark = createBookmark();
-		final String updatedTitle = "updatedTitle";
-		final String updatedMemo = "updatedMemo";
-		final String category = "인문";
-		final String openType = "partial";
-		final List<Tag> tags = List.of(
+		final List<Tag> tooManyTags = List.of(
 			new Tag("tag1"),
 			new Tag("tag2"),
 			new Tag("tag3"),
@@ -191,6 +161,7 @@ class BookmarkTest {
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> bookmark.update(updatedTitle, updatedMemo, category, openType, tags));
+			.isThrownBy(() -> createBookmark()
+				.update("updatedTitle", "updatedMemo", Category.HUMANITIES, OpenType.PRIVATE, tooManyTags));
 	}
 }

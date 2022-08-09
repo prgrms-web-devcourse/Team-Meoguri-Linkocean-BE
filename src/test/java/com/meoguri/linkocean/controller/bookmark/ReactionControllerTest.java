@@ -37,6 +37,8 @@ class ReactionControllerTest extends BaseControllerTest {
 		mockMvc.perform(post(basePath + "/{bookmarkId}/reactions/{reactionType}", bookmarkId, "like")
 				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
+
+			//then
 			.andExpect(status().isOk())
 			.andDo(print());
 

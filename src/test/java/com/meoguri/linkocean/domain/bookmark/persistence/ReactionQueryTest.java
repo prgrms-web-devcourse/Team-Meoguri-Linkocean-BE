@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -48,17 +50,16 @@ class ReactionQueryTest {
 	@BeforeEach
 	void setUp() {
 		profile = profileRepository.save(new Profile(userRepository.save(createUser()), "haha"));
-		bookmark = bookmarkRepository.save(
-			Bookmark.builder()
-				.profile(profile)
-				.linkMetadata(linkMetadataRepository.save(createLinkMetadata()))
-				.title("title")
-				.memo("memo")
-				.category("인문")
-				.openType("all")
-				.url("www.google.com")
-				.tags(Collections.emptyList())
-				.build());
+		bookmark = bookmarkRepository.save(new Bookmark(
+			profile,
+			linkMetadataRepository.save(createLinkMetadata()),
+			"title",
+			"memo",
+			OpenType.ALL,
+			Category.HEALTH,
+			"www.google.com",
+			Collections.emptyList()
+		));
 	}
 
 	@Test
