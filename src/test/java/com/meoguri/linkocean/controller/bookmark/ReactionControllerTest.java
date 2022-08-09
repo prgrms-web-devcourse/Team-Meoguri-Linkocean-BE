@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static org.apache.http.HttpHeaders.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -66,13 +67,13 @@ class ReactionControllerTest extends BaseControllerTest {
 
 		assertThat(response.getReactionCount())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", 0L,
-				"HATE", 1L
+				LIKE, 0L,
+				HATE, 1L
 			));
 		assertThat(response.getReaction())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", false,
-				"HATE", true
+				LIKE, false,
+				HATE, true
 			));
 	}
 
@@ -88,13 +89,13 @@ class ReactionControllerTest extends BaseControllerTest {
 
 		assertThat(response.getReactionCount())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", 0L,
-				"HATE", 0L
+				LIKE, 0L,
+				HATE, 0L
 			));
 		assertThat(response.getReaction())
 			.containsExactlyInAnyOrderEntriesOf(Map.of(
-				"LIKE", false,
-				"HATE", false
+				LIKE, false,
+				HATE, false
 			));
 	}
 }

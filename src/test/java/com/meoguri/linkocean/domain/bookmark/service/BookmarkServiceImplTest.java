@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.common.LinkoceanAssert.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -46,8 +47,6 @@ import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
@@ -368,7 +367,7 @@ class BookmarkServiceImplTest {
 					GetDetailedBookmarkResult::getUpdatedAt
 				).containsExactly(
 					bookmark.getTitle(),
-					bookmark.getLinkMetadata().getLink().getFullLink(),
+					bookmark.getUrl(),
 					bookmark.getLinkMetadata().getImage(),
 					bookmark.getCategory(),
 					bookmark.getMemo(),
@@ -379,11 +378,11 @@ class BookmarkServiceImplTest {
 				assertThat(result.getTags())
 					.contains("tag1");
 
-				assertThat(result.getReactionCount().get("like")).isZero();
-				assertThat(result.getReactionCount().get("hate")).isZero();
+				assertThat(result.getReactionCount().get(LIKE)).isZero();
+				assertThat(result.getReactionCount().get(HATE)).isZero();
 
-				assertThat(result.getReaction().get("like")).isFalse();
-				assertThat(result.getReaction().get("hate")).isFalse();
+				assertThat(result.getReaction().get(LIKE)).isFalse();
+				assertThat(result.getReaction().get(HATE)).isFalse();
 
 				assertThat(result.getProfile())
 					.extracting(
@@ -405,9 +404,9 @@ class BookmarkServiceImplTest {
 				//then
 				assertAll(
 					() -> assertThat(result.getReactionCount())
-						.containsExactlyInAnyOrderEntriesOf(Map.of("like", 1L, "hate", 0L)),
+						.containsExactlyInAnyOrderEntriesOf(Map.of(LIKE, 1L, HATE, 0L)),
 					() -> assertThat(result.getReaction())
-						.containsExactlyInAnyOrderEntriesOf(Map.of("like", true, "hate", false))
+						.containsExactlyInAnyOrderEntriesOf(Map.of(LIKE, true, HATE, false))
 				);
 			}
 
@@ -537,16 +536,16 @@ class BookmarkServiceImplTest {
 	}
 
 	@Test
-	void 중복_Url_확인_성공() {
+	void 프로필_아이디_url_로_북마크_존재하는지_확인_성공() {
 		//given
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
-		final Optional<Long> duplicated = bookmarkService.getBookmarkToCheck(userId, bookmark.getUrl());
-		final Optional<Long> notDuplicated = bookmarkService.getBookmarkToCheck(userId, "https://www.does.not.exist");
+		final Optional<Long> oBookmark1 = bookmarkService.getBookmarkToCheck(userId, bookmark.getUrl());
+		final Optional<Long> oBookmark2 = bookmarkService.getBookmarkToCheck(userId, "https://www.does.not.exist");
 
 		//then
-		assertThat(duplicated).isPresent().get().isEqualTo(bookmark.getId());
-		assertThat(notDuplicated).isEmpty();
+		assertThat(oBookmark1).isPresent().get().isEqualTo(bookmark.getId());
+		assertThat(oBookmark2).isEmpty();
 	}
 }

@@ -13,11 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
+import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 
 class BookmarkControllerTest extends BaseControllerTest {
+
+	@Autowired
+	private BookmarkRepository bookmarkRepository;
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
@@ -97,10 +102,10 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.isFavorite").value(false),
 				jsonPath("$.updatedAt").exists(),
 				jsonPath("$.tags", hasItems("good", "spring")),
-				jsonPath("$.reactionCount.like").value(0),
-				jsonPath("$.reactionCount.hate").value(0),
-				jsonPath("$.reaction.like").value(false),
-				jsonPath("$.reaction.hate").value(false),
+				jsonPath("$.reactionCount.LIKE").value(0),
+				jsonPath("$.reactionCount.HATE").value(0),
+				jsonPath("$.reaction.LIKE").value(false),
+				jsonPath("$.reaction.HATE").value(false),
 				jsonPath("$.profile.profileId").value(profileId),
 				jsonPath("$.profile.username").value("hani"),
 				jsonPath("$.profile.imageUrl").value(nullValue()),

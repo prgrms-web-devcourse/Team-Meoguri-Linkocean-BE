@@ -2,9 +2,9 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,13 +21,14 @@ import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @DataJpaTest
 class ReactionRepositoryTest {
 
-	@PersistenceContext
-	private EntityManager em;
+	@Autowired
+	private ReactionRepository reactionRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -41,8 +42,8 @@ class ReactionRepositoryTest {
 	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
 
-	@Autowired
-	private ReactionRepository reactionRepository;
+	@PersistenceContext
+	private EntityManager em;
 
 	private Profile profile;
 	private Bookmark bookmark;
@@ -95,18 +96,20 @@ class ReactionRepositoryTest {
 	}
 
 	@Test
-	void 북마크_좋아요_싫어요_개수를_조회할수_있다() {
+	void 리액션_별_카운트를_조회할_수_있다() {
 		//given
-		reactionRepository.save(new Reaction(profile, bookmark, "like"));
+		final User user1 = userRepository.save(createUser("test@gmail.com", "GOOGLE"));
+		final Profile profile1 = profileRepository.save(createProfile(user1, "test"));
+
+		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE.name()));
+		reactionRepository.save(new Reaction(profile1, bookmark, ReactionType.HATE.name()));
 
 		//when
-		final long likeCnt = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
-		final long hateCnt = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.HATE);
+		final Map<ReactionType, Long> group = reactionRepository.countReactionGroup(bookmark);
 
 		//then
-		assertAll(
-			() -> assertThat(likeCnt).isEqualTo(1L),
-			() -> assertThat(hateCnt).isZero()
-		);
+		assertThat(group.getOrDefault(ReactionType.LIKE, 0L)).isEqualTo(1);
+		assertThat(group.getOrDefault(ReactionType.HATE, 0L)).isEqualTo(1);
 	}
+
 }
