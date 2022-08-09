@@ -143,7 +143,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			bookmark.getTagNames(),
 			reactionCountMap,
 			reactionMap,
-			new GetBookmarkProfileResult(
+			new ProfileResult(
 				writer.getId(),
 				writer.getUsername(),
 				writer.getImage(),

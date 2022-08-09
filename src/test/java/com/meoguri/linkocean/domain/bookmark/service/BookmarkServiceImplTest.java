@@ -385,10 +385,10 @@ class BookmarkServiceImplTest {
 
 			assertThat(result.getProfile())
 				.extracting(
-					GetBookmarkProfileResult::getProfileId,
-					GetBookmarkProfileResult::getUsername,
-					GetBookmarkProfileResult::getImage,
-					GetBookmarkProfileResult::isFollow
+					ProfileResult::getProfileId,
+					ProfileResult::getUsername,
+					ProfileResult::getImage,
+					ProfileResult::isFollow
 				).containsExactly(profile.getId(), profile.getUsername(), profile.getImage(), false);
 		}
 

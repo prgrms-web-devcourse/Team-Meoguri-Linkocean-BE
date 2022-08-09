@@ -31,11 +31,11 @@ public final class GetDetailedBookmarkResult {
 	private final List<String> tags;
 	private final Map<ReactionType, Long> reactionCount;
 	private final Map<ReactionType, Boolean> reaction;
-	private final GetBookmarkProfileResult profile;
+	private final ProfileResult profile;
 
 	@Getter
 	@RequiredArgsConstructor
-	public static class GetBookmarkProfileResult {
+	public static class ProfileResult {
 		private final long profileId;
 		private final String username;
 		private final String image;
