@@ -19,7 +19,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -66,10 +65,7 @@ public class Bookmark extends BaseIdEntity {
 	@Lob
 	private String memo;
 
-	@Transient
 	private OpenType openType;
-
-	private byte openTypeCode;
 
 	@Column(nullable = true, length = 20)
 	@Enumerated(STRING)

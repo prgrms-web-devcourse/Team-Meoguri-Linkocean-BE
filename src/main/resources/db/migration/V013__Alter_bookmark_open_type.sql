@@ -1,2 +1,2 @@
 alter table bookmark
-    change open_type open_type_code tinyint default 10;
+    modify open_type tinyint not null default 10;

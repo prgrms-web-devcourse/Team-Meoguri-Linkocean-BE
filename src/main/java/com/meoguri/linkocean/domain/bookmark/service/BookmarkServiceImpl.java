@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
@@ -123,14 +124,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		final Profile owner = bookmark.getProfile();
-		final Profile currentUserProfile = findProfileByIdQuery.findById(profileId);
-		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(owner, bookmark);
-		final boolean isFollow = checkIsFollowQuery.isFollow(currentUserProfile, owner);
+		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, owner);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
-		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile, bookmark);
+		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
 
 		return GetDetailedBookmarkResult.builder()
 			.title(bookmark.getTitle())
@@ -164,15 +163,30 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final UltimateBookmarkFindCond findCond,
 		final Pageable pageable
 	) {
+		// 북마크 조회
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
 
+		// 추가 정보 조회
 		final List<Boolean> isFavorites =
 			checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarkPage.getContent());
 		final List<Boolean> isWriters = new ArrayList<>(nCopies(bookmarkPage.getSize(), true)); // 일단 항상 true 로 전달
 
+		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
+	}
+
+	private OpenType getAvailableBookmarkOpenType(final UltimateBookmarkFindCond findCond) {
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
+		final long targetProfileId = findCond.getTargetProfileId();
+
+		if (currentUserProfileId == targetProfileId) {
+			return OpenType.PRIVATE;
+		} else if (checkIsFollowQuery.isFollow(currentUserProfileId, findProfileByIdQuery.findById(targetProfileId))) {
+			return OpenType.PARTIAL;
+		} else {
+			return OpenType.ALL;
+		}
 	}
 
 	/**

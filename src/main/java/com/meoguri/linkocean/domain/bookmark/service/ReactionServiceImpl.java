@@ -38,7 +38,7 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
-		final Optional<Reaction> oReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
+		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profile.getId(), bookmark);
 
 		oReaction.ifPresentOrElse(
 			/* 리액션이 존재하는 경우 */
@@ -49,7 +49,7 @@ public class ReactionServiceImpl implements ReactionService {
 				if (existedReactionType == requestReactionType) {
 					cancelReaction(profile, bookmark, existedReactionType);
 
-				/* 기존의 리액션이 요청과 다른경우 */
+					/* 기존의 리액션이 요청과 다른경우 */
 				} else {
 					reaction.changeTypeTo(requestReactionType);
 				}
@@ -63,9 +63,9 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
+		// 고민 point
 		reactionRepository.save(new Reaction(profile, bookmark, reactionType.toString()));
 	}
-
 
 	private void cancelReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
 		final boolean isDeleted

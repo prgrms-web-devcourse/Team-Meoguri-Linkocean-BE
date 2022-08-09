@@ -11,7 +11,6 @@ import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,12 +35,12 @@ public class ReactionQuery {
 	}
 
 	/**
-	 * @param profile
+	 * @param profileId
 	 * @param bookmark
 	 * @return profile 의 bookmark 에 대한 리액션 여부
 	 */
-	public Map<ReactionType, Boolean> getReactionMap(final Profile profile, final Bookmark bookmark) {
-		final Optional<Reaction> oReaction = reactionRepository.findByProfileAndBookmark(profile, bookmark);
+	public Map<ReactionType, Boolean> getReactionMap(final long profileId, final Bookmark bookmark) {
+		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profileId, bookmark);
 
 		return Arrays.stream(ReactionType.values())
 			.collect(toMap(

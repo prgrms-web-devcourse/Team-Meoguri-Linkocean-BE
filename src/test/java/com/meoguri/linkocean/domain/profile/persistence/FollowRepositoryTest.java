@@ -46,8 +46,8 @@ class FollowRepositoryTest {
 		Profile followee = profile2;
 		followRepository.save(new Follow(follower, followee));
 
-		final boolean follow1 = followRepository.existsByFollowerAndFollowee(follower, followee);
-		final boolean follow2 = followRepository.existsByFollowerAndFollowee(followee, follower);
+		final boolean follow1 = followRepository.existsByFollower_idAndFollowee(follower.getId(), followee);
+		final boolean follow2 = followRepository.existsByFollower_idAndFollowee(followee.getId(), follower);
 
 		//then
 		assertThat(follow1).isTrue();

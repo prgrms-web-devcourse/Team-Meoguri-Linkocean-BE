@@ -74,8 +74,6 @@ public class ProfileServiceImpl implements ProfileService {
 	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
-		// final Profile currentUser = findProfileByUserIdQuery.findByUserId(userId);
-		final Profile currentProfile = findProfileByIdQuery.findById(currentProfileId);
 		final Profile targetProfile = findProfileByIdQuery.findById(targetProfileId);
 
 		return new GetDetailedProfileResult(
@@ -84,7 +82,7 @@ public class ProfileServiceImpl implements ProfileService {
 			targetProfile.getImage(),
 			targetProfile.getBio(),
 			targetProfile.getMyFavoriteCategories(),
-			checkIsFollowQuery.isFollow(currentProfile, targetProfile),
+			checkIsFollowQuery.isFollow(currentProfileId, targetProfile),
 			followRepository.countFollowerByProfile(targetProfile),
 			followRepository.countFolloweeByProfile(targetProfile)
 		);
