@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
-import static java.util.Collections.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,10 +166,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		// 추가 정보 조회
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		final List<Boolean> isWriters = new ArrayList<>(nCopies(size, true)); // 일단 항상 true 로 전달
+		boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		// 결과 반환
-		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
+		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);
 	}
 
 	@Override
@@ -178,6 +177,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final BookmarkFindCond findCond,
 		final Pageable pageable
 	) {
+		// 북마크 조회
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+		// 추가 정보 조회
 
 		return null;
 	}
@@ -214,7 +217,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
-		final List<Boolean> isWriter,
+		final boolean isWriter,
 		final Pageable pageable
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -232,7 +235,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmarks.get(i).getLikeCount(),
 				bookmarks.get(i).getLinkMetadata().getImage(),
-				isWriter.get(i),
+				isWriter,
 				bookmarks.get(i).getTagNames()
 			));
 		}
