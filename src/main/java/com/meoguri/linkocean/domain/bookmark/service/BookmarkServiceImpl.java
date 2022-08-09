@@ -143,14 +143,13 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.tags(bookmark.getTagNames())
 			.reactionCount(reactionCountMap)
 			.reaction(reactionMap)
-			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
+			.profile(new GetBookmarkProfileResult(
+				owner.getId(),
+				owner.getUsername(),
+				owner.getImage(),
+				isFollow
+			))
 			.build();
-	}
-
-	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {
-		return new GetBookmarkProfileResult(
-			profile.getId(), profile.getUsername(), profile.getImage(), isFollow
-		);
 	}
 
 	@Override
@@ -163,19 +162,27 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final UltimateBookmarkFindCond findCond,
 		final Pageable pageable
 	) {
+		// 이용 가능한 open type 설정
+		findCond.setOpenType(getAvailableBookmarkOpenType(findCond));
+
 		// 북마크 조회
-		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+		final List<Bookmark> bookmarks = bookmarkPage.getContent();
+		final int size = bookmarkPage.getSize();
 
 		// 추가 정보 조회
-		final List<Boolean> isFavorites =
-			checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarkPage.getContent());
-		final List<Boolean> isWriters = new ArrayList<>(nCopies(bookmarkPage.getSize(), true)); // 일단 항상 true 로 전달
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
+		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
+		final List<Boolean> isWriters = new ArrayList<>(nCopies(size, true)); // 일단 항상 true 로 전달
 
 		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriters, pageable);
 	}
 
+	/**
+	 * 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
+	 * @see com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond
+	 */
 	private OpenType getAvailableBookmarkOpenType(final UltimateBookmarkFindCond findCond) {
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final long targetProfileId = findCond.getTargetProfileId();
@@ -191,7 +198,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	/**
 	 * 북마크 페이지를 즐겨찾기 여부를 포함한 북마크 조회 결과 페이지로 전환 한다
-	 * @param bookmarkPage   북마크 페이지를
+	 * @param bookmarkPage   북마크 페이지
 	 * @param isFavorites    북마크별 즐겨찾기 여부
 	 * @param pageable       페이지 정보
 	 * @return 북마크 조회 결과 페이지

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
@@ -37,6 +38,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final List<String> tags = findCond.getTags();
 		final boolean follow = findCond.isFollow();
 		final String title = findCond.getTitle();
+		final OpenType openType = findCond.getOpenType();
 
 		JPAQuery<Bookmark> base = selectFrom(bookmark);
 
@@ -60,7 +62,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				bookmarkIdsIn(bookmarkIds),
 				profileIdEq(targetProfileId),
 				titleContains(title),
-				bookmark.status.eq(BookmarkStatus.REGISTERED)
+				bookmark.status.eq(BookmarkStatus.REGISTERED),
+				availableOpenType(openType)
 			),
 			Bookmark::getTagNames
 		);
@@ -89,6 +92,14 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private BooleanBuilder bookmarkIdsIn(final List<Long> bookmarkIds) {
 		return nullSafeBuilder(() -> bookmark.id.in(bookmarkIds));
+	}
+
+	private BooleanBuilder availableOpenType(final OpenType openType) {
+		// 전체 조회면 필터링이 필요 없음
+		if (openType == OpenType.ALL) {
+			return new BooleanBuilder();
+		}
+		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
 	}
 
 }
