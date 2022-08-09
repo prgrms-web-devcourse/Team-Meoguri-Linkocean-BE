@@ -12,19 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * <pre>
- * 궁극의 북마크 조회 조건
- * - `BookmarkFindCond`,
- * - `FeedBookmarksSearchCond`,
- * - `MyBookmarkSearchCond`,
- * - `OtherBookmarksSearchCond` 를 통합 할 조건이다
- * </pre>
+ * 북마크 조회 조건
  */
 @Getter
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public final class UltimateBookmarkFindCond {
+public final class BookmarkFindCond {
 
 	/* 현재 사용자의 프로필 id
 	   DTO 를 이용한 projection 사용 시 필요 - 아직은 리포지토리에서 사용하지 않는다 */

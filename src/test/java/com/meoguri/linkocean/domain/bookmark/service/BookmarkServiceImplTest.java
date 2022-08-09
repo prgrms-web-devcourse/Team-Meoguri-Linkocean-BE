@@ -37,7 +37,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
@@ -492,14 +492,14 @@ class BookmarkServiceImplTest {
 		@Test
 		void 다른_사람_북마크_목록_조회() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(userId)
 				.targetProfileId(profileId2)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<GetBookmarksResult> resultPage = bookmarkService.ultimateGetBookmarks(findCond, pageable);
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterId(findCond, pageable);
 
 			//then
 			assertThat(resultPage.getContent()).hasSize(1)
@@ -514,14 +514,14 @@ class BookmarkServiceImplTest {
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
 			followRepository.save(new Follow(profile, profile2));
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(userId)
 				.targetProfileId(profileId2)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<GetBookmarksResult> resultPage = bookmarkService.ultimateGetBookmarks(findCond, pageable);
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterId(findCond, pageable);
 
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)

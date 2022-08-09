@@ -31,7 +31,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -76,8 +76,8 @@ public class BookmarkController {
 		final @PathVariable("profileId") long profileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.ultimateGetBookmarks(
-			new UltimateBookmarkFindCond(
+		final Page<GetBookmarksResult> result = bookmarkService.getByWriterId(
+			new BookmarkFindCond(
 				user.getId(),
 				profileId,
 				queryParams.getCategory(),

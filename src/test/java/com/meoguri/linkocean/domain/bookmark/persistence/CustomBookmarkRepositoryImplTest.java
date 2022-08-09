@@ -17,14 +17,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -146,14 +145,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.category(Category.IT)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -168,14 +167,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_필터링_좋아요_정렬() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.category(Category.IT)
 				.build();
 			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -190,7 +189,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_카테고리로_조회_제목으로_필터링() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.category(Category.IT)
 				.title("1")
@@ -198,7 +197,7 @@ class CustomBookmarkRepositoryImplTest {
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(1)
@@ -215,14 +214,14 @@ class CustomBookmarkRepositoryImplTest {
 
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.title("1")
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -235,14 +234,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.favorite(true)
 				.build();
 			final Pageable pageable = likePageable();
 
 			// when
-			final Page<Bookmark> bookmarks = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -258,14 +257,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_태그로_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -280,14 +279,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_태그로_조회_좋아요_정렬_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
 			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -299,11 +298,10 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
 
-		@Ultimate
 		@Test
 		void 북마크_태그로_조회_제목_필터링_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.tags(List.of("tag1"))
 				.title("1")
@@ -311,7 +309,7 @@ class CustomBookmarkRepositoryImplTest {
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -327,13 +325,13 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -345,14 +343,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_Partial_공개범위_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.openType(OpenType.PARTIAL)
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -364,13 +362,13 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_좋아요_정렬_성공() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.build();
 			final Pageable pageable = likePageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -382,14 +380,14 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_기본_조회_제목으로_필터링() {
 			//given
-			final UltimateBookmarkFindCond findCond = UltimateBookmarkFindCond.builder()
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.title("1")
 				.build();
 			final Pageable pageable = defaultPageable();
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)

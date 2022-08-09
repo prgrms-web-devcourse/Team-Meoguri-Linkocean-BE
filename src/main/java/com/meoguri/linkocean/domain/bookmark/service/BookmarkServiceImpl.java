@@ -20,7 +20,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -153,15 +153,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Page<GetBookmarksResult> ultimateGetBookmarks(
-		final UltimateBookmarkFindCond findCond,
+	public Page<GetBookmarksResult> getByWriterId(
+		final BookmarkFindCond findCond,
 		final Pageable pageable
 	) {
 		// 이용 가능한 open type 설정
 		findCond.setOpenType(getAvailableBookmarkOpenType(findCond));
 
 		// 북마크 조회
-		final Page<Bookmark> bookmarkPage = bookmarkRepository.ultimateFindBookmarks(findCond, pageable);
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 		final int size = bookmarkPage.getSize();
 
@@ -189,9 +189,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	/**
 	 * 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
-	 * @see com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond
+	 * @see BookmarkFindCond
 	 */
-	private OpenType getAvailableBookmarkOpenType(final UltimateBookmarkFindCond findCond) {
+	private OpenType getAvailableBookmarkOpenType(final BookmarkFindCond findCond) {
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final long targetProfileId = findCond.getTargetProfileId();
 

@@ -18,7 +18,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
@@ -34,7 +34,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	/* 카테고리로 조회 */
 	@Override
-	public Page<Bookmark> ultimateFindBookmarks(final UltimateBookmarkFindCond findCond, final Pageable pageable) {
+	public Page<Bookmark> findByWriterId(final BookmarkFindCond findCond, final Pageable pageable) {
 
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Long targetProfileId = findCond.getTargetProfileId();
