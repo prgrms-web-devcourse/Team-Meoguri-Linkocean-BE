@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
@@ -32,8 +33,7 @@ public class Follow extends BaseIdEntity {
 	private Profile followee;
 
 	public Follow(final Profile follower, final Profile followee) {
-
-		//TODO follower == follow (자기자신이 자기 팔로우하지 못하는 로직 추가하기)
+		checkCondition(!follower.equals(followee)); // 자기 자신 팔로우 불가
 
 		this.follower = follower;
 		this.followee = followee;

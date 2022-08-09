@@ -127,6 +127,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'junit' // excluding junit 4
     }
+    testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 
 }
 

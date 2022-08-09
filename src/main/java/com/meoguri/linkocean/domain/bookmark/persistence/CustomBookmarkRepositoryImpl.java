@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
@@ -59,7 +60,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
 				profileIdEq(targetProfileId),
-				titleContains(title)
+				titleContains(title),
+				bookmark.status.eq(BookmarkStatus.REGISTERED)
 			),
 			Bookmark::getTagNames
 		);

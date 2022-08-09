@@ -3,7 +3,6 @@ package com.meoguri.linkocean.controller;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
+import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
@@ -35,8 +34,6 @@ import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
-
-import io.jsonwebtoken.Claims;
 
 @AutoConfigureMockMvc
 @Transactional
@@ -71,14 +68,12 @@ public class BaseControllerTest {
 	}
 
 	protected void 유저_등록_로그인(final String email, final String oAuthType) {
-		final User savedUser = userRepository.save(new User(email, oAuthType));
-
+		userRepository.save(new User(email, oAuthType));
 		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
 	protected void 로그인(final String email, final String oAuthType) {
 		userRepository.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType)).orElseThrow();
-
 		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
 	}
 
@@ -157,16 +152,34 @@ public class BaseControllerTest {
 
 	protected void 북마크_즐겨찾기(final long bookmarkId) throws Exception {
 		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/favorite", bookmarkId)
-				.header(AUTHORIZATION, token))
-			.andExpect(status().isOk())
-			.andDo(print());
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk());
 	}
 
 	protected void 북마크_좋아요(final long bookmarkId) throws Exception {
 		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/like", bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			.andExpect(status().isOk());
+	}
+
+	protected void 북마크_싫어요(final long bookmarkId) throws Exception {
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/reactions/hate", bookmarkId)
+				.header(AUTHORIZATION, token))
+			.andExpect(status().isOk());
+	}
+
+	//@Disabled("json deserialize issue")
+	protected GetDetailedBookmarkResponse 북마크_상세_조회(final long bookmarkId) throws Exception {
+		final MvcResult mvcResult = mockMvc.perform(get("/api/v1/bookmarks/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token))
 			.andExpect(status().isOk())
-			.andDo(print());
+			.andReturn();
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.findAndRegisterModules();
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetDetailedBookmarkResponse.class);
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
@@ -175,16 +188,4 @@ public class BaseControllerTest {
 		return objectMapper.readValue(content, JsonNode.class).get("id").asLong();
 	}
 
-	// TODO - 리팩터링 제거 대상입니당
-	protected long getUserId(final String tokenHeader) {
-		String token = StringUtils.substringAfter(tokenHeader, "Bearer ");
-
-		final String email = jwtProvider.getClaims(token, Claims::getId);
-		final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
-
-		return userRepository
-			.findByEmailAndOAuthType(new Email(email), User.OAuthType.of(oauthType))
-			.get().getId();
-
-	}
 }
