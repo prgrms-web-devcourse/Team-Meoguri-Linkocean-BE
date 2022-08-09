@@ -137,6 +137,17 @@ public abstract class Querydsl4RepositorySupport {
 		return PageableExecutionUtils.getPage(content, pageable, () -> jpaCountQuery.stream().count());
 	}
 
+	/**
+	 * 무한 스크롤 전용 페이지네이션 : total count 필요 없음
+	 */
+	protected <T> Page<T> applyPaginationWithoutTotalPage(
+		Pageable pageable,
+		JPAQuery<T> jpaContentQuery
+	) {
+		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+		return PageableExecutionUtils.getPage(content, pageable, () -> 0L);
+	}
+
 	private Pageable convertBookmarkSort(Pageable pageable) {
 		return QPageRequest.of(
 			pageable.getPageNumber(),
