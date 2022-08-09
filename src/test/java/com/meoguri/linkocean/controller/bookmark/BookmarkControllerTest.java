@@ -92,6 +92,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			//then
 			.andExpect(status().isOk())
 			.andExpectAll(
+				jsonPath("$.bookmarkId").value(bookmarkId),
 				jsonPath("$.title").value("title"),
 				jsonPath("$.url").value("https://www.naver.com"),
 				jsonPath("$.imageUrl").exists(),
