@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.service.dto.FeedBookmarksSearchCond;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +15,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class GetBookmarkQueryParams {
 
+	// 페이징 정보
 	private final int page;
 	private final int size;
 	private final List<String> orderProperties;
-	private final Category category;
-	private final String searchTitle;
 
+	// 필터링 정보
+	private final Category category;
+	private final String title;
 	private final boolean favorite;
 	private final boolean follow;
 	private final List<String> tags;
-
-	public FeedBookmarksSearchCond toFeedSearchCond() {
-		return new FeedBookmarksSearchCond(page, size, "upload", category.getKorName(), searchTitle, follow);
-	}
 
 	public Pageable toPageable() {
 		// PageRequest 는 0 부터 페이지를 세기 때문에 조정해줌

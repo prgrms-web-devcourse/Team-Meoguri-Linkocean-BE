@@ -3,6 +3,10 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,16 +26,39 @@ public final class GetFeedBookmarksResponse {
 	private final Boolean isWriter;
 	private final String imageUrl;
 	private final List<String> tags;
-
-	private final GetFeedBookmarkProfileResponse profile;
+	private final ProfileResponse profile;
 
 	@Getter
 	@RequiredArgsConstructor
-	public static class GetFeedBookmarkProfileResponse {
+	public static class ProfileResponse {
 
 		private final long profileId;
 		private final String username;
 		private final String imageUrl;
 		private final Boolean isFollow;
+	}
+
+	public static GetFeedBookmarksResponse of(GetFeedBookmarksResult result) {
+		final GetFeedBookmarksResult.ProfileResult profileResult = result.getProfile();
+
+		return new GetFeedBookmarksResponse(
+			result.getId(),
+			result.getTitle(),
+			result.getUrl(),
+			OpenType.toString(result.getOpenType()),
+			Category.toString(result.getCategory()),
+			result.getUpdatedAt(),
+			result.getLikeCount(),
+			result.isFavorite(),
+			result.isFavorite(),
+			result.getImage(),
+			result.getTags(),
+			new ProfileResponse(
+				profileResult.getProfileId(),
+				profileResult.getUsername(),
+				profileResult.getImage(),
+				profileResult.isFollow()
+			)
+		);
 	}
 }

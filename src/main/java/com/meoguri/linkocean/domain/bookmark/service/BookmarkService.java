@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -32,7 +31,7 @@ public interface BookmarkService {
 	Page<GetBookmarksResult> ultimateGetBookmarks(UltimateBookmarkFindCond findCond, Pageable pageable);
 
 	/* 피드 북마크 목록 */
-	List<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond);
+	Page<GetFeedBookmarksResult> getFeedBookmarks(FeedBookmarksSearchCond searchCond, Pageable pageable);
 
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);

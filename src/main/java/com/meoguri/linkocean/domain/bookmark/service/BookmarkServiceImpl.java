@@ -175,7 +175,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public List<GetFeedBookmarksResult> getFeedBookmarks(final FeedBookmarksSearchCond searchCond) {
+	public Page<GetFeedBookmarksResult> getFeedBookmarks(
+		final FeedBookmarksSearchCond searchCond,
+		final Pageable pageable
+	) {
 		return null;
 	}
 
