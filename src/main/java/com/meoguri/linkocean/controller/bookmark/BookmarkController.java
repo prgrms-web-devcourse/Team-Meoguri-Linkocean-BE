@@ -182,14 +182,16 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
-		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkToCheck(user.getId(), url);
+		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkToCheck(user.getProfileId(), url);
 
+		return ResponseEntity.ok()
+			.headers(getLocationHeaderIfPresent(oBookmarkId))
+			.body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
+	}
+
+	private HttpHeaders getLocationHeaderIfPresent(final Optional<Long> oBookmarkId) {
 		HttpHeaders headers = new HttpHeaders();
-
-		oBookmarkId.ifPresent(bookmarkId -> {
-			headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId));
-		});
-
-		return ResponseEntity.ok().headers(headers).body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
+		oBookmarkId.ifPresent(bookmarkId -> headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId)));
+		return headers;
 	}
 }

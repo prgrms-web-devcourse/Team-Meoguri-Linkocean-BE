@@ -4,33 +4,35 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.GetBookmarkProfileResult;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public final class GetDetailedBookmarkResponse {
 
-	private final String title;
-	private final String url;
+	private String title;
+	private String url;
 
-	private final String imageUrl;
-	private final String category;
-	private final String memo;
-	private final String openType;
+	private String imageUrl;
+	private String category;
+	private String memo;
+	private String openType;
 
-	private final Boolean isFavorite;
-	private final LocalDateTime updatedAt;
-	private final List<String> tags;
-	private final Map<String, Long> reactionCount;
-	private final Map<String, Boolean> reaction;
-	private final GetBookmarkProfileResponse profile;
+	private Boolean isFavorite;
+	private LocalDateTime updatedAt;
+	private List<String> tags;
+	private Map<Reaction.ReactionType, Long> reactionCount;
+	private Map<Reaction.ReactionType, Boolean> reaction;
+	private GetBookmarkProfileResponse profile;
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
 		return new GetDetailedBookmarkResponse(
@@ -50,15 +52,14 @@ public final class GetDetailedBookmarkResponse {
 	}
 
 	@Getter
-	@RequiredArgsConstructor
+	@NoArgsConstructor
+	@AllArgsConstructor
 	static class GetBookmarkProfileResponse {
 
-		private final long profileId;
-		private final String username;
-
-		@JsonProperty("imageUrl")
-		private final String image;
-		private final Boolean isFollow;
+		private long profileId;
+		private String username;
+		private String imageUrl;
+		private Boolean isFollow;
 
 		public static GetBookmarkProfileResponse of(final GetBookmarkProfileResult profile) {
 			return new GetBookmarkProfileResponse(

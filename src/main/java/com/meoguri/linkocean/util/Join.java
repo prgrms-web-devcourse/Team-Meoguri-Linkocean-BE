@@ -1,9 +1,12 @@
 package com.meoguri.linkocean.util;
 
+import java.util.List;
+
 import com.querydsl.core.types.CollectionExpression;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.MapExpression;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 
 /**
  * JPAQueryBase의 join의 파라미터 정보를 담는 클래스
@@ -20,7 +23,13 @@ public class Join {
 	Path alias;
 
 	// 페치 조인 여부
-	boolean isFetchJoin;
+	boolean fetchJoin;
+
+	// on 절 사용 여부
+	boolean on;
+
+	// on 절에 사용되는 Predicate 목록
+	List<Predicate> condition;
 
 	int joinType;
 

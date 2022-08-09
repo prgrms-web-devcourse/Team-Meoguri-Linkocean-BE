@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 
 import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -31,10 +30,6 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
-@TestPropertySource(properties = {
-	"logging.level.org.hibernate.SQL=DEBUG",
-	"logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE"
-})
 @Import(CustomP6spySqlFormat.class)
 @DataJpaTest
 class BookmarkRepositoryTest {
@@ -185,26 +180,20 @@ class BookmarkRepositoryTest {
 	}
 
 	@Test
-	void Url_검색시_해당_Url_존재() {
+	void 프로필_아이디_url_로_북마크_존재하는지_확인_성공() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "https://www.google.com"));
+		final Bookmark bookmark =
+			bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "https://www.google.com"));
 
 		//when
-		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
-			"https://www.google.com");
+		final Optional<Long> oBookmarkId1 =
+			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.google.com");
+		final Optional<Long> oBookmarkId2 =
+			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.does.not.exist");
 
 		//then
-		assertThat(sameUrlBookmark).isPresent();
+		assertThat(oBookmarkId1).isPresent().get().isEqualTo(bookmark.getId());
+		assertThat(oBookmarkId2).isEmpty();
 	}
 
-	@Test
-	void Url_검색시_해당_Url_없음() {
-
-		//when
-		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
-			"https://www.google.com");
-
-		//then
-		assertThat(sameUrlBookmark).isEmpty();
-	}
 }
