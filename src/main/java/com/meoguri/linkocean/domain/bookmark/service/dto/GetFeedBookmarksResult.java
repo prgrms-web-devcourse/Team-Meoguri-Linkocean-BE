@@ -19,15 +19,14 @@ public final class GetFeedBookmarksResult {
 	private final long id;
 	private final String title;
 	private final String url;
-	private final String memo;
 	private final OpenType openType;
 	private final Category category;
-	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 
 	private final String image;
+	private final long likeCount;
 	private final boolean isFavorite;
-	private final int likeCount;
+	private final boolean isWriter;
 	private final List<String> tags;
 	private final ProfileResult profile;
 
