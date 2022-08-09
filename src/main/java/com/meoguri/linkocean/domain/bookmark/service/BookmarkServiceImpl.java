@@ -234,7 +234,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Optional<Long> getBookmarkToCheck(final long profileId, final String url) {
+	public Optional<Long> getBookmarkIdIfExist(final long profileId, final String url) {
 		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
 	}
 }

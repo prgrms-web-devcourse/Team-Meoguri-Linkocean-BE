@@ -35,5 +35,5 @@ public interface BookmarkService {
 	Page<GetBookmarksResult> ultimateGetBookmarks(UltimateBookmarkFindCond findCond, Pageable pageable);
 
 	/* 중복Url 확인 */
-	Optional<Long> getBookmarkToCheck(long profileId, String url);
+	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
 }
