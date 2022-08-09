@@ -30,6 +30,9 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
@@ -54,6 +57,9 @@ public class BaseControllerTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private LinkMetadataRepository linkMetadataRepository;
 
 	protected String createJson(Object dto) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(dto);
@@ -88,13 +94,12 @@ public class BaseControllerTest {
 		return toId(mvcResult);
 	}
 
-	protected String 링크_메타데이터_얻기(final String link) throws Exception {
-		mockMvc.perform(post("/api/v1/linkmetadatas/obtain")
-				.param("link", link)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			.andExpect(status().isOk());
-
+	/* 테스트 속도를 위해 리포지토리로 처리 */
+	protected String 링크_메타데이터_얻기(final String link) {
+		linkMetadataRepository.findByLink(new Link(link)).ifPresentOrElse(
+			LinkMetadata::getLink, // dummy consumer
+			() -> linkMetadataRepository.save(new LinkMetadata(link, "title", "image"))
+		);
 		return link;
 	}
 
@@ -170,7 +175,6 @@ public class BaseControllerTest {
 			.andExpect(status().isOk());
 	}
 
-	//@Disabled("json deserialize issue")
 	protected GetDetailedBookmarkResponse 북마크_상세_조회(final long bookmarkId) throws Exception {
 		final MvcResult mvcResult = mockMvc.perform(get("/api/v1/bookmarks/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token))
