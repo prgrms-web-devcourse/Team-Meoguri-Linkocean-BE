@@ -183,26 +183,20 @@ class BookmarkRepositoryTest {
 	}
 
 	@Test
-	void Url_검색시_해당_Url_존재() {
+	void 프로필_아이디_url_로_북마크_존재하는지_확인_성공() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "https://www.google.com"));
+		final Bookmark bookmark =
+			bookmarkRepository.save(createBookmark(profile, link, "제목", "인문", "https://www.google.com"));
 
 		//when
-		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
-			"https://www.google.com");
+		final Optional<Long> oBookmarkId1 =
+			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.google.com");
+		final Optional<Long> oBookmarkId2 =
+			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.does.not.exist");
 
 		//then
-		assertThat(sameUrlBookmark).isPresent();
+		assertThat(oBookmarkId1).isPresent().get().isEqualTo(bookmark.getId());
+		assertThat(oBookmarkId2).isEmpty();
 	}
 
-	@Test
-	void Url_검색시_해당_Url_없음() {
-
-		//when
-		final Optional<Bookmark> sameUrlBookmark = bookmarkRepository.findByProfileAndUrl(profile,
-			"https://www.google.com");
-
-		//then
-		assertThat(sameUrlBookmark).isEmpty();
-	}
 }
