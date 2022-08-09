@@ -114,7 +114,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		bookmark.remove();
 	}
 
-	//TODO : 쿼리 튜닝
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 
@@ -132,20 +131,21 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile, bookmark);
 
-		return GetDetailedBookmarkResult.builder()
-			.title(bookmark.getTitle())
-			.url(bookmark.getUrl())
-			.image(bookmark.getLinkMetadata().getImage())
-			.category(bookmark.getCategory())
-			.memo(bookmark.getMemo())
-			.openType(bookmark.getOpenType())
-			.isFavorite(isFavorite)
-			.updatedAt(bookmark.getUpdatedAt())
-			.tags(bookmark.getTagNames())
-			.reactionCount(reactionCountMap)
-			.reaction(reactionMap)
-			.profile(convertToProfileResult(bookmark.getProfile(), isFollow))
-			.build();
+		return new GetDetailedBookmarkResult(
+			bookmarkId,
+			bookmark.getTitle(),
+			bookmark.getUrl(),
+			bookmark.getLinkMetadata().getImage(),
+			bookmark.getCategory(),
+			bookmark.getMemo(),
+			bookmark.getOpenType(),
+			bookmark.getUpdatedAt(),
+			isFavorite,
+			bookmark.getTagNames(),
+			reactionCountMap,
+			reactionMap,
+			convertToProfileResult(bookmark.getProfile(), isFollow)
+		);
 	}
 
 	private GetBookmarkProfileResult convertToProfileResult(final Profile profile, boolean isFollow) {

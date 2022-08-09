@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public final class GetDetailedBookmarkResponse {
 
+	private long bookmarkId;
 	private String title;
 	private String url;
 
@@ -36,6 +37,7 @@ public final class GetDetailedBookmarkResponse {
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
 		return new GetDetailedBookmarkResponse(
+			result.getBookmarkId(),
 			result.getTitle(),
 			result.getUrl(),
 			result.getImage(),

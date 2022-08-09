@@ -8,7 +8,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,9 +15,10 @@ import lombok.RequiredArgsConstructor;
  * 북마크 상세 조회 결과
  */
 @Getter
-@Builder
+@RequiredArgsConstructor
 public final class GetDetailedBookmarkResult {
 
+	private final long bookmarkId;
 	private final String title;
 	private final String url;
 	private final String image;
@@ -28,12 +28,9 @@ public final class GetDetailedBookmarkResult {
 	private final LocalDateTime updatedAt;
 
 	private final boolean isFavorite;
-
-	private List<String> tags;
-
-	private Map<ReactionType, Long> reactionCount;
-	private Map<ReactionType, Boolean> reaction;
-
+	private final List<String> tags;
+	private final Map<ReactionType, Long> reactionCount;
+	private final Map<ReactionType, Boolean> reaction;
 	private final GetBookmarkProfileResult profile;
 
 	@Getter
