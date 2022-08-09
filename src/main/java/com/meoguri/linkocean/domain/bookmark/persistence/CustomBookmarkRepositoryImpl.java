@@ -5,10 +5,13 @@ import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -18,6 +21,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 
 @Repository
@@ -56,7 +61,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
 		return applyPagination(
-			pageable,
+			convertBookmarkSort(pageable),
 			base.where(
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
@@ -102,5 +107,30 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 		// 주어진 openType 이하의 모든 openType 을 조회 할 필요가 있음
 		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
+	}
+
+	private Pageable convertBookmarkSort(Pageable pageable) {
+		return QPageRequest.of(
+			pageable.getPageNumber(),
+			pageable.getPageSize(),
+			toBookmarkOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new)
+		);
+	}
+
+	private List<OrderSpecifier<?>> toBookmarkOrderSpecifiers(Pageable pageable) {
+		final Order direction = Order.DESC;
+		final List<OrderSpecifier<?>> result = new ArrayList<>();
+
+		for (Sort.Order order : pageable.getSort()) {
+			switch (order.getProperty()) {
+				case "like":
+					result.add(new OrderSpecifier<>(direction, bookmark.likeCount));
+					break;
+				case "upload":
+					result.add(new OrderSpecifier<>(direction, bookmark.createdAt));
+					break;
+			}
+		}
+		return result;
 	}
 }

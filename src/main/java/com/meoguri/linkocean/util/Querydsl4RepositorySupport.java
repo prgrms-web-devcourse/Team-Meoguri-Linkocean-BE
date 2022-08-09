@@ -1,8 +1,5 @@
 package com.meoguri.linkocean.util;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,11 +11,9 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.data.jpa.repository.support.Querydsl;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -27,8 +22,6 @@ import org.springframework.util.Assert;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -109,7 +102,6 @@ public abstract class Querydsl4RepositorySupport {
 		Consumer<T> lazyLoader,
 		Function<JPAQueryFactory, JPAQuery<T>> countQuery
 	) {
-		pageable = convertBookmarkSort(pageable);
 		JPAQuery<T> jpaContentQuery = contentQuery.apply(getQueryFactory());
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
@@ -131,7 +123,6 @@ public abstract class Querydsl4RepositorySupport {
 		Consumer<T> lazyLoader,
 		JPAQuery<T> jpaCountQuery
 	) {
-		pageable = convertBookmarkSort(pageable);
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
 		return PageableExecutionUtils.getPage(content, pageable, () -> jpaCountQuery.stream().count());
@@ -146,31 +137,6 @@ public abstract class Querydsl4RepositorySupport {
 	) {
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		return PageableExecutionUtils.getPage(content, pageable, () -> 0L);
-	}
-
-	private Pageable convertBookmarkSort(Pageable pageable) {
-		return QPageRequest.of(
-			pageable.getPageNumber(),
-			pageable.getPageSize(),
-			toBookmarkOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new)
-		);
-	}
-
-	private List<OrderSpecifier<?>> toBookmarkOrderSpecifiers(Pageable pageable) {
-		final Order direction = Order.DESC;
-		final List<OrderSpecifier<?>> result = new ArrayList<>();
-
-		for (Sort.Order order : pageable.getSort()) {
-			switch (order.getProperty()) {
-				case "like":
-					result.add(new OrderSpecifier<>(direction, bookmark.likeCount));
-					break;
-				case "upload":
-					result.add(new OrderSpecifier<>(direction, bookmark.createdAt));
-					break;
-			}
-		}
-		return result;
 	}
 
 	/**
