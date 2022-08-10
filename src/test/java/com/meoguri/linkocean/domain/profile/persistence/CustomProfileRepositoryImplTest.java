@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -15,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.common.Ultimate;
@@ -142,30 +141,26 @@ class CustomProfileRepositoryImplTest {
 			//then
 			assertThat(profiles).containsExactly(profile1, profile2, profile3);
 		}
-	}
 
-	private UltimateProfileFindCond condWhenFindUsingUsername(final String username) {
-		return UltimateProfileFindCond.builder().username(username).build();
-	}
+		private UltimateProfileFindCond condWhenFindUsingUsername(final String username) {
+			return UltimateProfileFindCond.builder().username(username).build();
+		}
 
-	private UltimateProfileFindCond condWhenFindFollowees(final long profileId) {
-		return condWhenFindFollowees(profileId, null);
-	}
+		private UltimateProfileFindCond condWhenFindFollowees(final long profileId) {
+			return condWhenFindFollowees(profileId, null);
+		}
 
-	private UltimateProfileFindCond condWhenFindFollowees(final long profileId, final String username) {
-		return UltimateProfileFindCond.builder().profileId(profileId).followee(true).username(username).build();
-	}
+		private UltimateProfileFindCond condWhenFindFollowees(final long profileId, final String username) {
+			return UltimateProfileFindCond.builder().profileId(profileId).followee(true).username(username).build();
+		}
 
-	private UltimateProfileFindCond condWhenFindFollowers(final long profileId) {
-		return condWhenFindFollowers(profileId, null);
-	}
+		private UltimateProfileFindCond condWhenFindFollowers(final long profileId) {
+			return condWhenFindFollowers(profileId, null);
+		}
 
-	private UltimateProfileFindCond condWhenFindFollowers(final long profileId, final String username) {
-		return UltimateProfileFindCond.builder().profileId(profileId).follower(true).username(username).build();
-	}
-
-	private Pageable defaultPageable() {
-		return PageRequest.of(0, 8);
+		private UltimateProfileFindCond condWhenFindFollowers(final long profileId, final String username) {
+			return UltimateProfileFindCond.builder().profileId(profileId).follower(true).username(username).build();
+		}
 	}
 
 	@Disabled("곧 삭제 예정")

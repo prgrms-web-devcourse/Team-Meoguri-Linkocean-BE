@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -157,7 +156,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.category(Category.IT)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -179,7 +178,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.category(Category.IT)
 				.build();
-			final Pageable pageable = likePageable();
+			final Pageable pageable = defaultPageableSortByLike();
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -202,7 +201,7 @@ class CustomBookmarkRepositoryImplTest {
 				.category(Category.IT)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -226,7 +225,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -246,7 +245,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.favorite(true)
 				.build();
-			final Pageable pageable = likePageable();
+			final Pageable pageable = defaultPageableSortByLike();
 
 			// when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -269,7 +268,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -291,7 +290,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
-			final Pageable pageable = likePageable();
+			final Pageable pageable = defaultPageableSortByLike();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -314,7 +313,7 @@ class CustomBookmarkRepositoryImplTest {
 				.tags(List.of("tag1"))
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -336,7 +335,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.writerProfileId(profileId)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -355,7 +354,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.openType(OpenType.PARTIAL)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -373,7 +372,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.writerProfileId(profileId)
 				.build();
-			final Pageable pageable = likePageable();
+			final Pageable pageable = defaultPageableSortByLike();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -392,7 +391,7 @@ class CustomBookmarkRepositoryImplTest {
 				.writerProfileId(profileId)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
@@ -462,7 +461,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final PageRequest pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -481,7 +480,7 @@ class CustomBookmarkRepositoryImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final PageRequest pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);

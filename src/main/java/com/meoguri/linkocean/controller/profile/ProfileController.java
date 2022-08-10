@@ -96,7 +96,9 @@ public class ProfileController {
 		profileService.updateProfile(request.toCommand(user.getProfileId(), imageUrl));
 	}
 
-	/* 프로필 목록 조회 - 머구리 찾기 */
+	/**
+	 * 프로필 목록 조회 - 머구리 찾기
+	 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
