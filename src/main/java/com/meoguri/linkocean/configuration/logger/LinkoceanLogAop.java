@@ -45,10 +45,10 @@ public class LinkoceanLogAop {
 	/* Poincut에 의해 필터링된 경로로 들어오는 경우 메서드 리턴 후에 적용 */
 	@AfterReturning(value = "cut()", returning = "returnObj")
 	public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
-		// 메서드 정보 받아오기
+		/* 메서드 정보 받아오기 */
 		Method method = getMethod(joinPoint);
 		log.info("======= return method name = {} =======", method);
-		
+
 		if (nonNull(returnObj)) {
 			log.info("return type = {}", returnObj.getClass().getSimpleName());
 			log.info("return value = {}", returnObj);
