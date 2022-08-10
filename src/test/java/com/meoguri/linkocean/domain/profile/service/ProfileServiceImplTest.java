@@ -197,17 +197,13 @@ class ProfileServiceImplTest {
 		 * user2 -> profile3 팔로우
 		 * user3 -> profile2 팔로우
 		 */
-		private void makeScenario() {
+		@Test
+		void 팔로워_목록_조회_성공() {
+			//given
 			followService.follow(new FollowCommand(user1Id, profile2Id));
 			followService.follow(new FollowCommand(user1Id, profile3Id));
 			followService.follow(new FollowCommand(user2Id, profile3Id));
 			followService.follow(new FollowCommand(user3Id, profile2Id));
-		}
-
-		@Test
-		void 팔로워_목록_조회_성공() {
-			//given
-			makeScenario();
 
 			//when
 			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
@@ -241,10 +237,18 @@ class ProfileServiceImplTest {
 				);
 		}
 
+		/**
+		 * user1 -> profile1, profile2 팔로우
+		 * user2 -> profile3 팔로우
+		 * user3 -> profile2 팔로우
+		 */
 		@Test
 		void 팔로이_목록_조회_성공() {
 			//given
-			makeScenario();
+			followService.follow(new FollowCommand(user1Id, profile2Id));
+			followService.follow(new FollowCommand(user1Id, profile3Id));
+			followService.follow(new FollowCommand(user2Id, profile3Id));
+			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
 			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
