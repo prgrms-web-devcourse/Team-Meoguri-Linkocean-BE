@@ -99,6 +99,8 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
+		checkNotNull(openType);
+		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
@@ -109,11 +111,10 @@ public class Bookmark extends BaseIdEntity {
 		this.category = category;
 		this.status = BookmarkStatus.REGISTERED;
 		this.url = url;
-
-		setBookmarkTags(tags);
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
+		setBookmarkTags(tags);
 	}
 
 	/**
@@ -121,6 +122,9 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
 		final List<Tag> tags) {
+		checkNotNull(category);
+		checkNotNull(openType);
+		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
@@ -132,7 +136,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	private void setBookmarkTags(List<Tag> tags) {
-		checkCondition(tags.size() <= MAX_TAGS_COUNT);
+		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
 
 		this.bookmarkTags = tags.stream()
 			.map(tag -> new BookmarkTag(this, tag))
@@ -148,13 +152,6 @@ public class Bookmark extends BaseIdEntity {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
 
-	public boolean isOwnedBy(final Profile profile) {
-		return this.profile.equals(profile);
-	}
-
-	/**
-	 * 좋아요 수 변경
-	 */
 	public void changeLikeCount(long likeCount) {
 		this.likeCount = likeCount;
 	}

@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
@@ -32,6 +33,8 @@ public class Favorite extends BaseIdEntity {
 	private Profile owner;
 
 	public Favorite(final Bookmark bookmark, final Profile owner) {
+		checkNotNull(bookmark);
+		checkNotNull(owner);
 
 		this.bookmark = bookmark;
 		this.owner = owner;

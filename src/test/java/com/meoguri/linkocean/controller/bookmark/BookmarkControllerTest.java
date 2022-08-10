@@ -201,7 +201,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void Url중복확인_성공_새로운_url() throws Exception {
+	void Url_중복확인_성공_새로운_url() throws Exception {
 		//given <- ?!?!?
 		final String locationHeader = "Location";
 
@@ -217,7 +217,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void Url중복확인_성공_이미있는_url() throws Exception {
+	void Url_중복확인_성공_이미있는_url() throws Exception {
 		//given
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title1", "IT", List.of("공부"), "all");
 		final String expectedLocationHeader = "api/v1/bookmarks/" + bookmarkId;
@@ -378,4 +378,26 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[1].likeCount").value(0));
 		}
 	}
+
+	@Nested
+	class 피드_북마크_조회 {
+
+		@BeforeEach
+		void setUp() throws Exception {
+			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			프로필_등록("user1", List.of("IT"));
+
+			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			프로필_등록("user2", List.of("IT"));
+
+			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			프로필_등록("user3", List.of("IT"));
+
+		}
+
+		@Test
+		void name() {
+		}
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -33,6 +34,9 @@ public class FavoriteCategory extends BaseIdEntity {
 	private Category category;
 
 	public FavoriteCategory(final Profile profile, final String categoryName) {
+		checkNotNull(profile);
+		checkNotNull(categoryName);
+
 		this.profile = profile;
 		this.category = Category.of(categoryName);
 	}
