@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookm
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -188,12 +187,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Profile> writers = bookmarks.stream().map(Bookmark::getProfile).collect(toList());
 
 		// 추가 정보 조회
+		final List<Boolean> isWriters = getIsWriters(currentUserProfileId, writers);
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		//final List<Boolean> isWriters =  checkIsWriterQuery.checkIsWriter(currentUserProfileId, bookmarks);
-		final List<Boolean> isWriters = Collections.emptyList();
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
-		return toResultPage(bookmarkPage, isFavorites, isWriters, isFollows, pageable);
+		return toResultPage(bookmarkPage, isWriters, isFavorites, isFollows, pageable);
 	}
 
 	@Override
@@ -261,8 +259,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 */
 	private Page<GetFeedBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
-		final List<Boolean> isFavorites,
 		final List<Boolean> isWriters,
+		final List<Boolean> isFavorites,
 		final List<Boolean> isFollows,
 		final Pageable pageable
 	) {
@@ -295,5 +293,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long totalCount = bookmarkPage.getTotalElements();
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
+	}
+
+	private List<Boolean> getIsWriters(final long currentUserProfileId, final List<Profile> writers) {
+		return writers.stream()
+			.map(Profile::getId)
+			.map(writerId -> writerId == currentUserProfileId)
+			.collect(toList());
 	}
 }
