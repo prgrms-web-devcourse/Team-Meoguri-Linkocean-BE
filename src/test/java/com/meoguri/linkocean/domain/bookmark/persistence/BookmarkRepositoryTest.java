@@ -23,7 +23,6 @@ import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -73,22 +72,6 @@ class BookmarkRepositoryTest {
 		tag1 = tagRepository.save(new Tag("tag1"));
 		tag2 = tagRepository.save(new Tag("tag2"));
 		tag3 = tagRepository.save(new Tag("tag3"));
-	}
-
-	@Test
-	void 프로필_id_와_url_로_존재_확인() {
-		//given
-		final String url = "www.google.com";
-		final Bookmark bookmark = createBookmark(profile, link, OpenType.ALL, url);
-		bookmarkRepository.save(bookmark);
-
-		//when
-		final boolean isExists1 = bookmarkRepository.existsByProfile_idAndUrl(profile.getId(), "www.google.com");
-		final boolean isExists2 = bookmarkRepository.existsByProfile_idAndUrl(profile.getId(), "www.naver.com");
-
-		//then
-		assertThat(isExists1).isTrue();
-		assertThat(isExists2).isFalse();
 	}
 
 	@Test

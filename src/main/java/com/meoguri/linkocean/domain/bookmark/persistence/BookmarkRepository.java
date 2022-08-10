@@ -12,8 +12,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
 
-	boolean existsByProfile_idAndUrl(long profileId, String url);
-
 	@Query("select b "
 		+ "from Bookmark b "
 		+ "where b.profile = :profile "
