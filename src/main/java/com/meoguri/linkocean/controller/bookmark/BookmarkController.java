@@ -48,7 +48,9 @@ public class BookmarkController {
 
 	private final BookmarkService bookmarkService;
 
-	/* 북마크 등록 */
+	/**
+	 * 북 마크 등록
+	 */
 	@PostMapping
 	public SimpleIdResponse registerBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
