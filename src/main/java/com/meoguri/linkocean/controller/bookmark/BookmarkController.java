@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
+import static com.meoguri.linkocean.controller.common.SimpleIdResponse.of;
+import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
 
 import java.net.URI;
@@ -27,6 +28,7 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
+import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse.ProfileResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
@@ -119,7 +121,10 @@ public class BookmarkController {
 		final List<GetFeedBookmarksResponse> response = result.get()
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(response.size(), "bookmarks", response);
+
+		// TODO - 아직  개발 서버에서는 dummy 반환
+		// return PageResponse.of(response.size(), "bookmarks", response);
+		return feedDummyData();
 	}
 
 	/* 북마크 상세 조회 */
@@ -168,5 +173,43 @@ public class BookmarkController {
 		HttpHeaders headers = new HttpHeaders();
 		oBookmarkId.ifPresent(bookmarkId -> headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId)));
 		return headers;
+	}
+
+	private PageResponse<GetFeedBookmarksResponse> feedDummyData() {
+
+		return PageResponse.of(2, "bookmarks", List.of(
+			new GetFeedBookmarksResponse(
+				1L,
+				"네이버 웹툰",
+				"https://comic.naver.com/index",
+				"all",
+				"IT",
+				now(),
+				10L,
+				true,
+				false,
+				"bookmarkImageUrl",
+				List.of("spring", "fun"),
+				new ProfileResponse(
+					1L, "crush", "profileImage.png", false
+				)
+			),
+			new GetFeedBookmarksResponse(
+				2L,
+				"다음 웹툰",
+				"https://comic.daum.com/index",
+				"all",
+				null,
+				now(),
+				10L,
+				false,
+				true,
+				"bookmarkImageUrl2",
+				List.of("spring", "fun"),
+				new ProfileResponse(
+					1L, "crush", "profileImageUrl", false
+				)
+			)
+		));
 	}
 }
