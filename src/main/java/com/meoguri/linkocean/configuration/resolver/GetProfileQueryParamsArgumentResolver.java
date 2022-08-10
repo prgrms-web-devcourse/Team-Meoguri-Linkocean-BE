@@ -9,6 +9,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class GetProfileQueryParamsArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -28,6 +31,7 @@ public class GetProfileQueryParamsArgumentResolver implements HandlerMethodArgum
 		final String size = webRequest.getParameter("size");
 		final String username = webRequest.getParameter("username");
 
+		log.info("profile 조회 요청 : page : {}, size : {}, username : {}", page, size, username);
 		return new GetProfileQueryParams(
 			toInt(page, DEFAULT_PAGE),
 			toInt(size, DEFAULT_SIZE),

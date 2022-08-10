@@ -57,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			final String email = jwtProvider.getClaims(token, Claims::getId);
 			final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
 
+			log.debug("request on uri : {}, by user email : {}", request.getRequestURI(), email);
 			// email 과 OauthType 으로 User 가 존재하는지 확인
 			final SecurityUserProjection projection = userRepository
 				.findSecurityUserByEmailAndOauthType(new Email(email), OAuthType.of(oauthType))

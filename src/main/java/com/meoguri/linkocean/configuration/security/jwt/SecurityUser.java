@@ -29,7 +29,7 @@ public final class SecurityUser extends User {
 	}
 
 	public long getProfileId() {
-		checkCondition(profileId != null);
+		checkCondition(profileId != null, "profile is null");
 		return profileId;
 	}
 }

@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
@@ -23,6 +24,8 @@ public class BookmarkTag extends BaseIdEntity {
 	private Tag tag;
 
 	public BookmarkTag(final Bookmark bookmark, final Tag tag) {
+		checkNotNull(bookmark);
+		checkNotNull(tag);
 
 		this.bookmark = bookmark;
 		this.tag = tag;

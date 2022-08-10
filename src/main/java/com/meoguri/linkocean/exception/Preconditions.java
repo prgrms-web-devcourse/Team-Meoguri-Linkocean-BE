@@ -39,6 +39,12 @@ public final class Preconditions {
 		}
 	}
 
+	public static void checkCondition(final boolean expression, final String errorMessage, final Object... args) {
+		if (!expression) {
+			throw new LinkoceanRuntimeException(String.format(errorMessage, args));
+		}
+	}
+
 	public static void checkNotNull(final Object target) {
 		if (target == null) {
 			throw new NullPointerException();

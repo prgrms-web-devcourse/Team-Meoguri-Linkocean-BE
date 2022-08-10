@@ -33,7 +33,9 @@ public class Follow extends BaseIdEntity {
 	private Profile followee;
 
 	public Follow(final Profile follower, final Profile followee) {
-		checkCondition(!follower.equals(followee)); // 자기 자신 팔로우 불가
+		checkNotNull(follower);
+		checkNotNull(followee);
+		checkCondition(!follower.equals(followee), "자기 자신을 팔로우 할 수 없습니다");
 
 		this.follower = follower;
 		this.followee = followee;
