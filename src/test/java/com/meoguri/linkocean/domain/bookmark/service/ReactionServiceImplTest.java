@@ -145,30 +145,26 @@ class ReactionServiceImplTest {
 
 	@Test
 	void 좋아요_개수_수정_성공_Like_추가_경우() {
-		//given
-
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
-
-		em.flush();
-		em.clear();
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
+			.ifPresent(reaction -> {
+				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(1);
+			});
 	}
 
 	@Test
 	void 좋아요_개수_수정_성공_Hate_추가_경우() {
-		//given
-
 		//when
 		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate"));
 
-		em.flush();
-		em.clear();
-
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
+			.ifPresent(reaction -> {
+				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(0);
+			});
 	}
 
 	@Test
@@ -177,13 +173,13 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
-
-		em.flush();
-		em.clear();
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
+			.ifPresent(reaction -> {
+				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(0);
+			});
 	}
 
 	@Test
@@ -192,12 +188,12 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
-
-		em.flush();
-		em.clear();
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
+			.ifPresent(reaction -> {
+				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(1);
+			});
 	}
 }
