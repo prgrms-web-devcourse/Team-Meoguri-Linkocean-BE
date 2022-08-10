@@ -153,23 +153,23 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public Page<GetBookmarksResult> getByWriterProfileId(
+	public Page<GetBookmarksResult> getByTargetProfileId(
 		final BookmarkFindCond findCond,
 		final Pageable pageable
 	) {
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-		final Long targetProfileId = findCond.getWriterProfileId();
+		final Long targetProfileId = findCond.getTargetProfileId();
 
 		// 이용 가능한 open type 설정
 		findCond.setOpenType(getAvailableBookmarkOpenType(currentUserProfileId, targetProfileId));
 
 		// 북마크 조회
-		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByWriterId(findCond, pageable);
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
 		// 추가 정보 조회
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		final boolean isWriter = currentUserProfileId == findCond.getWriterProfileId();
+		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		// 결과 반환
 		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);

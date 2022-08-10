@@ -35,8 +35,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	/* 작성자의 id 로 북마크 페이징 조회 */
 	@Override
-	public Page<Bookmark> findByWriterId(final BookmarkFindCond findCond, final Pageable pageable) {
-		final Long targetProfileId = findCond.getWriterProfileId();
+	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
+		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
 		final boolean isFavorite = findCond.isFavorite();
 		final List<String> tags = findCond.getTags();

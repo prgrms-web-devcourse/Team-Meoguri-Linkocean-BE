@@ -65,22 +65,23 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		return getBookmarks(user, user.getProfileId(), queryParams);
+		return getByTargetProfileId(user, user.getProfileId(), queryParams);
 	}
 
 	/**
-	 * 	작성자의 프로필 id 로 북마크 페이징 조회
+	 * 대상의 프로필 id 로 북마크 페이징 조회
+	 * 카테고리 필터링, 제목 필터링, 태그 필터링, 즐겨찾기 필터링을 지원한다 <br>
 	 */
 	@GetMapping("/others/{profileId}")
-	public PageResponse<GetBookmarksResponse> getBookmarks(
+	public PageResponse<GetBookmarksResponse> getByTargetProfileId(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long writerProfileId,
+		final @PathVariable("profileId") long targetProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.getByWriterProfileId(
+		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
 				user.getId(),
-				writerProfileId,
+				targetProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),
