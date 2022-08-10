@@ -168,7 +168,6 @@ public class BookmarkController {
 		httpHeaders.setAccessControlAllowHeaders(List.of("*"));
 		httpHeaders.setAccessControlExposeHeaders(List.of("*"));
 		httpHeaders.setAccessControlRequestHeaders(List.of("*"));
-		
 		return ResponseEntity.ok()
 			.headers(httpHeaders)
 			.headers(getLocationHeaderIfPresent(oBookmarkId))
