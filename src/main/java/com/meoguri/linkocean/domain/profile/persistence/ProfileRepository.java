@@ -11,5 +11,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 
 	@Query("select p from Profile p where p.user.id = :userId")
 	Optional<Profile> findByUserId(long userId);
+	
+	boolean existsByUsername(String username);
 }
 

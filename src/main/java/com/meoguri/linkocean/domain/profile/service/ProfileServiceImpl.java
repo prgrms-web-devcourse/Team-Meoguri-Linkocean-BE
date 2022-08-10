@@ -43,15 +43,23 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
+		final long userId = command.getUserId();
+		final String username = command.getUsername();
+		final List<String> categories = command.getCategories();
+
+		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
+		final boolean exists = profileRepository.existsByUsername(username);
+		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
+
 		/* 연관 관계 조회 */
-		final User user = findUserByIdQuery.findById(command.getUserId());
+		final User user = findUserByIdQuery.findById(userId);
 
 		/* 프로필 등록 */
-		final Profile profile = profileRepository.save(new Profile(user, command.getUsername()));
+		final Profile profile = profileRepository.save(new Profile(user, username));
 		log.info("save profile with id :{}, username :{}", profile.getId(), profile.getUsername());
 
 		/* 선호 카테고리 등록 */
-		command.getCategories().forEach(profile::addToFavoriteCategory);
+		categories.forEach(profile::addToFavoriteCategory);
 		return profile.getId();
 	}
 

@@ -31,10 +31,15 @@ public final class Preconditions {
 		}
 	}
 
-	// target should be empty
 	public static void checkUniqueConstraint(final Optional<? extends BaseIdEntity> target, final String errorMessage) {
 		if (target.isPresent()) {
 			throw new IllegalArgumentException(String.format("%s id: %d", errorMessage, target.get().getId()));
+		}
+	}
+
+	public static void checkUniqueConstraint(final boolean exists, final String errorMessage) {
+		if (exists) {
+			throw new IllegalArgumentException(errorMessage);
 		}
 	}
 
