@@ -34,7 +34,7 @@ public class CustomRestControllerAdvice {
 	@ExceptionHandler({LinkoceanRuntimeException.class,
 		TypeMismatchException.class, HttpMessageNotReadableException.class,
 		MissingServletRequestParameterException.class, NoHandlerFoundException.class})
-	public ErrorResponse handleBadRequestException(RuntimeException ex) { //TODO RuntimeException -> Exception
+	public ErrorResponse handleBadRequestException(Exception ex) {
 		log.warn(ex.getMessage(), ex);
 
 		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.", ex);
@@ -53,7 +53,7 @@ public class CustomRestControllerAdvice {
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
-	public ErrorResponse handleServerException(RuntimeException ex) { //TODO RuntimeException to Exception
+	public ErrorResponse handleServerException(Exception ex) {
 		log.warn(ex.getMessage(), ex);
 
 		return ErrorResponse.of(INTERNAL_SERVER_ERROR, "알 수 없는 에러가 발생했습니다. 고객센터에 문의하세요.", ex);

@@ -8,7 +8,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.GetBookmarkProfileResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.ProfileResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -63,7 +63,7 @@ public final class GetDetailedBookmarkResponse {
 		private String imageUrl;
 		private Boolean isFollow;
 
-		public static GetBookmarkProfileResponse of(final GetBookmarkProfileResult profile) {
+		public static GetBookmarkProfileResponse of(final ProfileResult profile) {
 			return new GetBookmarkProfileResponse(
 				profile.getProfileId(),
 				profile.getUsername(),

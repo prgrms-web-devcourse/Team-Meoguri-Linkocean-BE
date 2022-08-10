@@ -22,10 +22,10 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 
 	@Query("select b "
 		+ "from Bookmark b "
-		+ "where b.profile = :profile "
+		+ "where b.profile.id = :profileId "
 		+ "and b.id = :id "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByProfileAndId(Profile profile, long id);
+	Optional<Bookmark> findByProfileIdAndId(long profileId, long id);
 
 	@Query("select b.id "
 		+ "from Bookmark b "

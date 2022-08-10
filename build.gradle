@@ -51,8 +51,11 @@ jacocoTestReport {
                     "com/meoguri/**/*Result.*",
                     "com/meoguri/**/*Cond.*",
                     "com/meoguri/**/*Properties.*",
+                    "com/meoguri/**/*Params.*",
                     "com/meoguri/**/SearchTab.*",
                     "com/meoguri/**/*Noti.*",
+                    "com/meoguri/**/util/*.*",
+                    "com/meoguri/**/exception/*.*"
             ] + Qdomains)
         }))
     }
@@ -94,7 +97,6 @@ dependencies {
     // Database
     implementation 'mysql:mysql-connector-java'
     implementation 'org.flywaydb:flyway-mysql'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.0'
 
     // Query DSL
     implementation "com.querydsl:querydsl-jpa"
