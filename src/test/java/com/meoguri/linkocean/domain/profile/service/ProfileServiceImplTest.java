@@ -10,13 +10,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
@@ -157,6 +161,171 @@ class ProfileServiceImplTest {
 		assertThat(user1ToUser1ProfileResult.isFollow()).isEqualTo(expectedFollow);
 	}
 
+	@Ultimate
+	@Nested
+	class 궁극의_프로필_목록_조회_테스트 {
+		private long user1Id;
+		private long user2Id;
+		private long user3Id;
+
+		private long profile1Id;
+		private long profile2Id;
+		private long profile3Id;
+
+		@BeforeEach
+		void setUp() {
+			// set up 3 users
+			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
+			final User user2 = userRepository.save(new User("user2@naver.com", "NAVER"));
+			final User user3 = userRepository.save(new User("user3@kakao.com", "KAKAO"));
+
+			user1Id = user1.getId();
+			user2Id = user2.getId();
+			user3Id = user3.getId();
+
+			final Profile profile1 = new Profile(user1, "user1");
+			final Profile profile2 = new Profile(user2, "user2");
+			final Profile profile3 = new Profile(user3, "user3");
+
+			profile1Id = profileService.registerProfile(registerCommandOf(profile1));
+			profile2Id = profileService.registerProfile(registerCommandOf(profile2));
+			profile3Id = profileService.registerProfile(registerCommandOf(profile3));
+		}
+
+		/**
+		 * user1 -> profile1, profile2 팔로우
+		 * user2 -> profile3 팔로우
+		 * user3 -> profile2 팔로우
+		 */
+		private void makeScenario() {
+			followService.follow(new FollowCommand(user1Id, profile2Id));
+			followService.follow(new FollowCommand(user1Id, profile3Id));
+			followService.follow(new FollowCommand(user2Id, profile3Id));
+			followService.follow(new FollowCommand(user3Id, profile2Id));
+		}
+
+		@Test
+		void 팔로워_목록_조회_성공() {
+			//given
+			makeScenario();
+
+			//when
+			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
+				condWhenFindFollowers(profile1Id), defaultPageable());
+			final Page<SearchProfileResult> result2 = profileService.getProfiles(user2Id,
+				condWhenFindFollowers(profile2Id), defaultPageable());
+			final Page<SearchProfileResult> result3 = profileService.getProfiles(user3Id,
+				condWhenFindFollowers(profile3Id), defaultPageable());
+
+			//then
+			assertThat(result1).isEmpty();
+			assertThat(result2)
+				.extracting(
+					SearchProfileResult::getId,
+					SearchProfileResult::getUsername,
+					SearchProfileResult::getImage,
+					SearchProfileResult::isFollow
+				).containsExactly(
+					tuple(user1Id, "user1", null, false),
+					tuple(user3Id, "user3", null, true)
+				);
+			assertThat(result3)
+				.extracting(
+					SearchProfileResult::getId,
+					SearchProfileResult::getUsername,
+					SearchProfileResult::getImage,
+					SearchProfileResult::isFollow
+				).containsExactly(
+					tuple(user1Id, "user1", null, false),
+					tuple(user2Id, "user2", null, true)
+				);
+		}
+
+		@Test
+		void 팔로이_목록_조회_성공() {
+			//given
+			makeScenario();
+
+			//when
+			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
+				condWhenFindFollowees(profile1Id), defaultPageable());
+			final Page<SearchProfileResult> result2 = profileService.getProfiles(user2Id,
+				condWhenFindFollowees(profile2Id), defaultPageable());
+			final Page<SearchProfileResult> result3 = profileService.getProfiles(user3Id,
+				condWhenFindFollowees(profile3Id), defaultPageable());
+
+			//then
+			assertThat(result1)
+				.extracting(
+					SearchProfileResult::getId,
+					SearchProfileResult::getUsername,
+					SearchProfileResult::getImage,
+					SearchProfileResult::isFollow
+				).containsExactly(
+					tuple(user2Id, "user2", null, true),
+					tuple(user3Id, "user3", null, true)
+				);
+			assertThat(result2)
+				.extracting(
+					SearchProfileResult::getId,
+					SearchProfileResult::getUsername,
+					SearchProfileResult::getImage,
+					SearchProfileResult::isFollow
+				).containsExactly(
+					tuple(user3Id, "user3", null, true)
+				);
+			assertThat(result3)
+				.extracting(
+					SearchProfileResult::getId,
+					SearchProfileResult::getUsername,
+					SearchProfileResult::getImage,
+					SearchProfileResult::isFollow
+				).containsExactly(
+					tuple(user2Id, "user2", null, true)
+				);
+		}
+
+		@Test
+		void 프로필_목록_조회_이름으로_필터링_성공() {
+			//given
+			followService.follow(new FollowCommand(user1Id, profile2Id));
+
+			//when
+			final Page<SearchProfileResult> results = profileService.getProfiles(user1Id,
+				condWhenFindUsingUsername("user"), defaultPageable());
+
+			//then
+			assertThat(results)
+				.extracting(SearchProfileResult::getId, SearchProfileResult::isFollow)
+				.containsExactly(
+					tuple(user1Id, false),
+					tuple(user2Id, true),
+					tuple(user3Id, false)
+				);
+		}
+
+		private UltimateProfileFindCond condWhenFindUsingUsername(final String username) {
+			return UltimateProfileFindCond.builder()
+				.username(username)
+				.build();
+		}
+
+		private UltimateProfileFindCond condWhenFindFollowees(final long profileId) {
+			return UltimateProfileFindCond.builder()
+				.profileId(profileId)
+				.followee(true)
+				.build();
+		}
+
+		private UltimateProfileFindCond condWhenFindFollowers(final long profileId) {
+			return UltimateProfileFindCond.builder()
+				.profileId(profileId)
+				.follower(true)
+				.build();
+		}
+	}
+
+	@Disabled("이전 완료(곧 삭제 예정)")
 	@Nested
 	class 프로필_목록_조회_테스트 {
 
