@@ -12,9 +12,10 @@ import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.UpdateBookmarkLikeCountQuery;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,13 +24,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
-	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 	private final ReactionRepository reactionRepository;
+
+	private final FindProfileByIdQuery findProfileByIdQuery;
+	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
+	private final UpdateBookmarkLikeCountQuery updateBookmarkLikeCountQuery;
 
 	@Override
 	public void requestReaction(ReactionCommand command) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 
@@ -75,6 +78,8 @@ public class ReactionServiceImpl implements ReactionService {
 
 	private void updateBookmarkLikeCount(Bookmark bookmark) {
 		final long likeCount = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
-		bookmark.changeLikeCount(likeCount);
+		final boolean isUpdated =
+			updateBookmarkLikeCountQuery.updateBookmarkLikeCountById(likeCount, bookmark.getId()) > 0;
+		checkCondition(isUpdated);
 	}
 }
