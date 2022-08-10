@@ -8,7 +8,6 @@ import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,7 +59,7 @@ public class Profile extends BaseIdEntity {
 	 * 회원 가입시 사용하는 생성자
 	 */
 	public Profile(final User user, final String username) {
-		checkCondition(Objects.nonNull(user));
+		checkNotNull(user);
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
 		this.user = user;

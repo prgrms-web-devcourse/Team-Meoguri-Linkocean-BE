@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.user.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -42,6 +43,8 @@ public class User extends BaseIdEntity {
 	 * 회원 가입시 사용하는 생성자
 	 */
 	public User(final String email, final String oauthType) {
+		checkNotNull(email);
+		checkNotNull(oauthType);
 
 		this.email = new Email(email);
 		this.oauthType = OAuthType.of(oauthType);
