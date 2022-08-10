@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.exception.Preconditions.*;
-
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -68,9 +66,7 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void cancelReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
-		final boolean isDeleted
-			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType) > 0;
-		checkCondition(isDeleted);
+		reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType);
 	}
 
 	private void updateBookmarkLikeCount(Bookmark bookmark) {

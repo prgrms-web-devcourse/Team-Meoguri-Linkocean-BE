@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.exception.Preconditions.*;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +36,6 @@ public class FavoriteServiceImpl implements FavoriteService {
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 		final Profile owner = findProfileByUserIdQuery.findByUserId(userId);
 
-		final boolean isDeleted
-			= favoriteRepository.deleteByOwnerAndBookmark(owner, bookmark) > 0;
-		checkCondition(isDeleted);
+		favoriteRepository.deleteByOwnerAndBookmark(owner, bookmark);
 	}
 }

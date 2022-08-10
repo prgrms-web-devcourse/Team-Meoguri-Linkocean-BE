@@ -11,6 +11,11 @@ import com.meoguri.linkocean.domain.BaseIdEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 북마크 태그
+ *
+ * - 태그를 생성할 때 [이름]이 존재해야 한다.
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
