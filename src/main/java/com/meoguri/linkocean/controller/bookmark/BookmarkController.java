@@ -164,7 +164,13 @@ public class BookmarkController {
 	) {
 		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkIdIfExist(user.getProfileId(), url);
 
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setAccessControlAllowHeaders(List.of("*"));
+		httpHeaders.setAccessControlExposeHeaders(List.of("*"));
+		httpHeaders.setAccessControlRequestHeaders(List.of("*"));
+		
 		return ResponseEntity.ok()
+			.headers(httpHeaders)
 			.headers(getLocationHeaderIfPresent(oBookmarkId))
 			.body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
 	}
