@@ -63,18 +63,19 @@ public class BookmarkServiceImpl implements BookmarkService {
 	public long registerBookmark(final RegisterBookmarkCommand command) {
 		final long profileId = command.getProfileId();
 		final String url = command.getUrl();
-		// 연관 필드 조회
+
+		/* 연관 필드 조회 */
 		final Profile profile = findProfileByIdQuery.findById(profileId);
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
 
-		// 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다
+		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
 		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndLinkMetadata(profile, linkMetadata);
 		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
 
-		// 태그 조회/저장
+		/* 태그 조회/저장 */
 		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
 
-		// 북마크 등록 진행
+		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
 			profile,
 			linkMetadata,
