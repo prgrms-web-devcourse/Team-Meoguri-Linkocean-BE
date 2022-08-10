@@ -149,10 +149,10 @@ class ReactionServiceImplTest {
 		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
-			.ifPresent(reaction -> {
-				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(1);
-			});
+		final Reaction reaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2).get();
+		final Bookmark bookmarkAddedByLike = reaction.getBookmark();
+
+		assertThat(bookmarkAddedByLike.getLikeCount()).isOne();
 	}
 
 	@Test
@@ -161,10 +161,10 @@ class ReactionServiceImplTest {
 		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate"));
 
 		//then
-		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
-			.ifPresent(reaction -> {
-				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(0);
-			});
+		final Reaction reaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2).get();
+		final Bookmark bookmarkAddedByHate = reaction.getBookmark();
+
+		assertThat(bookmarkAddedByHate.getLikeCount()).isZero();
 	}
 
 	@Test
@@ -176,10 +176,8 @@ class ReactionServiceImplTest {
 		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
-			.ifPresent(reaction -> {
-				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(0);
-			});
+		final long likeCountCancelLike = bookmarkRepository.findById(bookmark2.getId()).get().getLikeCount();
+		assertThat(likeCountCancelLike).isZero();
 	}
 
 	@Test
@@ -191,9 +189,7 @@ class ReactionServiceImplTest {
 		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2)
-			.ifPresent(reaction -> {
-				assertThat(reaction.getBookmark().getLikeCount()).isEqualTo(1);
-			});
+		final long likeCountChangedHateToLike = bookmarkRepository.findById(bookmark2.getId()).get().getLikeCount();
+		assertThat(likeCountChangedHateToLike).isOne();
 	}
 }
