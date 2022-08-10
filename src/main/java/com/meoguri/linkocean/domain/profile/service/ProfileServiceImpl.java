@@ -43,13 +43,14 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
+		/* 연관 관계 조회 */
 		final User user = findUserByIdQuery.findById(command.getUserId());
 
-		// 프로필 등록
+		/* 프로필 등록 */
 		final Profile profile = profileRepository.save(new Profile(user, command.getUsername()));
 		log.info("save profile with id :{}, username :{}", profile.getId(), profile.getUsername());
 
-		// 선호 카테고리 등록
+		/* 선호 카테고리 등록 */
 		command.getCategories().forEach(profile::addToFavoriteCategory);
 		return profile.getId();
 	}
