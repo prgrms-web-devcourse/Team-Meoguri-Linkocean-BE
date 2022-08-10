@@ -1,10 +1,10 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
+import static com.meoguri.linkocean.controller.common.SimpleIdResponse.of;
+import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,11 +28,12 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
+import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse.ProfileResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.controller.common.SimpleIdResponse;
-import com.meoguri.linkocean.domain.bookmark.persistence.dto.UltimateBookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -68,23 +69,23 @@ public class BookmarkController {
 	}
 
 	/**
-	 * 북마크 목록 조회
+	 * 	작성자의 프로필 id 로 북마크 페이징 조회
 	 */
 	@GetMapping("/others/{profileId}")
 	public PageResponse<GetBookmarksResponse> getBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long profileId,
+		final @PathVariable("profileId") long writerProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.ultimateGetBookmarks(
-			new UltimateBookmarkFindCond(
+		final Page<GetBookmarksResult> result = bookmarkService.getByWriterProfileId(
+			new BookmarkFindCond(
 				user.getId(),
-				profileId,
+				writerProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),
 				queryParams.isFollow(),
-				queryParams.getSearchTitle()
+				queryParams.getTitle()
 			),
 			queryParams.toPageable()
 		);
@@ -99,53 +100,31 @@ public class BookmarkController {
 	 * 피드 북마크 목록 조회
 	 * - 북마크 정보와 함께 작성자 프로필 정보를 반환한다
 	 */
-	//TODO
 	@GetMapping("/feed")
 	public PageResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final List<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(queryParams.toFeedSearchCond());
-
-		// final List<GetFeedBookmarksResponse> response =
-		// 	result.stream().map(GetFeedBookmarksResponse::of).collect(toList());
-
-		final List<GetFeedBookmarksResponse> dummyResponse = List.of(
-			new GetFeedBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				LocalDateTime.now(),
-				10L,
-				true,
-				false,
-				"bookmarkImageUrl",
-				List.of("spring", "fun"),
-				new GetFeedBookmarksResponse.GetFeedBookmarkProfileResponse(
-					1L, "crush", "profileImage.png", false
-				)
+		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
+			new BookmarkFindCond(
+				user.getId(),
+				null, //작성자가 따로 없는 조회 이므로 null
+				queryParams.getCategory(),
+				queryParams.isFavorite(),
+				queryParams.getTags(),
+				queryParams.isFollow(),
+				queryParams.getTitle()
 			),
-			new GetFeedBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://comic.daum.com/index",
-				"all",
-				null,
-				LocalDateTime.now(),
-				10L,
-				false,
-				true,
-				"bookmarkImageUrl2",
-				List.of("spring", "fun"),
-				new GetFeedBookmarksResponse.GetFeedBookmarkProfileResponse(
-					1L, "crush", "profileImageUrl", false
-				)
-			)
+			queryParams.toPageable()
 		);
 
-		return PageResponse.of(dummyResponse.size(), "bookmarks", dummyResponse);
+		final List<GetFeedBookmarksResponse> response = result.get()
+			.map(GetFeedBookmarksResponse::of)
+			.collect(toList());
+
+		// TODO - 아직  개발 서버에서는 dummy 반환
+		// return PageResponse.of(response.size(), "bookmarks", response);
+		return feedDummyData();
 	}
 
 	/* 북마크 상세 조회 */
@@ -177,8 +156,9 @@ public class BookmarkController {
 		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 
+	/* 중복 url 확인 */
 	@GetMapping
-	public ResponseEntity<Map<String, Object>> getDetailedBookmark(
+	public ResponseEntity<Map<String, Object>> getBookmarkIdIfDuplicated(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestParam("url") String url
 	) {
@@ -193,5 +173,43 @@ public class BookmarkController {
 		HttpHeaders headers = new HttpHeaders();
 		oBookmarkId.ifPresent(bookmarkId -> headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId)));
 		return headers;
+	}
+
+	private PageResponse<GetFeedBookmarksResponse> feedDummyData() {
+
+		return PageResponse.of(2, "bookmarks", List.of(
+			new GetFeedBookmarksResponse(
+				1L,
+				"네이버 웹툰",
+				"https://comic.naver.com/index",
+				"all",
+				"IT",
+				now(),
+				10L,
+				true,
+				false,
+				"bookmarkImageUrl",
+				List.of("spring", "fun"),
+				new ProfileResponse(
+					1L, "crush", "profileImage.png", false
+				)
+			),
+			new GetFeedBookmarksResponse(
+				2L,
+				"다음 웹툰",
+				"https://comic.daum.com/index",
+				"all",
+				null,
+				now(),
+				10L,
+				false,
+				true,
+				"bookmarkImageUrl2",
+				List.of("spring", "fun"),
+				new ProfileResponse(
+					1L, "crush", "profileImageUrl", false
+				)
+			)
+		));
 	}
 }

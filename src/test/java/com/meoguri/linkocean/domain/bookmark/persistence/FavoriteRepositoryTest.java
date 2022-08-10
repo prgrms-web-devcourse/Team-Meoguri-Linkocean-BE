@@ -67,7 +67,7 @@ class FavoriteRepositoryTest {
 	@Test
 	void 즐겨찾기_여부_조회() {
 		//when
-		final boolean isFavorite = favoriteRepository.existsByOwnerAndBookmark(owner, bookmark);
+		final boolean isFavorite = favoriteRepository.existsByOwner_idAndBookmark(owner.getId(), bookmark);
 
 		//then
 		assertThat(isFavorite).isFalse();
@@ -83,7 +83,7 @@ class FavoriteRepositoryTest {
 		favoriteRepository.save(new Favorite(bookmark, owner));
 
 		//when
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findByOwnerIdAndBookmark(owner.getId(),
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByOwnerIdAndBookmark(owner.getId(),
 			List.of(this.bookmark, bookmark));
 
 		//then

@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.util;
 
-import java.util.Collections;
+import static java.util.Collections.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -53,20 +54,23 @@ public final class Fixture {
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category) {
 
-		return createBookmark(profile, linkMetadata, title, category, "https://www.google.com",
-			Collections.emptyList());
+		return createBookmark(profile, linkMetadata, title, category, "https://www.google.com", emptyList());
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url) {
-		return createBookmark(profile, linkMetadata, title, category, url,
-			Collections.emptyList());
+		return createBookmark(profile, linkMetadata, title, category, url, emptyList());
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url, List<Tag> tags) {
 
 		return new Bookmark(profile, linkMetadata, title, "dream company", OpenType.ALL, category, url, tags);
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, OpenType openType, String url) {
+
+		return new Bookmark(profile, linkMetadata, null, null, openType, null, url, emptyList());
 	}
 
 	public static LinkMetadata createLinkMetadata() {
