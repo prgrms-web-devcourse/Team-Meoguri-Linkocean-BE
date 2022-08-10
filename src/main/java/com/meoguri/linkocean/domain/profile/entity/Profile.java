@@ -22,9 +22,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 사용자와 관련된 정보를 저장하는 엔티티
- * - username은 필수 값이다.
- * - bio(자기 소개), image(프로필 이미지)는 없어도 된다.
+ * 프로필
+ *
+ * - 프로필을 [사용자,유저 이름]으로 등록할 수 있다 추가로 [선호 카테고리]를 등록할 수 있다.
+ * - 프로필의 [유저 이름, 자기 소개, 이미지, 선호 카테고리 목록]을 수정할 수 있다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)

@@ -19,6 +19,12 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자
+ *
+ * - 사용자는 단순 로그인 용도로 쓰이고 실질적으로 프로필이 사용자를 대체한다.
+ * - 사용자를 등록할 때 [이메일, 소셜 타입]이 존재해야 한다.
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
