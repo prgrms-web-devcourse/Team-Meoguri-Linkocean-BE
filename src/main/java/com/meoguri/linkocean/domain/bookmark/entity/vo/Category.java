@@ -44,7 +44,7 @@ public enum Category {
 		return this.korName;
 	}
 
-	public static String toString(Category category) {
+	public static String toStringKor(Category category) {
 		return category == null ? null : category.korName;
 	}
 

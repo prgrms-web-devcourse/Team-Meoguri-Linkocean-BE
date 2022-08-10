@@ -39,7 +39,7 @@ public final class GetDetailedBookmarkResponse {
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
 
 		final String openType = OpenType.toString(result.getOpenType());
-		final String category = Optional.ofNullable(Category.toString(result.getCategory())).orElse("no-category");
+		final String category = Optional.ofNullable(Category.toStringKor(result.getCategory())).orElse("no-category");
 
 		return new GetDetailedBookmarkResponse(
 			result.getBookmarkId(),
