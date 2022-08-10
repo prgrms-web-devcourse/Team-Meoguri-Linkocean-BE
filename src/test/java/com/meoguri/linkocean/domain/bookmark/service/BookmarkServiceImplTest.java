@@ -157,7 +157,7 @@ class BookmarkServiceImplTest {
 			bookmarkService.registerBookmark(command);
 
 			//when then
-			assertThatExceptionOfType(IllegalArgumentException.class)
+			assertThatIllegalArgumentException()
 				.isThrownBy(() -> bookmarkService.registerBookmark(command));
 		}
 
