@@ -496,7 +496,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.writerProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
@@ -518,7 +518,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.writerProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
