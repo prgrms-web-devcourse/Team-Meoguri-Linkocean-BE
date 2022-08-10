@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 public class TagServiceImpl implements TagService {
 
 	private final TagRepository tagRepository;
-
 	private final BookmarkRepository bookmarkRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
