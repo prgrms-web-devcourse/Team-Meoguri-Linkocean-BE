@@ -45,7 +45,6 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -554,7 +553,7 @@ class BookmarkServiceImplTest {
 		private Bookmark bookmark10;
 
 		private LinkMetadata naver;
-		private LinkMetadata google;
+		private LinkMetadata kakao;
 		private LinkMetadata github;
 
 		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
@@ -581,23 +580,23 @@ class BookmarkServiceImplTest {
 
 			// 링크 메타 데이터 3개 셋업
 			naver = new LinkMetadata("www.naver.com", "naver", "naver.png");
-			google = new LinkMetadata("www.google.com", "google", "google.png");
+			kakao = new LinkMetadata("www.kakao.com", "kakao", "kakao.png");
 			github = new LinkMetadata("www.github.com", "github", "github.png");
 
 			naver = linkMetadataRepository.save(naver);
-			google = linkMetadataRepository.findByLink(new Link("www.google.com")).get();
+			kakao = linkMetadataRepository.save(kakao);
 			github = linkMetadataRepository.save(github);
 
 			bookmarkRepository.save(createBookmark(profile3, github, PRIVATE, "github.com"));
-			bookmarkRepository.save(createBookmark(profile3, google, PARTIAL, "google.com"));
+			bookmarkRepository.save(createBookmark(profile3, kakao, PARTIAL, "kakao.com"));
 			bookmark10 = bookmarkRepository.save(createBookmark(profile3, naver, ALL, "naver.com"));
 
 			bookmarkRepository.save(createBookmark(profile2, github, PRIVATE, "github.com"));
-			bookmark8 = bookmarkRepository.save(createBookmark(profile2, google, PARTIAL, "google.com"));
+			bookmark8 = bookmarkRepository.save(createBookmark(profile2, kakao, PARTIAL, "kakao.com"));
 			bookmark7 = bookmarkRepository.save(createBookmark(profile2, naver, ALL, "naver.com"));
 
 			bookmark6 = bookmarkRepository.save(createBookmark(profile1, github, PRIVATE, "github.com"));
-			bookmark5 = bookmarkRepository.save(createBookmark(profile1, google, PARTIAL, "google.com"));
+			bookmark5 = bookmarkRepository.save(createBookmark(profile1, kakao, PARTIAL, "kakao.com"));
 			bookmark4 = bookmarkRepository.save(createBookmark(profile1, naver, ALL, "naver.com"));
 
 			followRepository.save(new Follow(profile1, profile2));
@@ -657,7 +656,7 @@ class BookmarkServiceImplTest {
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(6);
+			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getContent())
 				.extracting(GetFeedBookmarksResult::getId, GetFeedBookmarksResult::isWriter)
 				.containsExactly(
