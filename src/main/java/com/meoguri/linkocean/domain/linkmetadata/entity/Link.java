@@ -10,9 +10,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * url
- * 링크 메타 데이터 테이블의 column 이며 데이터 중복을 줄이기 위해
- * schema (http, https) 와 www. 을 줄여서 저장함
+ * 링크(Link)
+ *
+ * - 링크 메타 데이터 테이블의 column 이며 유일하다.
+ * - 링크는 저장될 때 schema (http, https) 와 www. 를 지우고 저장한다.
  */
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode

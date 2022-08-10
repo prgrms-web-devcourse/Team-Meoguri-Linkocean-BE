@@ -16,7 +16,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 선호 북마크 카테고리
+ * 선호 카테고리
+ *
+ * - 선호 카테고리를 등록할 때 [프로필, 카테고리]가 존재해야 한다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)

@@ -12,6 +12,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자 이메일
+ *
+ * - RFC 몇을 따르죠? 형식을 따른다.
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode

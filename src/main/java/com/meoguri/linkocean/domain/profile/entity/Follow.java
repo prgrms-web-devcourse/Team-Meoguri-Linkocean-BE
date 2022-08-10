@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * 팔로우
- * 팔로워 - 팔로이 조합은 유니크하다.
+ *
+ * - 팔로워 - 팔로이 조합은 유일하다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
