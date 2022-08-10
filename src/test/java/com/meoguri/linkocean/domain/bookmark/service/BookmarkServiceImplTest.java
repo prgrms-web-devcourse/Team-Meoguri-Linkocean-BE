@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,7 +157,7 @@ class BookmarkServiceImplTest {
 			bookmarkService.registerBookmark(command);
 
 			//when then
-			assertThatExceptionOfType(DataIntegrityViolationException.class)
+			assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> bookmarkService.registerBookmark(command));
 		}
 

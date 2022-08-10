@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -60,9 +61,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
+		final long profileId = command.getProfileId();
+		final String url = command.getUrl();
 		// 연관 필드 조회
-		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
-		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(command.getUrl());
+		final Profile profile = findProfileByIdQuery.findById(profileId);
+		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
+
+		// 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다
+		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndLinkMetadata(profile, linkMetadata);
+		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		// 태그 조회/저장
 		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());

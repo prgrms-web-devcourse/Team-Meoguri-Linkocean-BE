@@ -3,6 +3,10 @@ package com.meoguri.linkocean.exception;
 import static lombok.AccessLevel.*;
 import static org.springframework.util.StringUtils.*;
 
+import java.util.Optional;
+
+import com.meoguri.linkocean.domain.BaseIdEntity;
+
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -21,9 +25,16 @@ public final class Preconditions {
 		checkArgument(target.length() <= maxLength, String.format(errorMessage, args));
 	}
 
-	public static void checkArgument(final boolean expression, final String errorMessage) {
+	public static void checkArgument(final boolean expression, final String errorMessage, final Object... args) {
 		if (!expression) {
-			throw new IllegalArgumentException(errorMessage);
+			throw new IllegalArgumentException(String.format(errorMessage, args));
+		}
+	}
+
+	// target should be empty
+	public static void checkUniqueConstraint(final Optional<? extends BaseIdEntity> target, final String errorMessage) {
+		if (target.isPresent()) {
+			throw new IllegalArgumentException(String.format("%s id: %d", errorMessage, target.get().getId()));
 		}
 	}
 
