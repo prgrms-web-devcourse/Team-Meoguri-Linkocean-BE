@@ -378,4 +378,44 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[1].likeCount").value(0));
 		}
 	}
+
+	@Nested
+	class 피드_북마크_조회 {
+
+		@BeforeEach
+		void setUp() throws Exception {
+			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			프로필_등록("user3", List.of("IT"));
+
+			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			final long profileId2 = 프로필_등록("user2", List.of("IT"));
+
+			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			프로필_등록("user1", List.of("IT"));
+
+			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			팔로우(profileId2);
+		}
+
+		@Test
+		void 피드_북마크_조회_성공() {
+			//when
+			mockMvc.perform()
+		}
+
+		@Test
+		void 피드_북마크_조회_팔로우_여부로_성공() {
+		}
+	}
 }
