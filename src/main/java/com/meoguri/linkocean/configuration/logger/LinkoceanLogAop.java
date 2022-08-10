@@ -29,7 +29,7 @@ public class LinkoceanLogAop {
 	public void beforeParameterLog(JoinPoint joinPoint) {
 		/* 메서드 정보 받아오기 */
 		Method method = getMethod(joinPoint);
-		log.info("======= call method name = {} =======", method.getName());
+		log.info("======= call method name = {} =======", method);
 
 		/* 파라미터 받아오기 */
 		Object[] args = joinPoint.getArgs();
@@ -46,7 +46,7 @@ public class LinkoceanLogAop {
 	public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
 		// 메서드 정보 받아오기
 		Method method = getMethod(joinPoint);
-		log.info("======= return method name = {} =======", method.getName());
+		log.info("======= return method name = {} =======", method);
 
 		if (nonNull(returnObj)) {
 			log.info("return type = {}", returnObj.getClass().getSimpleName());
