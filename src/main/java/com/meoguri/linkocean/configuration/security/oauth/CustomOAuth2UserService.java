@@ -60,7 +60,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			.orElseGet(() -> {
 				final User user = userRepository.save(attributes.toEntity());
 
-				log.info("save user with email : {}, oauthType : {}",
+				log.info("new user save with email : {}, oauthType : {}",
 					Email.toString(user.getEmail()), user.getOauthType());
 				return user;
 			});

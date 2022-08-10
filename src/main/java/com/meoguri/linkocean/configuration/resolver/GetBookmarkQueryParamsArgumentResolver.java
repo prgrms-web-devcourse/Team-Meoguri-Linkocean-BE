@@ -17,6 +17,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -46,6 +49,9 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 		final List<String> orderProperties =
 			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(order, DEFAULT_ORDER);
 
+		log.info("bookmark 조회 요청 : page : {}, size : {}, order : {}, category : {}, "
+				+ "searchTitle : {}, favorite : {}, follow : {}, tags : {}",
+			page, size, order, category, searchTitle, favorite, follow, tags);
 		return new GetBookmarkQueryParams(
 			toInt(page, DEFAULT_PAGE),
 			toInt(size, DEFAULT_SIZE),

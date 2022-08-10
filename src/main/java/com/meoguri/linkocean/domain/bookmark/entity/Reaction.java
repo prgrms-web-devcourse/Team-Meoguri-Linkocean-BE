@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -39,6 +40,9 @@ public class Reaction extends BaseIdEntity {
 	private ReactionType type;
 
 	public Reaction(final Profile profile, final Bookmark bookmark, final String type) {
+		checkNotNull(profile);
+		checkNotNull(bookmark);
+		checkNotNull(type);
 
 		this.profile = profile;
 		this.bookmark = bookmark;
