@@ -62,7 +62,9 @@ class CustomBookmarkRepositoryImplTest {
 	@PersistenceContext
 	private EntityManager em;
 
+	private Profile profile;
 	private long profileId;
+
 	private long bookmarkId1;
 	private long bookmarkId2;
 	private long bookmarkId3;
@@ -71,11 +73,12 @@ class CustomBookmarkRepositoryImplTest {
 	private LinkMetadata google;
 	private LinkMetadata github;
 
+	private Bookmark bookmark3;
 	@BeforeEach
 	void setUp() {
 		// 사용자 1명 셋업 - 크러쉬
 		final User user = userRepository.save(createUser("crush@mail.com", "NAVER"));
-		Profile profile = profileRepository.save(createProfile(user, "crush"));
+		profile = profileRepository.save(createProfile(user, "crush"));
 		profileId = profile.getId();
 
 		// 링크 메타 데이터 3개 셋업
@@ -116,7 +119,7 @@ class CustomBookmarkRepositoryImplTest {
 		));
 
 		// 크러쉬가 북마크 3개 저장 - 깃헙, IT, 비공개, 태그 없음
-		final Bookmark bookmark3 = bookmarkRepository.save(new Bookmark(
+		bookmark3 = bookmarkRepository.save(new Bookmark(
 			profile,
 			github,
 			"title3",
@@ -223,6 +226,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_즐겨찾기_조회_제목으로_필터링_성공() {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
 				.writerProfileId(profileId)
 				.title("1")
 				.build();
@@ -243,6 +247,7 @@ class CustomBookmarkRepositoryImplTest {
 		void 북마크_즐겨찾기_조회_좋아요_순으로_정렬_성공() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
 				.writerProfileId(profileId)
 				.favorite(true)
 				.build();
@@ -256,6 +261,55 @@ class CustomBookmarkRepositoryImplTest {
 				.extracting(Bookmark::getId)
 				.containsExactly(bookmarkId1, bookmarkId2);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
+		}
+
+		@Test
+		void 북마크_즐겨찾기_다른사람의_글도_있는경우() {
+			//setup
+			final User user2 = userRepository.save(createUser("user2@naver.com", "NAVER"));
+			final Profile profile2 = profileRepository.save(createProfile(user2, "user2"));
+			final Bookmark bookmark4 = bookmarkRepository.save(createBookmark(profile2, google, "google.com"));
+			final Bookmark bookmark5 = bookmarkRepository.save(createBookmark(profile2, naver, "naver.com"));
+
+			favoriteRepository.save(new Favorite(bookmark4, profile));
+			favoriteRepository.save(new Favorite(bookmark3, profile2));
+			favoriteRepository.save(new Favorite(bookmark5, profile2));
+			final Pageable pageable = defaultPageable();
+
+			//user1 -> user1
+			//given
+			final BookmarkFindCond findCond1 = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.writerProfileId(profileId)
+				.favorite(true)
+				.build();
+
+			//when
+			final Page<Bookmark> bookmarks1 = bookmarkRepository.findByWriterId(findCond1, pageable);
+
+			//then
+			assertThat(bookmarks1).hasSize(3)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmark4.getId(), bookmarkId2, bookmarkId1);
+			assertThat(bookmarks1.getTotalElements()).isEqualTo(3);
+
+			//user1 -> user2
+			//given
+			final BookmarkFindCond findCond2 = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.writerProfileId(profile2.getId())
+				.favorite(true)
+				.build();
+
+			//when
+			final Page<Bookmark> bookmarks2 = bookmarkRepository.findByWriterId(findCond2, pageable);
+
+			//then
+			assertThat(bookmarks2).hasSize(2)
+				.extracting(Bookmark::getId)
+				.containsExactly(bookmark5.getId(), bookmark3.getId());
+			assertThat(bookmarks2.getTotalElements()).isEqualTo(2);
+
 		}
 	}
 
