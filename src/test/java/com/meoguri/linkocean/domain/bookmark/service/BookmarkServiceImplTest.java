@@ -45,6 +45,7 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -584,7 +585,7 @@ class BookmarkServiceImplTest {
 			github = new LinkMetadata("www.github.com", "github", "github.png");
 
 			naver = linkMetadataRepository.save(naver);
-			google = linkMetadataRepository.save(google);
+			google = linkMetadataRepository.findByLink(new Link("www.google.com")).get();
 			github = linkMetadataRepository.save(github);
 
 			bookmarkRepository.save(createBookmark(profile3, github, PRIVATE, "github.com"));
