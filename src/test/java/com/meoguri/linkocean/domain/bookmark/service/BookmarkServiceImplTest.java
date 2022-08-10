@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -608,7 +607,7 @@ class BookmarkServiceImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final PageRequest pageable = defaultPageable();
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -650,7 +649,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final PageRequest pageable = defaultPageable();
+			final Pageable pageable = defaultPageable();
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
