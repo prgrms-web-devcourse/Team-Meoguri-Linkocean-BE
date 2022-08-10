@@ -112,15 +112,18 @@ public class ProfileServiceImpl implements ProfileService {
 		final Page<Profile> profilesPage = profileRepository.ultimateFindProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesPage.getContent();
 
-		/* 팔로우 여부 정보 가져 오기 */
-		final List<Boolean> isFollows;
-		if (isMyFollowees(currentProfileId, findCond.getProfileId(), findCond.isFollowee())) {
-			isFollows = new ArrayList<>((nCopies(profiles.size(), true)));
-		} else {
-			isFollows = checkIsFollowQuery.isFollows(currentProfileId, profiles);
-		}
+		/* 추가 정보 조회 */
+		final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
 
 		return toResultPage(profiles, isFollows, pageable);
+	}
+
+	private List<Boolean> getIsFollow(final long currentProfileId, final List<Profile> profiles,
+		final UltimateProfileFindCond findCond) {
+		if (isMyFollowees(currentProfileId, findCond.getProfileId(), findCond.isFollowee())) {
+			return new ArrayList<>((nCopies(profiles.size(), true)));
+		}
+		return checkIsFollowQuery.isFollows(currentProfileId, profiles);
 	}
 
 	private boolean isMyFollowees(final long currentProfileId, final Long profileId, final boolean followee) {
