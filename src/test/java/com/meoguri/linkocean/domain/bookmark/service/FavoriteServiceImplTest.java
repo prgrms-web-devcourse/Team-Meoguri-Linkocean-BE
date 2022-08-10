@@ -94,12 +94,6 @@ class FavoriteServiceImplTest {
 			.isThrownBy(() -> favoriteService.favorite(userId, bookmarkId));
 	}
 
-	@Test
-	void 즐겨찾기_해제_실패_즐겨찾기로_추가되어_있지_않음() {
-		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> favoriteService.unfavorite(userId, bookmarkId));
-	}
-
 	private RegisterBookmarkCommand command(final User user, final String url) {
 		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, OpenType.ALL, emptyList());
 	}

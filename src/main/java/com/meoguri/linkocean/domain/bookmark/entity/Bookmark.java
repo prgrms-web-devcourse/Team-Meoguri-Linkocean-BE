@@ -94,7 +94,6 @@ public class Bookmark extends BaseIdEntity {
 	 */
 	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
-		checkNotNull(category);
 		checkNotNull(openType);
 		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
