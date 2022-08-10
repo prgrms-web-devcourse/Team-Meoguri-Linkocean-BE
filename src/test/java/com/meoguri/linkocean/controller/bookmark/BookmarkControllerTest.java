@@ -12,16 +12,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
-import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 
 class BookmarkControllerTest extends BaseControllerTest {
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
@@ -382,21 +377,81 @@ class BookmarkControllerTest extends BaseControllerTest {
 	@Nested
 	class 피드_북마크_조회 {
 
+		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
+		// bookmark4 all,    		bookmark7 all, 		bookmark10 all
+		// bookmark5 partial,		bookmark8 partial	bookmark11 partial
+		// bookmark6 private,       bookmark9 private   bookmark12 private
+
+		private long bookmarkId4;
+		private long bookmarkId5;
+		private long bookmarkId6;
+
+		private long bookmarkId7;
+		private long bookmarkId8;
+
+		private long bookmarkId10;
+
 		@BeforeEach
 		void setUp() throws Exception {
-			유저_등록_로그인("user1@gmail.com", "GOOGLE");
-			프로필_등록("user1", List.of("IT"));
-
-			유저_등록_로그인("user2@gmail.com", "GOOGLE");
-			프로필_등록("user2", List.of("IT"));
-
 			유저_등록_로그인("user3@gmail.com", "GOOGLE");
 			프로필_등록("user3", List.of("IT"));
 
+			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId10 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			final long profileId2 = 프로필_등록("user2", List.of("IT"));
+
+			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			bookmarkId8 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId7 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			프로필_등록("user1", List.of("IT"));
+
+			bookmarkId6 = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
+			bookmarkId5 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
+
+			팔로우(profileId2);
 		}
 
 		@Test
-		void name() {
+		void 피드_북마크_조회_성공() throws Exception {
+			//when
+			mockMvc.perform(get(basePath + "/feed")
+					.header(AUTHORIZATION, token)
+					.accept(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(6),
+					jsonPath("$.bookmarks", hasSize(6)),
+					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
+					jsonPath("$.bookmarks[1].id").value(bookmarkId5),
+					jsonPath("$.bookmarks[2].id").value(bookmarkId6),
+					jsonPath("$.bookmarks[3].id").value(bookmarkId7),
+					jsonPath("$.bookmarks[4].id").value(bookmarkId8),
+					jsonPath("$.bookmarks[5].id").value(bookmarkId10)
+				).andDo(print());
+		}
+
+		@Test
+		void 피드_북마크_조회_팔로우_여부로_성공() throws Exception {
+			//when
+			mockMvc.perform(get(basePath + "/feed")
+					.param("follow", "true")
+					.header(AUTHORIZATION, token)
+					.accept(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(2),
+					jsonPath("$.bookmarks", hasSize(2)),
+					jsonPath("$.bookmarks[0].id").value(bookmarkId7),
+					jsonPath("$.bookmarks[1].id").value(bookmarkId8)
+				).andDo(print());
 		}
 	}
 

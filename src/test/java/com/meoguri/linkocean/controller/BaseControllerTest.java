@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller;
 
+import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -101,6 +102,10 @@ public class BaseControllerTest {
 			() -> linkMetadataRepository.save(new LinkMetadata(link, "title", "image"))
 		);
 		return link;
+	}
+
+	protected long 북마크_등록(final String url, final String openType) throws Exception {
+		return 북마크_등록(url, "title", null, emptyList(), openType);
 	}
 
 	protected long 북마크_등록(final String url, final String category, final List<String> tags,
