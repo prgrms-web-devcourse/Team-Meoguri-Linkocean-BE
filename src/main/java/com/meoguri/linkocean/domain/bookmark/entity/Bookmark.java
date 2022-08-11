@@ -35,7 +35,6 @@ import lombok.NoArgsConstructor;
 
 /**
  *  북마크 (인터넷 즐겨찾기)
- *
  *  - 북마크를 등록할 때 [프로필, 링크 메타데이터, 제목, 공개 범위]가 필수로 존재해야 하며 추가로 [메모, 카테고리, url, 태그 목록]를 입력 수 있다.
  *  - 사용자는 [url]당 하나의 북마크를 가질 수 있다.
  *  - 북마크의 [이름. 메모, 카테고리, 공개 범위, 태그 목록]를 수정할 수 있다.
@@ -95,9 +94,7 @@ public class Bookmark extends BaseIdEntity {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
-	/**
-	 * 북마크 등록시 사용하는 생성자
-	 */
+	/* 북마크 등록시 사용하는 생성자 */
 	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
 		checkNotNull(openType);
@@ -118,9 +115,7 @@ public class Bookmark extends BaseIdEntity {
 		setBookmarkTags(tags);
 	}
 
-	/**
-	 * 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다.
-	 */
+	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
 		final List<Tag> tags) {
 		checkNotNull(category);

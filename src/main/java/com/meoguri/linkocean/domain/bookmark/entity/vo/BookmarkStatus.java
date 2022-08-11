@@ -5,5 +5,6 @@ package com.meoguri.linkocean.domain.bookmark.entity.vo;
  * 생성시 `등록` 상태를 가지며 북마크 삭제를 통해 `제거` 상태가 된다.
  */
 public enum BookmarkStatus {
-	REGISTERED, REMOVED
+	REGISTERED,
+	REMOVED
 }
