@@ -1,9 +1,9 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
@@ -52,12 +51,11 @@ public class ProfileController {
 
 	/* 프로필 등록 */
 	@PostMapping
-	public SimpleIdResponse createProfile(
+	public Map<String, Object> createProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
-		log.info("user id {}", user.getId());
-		return of(profileService.registerProfile(request.toCommand(user.getId())));
+		return Map.of("id", profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
 	/* 내 프로필 조회 */

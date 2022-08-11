@@ -29,7 +29,6 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
-import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -46,11 +45,11 @@ public class BookmarkController {
 
 	/* 북마크 등록 */
 	@PostMapping
-	public SimpleIdResponse registerBookmark(
+	public Map<String, Object> registerBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return SimpleIdResponse.of(bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
+		return Map.of("id", bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
 	}
 
 	/* 내 북마크 목록 조회 */
