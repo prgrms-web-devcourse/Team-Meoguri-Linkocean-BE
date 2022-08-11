@@ -62,7 +62,6 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
-		// 고민 point
 		reactionRepository.save(new Reaction(profile, bookmark, reactionType.toString()));
 	}
 
