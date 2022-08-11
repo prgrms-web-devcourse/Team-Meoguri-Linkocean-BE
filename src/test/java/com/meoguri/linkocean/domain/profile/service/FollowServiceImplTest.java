@@ -56,8 +56,8 @@ class FollowServiceImplTest {
 		followService.follow(command);
 
 		//then
-		assertThat(profileService.getMyProfile(user1Id).getFolloweeCount()).isEqualTo(1);
-		assertThat(profileService.getMyProfile(user2Id).getFollowerCount()).isEqualTo(1);
+		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(1);
+		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(1);
 	}
 
 	@Test
@@ -81,8 +81,8 @@ class FollowServiceImplTest {
 		followService.unfollow(command);
 
 		//then
-		assertThat(profileService.getMyProfile(user1Id).getFolloweeCount()).isEqualTo(0);
-		assertThat(profileService.getMyProfile(user2Id).getFollowerCount()).isEqualTo(0);
+		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(0);
+		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(0);
 	}
 
 	@Test

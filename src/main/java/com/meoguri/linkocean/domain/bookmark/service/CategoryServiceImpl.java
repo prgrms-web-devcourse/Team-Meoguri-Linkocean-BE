@@ -23,13 +23,6 @@ public class CategoryServiceImpl implements CategoryService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public List<String> getMyUsedCategories(final long profileId) {
-		final Profile writer = findProfileByIdQuery.findById(profileId);
-
-		return convert(writer);
-	}
-
-	@Override
 	public List<String> getUsedCategories(final long profileId) {
 		final Profile writer = findProfileByIdQuery.findById(profileId);
 

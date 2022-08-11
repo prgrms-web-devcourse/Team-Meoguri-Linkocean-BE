@@ -21,7 +21,6 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
@@ -65,22 +64,6 @@ public class ProfileServiceImpl implements ProfileService {
 		/* 선호 카테고리 등록 */
 		categories.forEach(profile::addToFavoriteCategory);
 		return profile.getId();
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public GetMyProfileResult getMyProfile(final long profileId) {
-		final Profile profile = findProfileByIdQuery.findById(profileId);
-
-		return new GetMyProfileResult(
-			profile.getId(),
-			profile.getUsername(),
-			profile.getImage(),
-			profile.getBio(),
-			profile.getMyFavoriteCategories(),
-			followRepository.countFollowerByProfile(profile),
-			followRepository.countFolloweeByProfile(profile)
-		);
 	}
 
 	@Transactional(readOnly = true)

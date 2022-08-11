@@ -20,8 +20,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public final class BookmarkFindCond {
 
-	/* 현재 사용자의 프로필 id
-	   DTO 를 이용한 projection 사용 시 필요 - 아직은 리포지토리에서 사용하지 않는다 */
+	/* 현재 사용자의 프로필 id */
 	private final long currentUserProfileId;
 
 	/*대상을 지정한 북마크 조회인 경우 대상 프로필 id

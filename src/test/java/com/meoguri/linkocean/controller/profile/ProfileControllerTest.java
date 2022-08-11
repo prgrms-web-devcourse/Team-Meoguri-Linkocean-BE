@@ -20,7 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
+import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 
 class ProfileControllerTest extends BaseControllerTest {
 
@@ -185,7 +185,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		// 수정된 프로필 조회
 		//when
-		final GetMyProfileResponse myProfile = 내_프로필_조회();
+		final GetDetailedProfileResponse myProfile = 내_프로필_조회();
 
 		//then
 		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);

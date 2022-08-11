@@ -1,9 +1,9 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,18 +19,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
@@ -52,24 +49,19 @@ public class ProfileController {
 
 	/* 프로필 등록 */
 	@PostMapping
-	public SimpleIdResponse createProfile(
+	public Map<String, Object> createProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
-		log.info("user id {}", user.getId());
-		return of(profileService.registerProfile(request.toCommand(user.getId())));
+		return Map.of("id", profileService.registerProfile(request.toCommand(user.getId())));
 	}
 
 	/* 내 프로필 조회 */
 	@GetMapping("/me")
-	public GetMyProfileResponse getMyProfile(
+	public GetDetailedProfileResponse getMyProfile(
 		@AuthenticationPrincipal SecurityUser user
 	) {
-		final GetMyProfileResult profile = profileService.getMyProfile(user.getProfileId());
-		final List<GetProfileTagsResult> tags = tagService.getTags(user.getProfileId());
-		final List<String> categories = categoryService.getMyUsedCategories(user.getProfileId());
-
-		return GetMyProfileResponse.of(profile, tags, categories);
+		return getDetailedProfile(user, user.getProfileId());
 	}
 
 	/* 프로필 상세 조회 */
@@ -96,9 +88,7 @@ public class ProfileController {
 		profileService.updateProfile(request.toCommand(user.getProfileId(), imageUrl));
 	}
 
-	/**
-	 * 프로필 목록 조회 - 머구리 찾기
-	 */
+	/* 프로필 목록 조회 - 머구리 찾기 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
 		final @AuthenticationPrincipal SecurityUser user,

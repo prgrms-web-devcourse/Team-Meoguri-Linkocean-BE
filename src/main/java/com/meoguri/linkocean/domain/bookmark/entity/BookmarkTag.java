@@ -12,6 +12,9 @@ import com.meoguri.linkocean.domain.BaseIdEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 북마크 - 태그
+ */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity

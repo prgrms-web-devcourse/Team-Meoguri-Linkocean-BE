@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.controller;
+package com.meoguri.linkocean.controller.notification;
 
 import java.util.List;
 import java.util.Map;

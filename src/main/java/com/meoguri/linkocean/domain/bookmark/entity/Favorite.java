@@ -16,7 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 사용자가 북마크를 대상으로 지정하는 즐겨찾기
+ * 즐겨찾기
+ * - 사용자는 즐겨찾기를 북마크당 하나만 가질 수 있다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)

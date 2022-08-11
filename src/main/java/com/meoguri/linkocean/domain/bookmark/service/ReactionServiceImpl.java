@@ -21,9 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
+	private final ReactionRepository reactionRepository;
+
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
-	private final ReactionRepository reactionRepository;
 
 	@Override
 	public void requestReaction(ReactionCommand command) {

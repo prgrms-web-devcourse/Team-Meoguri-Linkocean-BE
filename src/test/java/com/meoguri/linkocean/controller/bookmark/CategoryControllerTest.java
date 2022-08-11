@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.bookmark;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -16,10 +17,13 @@ class CategoryControllerTest extends BaseControllerTest {
 
 	@Test
 	void 카테고리_전체_조회_Api_성공() throws Exception {
+		//given
+		유저_등록_로그인("hello@gmail.com", "GOOGLE");
+
 		//when
 		mockMvc.perform(get(basePath)
-				.contentType(MediaType.APPLICATION_JSON))
-
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTHORIZATION, token))
 			//then
 			.andExpect(status().isOk())
 			.andExpectAll(

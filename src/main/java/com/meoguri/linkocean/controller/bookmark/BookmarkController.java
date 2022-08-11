@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.of;
-import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
 
 import java.net.URI;
@@ -28,15 +26,12 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
-import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse.ProfileResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
-import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 
 import lombok.RequiredArgsConstructor;
@@ -48,20 +43,16 @@ public class BookmarkController {
 
 	private final BookmarkService bookmarkService;
 
-	/**
-	 * 북 마크 등록
-	 */
+	/* 북마크 등록 */
 	@PostMapping
-	public SimpleIdResponse registerBookmark(
+	public Map<String, Object> registerBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
+		return Map.of("id", bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
 	}
 
-	/**
-	 * 내 북마크 목록 조회
-	 */
+	/* 내 북마크 목록 조회 */
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
@@ -111,7 +102,7 @@ public class BookmarkController {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
 			new BookmarkFindCond(
 				user.getProfileId(),
-				null, //작성자가 따로 없는 조회 이므로 null
+				null, // 대상이 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),
@@ -124,7 +115,6 @@ public class BookmarkController {
 		final List<GetFeedBookmarksResponse> response = result.get()
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
-
 		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
@@ -134,8 +124,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId);
-		return GetDetailedBookmarkResponse.of(result);
+		return GetDetailedBookmarkResponse.of(bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 업데이트 */
@@ -179,43 +168,5 @@ public class BookmarkController {
 		HttpHeaders headers = new HttpHeaders();
 		oBookmarkId.ifPresent(bookmarkId -> headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId)));
 		return headers;
-	}
-
-	private PageResponse<GetFeedBookmarksResponse> feedDummyData() {
-
-		return PageResponse.of(2, "bookmarks", List.of(
-			new GetFeedBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				now(),
-				10L,
-				true,
-				false,
-				"bookmarkImageUrl",
-				List.of("spring", "fun"),
-				new ProfileResponse(
-					1L, "crush", "profileImage.png", false
-				)
-			),
-			new GetFeedBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://comic.daum.com/index",
-				"all",
-				null,
-				now(),
-				10L,
-				false,
-				true,
-				"bookmarkImageUrl2",
-				List.of("spring", "fun"),
-				new ProfileResponse(
-					1L, "crush", "profileImageUrl", false
-				)
-			)
-		));
 	}
 }

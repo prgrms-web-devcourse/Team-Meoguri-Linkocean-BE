@@ -19,6 +19,7 @@ public enum OpenType {
 	/* 개인 공개 */
 	PRIVATE((byte)30);
 
+	/* db 저장용 코드 */
 	private final byte code;
 
 	public static String toString(OpenType openType) {

@@ -23,19 +23,19 @@ public class LinkoceanLogAop {
 
 	private static final String NO_USER = "No User";
 
-	/* com.meoguri.linkocean.controller 이하 패키지의 모든 클래스 이하 모든 메서드에 적용 */
+	/* 컨트롤러의 모든 메서드에 적용 */
 	@Pointcut("execution(* com.meoguri.linkocean.controller..*.*(..))")
 	private void controller() {
 	}
 
 	@Around("controller()")
-	public Object loggingUserFlow(ProceedingJoinPoint pjp) throws Throwable {
+	public Object loggingUserFlow(ProceedingJoinPoint joinPoint) throws Throwable {
 		/* 메서드 정보 받아오기 */
-		Method method = getMethod(pjp);
+		Method method = getMethod(joinPoint);
 
 		/* 요청한 사용자 정보 가져 오기 */
 		SecurityUser user = null;
-		Object[] args = pjp.getArgs();
+		Object[] args = joinPoint.getArgs();
 		for (Object arg : args) {
 			if (arg instanceof SecurityUser) {
 				user = (SecurityUser)arg;
@@ -47,7 +47,7 @@ public class LinkoceanLogAop {
 			nonNull(user) ? user : NO_USER);
 
 		/* 메서드 호출 */
-		final Object retVal = pjp.proceed();
+		final Object retVal = joinPoint.proceed();
 
 		log.info("======= {} response to user {} =======",
 			method.getName(),

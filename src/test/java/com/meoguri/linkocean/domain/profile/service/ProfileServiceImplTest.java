@@ -23,7 +23,6 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
@@ -50,8 +49,6 @@ class ProfileServiceImplTest {
 	@Nested
 	class 프로필_등록_수정_조회_테스트 {
 
-		private long userId;
-
 		private Profile profile;
 
 		private List<String> categories;
@@ -59,9 +56,9 @@ class ProfileServiceImplTest {
 		@BeforeEach
 		void setUp() {
 			User user = userRepository.save(createUser());
-			userId = user.getId();
 
 			profile = createProfile(user);
+
 			categories = List.of("인문", "정치");
 		}
 
@@ -75,16 +72,16 @@ class ProfileServiceImplTest {
 			em.clear();
 
 			//when
-			final GetMyProfileResult result = profileService.getMyProfile(userId);
+			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
 
 			//then
 			assertThat(result).extracting(
-				GetMyProfileResult::getProfileId,
-				GetMyProfileResult::getUsername,
-				GetMyProfileResult::getImage,
-				GetMyProfileResult::getBio,
-				GetMyProfileResult::getFollowerCount,
-				GetMyProfileResult::getFolloweeCount
+				GetDetailedProfileResult::getProfileId,
+				GetDetailedProfileResult::getUsername,
+				GetDetailedProfileResult::getImage,
+				GetDetailedProfileResult::getBio,
+				GetDetailedProfileResult::getFollowerCount,
+				GetDetailedProfileResult::getFolloweeCount
 			).containsExactly(
 				profileId,
 				profile.getUsername(),
@@ -102,23 +99,24 @@ class ProfileServiceImplTest {
 		void 프로필_등록하고_수정하고_조회_성공() {
 			//given
 			final RegisterProfileCommand registerCommand = registerCommandOf(profile, categories);
-			profileService.registerProfile(registerCommand);
+			final long profileId = profileService.registerProfile(registerCommand);
 
 			em.flush();
 			em.clear();
 
 			//when
 			final UpdateProfileCommand updateCommand =
-				new UpdateProfileCommand(userId, "papa", "updated image url", "updated bio", List.of("인문", "과학"));
+				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio", List.of("인문", "과학"));
 			profileService.updateProfile(updateCommand);
 
 			em.flush();
 			em.clear();
 
 			//then
-			final GetMyProfileResult result = profileService.getMyProfile(userId);
+			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
 			assertThat(result)
-				.extracting(GetMyProfileResult::getUsername, GetMyProfileResult::getImage, GetMyProfileResult::getBio)
+				.extracting(GetDetailedProfileResult::getUsername, GetDetailedProfileResult::getImage,
+					GetDetailedProfileResult::getBio)
 				.containsExactly("papa", "updated image url", "updated bio");
 
 			final List<String> favoriteCategories = result.getFavoriteCategories();

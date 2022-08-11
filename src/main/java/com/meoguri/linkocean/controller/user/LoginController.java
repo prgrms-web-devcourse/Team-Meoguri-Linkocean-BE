@@ -15,19 +15,20 @@ import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/login")
 @RestController
 public class LoginController {
 
-	private final ProfileService profileService;
 	private final UserService userService;
+	private final ProfileService profileService;
 
+	/* 로그인 - 토큰을 반환한다 */
 	@PostMapping
-	public Map<String, Object> login(@RequestBody LoginRequest request) {
+	public Map<String, Object> login(
+		@RequestBody LoginRequest request
+	) {
 		return Map.of("token", userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
 	}
 
@@ -37,7 +38,9 @@ public class LoginController {
 	 *  회원가입 절차를 통해 프로필이 등록 된 사용자인지 알려준다
 	 */
 	@GetMapping("/success")
-	public Map<String, Object> loginSuccess(@AuthenticationPrincipal SecurityUser user) {
+	public Map<String, Object> loginSuccess(
+		@AuthenticationPrincipal SecurityUser user
+	) {
 		return Map.of("hasProfile", profileService.existsByUserId(user.getId()));
 	}
 
