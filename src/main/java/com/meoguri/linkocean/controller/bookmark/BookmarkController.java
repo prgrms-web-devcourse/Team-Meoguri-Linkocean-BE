@@ -110,7 +110,7 @@ public class BookmarkController {
 	) {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
 			new BookmarkFindCond(
-				user.getId(),
+				user.getProfileId(),
 				null, //작성자가 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
 				queryParams.isFavorite(),

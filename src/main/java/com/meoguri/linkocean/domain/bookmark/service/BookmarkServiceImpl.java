@@ -281,8 +281,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 			final Profile writer = bookmark.getProfile();
 			bookmarkResults.add(new GetFeedBookmarksResult(
 				bookmark.getId(),
-				bookmark.getUrl(),
 				bookmark.getTitle(),
+				bookmark.getUrl(),
 				bookmark.getOpenType(),
 				bookmark.getCategory(),
 				bookmark.getUpdatedAt(),
