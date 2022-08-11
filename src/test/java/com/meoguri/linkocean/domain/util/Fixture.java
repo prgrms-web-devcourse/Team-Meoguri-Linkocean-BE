@@ -40,7 +40,7 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 
-		return createBookmark(createProfile(), createLinkMetadata(), null);
+		return createBookmark(createProfile(), createLinkMetadata(), "google.com");
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata) {
@@ -61,6 +61,10 @@ public final class Fixture {
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url) {
 		return createBookmark(profile, linkMetadata, title, category, url, emptyList());
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String url) {
+		return createBookmark(profile, linkMetadata, "title", null, url, emptyList());
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,

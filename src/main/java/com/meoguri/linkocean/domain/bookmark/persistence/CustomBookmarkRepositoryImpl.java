@@ -35,9 +35,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	/* 작성자의 id 로 북마크 페이징 조회 */
 	@Override
-	public Page<Bookmark> findByWriterId(final BookmarkFindCond findCond, final Pageable pageable) {
-
-		final Long targetProfileId = findCond.getWriterProfileId();
+	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
+		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
 		final boolean isFavorite = findCond.isFavorite();
 		final List<String> tags = findCond.getTags();
@@ -52,18 +51,22 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 		joinIf(isFavorite, base,
 			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark)));
+				.on(favorite.bookmark.eq(bookmark),
+					favorite.owner.id.eq(targetProfileId)));
 
 		joinIf(tags != null, base,
 			() -> join(bookmark.profile).fetchJoin());
 
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
+
+		/* 즐겨찾기 요청이라면 작성자 id 기준 필터링이 없다 */
+		final Long writerId = isFavorite ? null : targetProfileId;
 		return applyPagination(
 			convertBookmarkSort(pageable),
 			base.where(
 				titleContains(title),
 				categoryEq(category),
-				profileIdEq(targetProfileId),
+				profileIdEq(writerId),
 				bookmarkIdsIn(bookmarkIds),
 				availableByOpenType(openType),
 				registered()
@@ -96,7 +99,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			() -> join(bookmark.profile).fetchJoin());
 
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
-
 		return applyPagination(
 			convertBookmarkSort(pageable),
 			base.where(
@@ -128,7 +130,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.category.eq(category));
 	}
 
-	private BooleanBuilder profileIdEq(final long profileId) {
+	private BooleanBuilder profileIdEq(final Long profileId) {
 		return nullSafeBuilder(() -> bookmark.profile.id.eq(profileId));
 	}
 

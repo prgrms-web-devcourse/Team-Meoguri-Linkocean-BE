@@ -24,9 +24,9 @@ public final class BookmarkFindCond {
 	   DTO 를 이용한 projection 사용 시 필요 - 아직은 리포지토리에서 사용하지 않는다 */
 	private final long currentUserProfileId;
 
-	/*작성자를 지정한 북마크 조회인 경우 대상 프로필 id
+	/*대상을 지정한 북마크 조회인 경우 대상 프로필 id
 	 만약 피드 페이지 조회 등의 작성자가 다양한 조회의 경우 null*/
-	private final Long writerProfileId;
+	private final Long targetProfileId;
 
 	/* 카테고리 필터링 조회인 경우 카테고리 아니라면 null */
 	private final Category category;
