@@ -50,6 +50,7 @@ public class S3Uploader {
 		return null;
 	}
 
+	//TODO 이미지 url 겹치지 않게 로직 작성
 	private String upload(File file, String dirName) {
 		String fileName = dirName + "/" + file.getName();
 		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file)
