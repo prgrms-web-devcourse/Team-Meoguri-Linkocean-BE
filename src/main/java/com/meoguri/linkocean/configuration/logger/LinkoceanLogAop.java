@@ -5,12 +5,14 @@ import static java.util.Objects.*;
 import java.lang.reflect.Method;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+
+import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,40 +21,39 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LinkoceanLogAop {
 
-	/* com.meoguri.linkocean 이하 패키지의 모든 클래스 이하 모든 메서드에 적용 */
-	@Pointcut("execution(* com.meoguri.linkocean..*.*(..))")
-	private void cut() {
+	private static final String NO_USER = "No User";
+
+	/* com.meoguri.linkocean.controller 이하 패키지의 모든 클래스 이하 모든 메서드에 적용 */
+	@Pointcut("execution(* com.meoguri.linkocean.controller..*.*(..))")
+	private void controller() {
 	}
 
-	/* Pointcut에 의해 필터링된 경로로 들어오는 경우 메서드 호출 전에 적용 */
-	@Before("cut()")
-	public void beforeParameterLog(JoinPoint joinPoint) {
+	@Around("controller()")
+	public Object loggingUserFlow(ProceedingJoinPoint pjp) throws Throwable {
 		/* 메서드 정보 받아오기 */
-		Method method = getMethod(joinPoint);
-		log.info("======= call method name = {} =======", method);
+		Method method = getMethod(pjp);
 
-		/* 파라미터 받아오기 */
-		Object[] args = joinPoint.getArgs();
-		if (args.length <= 0) {
-			log.info("no parameter");
-		}
+		/* 요청한 사용자 정보 가져 오기 */
+		SecurityUser user = null;
+		Object[] args = pjp.getArgs();
 		for (Object arg : args) {
-			log.info("parameter type = {}", arg.getClass().getSimpleName());
-			log.info("parameter value = {}", arg);
+			if (arg instanceof SecurityUser) {
+				user = (SecurityUser)arg;
+			}
 		}
-	}
 
-	/* Poincut에 의해 필터링된 경로로 들어오는 경우 메서드 리턴 후에 적용 */
-	@AfterReturning(value = "cut()", returning = "returnObj")
-	public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
-		/* 메서드 정보 받아오기 */
-		Method method = getMethod(joinPoint);
-		log.info("======= return method name = {} =======", method);
+		log.info("======= {} request by user {} =======",
+			method.getName(),
+			nonNull(user) ? user : NO_USER);
 
-		if (nonNull(returnObj)) {
-			log.info("return type = {}", returnObj.getClass().getSimpleName());
-			log.info("return value = {}", returnObj);
-		}
+		/* 메서드 호출 */
+		final Object retVal = pjp.proceed();
+
+		log.info("======= {} response to user {} =======",
+			method.getName(),
+			nonNull(user) ? user : NO_USER);
+
+		return retVal;
 	}
 
 	/* JoinPoint로 메서드 정보 가져오기 */
