@@ -32,4 +32,13 @@ public final class SecurityUser extends User {
 		checkCondition(profileId != null, "profile is null");
 		return profileId;
 	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder()
+			.append("SecurityUser{")
+			.append("id=").append(id).append(", ")
+			.append("profileId=").append(profileId).append("}")
+			.toString();
+	}
 }
