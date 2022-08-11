@@ -3,6 +3,7 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
@@ -38,7 +39,7 @@ public final class GetDetailedBookmarkResponse {
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
 
 		final String openType = OpenType.toString(result.getOpenType());
-		final String category = Category.toStringKor(result.getCategory());
+		final String category = Optional.ofNullable(Category.toStringKor(result.getCategory())).orElse("no-category");
 
 		return new GetDetailedBookmarkResponse(
 			result.getBookmarkId(),
