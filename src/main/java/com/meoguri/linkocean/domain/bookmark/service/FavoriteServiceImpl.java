@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteServiceImpl implements FavoriteService {
 
 	private final FavoriteRepository favoriteRepository;
+
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
