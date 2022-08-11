@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
@@ -546,5 +548,25 @@ class CustomBookmarkRepositoryImplTest {
 				.containsExactly(bookmark7, bookmark8);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
 		}
+
+		@Test
+		void 피드_북마크_조회_성공_페이징() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.build();
+			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent())
+				.containsExactly(bookmark4, bookmark5);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+		}
+
 	}
+
 }
