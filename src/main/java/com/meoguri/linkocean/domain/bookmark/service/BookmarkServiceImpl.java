@@ -90,15 +90,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
-		// 수정 할 북마크 조회
+		/* 수정 할 북마크 조회 */
 		Bookmark bookmark = bookmarkRepository
 			.findByProfileIdAndId(command.getProfileId(), command.getBookmarkId())
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		// 태그 조회/저장
+		/* 태그 조회/저장 */
 		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
 
-		//update 진행
+		/* update 진행 */
 		bookmark.update(
 			command.getTitle(),
 			command.getMemo(),
@@ -111,32 +111,32 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void removeBookmark(final long profileId, final long bookmarkId) {
-		// 제거 할 북마크 조회
+		/* 제거 할 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByProfileIdAndId(profileId, bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		// remove 진행
+		/* remove 진행 */
 		bookmark.remove();
 	}
 
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
-		// 북마크 조회
+		/* 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(LinkoceanRuntimeException::new);
 
-		// 추가 정보 조회
 		final Profile writer = bookmark.getProfile();
 
+		/* 추가 정보 조회 */
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(profileId, bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
 
-		// 결과 반환
+		/* 결과 반환 */
 		return new GetDetailedBookmarkResult(
 			bookmarkId,
 			bookmark.getTitle(),
@@ -167,18 +167,18 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Long targetProfileId = findCond.getTargetProfileId();
 
-		// 이용 가능한 open type 설정
+		/* 이용 가능한 open type 설정 */
 		findCond.setOpenType(getAvailableBookmarkOpenType(currentUserProfileId, targetProfileId));
 
-		// 북마크 조회
+		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
-		// 추가 정보 조회
+		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
-		// 결과 반환
+		/* 결과 반환 */
 		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);
 	}
 
@@ -189,12 +189,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 	) {
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 
-		// 북마크 조회
+		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 		final List<Profile> writers = bookmarks.stream().map(Bookmark::getProfile).collect(toList());
 
-		// 추가 정보 조회
+		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 

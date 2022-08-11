@@ -26,7 +26,7 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
 	@Query("select r.type as type, count(r) as cnt "
 		+ "from Reaction r "
-		+ "where r.bookmark = ?1 "
+		+ "where r.bookmark = :bookmark "
 		+ "group by r.type")
 	List<Tuple> countReactionGroupInternal(Bookmark bookmark);
 
