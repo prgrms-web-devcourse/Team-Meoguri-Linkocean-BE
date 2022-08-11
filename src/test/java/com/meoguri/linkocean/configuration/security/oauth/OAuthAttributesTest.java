@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.user.entity.Email;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 class OAuthAttributesTest {
 

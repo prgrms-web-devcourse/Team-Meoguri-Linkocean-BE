@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.entity;
+package com.meoguri.linkocean.domain.user.entity.vo;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;
@@ -9,15 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * 사용자 이메일
- *
- * - RFC 몇을 따르죠? 형식을 따른다.
+ * - RFC 5322 ?
  */
-@Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 @Embeddable
