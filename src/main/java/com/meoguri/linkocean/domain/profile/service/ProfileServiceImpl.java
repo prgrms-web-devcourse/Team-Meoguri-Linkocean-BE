@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
@@ -48,7 +49,7 @@ public class ProfileServiceImpl implements ProfileService {
 	public long registerProfile(final RegisterProfileCommand command) {
 		final long userId = command.getUserId();
 		final String username = command.getUsername();
-		final List<String> categories = command.getCategories();
+		final List<Category> categories = command.getCategories();
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
 		final boolean exists = profileRepository.existsByUsername(username);

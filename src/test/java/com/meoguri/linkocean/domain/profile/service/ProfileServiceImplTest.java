@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.common.Ultimate;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
@@ -51,7 +53,7 @@ class ProfileServiceImplTest {
 
 		private Profile profile;
 
-		private List<String> categories;
+		private List<Category> categories;
 
 		@BeforeEach
 		void setUp() {
@@ -59,7 +61,7 @@ class ProfileServiceImplTest {
 
 			profile = createProfile(user);
 
-			categories = List.of("인문", "정치");
+			categories = List.of(HUMANITIES, POLITICS);
 		}
 
 		@Test
@@ -91,8 +93,8 @@ class ProfileServiceImplTest {
 				0
 			);
 
-			final List<String> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly("인문", "정치");
+			final List<Category> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly(HUMANITIES, POLITICS);
 		}
 
 		@Test
@@ -106,7 +108,8 @@ class ProfileServiceImplTest {
 
 			//when
 			final UpdateProfileCommand updateCommand =
-				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio", List.of("인문", "과학"));
+				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio",
+					List.of(HUMANITIES, SCIENCE));
 			profileService.updateProfile(updateCommand);
 
 			em.flush();
@@ -119,8 +122,8 @@ class ProfileServiceImplTest {
 					GetDetailedProfileResult::getBio)
 				.containsExactly("papa", "updated image url", "updated bio");
 
-			final List<String> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly("인문", "과학");
+			final List<Category> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly(HUMANITIES, SCIENCE);
 		}
 
 		@Test
@@ -480,7 +483,7 @@ class ProfileServiceImplTest {
 		return registerCommandOf(profile, emptyList());
 	}
 
-	private static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
+	private static RegisterProfileCommand registerCommandOf(Profile profile, List<Category> categories) {
 		return new RegisterProfileCommand(
 			profile.getUser().getId(),
 			profile.getUsername(),

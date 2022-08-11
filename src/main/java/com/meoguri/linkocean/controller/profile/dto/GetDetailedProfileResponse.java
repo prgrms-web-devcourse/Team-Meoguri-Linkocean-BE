@@ -36,7 +36,7 @@ public final class GetDetailedProfileResponse {
 		return new GetDetailedProfileResponse(
 			result.getProfileId(),
 			result.getImage(),
-			result.getFavoriteCategories(),
+			result.getFavoriteCategories().stream().map(Category::getKorName).collect(toList()),
 			result.getUsername(),
 			result.getBio(),
 			result.isFollow(),

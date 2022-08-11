@@ -2,6 +2,8 @@ package com.meoguri.linkocean.domain.profile.service.dto;
 
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,5 +15,5 @@ public final class UpdateProfileCommand {
 	private final String username;
 	private final String image;
 	private final String bio;
-	private final List<String> categories;
+	private final List<Category> categories;
 }

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -84,30 +85,26 @@ public class Profile extends BaseIdEntity {
 	/**
 	 * 프로필 - 선호 카테고리의 연관관계 편의 메서드
 	 */
-	public void addToFavoriteCategory(String category) {
+	public void addToFavoriteCategory(Category category) {
 		this.favoriteCategories.add(new FavoriteCategory(this, category));
 	}
 
-	/**
-	 * 선호카테고리 목록 조회
-	 */
-	public List<String> getMyFavoriteCategories() {
+	/* 선호카테고리 목록 조회 */
+	public List<Category> getMyFavoriteCategories() {
 		return this.favoriteCategories.stream()
-			.map(FavoriteCategory::getCategoryName)
+			.map(FavoriteCategory::getCategory)
 			.collect(toList());
 	}
 
-	/**
-	 * 선호 카테고리 목록 업데이트
-	 */
-	public void updateFavoriteCategories(final List<String> categories) {
-		// 기존 목록 중 업데이트 목록에 없다면 삭제
-		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory().getKorName()));
+	/* 선호 카테고리 목록 업데이트 */
+	public void updateFavoriteCategories(final List<Category> categories) {
+		/* 기존 목록 중 업데이트 목록에 없다면 삭제 */
+		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory()));
 
-		// 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가
+		/* 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가 */
 		categories.stream()
 			.filter(c -> !favoriteCategories.stream()
-				.map(FavoriteCategory::getCategoryName)
+				.map(FavoriteCategory::getCategory)
 				.collect(toList()).contains(c))
 			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
 	}
