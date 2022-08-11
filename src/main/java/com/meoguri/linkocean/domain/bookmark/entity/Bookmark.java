@@ -60,7 +60,7 @@ public class Bookmark extends BaseIdEntity {
 
 	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
 	@Getter(NONE)
-	@OneToMany(mappedBy = "bookmark", cascade = PERSIST, orphanRemoval = true)
+	@OneToMany(mappedBy = "bookmark", cascade = ALL, orphanRemoval = true)
 	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
@@ -134,9 +134,8 @@ public class Bookmark extends BaseIdEntity {
 	private void setBookmarkTags(List<Tag> tags) {
 		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
 
-		this.bookmarkTags = tags.stream()
-			.map(tag -> new BookmarkTag(this, tag))
-			.collect(toList());
+		this.bookmarkTags.clear();
+		tags.forEach(tag -> bookmarkTags.add(new BookmarkTag(this, tag)));
 	}
 
 	public void remove() {
