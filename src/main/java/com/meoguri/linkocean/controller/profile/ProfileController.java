@@ -46,6 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class ProfileController {
 
+	private static final String PROFILES = "profiles";
+
 	private final ProfileService profileService;
 	private final CategoryService categoryService;
 	private final TagService tagService;
@@ -115,7 +117,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response);
 	}
 
 	/**
@@ -140,7 +142,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response);
 	}
 
 	/**
@@ -165,7 +167,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response);
 	}
 
 }
