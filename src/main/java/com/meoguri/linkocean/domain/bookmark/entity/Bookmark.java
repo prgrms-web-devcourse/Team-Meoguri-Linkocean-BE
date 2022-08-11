@@ -61,7 +61,7 @@ public class Bookmark extends BaseIdEntity {
 
 	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
 	@Getter(NONE)
-	@OneToMany(mappedBy = "bookmark", cascade = PERSIST, orphanRemoval = true)
+	@OneToMany(mappedBy = "bookmark", cascade = ALL, orphanRemoval = true)
 	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
