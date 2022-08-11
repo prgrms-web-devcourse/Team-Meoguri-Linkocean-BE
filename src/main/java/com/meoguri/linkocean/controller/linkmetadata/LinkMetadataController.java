@@ -23,6 +23,6 @@ public class LinkMetadataController {
 	public Map<String, Object> getOrSaveLinkMetaTitle(
 		final @RequestParam String link
 	) {
-		return Map.of("title", linkMetadataService.getTitleByLink(link));
+		return Map.of("title", linkMetadataService.getOrSaveLinkMetadataTitle(link));
 	}
 }

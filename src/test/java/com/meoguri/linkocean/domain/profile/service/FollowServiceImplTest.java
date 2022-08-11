@@ -81,15 +81,14 @@ class FollowServiceImplTest {
 		followService.unfollow(command);
 
 		//then
-		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(0);
-		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(0);
+		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isZero();
+		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isZero();
 	}
 
 	@Test
 	void 언팔로우_실패() {
 		//given
 		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
-		// no follow exists
 
 		//when then
 		assertThatLinkoceanRuntimeException()

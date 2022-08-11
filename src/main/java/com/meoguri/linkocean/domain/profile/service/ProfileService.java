@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 
 public interface ProfileService {
@@ -29,25 +29,24 @@ public interface ProfileService {
 	 * <li>팔로이 목록 조회</li>
 	 * <li>특정 username 프로필 목록 조회</li>
 	 */
-	Page<SearchProfileResult> getProfiles(long currentProfileId, UltimateProfileFindCond searchCond,
-		Pageable pageable);
+	Page<GetProfilesResult> getProfiles(long currentProfileId, UltimateProfileFindCond searchCond, Pageable pageable);
 
 	/**
 	 * profileId 사용자의 팔로워 프로필 목록 조회
 	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
 	 */
-	List<SearchProfileResult> searchFollowerProfiles(ProfileSearchCond searchCond, long profileId);
+	List<GetProfilesResult> searchFollowerProfiles(ProfileSearchCond searchCond, long profileId);
 
 	/**
 	 * profileId 사용자의 팔로이 프로필 목록 조회
 	 * 현재 접속 사용자의 팔로우 여부를 말아서 준다
 	 */
-	List<SearchProfileResult> searchFolloweeProfiles(ProfileSearchCond searchCond, long profileId);
+	List<GetProfilesResult> searchFolloweeProfiles(ProfileSearchCond searchCond, long profileId);
 
 	/* 프로필 보유 여부 확인 */
 	boolean existsByUserId(long userId);
 
 	/* 프로필 목록 조회 - 머구리 찾기*/
-	List<SearchProfileResult> searchProfilesByUsername(ProfileSearchCond searchCond);
+	List<GetProfilesResult> searchProfilesByUsername(ProfileSearchCond searchCond);
 
 }

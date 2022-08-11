@@ -18,8 +18,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 선호 카테고리
- *
- * - 선호 카테고리를 등록할 때 [프로필, 카테고리]가 존재해야 한다.
+ * - 선호 카테고리에는 [프로필, 카테고리]는 필수이다
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -33,16 +32,11 @@ public class FavoriteCategory extends BaseIdEntity {
 	@Enumerated(STRING)
 	private Category category;
 
-	public FavoriteCategory(final Profile profile, final String categoryName) {
+	public FavoriteCategory(final Profile profile, final Category category) {
 		checkNotNull(profile);
-		checkNotNull(categoryName);
+		checkNotNull(category);
 
 		this.profile = profile;
-		this.category = Category.of(categoryName);
+		this.category = category;
 	}
-
-	public String getCategoryName() {
-		return this.category.getKorName();
-	}
-
 }

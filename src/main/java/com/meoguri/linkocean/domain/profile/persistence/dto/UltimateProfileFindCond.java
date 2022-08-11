@@ -15,23 +15,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UltimateProfileFindCond {
 
-	/**
-	 * 팔로우, 팔로이 목록 조회에서 현재 사용자의 프로필 아이디
-	 */
+	/* 팔로우, 팔로이 목록 조회에서 현재 사용자의 프로필 아이디 */
 	private final Long profileId;
 
-	/**
-	 * 팔로워 목록 조회
-	 */
+	/* 팔로워 목록 조회 */
 	private final boolean follower;
 
-	/**
-	 * 팔로이 목록 조회
-	 */
+	/* 팔로이 목록 조회 */
 	private final boolean followee;
 
-	/**
-	 * 검색하고 싶은 사용자의 username
-	 */
+	/* 검색하고 싶은 사용자의 username */
 	private final String username;
 }

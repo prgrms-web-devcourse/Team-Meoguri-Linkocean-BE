@@ -17,7 +17,6 @@ import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
 
 @Repository
 public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport implements CustomProfileRepository {
@@ -34,20 +33,30 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 		final boolean isFollowee = findCond.isFollowee();
 		final String username = findCond.getUsername();
 
-		final JPAQuery<Profile> base = selectFrom(profile);
+		return applySlicing(
+			pageable,
+			selectFrom(profile)
+				.where(
+					followerOfUsername(isFollower, currentProfileId, username),
+					followeeOfUsername(isFollowee, currentProfileId, username),
+					usernameContains(username)
+				)
+		);
+		// final JPAQuery<Profile> base = selectFrom(profile);
+		/*
 
 		if (isFollower) {
-			return applyPaginationWithoutTotalPage(
-				pageable, base.where(followerOfUsername(currentProfileId, username)));
+			return applySlicing(
+				pageable, base.where(followerOfUsername(isFollower, currentProfileId, username)));
 		}
 
 		if (isFollowee) {
-			return applyPaginationWithoutTotalPage(
-				pageable, base.where(followeeOfUsername(currentProfileId, username)));
+			return applySlicing(
+				pageable, base.where(followeeOfUsername(isFollowee, currentProfileId, username)));
 		}
 
-		return applyPaginationWithoutTotalPage(
-			pageable, base.where(usernameContains(username)));
+		return applySlicing(
+			pageable, base.where(usernameContains(username)));*/
 	}
 
 	@Override
@@ -81,6 +90,52 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 			.offset(findCond.getOffset())
 			.limit(findCond.getLimit())
 			.fetch();
+	}
+
+	private BooleanBuilder followerOfUsername(
+		boolean isFollower,
+		Long profileId,
+		String username
+	) {
+		if (!isFollower) {
+			return new BooleanBuilder();
+		}
+
+		return nullSafeBuilder(() -> profile.in(
+			joinIf(
+				username != null,
+				select(follow.follower)
+					.from(follow),
+				() -> join(follow.follower, profile)
+					.on(follow.follower.id.eq(profile.id))
+			).where(
+				follow.followee.id.eq(profileId),
+				usernameContains(username)
+			))
+		);
+	}
+
+	private BooleanBuilder followeeOfUsername(
+		boolean isFollowee,
+		Long profileId,
+		String username
+	) {
+		if (!isFollowee) {
+			return new BooleanBuilder();
+		}
+
+		return nullSafeBuilder(() -> profile.in(
+			joinIf(
+				username != null,
+				select(follow.followee)
+					.from(follow),
+				() -> join(follow.followee, profile)
+					.on(follow.followee.id.eq(profile.id))
+			).where(
+				follow.follower.id.eq(profileId),
+				usernameContains(username)
+			))
+		);
 	}
 
 	private BooleanBuilder followerOfUsername(long profileId, String username) {

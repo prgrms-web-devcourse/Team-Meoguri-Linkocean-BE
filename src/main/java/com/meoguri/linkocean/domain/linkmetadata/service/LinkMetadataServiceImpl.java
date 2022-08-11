@@ -14,11 +14,9 @@ import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// TODO
-// 타이틀 조회 후 삽입 할때 검색(jsoupLinkMetadataService.search) 두번 발생하지 않도록 최적화 c.f. Redis
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LinkMetadataServiceImpl implements LinkMetadataService {
 
@@ -26,21 +24,23 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 
 	private final LinkMetadataRepository linkMetadataRepository;
 
+	@Transactional
 	@Override
-	public String getTitleByLink(final String link) {
+	public String getOrSaveLinkMetadataTitle(final String link) {
+
 		return linkMetadataRepository.findTitleByLink(new Link(link))
 			.orElseGet(() -> {
 				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
 
-				final LinkMetadata linkMetadata = new LinkMetadata(link, result.getTitle(), result.getImage());
-				linkMetadataRepository.save(linkMetadata);
-
-				log.info("save link metadata - url : {}, title : {}", linkMetadata.getSavedLink(),
-					linkMetadata.getTitle());
-				return result.getTitle();
+				return linkMetadataRepository.save(new LinkMetadata(
+					link,
+					result.getTitle(),
+					result.getImage())
+				).getTitle();
 			});
 	}
 
+	@Transactional
 	@Override
 	public Pageable synchronizeDataAndReturnNextPageable(final Pageable pageable) {
 

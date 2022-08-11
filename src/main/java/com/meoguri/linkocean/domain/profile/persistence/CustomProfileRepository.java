@@ -17,5 +17,6 @@ public interface CustomProfileRepository {
 
 	List<Profile> findByUsernameLike(ProfileFindCond findCond);
 
+	/* 프로필 목록 조회 */
 	Page<Profile> ultimateFindProfiles(UltimateProfileFindCond findCond, Pageable pageable);
 }

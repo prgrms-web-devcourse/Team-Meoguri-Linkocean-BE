@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -19,13 +20,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.common.Ultimate;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -51,7 +53,7 @@ class ProfileServiceImplTest {
 
 		private Profile profile;
 
-		private List<String> categories;
+		private List<Category> categories;
 
 		@BeforeEach
 		void setUp() {
@@ -59,7 +61,7 @@ class ProfileServiceImplTest {
 
 			profile = createProfile(user);
 
-			categories = List.of("인문", "정치");
+			categories = List.of(HUMANITIES, POLITICS);
 		}
 
 		@Test
@@ -91,8 +93,8 @@ class ProfileServiceImplTest {
 				0
 			);
 
-			final List<String> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly("인문", "정치");
+			final List<Category> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly(HUMANITIES, POLITICS);
 		}
 
 		@Test
@@ -106,7 +108,8 @@ class ProfileServiceImplTest {
 
 			//when
 			final UpdateProfileCommand updateCommand =
-				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio", List.of("인문", "과학"));
+				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio",
+					List.of(HUMANITIES, SCIENCE));
 			profileService.updateProfile(updateCommand);
 
 			em.flush();
@@ -119,8 +122,8 @@ class ProfileServiceImplTest {
 					GetDetailedProfileResult::getBio)
 				.containsExactly("papa", "updated image url", "updated bio");
 
-			final List<String> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly("인문", "과학");
+			final List<Category> favoriteCategories = result.getFavoriteCategories();
+			assertThat(favoriteCategories).containsExactly(HUMANITIES, SCIENCE);
 		}
 
 		@Test
@@ -221,31 +224,31 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
+			final Page<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
 				condWhenFindFollowers(profile1Id), defaultPageable());
-			final Page<SearchProfileResult> result2 = profileService.getProfiles(user2Id,
+			final Page<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
 				condWhenFindFollowers(profile2Id), defaultPageable());
-			final Page<SearchProfileResult> result3 = profileService.getProfiles(user3Id,
+			final Page<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
 				condWhenFindFollowers(profile3Id), defaultPageable());
 
 			//then
 			assertThat(result1).isEmpty();
 			assertThat(result2)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
 					tuple(user2Id, "user2", null, true)
@@ -266,39 +269,39 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final Page<SearchProfileResult> result1 = profileService.getProfiles(user1Id,
+			final Page<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
 				condWhenFindFollowees(profile1Id), defaultPageable());
-			final Page<SearchProfileResult> result2 = profileService.getProfiles(user2Id,
+			final Page<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
 				condWhenFindFollowees(profile2Id), defaultPageable());
-			final Page<SearchProfileResult> result3 = profileService.getProfiles(user3Id,
+			final Page<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
 				condWhenFindFollowees(profile3Id), defaultPageable());
 
 			//then
 			assertThat(result1)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true),
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result2)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true)
 				);
@@ -310,12 +313,12 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user1Id, profile2Id));
 
 			//when
-			final Page<SearchProfileResult> results = profileService.getProfiles(user1Id,
+			final Page<GetProfilesResult> results = profileService.getProfiles(user1Id,
 				condWhenFindUsingUsername("user"), defaultPageable());
 
 			//then
 			assertThat(results)
-				.extracting(SearchProfileResult::getId, SearchProfileResult::isFollow)
+				.extracting(GetProfilesResult::getProfileId, GetProfilesResult::isFollow)
 				.containsExactly(
 					tuple(user1Id, false),
 					tuple(user2Id, true),
@@ -385,28 +388,28 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> result1 = profileService.searchFollowerProfiles(cond(user1Id), profile1Id);
-			final List<SearchProfileResult> result2 = profileService.searchFollowerProfiles(cond(user2Id), profile2Id);
-			final List<SearchProfileResult> result3 = profileService.searchFollowerProfiles(cond(user3Id), profile3Id);
+			final List<GetProfilesResult> result1 = profileService.searchFollowerProfiles(cond(user1Id), profile1Id);
+			final List<GetProfilesResult> result2 = profileService.searchFollowerProfiles(cond(user2Id), profile2Id);
+			final List<GetProfilesResult> result3 = profileService.searchFollowerProfiles(cond(user3Id), profile3Id);
 
 			//then
 			assertThat(result1).isEmpty();
 			assertThat(result2)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user1Id, "user1", null, false),
 					tuple(user2Id, "user2", null, true)
@@ -422,36 +425,36 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> result1 = profileService.searchFolloweeProfiles(cond(user1Id), profile1Id);
-			final List<SearchProfileResult> result2 = profileService.searchFolloweeProfiles(cond(user2Id), profile2Id);
-			final List<SearchProfileResult> result3 = profileService.searchFolloweeProfiles(cond(user3Id), profile3Id);
+			final List<GetProfilesResult> result1 = profileService.searchFolloweeProfiles(cond(user1Id), profile1Id);
+			final List<GetProfilesResult> result2 = profileService.searchFolloweeProfiles(cond(user2Id), profile2Id);
+			final List<GetProfilesResult> result3 = profileService.searchFolloweeProfiles(cond(user3Id), profile3Id);
 
 			//then
 			assertThat(result1)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true),
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result2)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user3Id, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
-					SearchProfileResult::getId,
-					SearchProfileResult::getUsername,
-					SearchProfileResult::getImage,
-					SearchProfileResult::isFollow
+					GetProfilesResult::getProfileId,
+					GetProfilesResult::getUsername,
+					GetProfilesResult::getImage,
+					GetProfilesResult::isFollow
 				).containsExactly(
 					tuple(user2Id, "user2", null, true)
 				);
@@ -463,11 +466,11 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user1Id, profile2Id));
 
 			//when
-			final List<SearchProfileResult> results = profileService.searchProfilesByUsername(cond(user1Id, "user"));
+			final List<GetProfilesResult> results = profileService.searchProfilesByUsername(cond(user1Id, "user"));
 
 			//then
 			assertThat(results)
-				.extracting(SearchProfileResult::getId, SearchProfileResult::isFollow)
+				.extracting(GetProfilesResult::getProfileId, GetProfilesResult::isFollow)
 				.containsExactly(
 					tuple(user1Id, false),
 					tuple(user2Id, true),
@@ -480,7 +483,7 @@ class ProfileServiceImplTest {
 		return registerCommandOf(profile, emptyList());
 	}
 
-	private static RegisterProfileCommand registerCommandOf(Profile profile, List<String> categories) {
+	private static RegisterProfileCommand registerCommandOf(Profile profile, List<Category> categories) {
 		return new RegisterProfileCommand(
 			profile.getUser().getId(),
 			profile.getUsername(),
