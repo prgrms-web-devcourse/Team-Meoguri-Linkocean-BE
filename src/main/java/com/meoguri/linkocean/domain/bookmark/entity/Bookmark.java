@@ -151,4 +151,7 @@ public class Bookmark extends BaseIdEntity {
 		this.likeCount = likeCount;
 	}
 
+	public boolean isWrittenBy(final Profile profile) {
+		return this.profile.equals(profile);
+	}
 }
