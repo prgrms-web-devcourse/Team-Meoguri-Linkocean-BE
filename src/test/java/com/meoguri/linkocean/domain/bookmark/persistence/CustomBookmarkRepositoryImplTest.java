@@ -273,7 +273,7 @@ class CustomBookmarkRepositoryImplTest {
 			favoriteRepository.save(new Favorite(bookmark4, profile));
 			favoriteRepository.save(new Favorite(bookmark3, profile2));
 			favoriteRepository.save(new Favorite(bookmark5, profile2));
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//user1 -> user1
 			//given

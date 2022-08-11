@@ -139,9 +139,8 @@ public class Bookmark extends BaseIdEntity {
 	private void setBookmarkTags(List<Tag> tags) {
 		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
 
-		this.bookmarkTags = tags.stream()
-			.map(tag -> new BookmarkTag(this, tag))
-			.collect(toList());
+		this.bookmarkTags.clear();
+		tags.forEach(tag -> bookmarkTags.add(new BookmarkTag(this, tag)));
 	}
 
 	public void remove() {
