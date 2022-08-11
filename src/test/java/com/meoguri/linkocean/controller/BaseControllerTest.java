@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller;
 
+import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -29,7 +30,6 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -103,6 +103,10 @@ public class BaseControllerTest {
 		return link;
 	}
 
+	protected long 북마크_등록(final String url, final String openType) throws Exception {
+		return 북마크_등록(url, "title", null, emptyList(), openType);
+	}
+
 	protected long 북마크_등록(final String url, final String category, final List<String> tags,
 		final String openType) throws Exception {
 		return 북마크_등록(url, "title", category, tags, openType);
@@ -143,7 +147,7 @@ public class BaseControllerTest {
 		return mapper.readValue(content, GetDetailedProfileResponse.class);
 	}
 
-	protected GetMyProfileResponse 내_프로필_조회() throws Exception {
+	protected GetDetailedProfileResponse 내_프로필_조회() throws Exception {
 		final MvcResult mvcResult =
 			mockMvc.perform(get("/api/v1/profiles/me")
 					.header(AUTHORIZATION, token)
@@ -152,7 +156,7 @@ public class BaseControllerTest {
 				.andReturn();
 
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetDetailedProfileResponse.class);
 	}
 
 	protected void 북마크_즐겨찾기(final long bookmarkId) throws Exception {

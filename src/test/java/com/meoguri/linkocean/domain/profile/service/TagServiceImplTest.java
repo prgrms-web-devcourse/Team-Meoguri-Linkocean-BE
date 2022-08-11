@@ -52,7 +52,6 @@ class TagServiceImplTest {
 	@Autowired
 	private TagRepository tagRepository;
 
-	private long userId;
 	private Profile profile;
 	private LinkMetadata link;
 	private Tag tag1;
@@ -65,8 +64,6 @@ class TagServiceImplTest {
 		User user = userRepository.save(createUser());
 		profile = profileRepository.save(createProfile(user));
 		link = linkMetadataRepository.save(createLinkMetadata());
-
-		userId = user.getId();
 
 		// 태그 셋업
 		tag1 = tagRepository.save(new Tag("tag1"));
@@ -89,7 +86,7 @@ class TagServiceImplTest {
 		em.clear();
 
 		//when
-		final List<GetProfileTagsResult> result = tagService.getMyTags(userId);
+		final List<GetProfileTagsResult> result = tagService.getTags(profile.getId());
 
 		//then
 		assertThat(result).hasSize(3)

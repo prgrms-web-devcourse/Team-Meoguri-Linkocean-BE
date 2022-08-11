@@ -34,7 +34,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 북마크 (인터넷 즐겨찾기)
+ *  북마크 (인터넷 즐겨찾기)
+ *  - 북마크를 등록할 때 [프로필, 링크 메타데이터, 제목, 공개 범위]가 필수로 존재해야 하며 추가로 [메모, 카테고리, url, 태그 목록]를 입력 수 있다.
+ *  - 사용자는 [url]당 하나의 북마크를 가질 수 있다.
+ *  - 북마크의 [이름. 메모, 카테고리, 공개 범위, 태그 목록]를 수정할 수 있다.
+ *  - 북마크를 삭제할 수 있다.
+ *  - 북마크의 좋아요 수를 변경할 수 있다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -55,7 +60,7 @@ public class Bookmark extends BaseIdEntity {
 
 	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
 	@Getter(NONE)
-	@OneToMany(mappedBy = "bookmark", cascade = PERSIST, orphanRemoval = true)
+	@OneToMany(mappedBy = "bookmark", cascade = ALL, orphanRemoval = true)
 	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
@@ -89,11 +94,11 @@ public class Bookmark extends BaseIdEntity {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
-	/**
-	 * 북마크 등록시 사용하는 생성자
-	 */
+	/* 북마크 등록시 사용하는 생성자 */
 	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
+		checkNotNull(openType);
+		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.profile = profile;
@@ -104,18 +109,18 @@ public class Bookmark extends BaseIdEntity {
 		this.category = category;
 		this.status = BookmarkStatus.REGISTERED;
 		this.url = url;
-
-		setBookmarkTags(tags);
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
+		setBookmarkTags(tags);
 	}
 
-	/**
-	 * 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다.
-	 */
+	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
 		final List<Tag> tags) {
+		checkNotNull(category);
+		checkNotNull(openType);
+		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
@@ -127,11 +132,10 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	private void setBookmarkTags(List<Tag> tags) {
-		checkCondition(tags.size() <= MAX_TAGS_COUNT);
+		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
 
-		this.bookmarkTags = tags.stream()
-			.map(tag -> new BookmarkTag(this, tag))
-			.collect(toList());
+		this.bookmarkTags.clear();
+		tags.forEach(tag -> bookmarkTags.add(new BookmarkTag(this, tag)));
 	}
 
 	public void remove() {
@@ -143,13 +147,6 @@ public class Bookmark extends BaseIdEntity {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
 
-	public boolean isOwnedBy(final Profile profile) {
-		return this.profile.equals(profile);
-	}
-
-	/**
-	 * 좋아요 수 변경
-	 */
 	public void changeLikeCount(long likeCount) {
 		this.likeCount = likeCount;
 	}

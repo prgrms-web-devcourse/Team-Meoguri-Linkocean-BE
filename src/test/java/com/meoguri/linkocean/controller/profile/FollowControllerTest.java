@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 
 class FollowControllerTest extends BaseControllerTest {
 
@@ -43,7 +42,7 @@ class FollowControllerTest extends BaseControllerTest {
 			.andExpect(status().isOk());
 
 		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
-		final GetMyProfileResponse papaProfile = 내_프로필_조회();
+		final GetDetailedProfileResponse papaProfile = 내_프로필_조회();
 
 		assertThat(hahaProfile.getFollowerCount()).isEqualTo(1L);
 		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);
@@ -82,7 +81,7 @@ class FollowControllerTest extends BaseControllerTest {
 			.andExpect(status().isOk());
 
 		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
-		final GetMyProfileResponse papaProfile = 내_프로필_조회();
+		final GetDetailedProfileResponse papaProfile = 내_프로필_조회();
 
 		assertThat(hahaProfile.getFollowerCount()).isEqualTo(0L);
 		assertThat(hahaProfile.getFolloweeCount()).isEqualTo(0L);

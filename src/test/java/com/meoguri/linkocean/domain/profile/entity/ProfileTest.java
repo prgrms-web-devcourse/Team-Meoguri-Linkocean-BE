@@ -35,7 +35,7 @@ class ProfileTest {
 		User nullUser = null;
 
 		//when then
-		assertThatLinkoceanRuntimeException()
+		assertThatNullPointerException()
 			.isThrownBy(() -> new Profile(nullUser, "crush"));
 	}
 

@@ -37,7 +37,9 @@ public class SecurityConfiguration {
 				logout -> logout.logoutSuccessUrl("/")
 			)
 			.authorizeRequests(
-				request -> request.anyRequest().permitAll()
+				auth -> {
+					auth.anyRequest().permitAll();
+				}
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint().userService(customOAuth2UserService)

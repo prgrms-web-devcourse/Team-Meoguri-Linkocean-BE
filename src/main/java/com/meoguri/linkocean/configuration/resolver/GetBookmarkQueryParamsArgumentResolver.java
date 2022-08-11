@@ -1,12 +1,12 @@
 package com.meoguri.linkocean.configuration.resolver;
 
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 import static org.apache.commons.lang3.math.NumberUtils.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -46,6 +49,9 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 		final List<String> orderProperties =
 			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(order, DEFAULT_ORDER);
 
+		log.info("bookmark 조회 요청 : page : {}, size : {}, order : {}, category : {}, "
+				+ "searchTitle : {}, favorite : {}, follow : {}, tags : {}",
+			page, size, order, category, searchTitle, favorite, follow, tags);
 		return new GetBookmarkQueryParams(
 			toInt(page, DEFAULT_PAGE),
 			toInt(size, DEFAULT_SIZE),
@@ -59,9 +65,9 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 	}
 
 	private List<String> toTagList(final String tags) {
-		if (Objects.isNull(tags)) {
+		if (isNull(tags)) {
 			return null;
 		}
-		return Arrays.stream(tags.split(",")).collect(Collectors.toList());
+		return Arrays.stream(tags.split(",")).collect(toList());
 	}
 }

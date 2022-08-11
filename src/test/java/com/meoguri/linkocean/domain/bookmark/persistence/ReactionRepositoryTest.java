@@ -83,13 +83,11 @@ class ReactionRepositoryTest {
 		em.clear();
 
 		//when
-		final boolean isDeleted
-			= reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, ReactionType.LIKE) > 0;
-		em.flush(); // <- delete 쿼리 발생 어떻게 id 에 대한 in 절 쿼리가 나가는지 의문
+		reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, ReactionType.LIKE);
+		em.flush();
 		em.clear();
 
 		//then
-		assertThat(isDeleted).isTrue();
 		assertThat(reactionRepository.findById(reaction.getId())).isEmpty();
 
 		em.flush();

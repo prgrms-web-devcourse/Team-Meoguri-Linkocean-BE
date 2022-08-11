@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 public class TagServiceImpl implements TagService {
 
 	private final TagRepository tagRepository;
-
 	private final BookmarkRepository bookmarkRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
@@ -41,20 +40,8 @@ public class TagServiceImpl implements TagService {
 	}
 
 	@Override
-	public List<GetProfileTagsResult> getMyTags(final long profileId) {
-		final Profile profile = findProfileByIdQuery.findById(profileId);
-
-		return convert(profile);
-	}
-
-	@Override
 	public List<GetProfileTagsResult> getTags(final long profileId) {
 		final Profile profile = findProfileByIdQuery.findById(profileId);
-		return convert(profile);
-	}
-
-	/* 프로필을 태그 조회 결과로 변환 */
-	private List<GetProfileTagsResult> convert(final Profile profile) {
 		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileFetchTags(profile);
 
 		final Map<String, Integer> tagCountMap = getTagCountMap(bookmarks);

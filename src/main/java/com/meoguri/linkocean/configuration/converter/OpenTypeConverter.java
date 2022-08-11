@@ -7,6 +7,9 @@ import javax.persistence.Converter;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 
+/**
+ * Application : Enum OpenType <-> DB : Byte(TINYINT) Converter
+ */
 @Converter(autoApply = true)
 public class OpenTypeConverter implements AttributeConverter<OpenType, Byte> {
 

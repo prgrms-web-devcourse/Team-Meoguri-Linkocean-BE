@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -16,7 +17,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 선호 북마크 카테고리
+ * 선호 카테고리
+ *
+ * - 선호 카테고리를 등록할 때 [프로필, 카테고리]가 존재해야 한다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -31,6 +34,9 @@ public class FavoriteCategory extends BaseIdEntity {
 	private Category category;
 
 	public FavoriteCategory(final Profile profile, final String categoryName) {
+		checkNotNull(profile);
+		checkNotNull(categoryName);
+
 		this.profile = profile;
 		this.category = Category.of(categoryName);
 	}

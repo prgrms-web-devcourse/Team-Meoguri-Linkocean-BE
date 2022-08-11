@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * 팔로우
- * 팔로워 - 팔로이 조합은 유니크하다.
+ *
+ * - 팔로워 - 팔로이 조합은 유일하다.
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -33,7 +34,9 @@ public class Follow extends BaseIdEntity {
 	private Profile followee;
 
 	public Follow(final Profile follower, final Profile followee) {
-		checkCondition(!follower.equals(followee)); // 자기 자신 팔로우 불가
+		checkNotNull(follower);
+		checkNotNull(followee);
+		checkCondition(!follower.equals(followee), "자기 자신을 팔로우 할 수 없습니다");
 
 		this.follower = follower;
 		this.followee = followee;

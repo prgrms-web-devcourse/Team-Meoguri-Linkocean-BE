@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.controller.common.SimpleIdResponse.of;
-import static java.time.LocalDateTime.*;
 import static java.util.stream.Collectors.*;
 
 import java.net.URI;
@@ -28,15 +26,12 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
-import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse.ProfileResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
-import com.meoguri.linkocean.controller.common.SimpleIdResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 
 import lombok.RequiredArgsConstructor;
@@ -50,37 +45,36 @@ public class BookmarkController {
 
 	/* 북마크 등록 */
 	@PostMapping
-	public SimpleIdResponse registerBookmark(
+	public Map<String, Object> registerBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @RequestBody RegisterBookmarkRequest request
 	) {
-		return of(bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
+		return Map.of("id", bookmarkService.registerBookmark(request.toCommand(user.getProfileId())));
 	}
 
-	/**
-	 * 내 북마크 목록 조회
-	 */
+	/* 내 북마크 목록 조회 */
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetBookmarkQueryParams queryParams
 	) {
-		return getBookmarks(user, user.getProfileId(), queryParams);
+		return getByTargetProfileId(user, user.getProfileId(), queryParams);
 	}
 
 	/**
-	 * 	작성자의 프로필 id 로 북마크 페이징 조회
+	 * 대상의 프로필 id 로 북마크 페이징 조회
+	 * 카테고리 필터링, 제목 필터링, 태그 필터링, 즐겨찾기 필터링을 지원한다 <br>
 	 */
 	@GetMapping("/others/{profileId}")
-	public PageResponse<GetBookmarksResponse> getBookmarks(
+	public PageResponse<GetBookmarksResponse> getByTargetProfileId(
 		final @AuthenticationPrincipal SecurityUser user,
-		final @PathVariable("profileId") long writerProfileId,
+		final @PathVariable("profileId") long targetProfileId,
 		final GetBookmarkQueryParams queryParams
 	) {
-		final Page<GetBookmarksResult> result = bookmarkService.getByWriterProfileId(
+		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
 				user.getId(),
-				writerProfileId,
+				targetProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),
@@ -107,8 +101,8 @@ public class BookmarkController {
 	) {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
 			new BookmarkFindCond(
-				user.getId(),
-				null, //작성자가 따로 없는 조회 이므로 null
+				user.getProfileId(),
+				null, // 대상이 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
 				queryParams.getTags(),
@@ -121,10 +115,7 @@ public class BookmarkController {
 		final List<GetFeedBookmarksResponse> response = result.get()
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
-
-		// TODO - 아직  개발 서버에서는 dummy 반환
-		// return PageResponse.of(response.size(), "bookmarks", response);
-		return feedDummyData();
+		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/* 북마크 상세 조회 */
@@ -133,8 +124,7 @@ public class BookmarkController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId);
-		return GetDetailedBookmarkResponse.of(result);
+		return GetDetailedBookmarkResponse.of(bookmarkService.getDetailedBookmark(user.getProfileId(), bookmarkId));
 	}
 
 	/* 북마크 업데이트 */
@@ -164,7 +154,12 @@ public class BookmarkController {
 	) {
 		final Optional<Long> oBookmarkId = bookmarkService.getBookmarkIdIfExist(user.getProfileId(), url);
 
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setAccessControlAllowHeaders(List.of("*"));
+		httpHeaders.setAccessControlExposeHeaders(List.of("*"));
+		httpHeaders.setAccessControlRequestHeaders(List.of("*"));
 		return ResponseEntity.ok()
+			.headers(httpHeaders)
 			.headers(getLocationHeaderIfPresent(oBookmarkId))
 			.body(Map.of("isDuplicateUrl", oBookmarkId.isPresent()));
 	}
@@ -173,43 +168,5 @@ public class BookmarkController {
 		HttpHeaders headers = new HttpHeaders();
 		oBookmarkId.ifPresent(bookmarkId -> headers.setLocation(URI.create("api/v1/bookmarks/" + bookmarkId)));
 		return headers;
-	}
-
-	private PageResponse<GetFeedBookmarksResponse> feedDummyData() {
-
-		return PageResponse.of(2, "bookmarks", List.of(
-			new GetFeedBookmarksResponse(
-				1L,
-				"네이버 웹툰",
-				"https://comic.naver.com/index",
-				"all",
-				"IT",
-				now(),
-				10L,
-				true,
-				false,
-				"bookmarkImageUrl",
-				List.of("spring", "fun"),
-				new ProfileResponse(
-					1L, "crush", "profileImage.png", false
-				)
-			),
-			new GetFeedBookmarksResponse(
-				2L,
-				"다음 웹툰",
-				"https://comic.daum.com/index",
-				"all",
-				null,
-				now(),
-				10L,
-				false,
-				true,
-				"bookmarkImageUrl2",
-				List.of("spring", "fun"),
-				new ProfileResponse(
-					1L, "crush", "profileImageUrl", false
-				)
-			)
-		));
 	}
 }

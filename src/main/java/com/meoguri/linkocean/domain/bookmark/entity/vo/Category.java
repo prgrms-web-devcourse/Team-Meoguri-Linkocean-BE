@@ -32,10 +32,6 @@ public enum Category {
 
 	private final String korName;
 
-	public static List<String> getEnglishNames() {
-		return Arrays.stream(Category.values()).map(v -> v.korName).collect(toList());
-	}
-
 	public static List<String> getKoreanNames() {
 		return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 	}
@@ -44,8 +40,8 @@ public enum Category {
 		return this.korName;
 	}
 
-	public static String toString(Category category) {
-		return category.korName;
+	public static String toStringKor(Category category) {
+		return category == null ? null : category.korName;
 	}
 
 	public static Category of(String arg) {

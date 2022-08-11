@@ -22,8 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LinkMetadataServiceImpl implements LinkMetadataService {
 
-	private final LinkMetadataRepository linkMetadataRepository;
 	private final JsoupLinkMetadataService jsoupLinkMetadataService;
+
+	private final LinkMetadataRepository linkMetadataRepository;
 
 	@Override
 	public String getTitleByLink(final String link) {

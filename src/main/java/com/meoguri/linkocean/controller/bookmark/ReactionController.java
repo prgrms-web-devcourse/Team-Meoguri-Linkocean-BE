@@ -19,14 +19,21 @@ public class ReactionController {
 
 	private final ReactionService reactionService;
 
+	/**
+	 * 사용자는 북마크에 대해 하나의 reaction 만을 가질 수 있다.
+	 * 사용자는 reaction 을 등록, 취소, 변경 할 수 있다.
+	 * 		like,   hate   요청 reactionType   ->  like,    hate
+	 * 등록	 0       0           like 		 	    1 		0
+	 * 취소	 1       0           like 		 	    0 		0
+	 * 변경	 0       1           like 		 	    1 		0
+	 */
 	@PostMapping("{bookmarkId}/reactions/{reactionType}")
 	public void requestReaction(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId,
 		final @PathVariable String reactionType
 	) {
-		final ReactionCommand command = new ReactionCommand(user.getProfileId(), bookmarkId, reactionType);
-		reactionService.requestReaction(command);
+		reactionService.requestReaction(new ReactionCommand(user.getId(), bookmarkId, reactionType));
 	}
 
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * 목록 조회의 공통 Serializer
+ * 페이지 조회의 공통 Serializer
  * - 데이터 타입 별로 array 의 이름을 커스터마이징 하기 위해 사용
  */
 public class PageResponseJsonSerializer extends JsonSerializer<PageResponse<?>> {

@@ -5,6 +5,7 @@ import static java.util.Collections.*;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -39,7 +40,7 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 
-		return createBookmark(createProfile(), createLinkMetadata(), null);
+		return createBookmark(createProfile(), createLinkMetadata(), "google.com");
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata) {
@@ -60,6 +61,10 @@ public final class Fixture {
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
 		String url) {
 		return createBookmark(profile, linkMetadata, title, category, url, emptyList());
+	}
+
+	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String url) {
+		return createBookmark(profile, linkMetadata, "title", null, url, emptyList());
 	}
 
 	public static Bookmark createBookmark(Profile profile, LinkMetadata linkMetadata, String title, Category category,
@@ -90,11 +95,15 @@ public final class Fixture {
 		return new Tag("tag");
 	}
 
-	public static PageRequest defaultPageable() {
+	public static Pageable defaultPageable() {
+		return PageRequest.of(0, 8);
+	}
+
+	public static Pageable defaultPageableSortByUpload() {
 		return PageRequest.of(0, 8, Sort.by("upload"));
 	}
 
-	public static PageRequest likePageable() {
+	public static Pageable defaultPageableSortByLike() {
 		return PageRequest.of(0, 8, Sort.by("like", "upload"));
 	}
 

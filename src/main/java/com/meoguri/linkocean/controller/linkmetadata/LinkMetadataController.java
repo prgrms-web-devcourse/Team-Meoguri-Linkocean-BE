@@ -18,8 +18,11 @@ public class LinkMetadataController {
 
 	private final LinkMetadataService linkMetadataService;
 
+	/* 링크 메타데이터 얻기 */
 	@PostMapping("/obtain")
-	public Map<String, Object> getLinkMetaTitle(@RequestParam("link") String link) {
+	public Map<String, Object> getOrSaveLinkMetaTitle(
+		final @RequestParam String link
+	) {
 		return Map.of("title", linkMetadataService.getTitleByLink(link));
 	}
 }
