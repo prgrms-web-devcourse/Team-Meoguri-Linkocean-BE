@@ -19,6 +19,7 @@ public class FollowController {
 
 	private final FollowService followService;
 
+	/* 팔로우 */
 	@PostMapping("/follow")
 	public void follow(
 		@AuthenticationPrincipal SecurityUser user,
@@ -27,6 +28,7 @@ public class FollowController {
 		followService.follow(new FollowCommand(user.getId(), followeeId));
 	}
 
+	/* 언팔로우 */
 	@PostMapping("/unfollow")
 	public void unfollow(
 		@AuthenticationPrincipal SecurityUser user,
