@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.common.LinkoceanAssert.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -40,6 +41,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -496,7 +498,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.writerProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
@@ -518,7 +520,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.writerProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByWriterProfileId(findCond, pageable);
@@ -527,6 +529,147 @@ class BookmarkServiceImplTest {
 			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId2, OpenType.PARTIAL), tuple(bookmarkId1, OpenType.ALL));
+		}
+	}
+
+	@Nested
+	class 피드_북마크_조회 {
+
+		@Autowired
+		private FollowRepository followRepository;
+
+		private long profileId1;
+		private long profileId2;
+		private long profileId3;
+
+		private Bookmark bookmark4;
+		private Bookmark bookmark5;
+		private Bookmark bookmark6;
+
+		private Bookmark bookmark7;
+		private Bookmark bookmark8;
+
+		private Bookmark bookmark10;
+
+		private LinkMetadata naver;
+		private LinkMetadata kakao;
+		private LinkMetadata github;
+
+		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
+		// bookmark4 all,    		bookmark7 all, 		bookmark10 all
+		// bookmark5 partial,		bookmark8 partial	bookmark11 partial
+		// bookmark6 private,       bookmark9 private   bookmark12 private
+		@BeforeEach
+		void setUp() {
+			linkMetadataRepository.deleteAll();
+			reactionRepository.deleteAll();
+			favoriteRepository.deleteAll();
+			bookmarkRepository.deleteAll(); // clean data by crush @ above setUp method
+
+			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
+			final User user2 = userRepository.save(new User("user2@gmail.com", "GOOGLE"));
+			final User user3 = userRepository.save(new User("user3@gmail.com", "GOOGLE"));
+
+			final Profile profile1 = profileRepository.save(new Profile(user1, "user1"));
+			final Profile profile2 = profileRepository.save(new Profile(user2, "user2"));
+			final Profile profile3 = profileRepository.save(new Profile(user3, "user3"));
+			profileId1 = profile1.getId();
+			profileId2 = profile2.getId();
+			profileId3 = profile3.getId();
+
+			// 링크 메타 데이터 3개 셋업
+			naver = new LinkMetadata("www.naver.com", "naver", "naver.png");
+			kakao = new LinkMetadata("www.kakao.com", "kakao", "kakao.png");
+			github = new LinkMetadata("www.github.com", "github", "github.png");
+
+			naver = linkMetadataRepository.save(naver);
+			kakao = linkMetadataRepository.save(kakao);
+			github = linkMetadataRepository.save(github);
+
+			bookmarkRepository.save(createBookmark(profile3, github, PRIVATE, "github.com"));
+			bookmarkRepository.save(createBookmark(profile3, kakao, PARTIAL, "kakao.com"));
+			bookmark10 = bookmarkRepository.save(createBookmark(profile3, naver, ALL, "naver.com"));
+
+			bookmarkRepository.save(createBookmark(profile2, github, PRIVATE, "github.com"));
+			bookmark8 = bookmarkRepository.save(createBookmark(profile2, kakao, PARTIAL, "kakao.com"));
+			bookmark7 = bookmarkRepository.save(createBookmark(profile2, naver, ALL, "naver.com"));
+
+			bookmark6 = bookmarkRepository.save(createBookmark(profile1, github, PRIVATE, "github.com"));
+			bookmark5 = bookmarkRepository.save(createBookmark(profile1, kakao, PARTIAL, "kakao.com"));
+			bookmark4 = bookmarkRepository.save(createBookmark(profile1, naver, ALL, "naver.com"));
+
+			followRepository.save(new Follow(profile1, profile2));
+		}
+
+		@Test
+		void 피드_북마크_조회_성공() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.build();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(6);
+			assertThat(bookmarkPage.getContent())
+				.extracting(GetFeedBookmarksResult::getId, GetFeedBookmarksResult::isWriter)
+				.containsExactly(
+					tuple(bookmark4.getId(), true),
+					tuple(bookmark5.getId(), true),
+					tuple(bookmark6.getId(), true),
+
+					tuple(bookmark7.getId(), false),
+					tuple(bookmark8.getId(), false),
+
+					tuple(bookmark10.getId(), false)
+				);
+			assertThat(bookmarkPage.getContent())
+				.extracting(GetFeedBookmarksResult::getProfile)
+				.extracting(GetFeedBookmarksResult.ProfileResult::getProfileId,
+					GetFeedBookmarksResult.ProfileResult::isFollow)
+				.containsExactly(
+					tuple(profileId1, false),
+					tuple(profileId1, false),
+					tuple(profileId1, false),
+
+					tuple(profileId2, true),
+					tuple(profileId2, true),
+
+					tuple(profileId3, false)
+				);
+		}
+
+		@Test
+		void 피드_북마크_조회_팔로우_여부로_성공() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.follow(true)
+				.build();
+			final Pageable pageable = defaultPageable();
+
+			//when
+			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent())
+				.extracting(GetFeedBookmarksResult::getId, GetFeedBookmarksResult::isWriter)
+				.containsExactly(
+					tuple(bookmark7.getId(), false),
+					tuple(bookmark8.getId(), false)
+				);
+			assertThat(bookmarkPage.getContent())
+				.extracting(GetFeedBookmarksResult::getProfile)
+				.extracting(GetFeedBookmarksResult.ProfileResult::getProfileId,
+					GetFeedBookmarksResult.ProfileResult::isFollow)
+				.containsExactly(
+					tuple(profileId2, true),
+					tuple(profileId2, true)
+				);
 		}
 	}
 

@@ -2,6 +2,10 @@ package com.meoguri.linkocean.domain.profile.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
@@ -22,6 +26,15 @@ public interface ProfileService {
 
 	/* 프로필 업데이트 */
 	void updateProfile(UpdateProfileCommand command);
+
+	/**
+	 * 다양한 조건으로 프로필 목록 조회
+	 * <li>팔로워 목록 조회</li>
+	 * <li>팔로이 목록 조회</li>
+	 * <li>특정 username 프로필 목록 조회</li>
+	 */
+	Page<SearchProfileResult> getProfiles(long currentProfileId, UltimateProfileFindCond searchCond,
+		Pageable pageable);
 
 	/**
 	 * profileId 사용자의 팔로워 프로필 목록 조회

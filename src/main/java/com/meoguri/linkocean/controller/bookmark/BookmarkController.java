@@ -48,7 +48,9 @@ public class BookmarkController {
 
 	private final BookmarkService bookmarkService;
 
-	/* 북마크 등록 */
+	/**
+	 * 북 마크 등록
+	 */
 	@PostMapping
 	public SimpleIdResponse registerBookmark(
 		final @AuthenticationPrincipal SecurityUser user,
@@ -122,9 +124,7 @@ public class BookmarkController {
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
 
-		// TODO - 아직  개발 서버에서는 dummy 반환
-		// return PageResponse.of(response.size(), "bookmarks", response);
-		return feedDummyData();
+		return PageResponse.of(response.size(), "bookmarks", response);
 	}
 
 	/* 북마크 상세 조회 */

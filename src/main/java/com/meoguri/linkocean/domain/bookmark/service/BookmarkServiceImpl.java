@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookm
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -189,11 +188,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		// 추가 정보 조회
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		//final List<Boolean> isWriters =  checkIsWriterQuery.checkIsWriter(currentUserProfileId, bookmarks);
-		final List<Boolean> isWriters = Collections.emptyList();
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
-		return toResultPage(bookmarkPage, isFavorites, isWriters, isFollows, pageable);
+		return toResultPage(bookmarkPage, isFavorites, isFollows, currentUserProfileId, pageable);
 	}
 
 	@Override
@@ -233,18 +230,19 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
+			final Bookmark bookmark = bookmarks.get(i);
 			bookmarkResults.add(new GetBookmarksResult(
-				bookmarks.get(i).getId(),
-				bookmarks.get(i).getUrl(),
-				bookmarks.get(i).getTitle(),
-				bookmarks.get(i).getOpenType(),
-				bookmarks.get(i).getCategory(),
-				bookmarks.get(i).getUpdatedAt(),
+				bookmark.getId(),
+				bookmark.getUrl(),
+				bookmark.getTitle(),
+				bookmark.getOpenType(),
+				bookmark.getCategory(),
+				bookmark.getUpdatedAt(),
 				isFavorites.get(i),
-				bookmarks.get(i).getLikeCount(),
-				bookmarks.get(i).getLinkMetadata().getImage(),
+				bookmark.getLikeCount(),
+				bookmark.getLinkMetadata().getImage(),
 				isWriter,
-				bookmarks.get(i).getTagNames()
+				bookmark.getTagNames()
 			));
 		}
 		final long totalCount = bookmarkPage.getTotalElements();
@@ -262,8 +260,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetFeedBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
-		final List<Boolean> isWriters,
 		final List<Boolean> isFollows,
+		final long currentUserProfileId,
 		final Pageable pageable
 	) {
 		final List<GetFeedBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -271,19 +269,20 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
-			final Profile writer = bookmarks.get(i).getProfile();
+			final Bookmark bookmark = bookmarks.get(i);
+			final Profile writer = bookmark.getProfile();
 			bookmarkResults.add(new GetFeedBookmarksResult(
-				bookmarks.get(i).getId(),
-				bookmarks.get(i).getUrl(),
-				bookmarks.get(i).getTitle(),
-				bookmarks.get(i).getOpenType(),
-				bookmarks.get(i).getCategory(),
-				bookmarks.get(i).getUpdatedAt(),
-				bookmarks.get(i).getLinkMetadata().getImage(),
-				bookmarks.get(i).getLikeCount(),
+				bookmark.getId(),
+				bookmark.getUrl(),
+				bookmark.getTitle(),
+				bookmark.getOpenType(),
+				bookmark.getCategory(),
+				bookmark.getUpdatedAt(),
+				bookmark.getLinkMetadata().getImage(),
+				bookmark.getLikeCount(),
 				isFavorites.get(i),
-				isWriters.get(i),
-				bookmarks.get(i).getTagNames(),
+				writer.getId().equals(currentUserProfileId),
+				bookmark.getTagNames(),
 				new GetFeedBookmarksResult.ProfileResult(
 					writer.getId(),
 					writer.getUsername(),
@@ -296,4 +295,5 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
+
 }

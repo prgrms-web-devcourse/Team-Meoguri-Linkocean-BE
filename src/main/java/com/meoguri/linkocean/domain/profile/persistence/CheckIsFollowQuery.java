@@ -19,7 +19,9 @@ public class CheckIsFollowQuery {
 		return followRepository.existsByFollower_idAndFollowee(followerId, followee);
 	}
 
-	/* profileId 사용자가 targets 프로필 목록을 팔로우 즐겨찾기를 했는지 입력받은 순서대로 말아준다 */
+	/**
+	 * profileId 사용자가 targets 프로필 목록을 팔로우 즐겨찾기를 했는지 입력받은 순서대로 말아준다
+	 */
 	public List<Boolean> isFollows(final long profileId, final List<Profile> targets) {
 		final Set<Long> followerProfileIds = followRepository.findFolloweeIdsFollowedBy(profileId, targets);
 
