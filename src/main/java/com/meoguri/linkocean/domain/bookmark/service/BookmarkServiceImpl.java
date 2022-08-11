@@ -72,7 +72,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
+		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
@@ -96,7 +96,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(LinkoceanRuntimeException::new);
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveList(command.getTagNames());
+		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* update 진행 */
 		bookmark.update(

@@ -122,7 +122,7 @@ class BookmarkRepositoryTest {
 		em.clear();
 
 		//when
-		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileFetchTags(profile);
+		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileIdFetchTags(profile.getId());
 
 		em.flush();
 		em.clear();

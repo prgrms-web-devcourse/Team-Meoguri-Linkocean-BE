@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.profile.dto;
 
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,9 +16,9 @@ public final class GetProfilesResponse {
 	private String imageUrl;
 	private Boolean isFollow;
 
-	public static GetProfilesResponse of(final SearchProfileResult result) {
+	public static GetProfilesResponse of(final GetProfilesResult result) {
 		return new GetProfilesResponse(
-			result.getId(),
+			result.getProfileId(),
 			result.getUsername(),
 			result.getImage(),
 			result.isFollow()

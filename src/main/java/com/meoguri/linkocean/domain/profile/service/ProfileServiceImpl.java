@@ -22,9 +22,9 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.FindUserByIdQuery;
@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
@@ -45,6 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final CheckIsFollowQuery checkIsFollowQuery;
 
+	@Transactional
 	@Override
 	public long registerProfile(final RegisterProfileCommand command) {
 		final long userId = command.getUserId();
@@ -67,40 +68,48 @@ public class ProfileServiceImpl implements ProfileService {
 		return profile.getId();
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
+		/* 프로필 조회 */
 		final Profile targetProfile = findProfileByIdQuery.findById(targetProfileId);
 
+		/* 추가 정보 조회 */
+		final boolean isFollow = checkIsFollowQuery.isFollow(currentProfileId, targetProfile);
+		final int followerCount = followRepository.countFollowerByProfile(targetProfile);
+		final int followeeCount = followRepository.countFolloweeByProfile(targetProfile);
+
+		/* 결과 반환 */
 		return new GetDetailedProfileResult(
 			targetProfile.getId(),
 			targetProfile.getUsername(),
 			targetProfile.getImage(),
 			targetProfile.getBio(),
 			targetProfile.getMyFavoriteCategories(),
-			checkIsFollowQuery.isFollow(currentProfileId, targetProfile),
-			followRepository.countFollowerByProfile(targetProfile),
-			followRepository.countFolloweeByProfile(targetProfile)
+			isFollow,
+			followerCount,
+			followeeCount
 		);
 	}
 
+	@Transactional
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
+		/* 프로필 조회 */
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
-		final String origUsername = profile.getUsername();
 
-		// 프로필 업데이트
+		/* 프로필 업데이트 */
 		profile.update(command.getUsername(), command.getBio(), command.getImage());
 
-		// 선호 카테고리 업데이트
+		/* 선호 카테고리 업데이트 */
 		profile.updateFavoriteCategories(command.getCategories());
-		log.info("profile updated : from username : {} -> {}", origUsername, profile.getUsername());
 	}
 
 	@Override
-	public Page<SearchProfileResult> getProfiles(final long currentProfileId, final UltimateProfileFindCond findCond,
-		final Pageable pageable) {
-
+	public Page<GetProfilesResult> getProfiles(
+		final long currentProfileId,
+		final UltimateProfileFindCond findCond,
+		final Pageable pageable
+	) {
 		/* 프로필 목록 가져 오기 */
 		final Page<Profile> profilesPage = profileRepository.ultimateFindProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesPage.getContent();
@@ -111,8 +120,11 @@ public class ProfileServiceImpl implements ProfileService {
 		return toResultPage(profiles, isFollows, pageable);
 	}
 
-	private List<Boolean> getIsFollow(final long currentProfileId, final List<Profile> profiles,
-		final UltimateProfileFindCond findCond) {
+	private List<Boolean> getIsFollow(
+		final long currentProfileId,
+		final List<Profile> profiles,
+		final UltimateProfileFindCond findCond
+	) {
 		if (isMyFollowees(currentProfileId, findCond.getProfileId(), findCond.isFollowee())) {
 			return new ArrayList<>((nCopies(profiles.size(), true)));
 		}
@@ -123,15 +135,17 @@ public class ProfileServiceImpl implements ProfileService {
 		return followee && currentProfileId == profileId; /* 순서 중요!! 순서 바뀌면 NPE 가능성 존재 */
 	}
 
-	private Page<SearchProfileResult> toResultPage(final List<Profile> profiles, final List<Boolean> isFollows,
-		Pageable pageable) {
-
-		List<SearchProfileResult> results = new ArrayList<>();
+	private Page<GetProfilesResult> toResultPage(
+		final List<Profile> profiles,
+		final List<Boolean> isFollows,
+		Pageable pageable
+	) {
+		List<GetProfilesResult> results = new ArrayList<>();
 		for (int i = 0; i < profiles.size(); i++) {
 			final Profile followerProfile = profiles.get(i);
 			final boolean isFollow = isFollows.get(i);
 
-			results.add(new SearchProfileResult(
+			results.add(new GetProfilesResult(
 				followerProfile.getId(),
 				followerProfile.getUsername(),
 				followerProfile.getImage(),
@@ -141,9 +155,9 @@ public class ProfileServiceImpl implements ProfileService {
 		return new PageImpl<>(results, pageable, 0L);
 	}
 
-	@Transactional(readOnly = true)
+	@Deprecated
 	@Override
-	public List<SearchProfileResult> searchFollowerProfiles(final ProfileSearchCond searchCond, final long profileId) {
+	public List<GetProfilesResult> searchFollowerProfiles(final ProfileSearchCond searchCond, final long profileId) {
 		final long currentUserProfileId = searchCond.getProfileId();
 
 		// 프로필 조회
@@ -163,9 +177,9 @@ public class ProfileServiceImpl implements ProfileService {
 		return getResult(followerProfiles, isFollows);
 	}
 
-	@Transactional(readOnly = true)
+	@Deprecated
 	@Override
-	public List<SearchProfileResult> searchFolloweeProfiles(final ProfileSearchCond searchCond, final long profileId) {
+	public List<GetProfilesResult> searchFolloweeProfiles(final ProfileSearchCond searchCond, final long profileId) {
 		final long currentUserProfileId = searchCond.getProfileId();
 
 		// 프로필 조회
@@ -188,15 +202,14 @@ public class ProfileServiceImpl implements ProfileService {
 		return getResult(followeeProfiles, isFollows);
 	}
 
-	@Transactional(readOnly = true)
 	@Override
 	public boolean existsByUserId(final long userId) {
 		return profileRepository.findByUserId(userId).isPresent();
 	}
 
-	@Transactional(readOnly = true)
+	@Deprecated
 	@Override
-	public List<SearchProfileResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
+	public List<GetProfilesResult> searchProfilesByUsername(final ProfileSearchCond searchCond) {
 		checkArgument(hasText(searchCond.getUsername()), "사용자 이름을 입력해 주세요");
 
 		// 프로필 조회
@@ -214,17 +227,15 @@ public class ProfileServiceImpl implements ProfileService {
 		return getResult(profiles, isFollows);
 	}
 
-	/**
-	 * 두 배열을 결과 배열로 변환하는 메서드
-	 */
-	private List<SearchProfileResult> getResult(final List<Profile> followerProfiles, final List<Boolean> isFollows) {
+	/* 두 배열을 결과 배열로 변환하는 메서드 */
+	private List<GetProfilesResult> getResult(final List<Profile> followerProfiles, final List<Boolean> isFollows) {
 		int numFollower = followerProfiles.size();
-		List<SearchProfileResult> result = new ArrayList<>();
+		List<GetProfilesResult> result = new ArrayList<>();
 		for (int i = 0; i < numFollower; i++) {
 			final Profile followerProfile = followerProfiles.get(i);
 			final boolean isFollow = isFollows.get(i);
 
-			result.add(new SearchProfileResult(
+			result.add(new GetProfilesResult(
 				followerProfile.getId(),
 				followerProfile.getUsername(),
 				followerProfile.getImage(),

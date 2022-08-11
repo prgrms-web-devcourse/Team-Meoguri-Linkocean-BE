@@ -131,7 +131,7 @@ public abstract class Querydsl4RepositorySupport {
 	/**
 	 * 무한 스크롤 전용 페이지네이션 : total count 필요 없음
 	 */
-	protected <T> Page<T> applyPaginationWithoutTotalPage(
+	protected <T> Page<T> applySlicing(
 		Pageable pageable,
 		JPAQuery<T> jpaContentQuery
 	) {

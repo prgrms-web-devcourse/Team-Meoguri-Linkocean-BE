@@ -38,9 +38,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "from Bookmark b "
 		+ "join fetch b.bookmarkTags bt "
 		+ "join fetch bt.tag "
-		+ "where b.profile = :profile "
+		+ "where b.profile.id = :profileId "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	List<Bookmark> findByProfileFetchTags(Profile profile);
+	List<Bookmark> findByProfileIdFetchTags(long profileId);
 
 	@Query("select distinct b "
 		+ "from Bookmark b "

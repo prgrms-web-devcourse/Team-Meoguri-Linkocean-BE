@@ -30,8 +30,8 @@ import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
 import com.meoguri.linkocean.infrastructure.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
@@ -95,7 +95,7 @@ public class ProfileController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetProfileQueryParams queryParams
 	) {
-		final List<SearchProfileResult> results =
+		final List<GetProfilesResult> results =
 			profileService.searchProfilesByUsername(queryParams.toSearchCond(user.getProfileId()));
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -113,7 +113,7 @@ public class ProfileController {
 		final GetProfileQueryParams queryParams
 	) {
 		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
-		final List<SearchProfileResult> results = profileService.searchFollowerProfiles(cond, profileId);
+		final List<GetProfilesResult> results = profileService.searchFollowerProfiles(cond, profileId);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
@@ -130,7 +130,7 @@ public class ProfileController {
 		final GetProfileQueryParams queryParams
 	) {
 		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
-		final List<SearchProfileResult> results = profileService.searchFolloweeProfiles(cond, profileId);
+		final List<GetProfilesResult> results = profileService.searchFolloweeProfiles(cond, profileId);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
 		return SliceResponse.of("profiles", response);
