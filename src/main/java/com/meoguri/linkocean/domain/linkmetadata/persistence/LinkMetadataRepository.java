@@ -14,7 +14,9 @@ public interface LinkMetadataRepository extends JpaRepository<LinkMetadata, Long
 
 	Optional<LinkMetadata> findByLink(Link link);
 
-	@Query("select l.title from LinkMetadata l where l.link = :link")
+	@Query("select l.title "
+		+ "from LinkMetadata l "
+		+ "where l.link = :link")
 	Optional<String> findTitleByLink(Link link);
 
 	/* 배치작업 최적화를 위해 Slice 이용 */

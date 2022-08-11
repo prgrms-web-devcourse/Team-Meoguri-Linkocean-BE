@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * 링크(Link)
- *
  * - 링크 메타 데이터 테이블의 column 이며 유일하다.
  * - 링크는 저장될 때 schema (http, https) 와 www. 를 지우고 저장한다.
  */
