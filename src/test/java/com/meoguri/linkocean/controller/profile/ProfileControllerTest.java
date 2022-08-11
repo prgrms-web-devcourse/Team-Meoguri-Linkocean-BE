@@ -220,9 +220,8 @@ class ProfileControllerTest extends BaseControllerTest {
 			팔로우(user3ProfileId);
 		}
 
-		// 1. 프로필 목록 조회 - 머구리 찾기 / 이름으로 필터링
 		@Test
-		void 프로필_목록_조회_Api_성공() throws Exception {
+		void 유저네임으로_프로필_목록_조회_Api_성공() throws Exception {
 			로그인("user1@gmail.com", "GOOGLE");
 
 			mockMvc.perform(get(baseUrl + "?username=" + "user")
