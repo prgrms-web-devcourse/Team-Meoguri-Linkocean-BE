@@ -29,7 +29,7 @@ import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
@@ -107,7 +107,7 @@ public class ProfileController {
 
 		final Page<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new UltimateProfileFindCond(
+			new ProfileFindCond(
 				null,
 				false,
 				false,
@@ -132,7 +132,7 @@ public class ProfileController {
 	) {
 		final Page<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new UltimateProfileFindCond(
+			new ProfileFindCond(
 				profileId,
 				true,
 				false,
@@ -157,7 +157,7 @@ public class ProfileController {
 	) {
 		final Page<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new UltimateProfileFindCond(
+			new ProfileFindCond(
 				profileId,
 				false,
 				true,

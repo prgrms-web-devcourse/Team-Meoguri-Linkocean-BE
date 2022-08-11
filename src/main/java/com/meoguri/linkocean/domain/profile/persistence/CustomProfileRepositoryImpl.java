@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
@@ -23,7 +23,7 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 	}
 
 	@Override
-	public Page<Profile> ultimateFindProfiles(final UltimateProfileFindCond findCond, final Pageable pageable) {
+	public Page<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
 
 		final Long currentProfileId = findCond.getProfileId();
 		final boolean isFollower = findCond.isFollower();

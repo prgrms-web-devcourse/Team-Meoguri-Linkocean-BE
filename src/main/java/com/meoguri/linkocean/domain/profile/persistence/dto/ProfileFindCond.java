@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class UltimateProfileFindCond {
+public class ProfileFindCond {
 
 	/* 팔로우, 팔로이 목록 조회에서 현재 사용자의 프로필 아이디 */
 	private final Long profileId;

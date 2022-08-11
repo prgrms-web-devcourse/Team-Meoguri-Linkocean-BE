@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
@@ -324,21 +324,21 @@ class ProfileServiceImplTest {
 				);
 		}
 
-		private UltimateProfileFindCond condWhenFindUsingUsername(final String username) {
-			return UltimateProfileFindCond.builder()
+		private ProfileFindCond condWhenFindUsingUsername(final String username) {
+			return ProfileFindCond.builder()
 				.username(username)
 				.build();
 		}
 
-		private UltimateProfileFindCond condWhenFindFollowees(final long profileId) {
-			return UltimateProfileFindCond.builder()
+		private ProfileFindCond condWhenFindFollowees(final long profileId) {
+			return ProfileFindCond.builder()
 				.profileId(profileId)
 				.followee(true)
 				.build();
 		}
 
-		private UltimateProfileFindCond condWhenFindFollowers(final long profileId) {
-			return UltimateProfileFindCond.builder()
+		private ProfileFindCond condWhenFindFollowers(final long profileId) {
+			return ProfileFindCond.builder()
 				.profileId(profileId)
 				.follower(true)
 				.build();

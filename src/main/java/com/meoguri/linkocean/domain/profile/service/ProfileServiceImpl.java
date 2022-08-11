@@ -18,7 +18,7 @@ import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -104,11 +104,11 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public Page<GetProfilesResult> getProfiles(
 		final long currentProfileId,
-		final UltimateProfileFindCond findCond,
+		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
 		/* 프로필 목록 가져 오기 */
-		final Page<Profile> profilesPage = profileRepository.ultimateFindProfiles(findCond, pageable);
+		final Page<Profile> profilesPage = profileRepository.findProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesPage.getContent();
 
 		/* 추가 정보 조회 */
@@ -120,7 +120,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private List<Boolean> getIsFollow(
 		final long currentProfileId,
 		final List<Profile> profiles,
-		final UltimateProfileFindCond findCond
+		final ProfileFindCond findCond
 	) {
 		if (isMyFollowees(currentProfileId, findCond.getProfileId(), findCond.isFollowee())) {
 			return new ArrayList<>((nCopies(profiles.size(), true)));

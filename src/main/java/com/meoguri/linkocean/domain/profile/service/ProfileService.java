@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.profile.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -26,7 +26,7 @@ public interface ProfileService {
 	 * - 팔로이 목록 조회
 	 * - 특정 username 프로필 목록 조회
 	 */
-	Page<GetProfilesResult> getProfiles(long currentProfileId, UltimateProfileFindCond searchCond, Pageable pageable);
+	Page<GetProfilesResult> getProfiles(long currentProfileId, ProfileFindCond searchCond, Pageable pageable);
 
 	/* 프로필 보유 여부 확인 */
 	boolean existsByUserId(long userId);

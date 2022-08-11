@@ -16,7 +16,7 @@ import org.springframework.data.domain.Page;
 import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
@@ -60,11 +60,11 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile1.getId()), defaultPageable());
-		final Page<Profile> followerOfUser2 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser2 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile2.getId()), defaultPageable());
-		final Page<Profile> followerOfUser3 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser3 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile3.getId()), defaultPageable());
 
 		//then
@@ -80,7 +80,7 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile3.getId(), "user1"), defaultPageable());
 
 		//then
@@ -95,11 +95,11 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile1.getId()), defaultPageable());
-		final Page<Profile> followerOfUser2 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser2 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile2.getId()), defaultPageable());
-		final Page<Profile> followerOfUser3 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser3 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile3.getId()), defaultPageable());
 
 		//then
@@ -115,7 +115,7 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile1, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.ultimateFindProfiles(
+		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile1.getId(), "user3"), defaultPageable());
 
 		//then
@@ -125,30 +125,30 @@ class CustomProfileRepositoryImplTest {
 	@Test
 	void 프로필_목록_조회_성공_이름_지정() {
 		//when
-		final Page<Profile> profiles = profileRepository.ultimateFindProfiles(condWhenFindUsingUsername("user"),
+		final Page<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"),
 			defaultPageable());
 
 		//then
 		assertThat(profiles).containsExactly(profile1, profile2, profile3);
 	}
 
-	private UltimateProfileFindCond condWhenFindUsingUsername(final String username) {
-		return UltimateProfileFindCond.builder().username(username).build();
+	private ProfileFindCond condWhenFindUsingUsername(final String username) {
+		return ProfileFindCond.builder().username(username).build();
 	}
 
-	private UltimateProfileFindCond condWhenFindFollowees(final long profileId) {
+	private ProfileFindCond condWhenFindFollowees(final long profileId) {
 		return condWhenFindFollowees(profileId, null);
 	}
 
-	private UltimateProfileFindCond condWhenFindFollowees(final long profileId, final String username) {
-		return UltimateProfileFindCond.builder().profileId(profileId).followee(true).username(username).build();
+	private ProfileFindCond condWhenFindFollowees(final long profileId, final String username) {
+		return ProfileFindCond.builder().profileId(profileId).followee(true).username(username).build();
 	}
 
-	private UltimateProfileFindCond condWhenFindFollowers(final long profileId) {
+	private ProfileFindCond condWhenFindFollowers(final long profileId) {
 		return condWhenFindFollowers(profileId, null);
 	}
 
-	private UltimateProfileFindCond condWhenFindFollowers(final long profileId, final String username) {
-		return UltimateProfileFindCond.builder().profileId(profileId).follower(true).username(username).build();
+	private ProfileFindCond condWhenFindFollowers(final long profileId, final String username) {
+		return ProfileFindCond.builder().profileId(profileId).follower(true).username(username).build();
 	}
 }
