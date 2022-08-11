@@ -16,7 +16,7 @@ public final class GetProfileQueryParams {
 
 	/* 필터링 정보 */
 	private final String username;
-	
+
 	public Pageable toPageable() {
 		/* PageRequest 는 0 부터 페이지를 세기 때문에 조정해줌 */
 		return PageRequest.of(page - 1, size);
