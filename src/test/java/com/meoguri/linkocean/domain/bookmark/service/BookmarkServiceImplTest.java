@@ -607,7 +607,7 @@ class BookmarkServiceImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -649,7 +649,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
