@@ -38,8 +38,7 @@ public class SecurityConfiguration {
 			)
 			.authorizeRequests(
 				auth -> {
-					auth.antMatchers("/api/v1/login").permitAll();
-					auth.anyRequest().authenticated();
+					auth.anyRequest().permitAll();
 				}
 			)
 			.oauth2Login(oauth2 -> oauth2
