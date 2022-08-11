@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.common.LinkoceanAssert.*;
+import static com.meoguri.linkocean.common.Assertions.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
