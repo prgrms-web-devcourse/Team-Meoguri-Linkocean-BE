@@ -112,7 +112,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		);
 	}
 
-	// 태그를 포함한 북마크의 id 를 역으로 조회
+	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? select(bookmarkTag.bookmark.id)
 			.distinct()
