@@ -24,6 +24,7 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
@@ -72,7 +73,7 @@ public class ProfileController {
 	) {
 		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getProfileId(), profileId);
 		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
-		final List<String> categories = categoryService.getUsedCategories(profileId);
+		final List<Category> categories = categoryService.getUsedCategories(profileId);
 
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}

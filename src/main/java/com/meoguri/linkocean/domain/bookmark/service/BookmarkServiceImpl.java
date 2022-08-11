@@ -174,6 +174,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
+		//TODO isWriter logic
+
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
@@ -210,10 +212,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 * 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
 	 * @see BookmarkFindCond
 	 */
-	private OpenType getAvailableBookmarkOpenType(final long currentUserProfileId, final long writerProfileId) {
-		if (currentUserProfileId == writerProfileId) {
+	private OpenType getAvailableBookmarkOpenType(final long currentUserProfileId, final long targetProfileId) {
+		if (currentUserProfileId == targetProfileId) {
 			return OpenType.PRIVATE;
-		} else if (checkIsFollowQuery.isFollow(currentUserProfileId, findProfileByIdQuery.findById(writerProfileId))) {
+		} else if (checkIsFollowQuery.isFollow(currentUserProfileId, findProfileByIdQuery.findById(targetProfileId))) {
 			return OpenType.PARTIAL;
 		} else {
 			return OpenType.ALL;

@@ -23,15 +23,11 @@ public class CategoryServiceImpl implements CategoryService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public List<String> getUsedCategories(final long profileId) {
+	public List<Category> getUsedCategories(final long profileId) {
 		final Profile writer = findProfileByIdQuery.findById(profileId);
 
-		return convert(writer);
-	}
-
-	private List<String> convert(final Profile writer) {
 		return bookmarkRepository.findCategoryExistsBookmark(writer).stream()
-			.map(name -> Category.valueOf(name).getKorName())
 			.collect(Collectors.toList());
 	}
+
 }

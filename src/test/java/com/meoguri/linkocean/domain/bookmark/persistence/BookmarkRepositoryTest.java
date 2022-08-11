@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,11 +107,11 @@ class BookmarkRepositoryTest {
 	@Test
 	void 사용자의_전체_북마크조회_태그_까지_페치_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", Category.IT, "www.naver.com",
+		final Bookmark bookmark1 = createBookmark(profile, link, "bookmark1", IT, "www.naver.com",
 			List.of(tag1, tag2, tag3));
-		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", Category.IT, "www.google.com",
+		final Bookmark bookmark2 = createBookmark(profile, link, "bookmark2", IT, "www.google.com",
 			List.of(tag2, tag3));
-		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", Category.IT, "www.haha.com",
+		final Bookmark bookmark3 = createBookmark(profile, link, "bookmark3", IT, "www.haha.com",
 			List.of(tag3));
 
 		bookmarkRepository.save(bookmark1);
@@ -165,25 +166,25 @@ class BookmarkRepositoryTest {
 	@Test
 	void 게시글이_존재하는_카테고리이름_반환() {
 		//given
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.google.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.naver.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "www.prgrms.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.SOCIAL, "www.daum.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.SOCIAL, "www.hello.com"));
-		bookmarkRepository.save(createBookmark(profile, link, "제목", Category.SCIENCE, "www.linkocean.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", IT, "www.google.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", IT, "www.naver.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", IT, "www.prgrms.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", SOCIAL, "www.daum.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", SOCIAL, "www.hello.com"));
+		bookmarkRepository.save(createBookmark(profile, link, "제목", SCIENCE, "www.linkocean.com"));
 
 		//when
-		final List<String> categories = bookmarkRepository.findCategoryExistsBookmark(profile);
+		final List<Category> categories = bookmarkRepository.findCategoryExistsBookmark(profile);
 
 		//then
-		assertThat(categories).contains("IT", "SOCIAL", "SCIENCE");
+		assertThat(categories).contains(IT, SOCIAL, SCIENCE);
 	}
 
 	@Test
 	void 프로필_아이디_url_로_북마크_존재하는지_확인_성공() {
 		//given
 		final Bookmark bookmark =
-			bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "https://www.google.com"));
+			bookmarkRepository.save(createBookmark(profile, link, "제목", IT, "https://www.google.com"));
 
 		//when
 		final Optional<Long> oBookmarkId1 =

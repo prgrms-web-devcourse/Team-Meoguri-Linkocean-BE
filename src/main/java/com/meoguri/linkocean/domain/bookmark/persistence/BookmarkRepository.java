@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
@@ -60,5 +61,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "where b.profile = :profile "
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	List<String> findCategoryExistsBookmark(Profile profile);
+	List<Category> findCategoryExistsBookmark(Profile profile);
 }
