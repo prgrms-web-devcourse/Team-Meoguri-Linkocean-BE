@@ -22,14 +22,12 @@ import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetMyProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
 import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
@@ -60,14 +58,10 @@ public class ProfileController {
 
 	/* 내 프로필 조회 */
 	@GetMapping("/me")
-	public GetMyProfileResponse getMyProfile(
+	public GetDetailedProfileResponse getMyProfile(
 		@AuthenticationPrincipal SecurityUser user
 	) {
-		final GetMyProfileResult profile = profileService.getMyProfile(user.getProfileId());
-		final List<GetProfileTagsResult> tags = tagService.getTags(user.getProfileId());
-		final List<String> categories = categoryService.getMyUsedCategories(user.getProfileId());
-
-		return GetMyProfileResponse.of(profile, tags, categories);
+		return getDetailedProfile(user, user.getProfileId());
 	}
 
 	/* 프로필 상세 조회 */

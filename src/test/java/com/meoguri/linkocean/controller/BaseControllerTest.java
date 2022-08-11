@@ -30,7 +30,6 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.profile.dto.GetMyProfileResponse;
 import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -148,7 +147,7 @@ public class BaseControllerTest {
 		return mapper.readValue(content, GetDetailedProfileResponse.class);
 	}
 
-	protected GetMyProfileResponse 내_프로필_조회() throws Exception {
+	protected GetDetailedProfileResponse 내_프로필_조회() throws Exception {
 		final MvcResult mvcResult =
 			mockMvc.perform(get("/api/v1/profiles/me")
 					.header(AUTHORIZATION, token)
@@ -157,7 +156,7 @@ public class BaseControllerTest {
 				.andReturn();
 
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetMyProfileResponse.class);
+		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetDetailedProfileResponse.class);
 	}
 
 	protected void 북마크_즐겨찾기(final long bookmarkId) throws Exception {
