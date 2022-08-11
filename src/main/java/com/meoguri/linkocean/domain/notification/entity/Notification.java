@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -38,6 +39,7 @@ public class Notification extends BaseIdEntity implements Serializable {
 	@Enumerated(STRING)
 	private NotificationType type;
 
+	@JsonIgnore
 	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile receiver;
 
