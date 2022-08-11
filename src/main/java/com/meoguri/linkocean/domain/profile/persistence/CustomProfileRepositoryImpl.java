@@ -4,8 +4,6 @@ import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import org.springframework.data.domain.Page;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
@@ -42,60 +39,12 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 					usernameContains(username)
 				)
 		);
-		// final JPAQuery<Profile> base = selectFrom(profile);
-		/*
-
-		if (isFollower) {
-			return applySlicing(
-				pageable, base.where(followerOfUsername(isFollower, currentProfileId, username)));
-		}
-
-		if (isFollowee) {
-			return applySlicing(
-				pageable, base.where(followeeOfUsername(isFollowee, currentProfileId, username)));
-		}
-
-		return applySlicing(
-			pageable, base.where(usernameContains(username)));*/
-	}
-
-	@Override
-	public List<Profile> findFollowerProfilesBy(final ProfileFindCond findCond) {
-		return selectFrom(profile)
-			.where(
-				followerOfUsername(findCond.getProfileId(), findCond.getUsername())
-			)
-			.offset(findCond.getOffset())
-			.limit(findCond.getLimit())
-			.fetch();
-	}
-
-	@Override
-	public List<Profile> findFolloweeProfilesBy(final ProfileFindCond findCond) {
-		return selectFrom(profile)
-			.where(
-				followeeOfUsername(findCond.getProfileId(), findCond.getUsername())
-			)
-			.offset(findCond.getOffset())
-			.limit(findCond.getLimit())
-			.fetch();
-	}
-
-	@Override
-	public List<Profile> findByUsernameLike(final ProfileFindCond findCond) {
-		return selectFrom(profile)
-			.where(
-				usernameLike(findCond.getUsername())
-			)
-			.offset(findCond.getOffset())
-			.limit(findCond.getLimit())
-			.fetch();
 	}
 
 	private BooleanBuilder followerOfUsername(
-		boolean isFollower,
-		Long profileId,
-		String username
+		final boolean isFollower,
+		final Long profileId,
+		final String username
 	) {
 		if (!isFollower) {
 			return new BooleanBuilder();
@@ -116,9 +65,9 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 	}
 
 	private BooleanBuilder followeeOfUsername(
-		boolean isFollowee,
-		Long profileId,
-		String username
+		final boolean isFollowee,
+		final Long profileId,
+		final String username
 	) {
 		if (!isFollowee) {
 			return new BooleanBuilder();
@@ -136,44 +85,6 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 				usernameContains(username)
 			))
 		);
-	}
-
-	private BooleanBuilder followerOfUsername(long profileId, String username) {
-
-		return nullSafeBuilder(() -> profile.in(
-			joinIf(
-				username != null,
-				select(follow.follower)
-					.from(follow),
-				() -> join(follow.follower, profile)
-					.on(follow.follower.id.eq(profile.id))
-			).where(
-				follow.followee.id.eq(profileId),
-				usernameContains(username)
-			))
-		);
-	}
-
-	private BooleanBuilder followeeOfUsername(long profileId, String username) {
-
-		return nullSafeBuilder(() -> profile.in(
-			joinIf(
-				username != null,
-				select(follow.followee)
-					.from(follow),
-				() -> join(follow.followee, profile)
-					.on(follow.followee.id.eq(profile.id))
-			).where(
-				follow.follower.id.eq(profileId),
-				usernameContains(username)
-			))
-		);
-	}
-
-	/* profile.username like '%username%' escape '!' */
-	private BooleanBuilder usernameLike(final String username) {
-
-		return nullSafeBuilder(() -> profile.username.like(String.join(username, "%", "%")));
 	}
 
 	private BooleanBuilder usernameContains(final String username) {
