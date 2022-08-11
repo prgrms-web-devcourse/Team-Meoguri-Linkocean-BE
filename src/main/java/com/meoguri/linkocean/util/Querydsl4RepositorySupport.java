@@ -106,7 +106,7 @@ public abstract class Querydsl4RepositorySupport {
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
 		JPAQuery<T> countResult = countQuery.apply(getQueryFactory());
-		return PageableExecutionUtils.getPage(content, pageable, () -> countResult.stream().count());
+		return PageableExecutionUtils.getPage(content, pageable, jpaContentQuery::fetchCount);
 	}
 
 	protected <T> Page<T> applyPagination(
@@ -125,7 +125,7 @@ public abstract class Querydsl4RepositorySupport {
 	) {
 		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
-		return PageableExecutionUtils.getPage(content, pageable, () -> jpaCountQuery.stream().count());
+		return PageableExecutionUtils.getPage(content, pageable, jpaContentQuery::fetchCount);
 	}
 
 	/**
