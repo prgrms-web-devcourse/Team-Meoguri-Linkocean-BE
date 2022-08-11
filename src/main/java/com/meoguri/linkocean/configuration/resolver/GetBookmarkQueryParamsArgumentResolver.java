@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.configuration.resolver;
 
-import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
@@ -67,7 +66,7 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 
 	private List<String> toTagList(final String tags) {
 		if (isNull(tags)) {
-			return emptyList();
+			return null;
 		}
 		return Arrays.stream(tags.split(",")).collect(toList());
 	}

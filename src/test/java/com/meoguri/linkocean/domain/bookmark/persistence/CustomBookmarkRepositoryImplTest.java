@@ -73,6 +73,7 @@ class CustomBookmarkRepositoryImplTest {
 	private LinkMetadata github;
 
 	private Bookmark bookmark3;
+
 	@BeforeEach
 	void setUp() {
 		// 사용자 1명 셋업 - 크러쉬
@@ -273,7 +274,7 @@ class CustomBookmarkRepositoryImplTest {
 			favoriteRepository.save(new Favorite(bookmark4, profile));
 			favoriteRepository.save(new Favorite(bookmark3, profile2));
 			favoriteRepository.save(new Favorite(bookmark5, profile2));
-			final Pageable pageable = defaultPageable();
+			final Pageable pageable = defaultPageableSortByUpload();
 
 			//user1 -> user1
 			//given
