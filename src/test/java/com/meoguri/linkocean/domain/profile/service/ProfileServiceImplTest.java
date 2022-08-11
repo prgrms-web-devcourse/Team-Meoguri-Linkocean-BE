@@ -124,6 +124,23 @@ class ProfileServiceImplTest {
 			final List<String> favoriteCategories = result.getFavoriteCategories();
 			assertThat(favoriteCategories).containsExactly("인문", "과학");
 		}
+
+		@Test
+		void 사용자_이름_중복_등록_실패() {
+			//given
+			final User user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
+			final User user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
+
+			final String username = "duplicated";
+			final RegisterProfileCommand command1 = new RegisterProfileCommand(user1.getId(), username, emptyList());
+			final RegisterProfileCommand command2 = new RegisterProfileCommand(user2.getId(), username, emptyList());
+
+			profileService.registerProfile(command1);
+
+			//when then
+			assertThatIllegalArgumentException()
+				.isThrownBy(() -> profileService.registerProfile(command2));
+		}
 	}
 
 	@Test

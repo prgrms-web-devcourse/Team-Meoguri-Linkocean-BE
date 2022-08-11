@@ -66,7 +66,7 @@ public class ProfileController {
 		@AuthenticationPrincipal SecurityUser user
 	) {
 		final GetMyProfileResult profile = profileService.getMyProfile(user.getProfileId());
-		final List<GetProfileTagsResult> tags = tagService.getMyTags(user.getProfileId());
+		final List<GetProfileTagsResult> tags = tagService.getTags(user.getProfileId());
 		final List<String> categories = categoryService.getMyUsedCategories(user.getProfileId());
 
 		return GetMyProfileResponse.of(profile, tags, categories);

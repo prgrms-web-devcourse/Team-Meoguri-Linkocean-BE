@@ -43,4 +43,19 @@ class ProfileRepositoryTest {
 		assertThat(foundProfile).isPresent();
 		assertThat(foundProfile.get()).isEqualTo(profile);
 	}
+
+	@Test
+	void 사용자_이름_중복_확인() {
+		//given
+		final Profile profile = new Profile(user, "haha");
+		profileRepository.save(profile);
+
+		//when
+		final boolean exists1 = profileRepository.existsByUsername("haha");
+		final boolean exists2 = profileRepository.existsByUsername("papa");
+
+		//then
+		assertThat(exists1).isTrue();
+		assertThat(exists2).isFalse();
+	}
 }

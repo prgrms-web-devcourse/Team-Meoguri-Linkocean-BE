@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class FollowServiceImpl implements FollowService {
 
 	private final FollowRepository followRepository;
+
 	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
