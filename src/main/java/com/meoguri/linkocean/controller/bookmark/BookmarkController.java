@@ -73,7 +73,7 @@ public class BookmarkController {
 	) {
 		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
-				user.getId(),
+				user.getId(), // 여기 profileId가 들어가야 하지 않나요?
 				targetProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
