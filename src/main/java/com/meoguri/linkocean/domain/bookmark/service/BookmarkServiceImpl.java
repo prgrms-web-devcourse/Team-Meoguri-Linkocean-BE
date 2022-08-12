@@ -176,14 +176,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
-		//TODO isWriter logic
-
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		/* 결과 반환 */
-		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);
+		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);
 	}
 
 	@Override
@@ -234,7 +232,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
-		final boolean isWriter,
+		final long currentUserProfileId,
 		final Pageable pageable
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -243,6 +241,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
+			final Profile writer = bookmark.getProfile();
 			bookmarkResults.add(new GetBookmarksResult(
 				bookmark.getId(),
 				bookmark.getUrl(),
@@ -253,7 +252,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmark.getLikeCount(),
 				bookmark.getLinkMetadata().getImage(),
-				isWriter,
+				writer.getId().equals(currentUserProfileId),
 				bookmark.getTagNames()
 			));
 		}
