@@ -304,4 +304,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
+	@Override
+	public int updateBookmarkLikeCount(long profileId, Long bookmarkLikeCount) {
+		return bookmarkRepository.addBookmarkLikeCount(profileId, bookmarkLikeCount);
+	}
 }
