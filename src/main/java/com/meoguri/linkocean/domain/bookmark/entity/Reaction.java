@@ -31,10 +31,10 @@ import lombok.NoArgsConstructor;
 )
 public class Reaction extends BaseIdEntity {
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile profile;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Bookmark bookmark;
 
 	@Enumerated(STRING)

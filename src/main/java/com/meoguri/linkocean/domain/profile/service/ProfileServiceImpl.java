@@ -23,8 +23,7 @@ import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.FindUserByIdQuery;
+import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
+	private final UserService userService;
+
 	private final ProfileRepository profileRepository;
 	private final FollowRepository followRepository;
 
-	private final FindUserByIdQuery findUserByIdQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final CheckIsFollowQuery checkIsFollowQuery;
 
@@ -53,15 +53,11 @@ public class ProfileServiceImpl implements ProfileService {
 		final boolean exists = profileRepository.existsByUsername(username);
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
-		/* 연관 관계 조회 */
-		final User user = findUserByIdQuery.findById(userId);
+		/* 프로필 저장, 유저에 프로필 등록 */
+		final Profile profile = profileRepository.save(new Profile(username, categories));
+		userService.registerProfile(userId, profile);
 
-		/* 프로필 등록 */
-		final Profile profile = profileRepository.save(new Profile(user, username));
-		log.info("save profile with id :{}, username :{}", profile.getId(), profile.getUsername());
-
-		/* 선호 카테고리 등록 */
-		categories.forEach(profile::addToFavoriteCategory);
+		log.info("save profile with id :{}, username :{}", profile.getId(), username);
 		return profile.getId();
 	}
 
