@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
 
+	private static final String ID = "id";
+	private static final int MAX_PAGE_SIZE = 8;
 	private final GetBookmarkQueryParamsArgumentResolver getBookmarkQueryParamsArgumentResolver;
 	private final GetProfileQueryParamsArgumentResolver getProfileQueryParamsArgumentResolver;
 
@@ -31,12 +33,12 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 		/* set default pageable as Page request [number:0, size 8, sort: id: DESC] */
 		SortHandlerMethodArgumentResolver sortArgumentResolver = new SortHandlerMethodArgumentResolver();
-		sortArgumentResolver.setFallbackSort(Sort.by(Sort.Direction.DESC, "id"));
+		sortArgumentResolver.setFallbackSort(Sort.by(Sort.Direction.DESC, ID));
 
 		PageableHandlerMethodArgumentResolver resolver =
 			new PageableHandlerMethodArgumentResolver(sortArgumentResolver);
 		resolver.setOneIndexedParameters(true);
-		resolver.setMaxPageSize(8);
+		resolver.setMaxPageSize(MAX_PAGE_SIZE);
 		resolvers.add(resolver);
 	}
 
