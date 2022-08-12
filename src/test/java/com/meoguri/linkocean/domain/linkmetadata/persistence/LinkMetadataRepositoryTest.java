@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
+import static com.meoguri.linkocean.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
@@ -7,7 +8,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -53,7 +53,7 @@ class LinkMetadataRepositoryTest {
 		//given
 		linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png"));
 
-		assertThatExceptionOfType(DataIntegrityViolationException.class)
+		assertThatDataIntegrityViolationException()
 			.isThrownBy(() -> linkMetadataRepository.save(new LinkMetadata("naver.com", "네이버", "naver.png")));
 	}
 }

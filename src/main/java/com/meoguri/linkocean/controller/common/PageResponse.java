@@ -13,12 +13,12 @@ import lombok.RequiredArgsConstructor;
 @JsonSerialize(using = PageResponseJsonSerializer.class)
 public class PageResponse<T> {
 
-	private final long totalCount;
 	private final String name;
 	private final List<T> data;
+	private final long totalCount;
 
-	public static <T> PageResponse<T> of(final long totalCount, final String name, final List<T> data) {
-		return new PageResponse<>(totalCount, name, data);
+	public static <T> PageResponse<T> of(final String name, final List<T> data, final long totalCount) {
+		return new PageResponse<>(name, data, totalCount);
 	}
 
 	public List<Object> getData() {

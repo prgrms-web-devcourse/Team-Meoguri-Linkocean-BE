@@ -12,7 +12,9 @@ spring:
         default_batch_fetch_size: 100
 
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/tests
+
   mongodb:
     embedded:
       version: 3.5.5

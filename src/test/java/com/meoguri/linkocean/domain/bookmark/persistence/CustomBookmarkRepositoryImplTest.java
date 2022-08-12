@@ -75,6 +75,7 @@ class CustomBookmarkRepositoryImplTest {
 	private LinkMetadata github;
 
 	private Bookmark bookmark3;
+	private Bookmark bookmark2;
 
 	@BeforeEach
 	void setUp() {
@@ -109,7 +110,7 @@ class CustomBookmarkRepositoryImplTest {
 		));
 
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
-		final Bookmark bookmark2 = bookmarkRepository.save(new Bookmark(
+		bookmark2 = bookmarkRepository.save(new Bookmark(
 			profile,
 			google,
 			"title2",
@@ -458,6 +459,25 @@ class CustomBookmarkRepositoryImplTest {
 				.extracting(Bookmark::getId, Bookmark::getTitle)
 				.containsExactly(tuple(bookmarkId1, "title1"));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+		}
+
+		@Test
+		void 북마크_조회_성공_페이징() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.targetProfileId(profileId)
+				.build();
+			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent())
+				.containsExactly(bookmark3, bookmark2);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 	}
 
