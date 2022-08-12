@@ -107,12 +107,9 @@ public class ProfileController {
 
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new ProfileFindCond(
-				null,
-				false,
-				false,
-				queryParams.getUsername()
-			),
+			ProfileFindCond.builder()
+				.username(queryParams.getUsername())
+				.build(),
 			queryParams.toPageable()
 		);
 
@@ -132,12 +129,10 @@ public class ProfileController {
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new ProfileFindCond(
-				profileId,
-				true,
-				false,
-				queryParams.getUsername()
-			),
+			ProfileFindCond.builder()
+				.profileId(profileId)
+				.follower(true)
+				.build(),
 			queryParams.toPageable()
 		);
 
@@ -157,12 +152,10 @@ public class ProfileController {
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
-			new ProfileFindCond(
-				profileId,
-				false,
-				true,
-				queryParams.getUsername()
-			),
+			ProfileFindCond.builder()
+				.profileId(profileId)
+				.followee(true)
+				.build(),
 			queryParams.toPageable()
 		);
 
