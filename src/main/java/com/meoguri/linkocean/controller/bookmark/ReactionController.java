@@ -33,7 +33,7 @@ public class ReactionController {
 		final @PathVariable long bookmarkId,
 		final @PathVariable String reactionType
 	) {
-		reactionService.requestReaction(new ReactionCommand(user.getId(), bookmarkId, reactionType));
+		reactionService.requestReaction(new ReactionCommand(user.getProfileId(), bookmarkId, reactionType));
 	}
 
 }
