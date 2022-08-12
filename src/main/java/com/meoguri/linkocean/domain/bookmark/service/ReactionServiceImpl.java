@@ -48,6 +48,7 @@ public class ReactionServiceImpl implements ReactionService {
 
 			/*이미 있던 reaction의 reactionType 이 request reactionType 과 같다면*/
 			if (existedReactionType.equals(requestReactionType)) {
+				/*리액션 삭제(취소)*/
 				cancelReaction(reaction);
 
 				if (existedReactionType.equals(ReactionType.LIKE)) {
@@ -56,7 +57,8 @@ public class ReactionServiceImpl implements ReactionService {
 
 			/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
 			} else {
-				changeReaction(reaction);
+				/*리액션 변경*/
+				changeReaction(reaction, requestReactionType);
 
 				if (existedReactionType.equals(ReactionType.HATE) && requestReactionType.equals(ReactionType.LIKE)) {
 					bookmarkService.updateBookmarkLikeCount(bookmark.getId(), 1L);
@@ -67,35 +69,12 @@ public class ReactionServiceImpl implements ReactionService {
 
 		/* 리액션이 존재하지 않은 경우 */
 		} else {
+			/*리액션 추가*/
 			addReaction(profile, bookmark, requestReactionType);
 			if (requestReactionType.equals(ReactionType.LIKE)) {
 				bookmarkService.updateBookmarkLikeCount(bookmark.getId(), 1L);
 			}
 		}
-
-
-
-		// oReaction.ifPresentOrElse(
-		// 	/* 리액션이 존재하는 경우 */
-		// 	reaction -> {
-		// 		ReactionType existedReactionType = ReactionType.of(reaction.getType());
-		//
-		// 		if(existedReactionType.equals())
-		// 		/* 기존의 리액션 타입이 요청 리액션 타입과 같은경우 */
-		// 		if (existedReactionType == requestReactionType) {
-		// 			cancelReaction(profile, bookmark, existedReactionType);
-		//
-		// 		/* 기존의 리액션이 요청과 다른경우 */
-		// 		} else {
-		// 			reaction.changeTypeTo(requestReactionType);
-		// 		}
-		// 	},
-		//
-		// 	/* 리액션이 존재하지 않은 경우 */
-		// 	() -> {
-		// 		addReaction(profile, bookmark, requestReactionType);
-		// 	}
-		// );
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
@@ -103,12 +82,11 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void cancelReaction(final Reaction reaction) {
-		reactionRepository.deleteByProfileAndBookmarkAndType(
-			reaction.getProfile(), reaction.getBookmark(), ReactionType.of(reaction.getType()));
+		reactionRepository.deleteByProfileAndBookmark(reaction.getProfile(), reaction.getBookmark());
 	}
 
-	private void changeReaction(final Reaction reaction) {
+	private void changeReaction(final Reaction reaction, ReactionType requestReactionType) {
 		reactionRepository.updateReaction(
-			reaction.getProfile(), reaction.getBookmark(), ReactionType.of(reaction.getType()));
+			reaction.getProfile(), reaction.getBookmark(), requestReactionType);
 	}
 }

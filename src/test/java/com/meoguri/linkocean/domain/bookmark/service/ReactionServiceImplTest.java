@@ -99,17 +99,17 @@ class ReactionServiceImplTest {
 		//이미_있는_리액션이_요청의_리액션_상태가_같음
 
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate")); //취소됨
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		em.flush();
 		em.clear();
 
 		//then
-		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
-			bookmark2);
+		final Optional<Reaction> findReaction
+			= reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2);
 		assertThat(findReaction).isEmpty();
 	}
 
@@ -121,13 +121,13 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like")); //취소 후 등록
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
 
 		//then
-		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
-			bookmark2);
+		final Optional<Reaction> ReactionChangedToLike
+			= reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2);
 
-		assertThat(findReaction).isPresent().get()
+		assertThat(ReactionChangedToLike).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
 			.containsExactly(profile1, bookmark2, "like");
 	}
