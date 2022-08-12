@@ -18,8 +18,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.ColumnDefault;
 
@@ -44,9 +42,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "url"})
-)
 public class Bookmark extends BaseIdEntity {
 
 	public static final int MAX_BOOKMARK_TITLE_LENGTH = 50;
