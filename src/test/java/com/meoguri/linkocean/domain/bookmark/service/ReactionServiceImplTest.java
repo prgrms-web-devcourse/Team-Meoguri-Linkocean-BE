@@ -61,11 +61,14 @@ class ReactionServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자, 프로필, 링크 메타 데이터 셋업
-		user1 = userRepository.save( createUser("haha@gmail.com", "GOOGLE") );
-		user2 = userRepository.save( createUser("gaga@naver.com", "NAVER") );
+		user1 = userRepository.save(createUser("haha@gmail.com", "GOOGLE"));
+		user2 = userRepository.save(createUser("gaga@naver.com", "NAVER"));
 
 		profile1 = profileRepository.save(createProfile(user1, "haha"));
 		profile2 = profileRepository.save(createProfile(user2, "gaga"));
+
+		user1.registerProfile(profile1);
+		user2.registerProfile(profile2);
 
 		link = linkMetadataRepository.save(createLinkMetadata());
 
@@ -76,7 +79,7 @@ class ReactionServiceImplTest {
 	@Test
 	void 리액션_등록_성공() {
 		//사용자가_하나의_북마크에_대해_리액션을_처음_등록하는_경우
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
+		final ReactionCommand reactionCommand = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
 
 		//when
 		reactionService.requestReaction(reactionCommand);
@@ -105,7 +108,7 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "hate");
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate");
 		reactionService.requestReaction(command); //취소됨
 
 		em.flush();
@@ -128,7 +131,7 @@ class ReactionServiceImplTest {
 		em.flush();
 		em.clear();
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
 		reactionService.requestReaction(command); //취소 후 등록
 
 		em.flush();
@@ -148,7 +151,7 @@ class ReactionServiceImplTest {
 		//given
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
 
 		em.flush();
 		em.clear();
@@ -162,7 +165,7 @@ class ReactionServiceImplTest {
 		//given
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate"));
 
 		em.flush();
 		em.clear();
@@ -177,7 +180,7 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
 
 		em.flush();
 		em.clear();
@@ -192,7 +195,7 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
 
 		em.flush();
 		em.clear();
