@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.controller.common.SliceResponse;
+import com.meoguri.linkocean.controller.common.ListResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,10 +34,10 @@ public class NotificationController {
 
 	/* 알림 조회 */
 	@GetMapping
-	public SliceResponse<Map<String, Object>> getNotifications(
+	public ListResponse<Map<String, Object>> getNotifications(
 		final @AuthenticationPrincipal SecurityUser user
 	) {
-		return SliceResponse.of("notifications", dummyNotifications());
+		return ListResponse.of("notifications", dummyNotifications());
 	}
 
 	private List<Map<String, Object>> dummyNotifications() {
