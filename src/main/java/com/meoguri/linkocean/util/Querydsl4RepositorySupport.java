@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.data.jpa.repository.support.Querydsl;
@@ -128,20 +130,26 @@ public abstract class Querydsl4RepositorySupport {
 		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
 	}
 
-	/**
-	 * 무한 스크롤 전용 페이지네이션 : total count 필요 없음
-	 */
-	protected <T> Page<T> applySlicing(
+	/* 무한 스크롤 전용 슬라이싱 */
+	protected <T> Slice<T> applySlicing(
 		Pageable pageable,
 		JPAQuery<T> jpaContentQuery
 	) {
-		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
-		return PageableExecutionUtils.getPage(content, pageable, () -> 0L);
+		final List<T> content = jpaContentQuery
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		boolean hasNext = false;
+		if (content.size() > pageable.getPageSize()) {
+			content.remove(pageable.getPageSize());
+			hasNext = true;
+		}
+
+		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
-	/**
-	 * 동적 where 절을 지원하기 위한 유틸리티 메서드
-	 */
+	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
 	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
 		try {
 			return new BooleanBuilder(cond.get());
@@ -150,9 +158,7 @@ public abstract class Querydsl4RepositorySupport {
 		}
 	}
 
-	/**
-	 * 동적 join 을 지원하기 위한 유틸리티 메서드
-	 */
+	/* 동적 join 을 지원하기 위한 유틸리티 메서드 */
 	protected static <T> JPQLQuery<T> joinIf(
 		final boolean expression,
 		JPQLQuery<T> base,
