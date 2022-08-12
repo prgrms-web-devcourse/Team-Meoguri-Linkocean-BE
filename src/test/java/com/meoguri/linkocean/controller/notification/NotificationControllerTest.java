@@ -83,12 +83,11 @@ class NotificationControllerTest extends BaseControllerTest {
 		//given
 		로그인("target@gmail.com", "GOOGLE");
 		final Map<String, Object> request = Map.of(
-			"targetId", senderProfileId,
-			"bookmarkId", unsharableBookmarkId
+			"targetId", senderProfileId
 		);
 
 		//when
-		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", shareBookmarkId)
+		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", unsharableBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
