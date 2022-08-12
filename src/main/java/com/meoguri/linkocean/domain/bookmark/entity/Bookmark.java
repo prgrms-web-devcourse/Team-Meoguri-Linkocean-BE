@@ -113,7 +113,6 @@ public class Bookmark extends BaseIdEntity {
 	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
 		final List<Tag> tags) {
-		checkNotNull(category);
 		checkNotNull(openType);
 		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
