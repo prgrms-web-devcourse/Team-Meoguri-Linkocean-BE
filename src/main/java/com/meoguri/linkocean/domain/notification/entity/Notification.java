@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.notification.entity;
 
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import java.io.Serializable;
@@ -11,13 +12,14 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
@@ -33,7 +35,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @TypeDef(name = "json", typeClass = JsonType.class)
 @Entity
-public class Notification extends BaseIdEntity implements Serializable {
+public class Notification implements Serializable {
+
+	@JsonIgnore
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	private Long id;
 
 	@Column(nullable = false, length = 20)
 	@Enumerated(STRING)
