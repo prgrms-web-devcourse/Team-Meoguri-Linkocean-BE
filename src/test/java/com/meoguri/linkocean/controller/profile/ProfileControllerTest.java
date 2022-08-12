@@ -229,6 +229,7 @@ class ProfileControllerTest extends BaseControllerTest {
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
+					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles").isArray(),
 					jsonPath("$.profiles", hasSize(3)),
 					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
@@ -267,6 +268,7 @@ class ProfileControllerTest extends BaseControllerTest {
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
+					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles", hasSize(1)),
 					jsonPath("$.profiles[0].profileId").value(user2ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(true)
@@ -278,6 +280,7 @@ class ProfileControllerTest extends BaseControllerTest {
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
+					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles", hasSize(1)),
 					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false)
@@ -289,6 +292,7 @@ class ProfileControllerTest extends BaseControllerTest {
 					.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
+					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles", hasSize(1)),
 					jsonPath("$.profiles[0].profileId").value(user2ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(true)
