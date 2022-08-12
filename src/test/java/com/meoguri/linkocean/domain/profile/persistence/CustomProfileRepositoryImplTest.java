@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.common.CustomP6spySqlFormat;
@@ -129,7 +131,25 @@ class CustomProfileRepositoryImplTest {
 			defaultPageable());
 
 		//then
-		assertThat(profiles).containsExactly(profile1, profile2, profile3);
+		assertAll(
+			() -> assertThat(profiles).containsExactly(profile1, profile2, profile3),
+			() -> assertThat(profiles.hasNext()).isFalse()
+		);
+	}
+
+	@Test
+	void 프로필_목록_조회_다음_페이지_있음() {
+		//given
+		final PageRequest pageable = PageRequest.of(0, 2);
+
+		//when
+		final Slice<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"), pageable);
+
+		//then
+		assertAll(
+			() -> assertThat(profiles.getSize()).isEqualTo(pageable.getPageSize()),
+			() -> assertThat(profiles.hasNext()).isTrue()
+		);
 	}
 
 	private ProfileFindCond condWhenFindUsingUsername(final String username) {
