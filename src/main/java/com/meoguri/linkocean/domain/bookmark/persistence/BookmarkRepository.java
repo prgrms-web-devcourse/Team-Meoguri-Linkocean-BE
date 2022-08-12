@@ -62,10 +62,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "where b.profile = :profile "
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	List<String> findCategoryExistsBookmark(Profile profile);
+	List<Category> findCategoryExistsBookmark(Profile profile);
 
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount + :likeVariance WHERE b.id = :bookmarkId")
 	int addBookmarkLikeCount(Long bookmarkId, Long likeVariance);
-	List<Category> findCategoryExistsBookmark(Profile profile);
 }
