@@ -27,10 +27,10 @@ import lombok.NoArgsConstructor;
 )
 public class Favorite extends BaseIdEntity {
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Bookmark bookmark;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile owner;
 
 	public Favorite(final Bookmark bookmark, final Profile owner) {

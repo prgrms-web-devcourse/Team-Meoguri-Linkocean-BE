@@ -37,7 +37,7 @@ public class Profile extends BaseIdEntity {
 	public static final int MAX_PROFILE_BIO_LENGTH = 50;
 	public static final int MAX_PROFILE_IMAGE_URL_LENGTH = 255;
 
-	@OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "user_id")
 	private User user;
 
@@ -54,7 +54,7 @@ public class Profile extends BaseIdEntity {
 	private String bio;
 
 	/* 프로필 사진 주소 */
-	@Column(nullable = true, length = 255)
+	@Column(nullable = true, length = 700)
 	private String image;
 
 	/* 회원 가입시 사용하는 생성자 */

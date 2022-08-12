@@ -31,11 +31,10 @@ public class LinkMetadata extends BaseIdEntity {
 	@Embedded
 	private Link link;
 
-	//TODO 길이 제약조건 추가하기
-	@Column(nullable = false)
+	@Column(nullable = false, length = 500)
 	private String title;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 700)
 	private String image;
 
 	public LinkMetadata(final String link, final String title, final String image) {

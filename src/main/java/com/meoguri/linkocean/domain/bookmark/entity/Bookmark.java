@@ -47,10 +47,10 @@ public class Bookmark extends BaseIdEntity {
 	public static final int MAX_BOOKMARK_TITLE_LENGTH = 50;
 	public static final int MAX_TAGS_COUNT = 5;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile profile;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private LinkMetadata linkMetadata;
 
 	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
@@ -80,7 +80,7 @@ public class Bookmark extends BaseIdEntity {
 	private long likeCount;
 
 	/* 사용자가 입력한 url */
-	@Column(nullable = false)
+	@Column(nullable = false, length = 700)
 	private String url;
 
 	@Column(nullable = false)

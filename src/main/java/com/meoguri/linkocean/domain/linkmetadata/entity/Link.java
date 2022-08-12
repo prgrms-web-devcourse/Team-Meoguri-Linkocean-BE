@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public final class Link {
 
-	@Column(nullable = false, unique = true, length = 255)
+	@Column(nullable = false, unique = true, length = 700)
 	private String link;
 
 	public Link(final String link) {

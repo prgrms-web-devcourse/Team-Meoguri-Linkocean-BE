@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class FavoriteCategory extends BaseIdEntity {
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile profile;
 
 	@Column(nullable = true, length = 20)
