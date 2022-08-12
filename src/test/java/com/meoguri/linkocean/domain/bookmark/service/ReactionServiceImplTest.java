@@ -101,12 +101,8 @@ class ReactionServiceImplTest {
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
-		em.flush();
-		em.clear();
-
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "hate");
-		reactionService.requestReaction(command); //취소됨
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate")); //취소됨
 
 		em.flush();
 		em.clear();
@@ -118,21 +114,14 @@ class ReactionServiceImplTest {
 	}
 
 	@Test
-	void 리액션_취소_후_등록() {
-
-		//이미_있는_리액션이_요청의_리액션_상태가_다름
+	void 리액션_변경() {
+		/*이미_있는_리액션이_요청의_리액션_상태가_다름*/
 
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
-		em.flush();
-		em.clear();
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
-		reactionService.requestReaction(command); //취소 후 등록
-
-		em.flush();
-		em.clear();
+		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like")); //취소 후 등록
 
 		//then
 		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
@@ -171,6 +160,7 @@ class ReactionServiceImplTest {
 	void 좋아요_개수_수정_성공_좋아요_좋아요_경우() {
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+		bookmarkRepository.addBookmarkLikeCount(bookmark2.getId(), 1L);
 
 		//when
 		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
