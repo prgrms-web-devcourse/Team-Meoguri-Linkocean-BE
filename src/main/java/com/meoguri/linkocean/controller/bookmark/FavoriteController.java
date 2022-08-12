@@ -23,7 +23,7 @@ public class FavoriteController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		favoriteService.favorite(user.getId(), bookmarkId);
+		favoriteService.favorite(user.getProfileId(), bookmarkId);
 	}
 
 	@PostMapping("{bookmarkId}/unfavorite")
@@ -31,7 +31,7 @@ public class FavoriteController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long bookmarkId
 	) {
-		favoriteService.unfavorite(user.getId(), bookmarkId);
+		favoriteService.unfavorite(user.getProfileId(), bookmarkId);
 	}
 
 }
