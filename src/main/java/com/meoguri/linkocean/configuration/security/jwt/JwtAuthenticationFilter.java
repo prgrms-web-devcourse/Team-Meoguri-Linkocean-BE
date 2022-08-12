@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.configuration.security.jwt;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 
 import java.util.List;
 
@@ -61,7 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// email 과 OauthType 으로 User 가 존재하는지 확인
 			final SecurityUserProjection projection = userRepository
 				.findSecurityUserByEmailAndOauthType(new Email(email), OAuthType.of(oauthType))
-				.orElseThrow(LinkoceanRuntimeException::new);
+				.orElseThrow(() ->
+					new LinkoceanRuntimeException(format("사용자가 없습니다. email :%s oauthType : %s", email, oauthType)));
 
 			// @AuthenticationPrincipal 을 위한 UserDetails
 			final UserDetails userDetails = new SecurityUser(

@@ -453,6 +453,25 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[1].id").value(bookmarkId8)
 				).andDo(print());
 		}
+
+		@Test
+		void 피드_북마크_조회_즐겨찾기_후_조회_성공() throws Exception {
+			로그인("user2@gmail.com", "GOOGLE");
+			북마크_즐겨찾기(bookmarkId10);
+
+			//when
+			mockMvc.perform(get(basePath + "/feed")
+					.param("favorite", "true")
+					.header(AUTHORIZATION, token)
+					.accept(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.totalCount").value(1),
+					jsonPath("$.bookmarks", hasSize(1)),
+					jsonPath("$.bookmarks[0].isWriter").value(false)
+				).andDo(print());
+		}
 	}
 
 }

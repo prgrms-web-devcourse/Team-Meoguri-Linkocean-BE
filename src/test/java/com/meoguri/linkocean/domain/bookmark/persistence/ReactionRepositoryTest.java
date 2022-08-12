@@ -66,7 +66,7 @@ class ReactionRepositoryTest {
 	}
 
 	@Test
-	void 프로필_북마크_조합은_유니크하다() {
+	void 리액션의_프로필_북마크_조합은_유니크하다() {
 		//given
 		reactionRepository.save(new Reaction(profile, bookmark, "like"));
 
@@ -76,7 +76,7 @@ class ReactionRepositoryTest {
 	}
 
 	@Test
-	void 프로필_북마크_리액션타입_조합으로_삭제할수_있다() {
+	void 리액션을_프로필_북마크_리액션타입_조합으로_삭제할수_있다() {
 		//given
 		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, "like"));
 		em.flush();

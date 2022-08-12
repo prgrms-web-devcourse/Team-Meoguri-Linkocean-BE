@@ -6,11 +6,11 @@ package com.meoguri.linkocean.exception;
  */
 public class LinkoceanRuntimeException extends RuntimeException {
 
-	public LinkoceanRuntimeException() {
-		super();
-	}
-
 	public LinkoceanRuntimeException(final String message) {
 		super(message);
+	}
+
+	public LinkoceanRuntimeException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 }

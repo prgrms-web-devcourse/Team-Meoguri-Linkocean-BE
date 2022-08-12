@@ -59,7 +59,7 @@ class FavoriteRepositoryTest {
 		assertThat(favoriteRepository.findAll()).hasSize(1);
 
 		// 삭제
-		final int deletedCount = favoriteRepository.deleteByOwnerAndBookmark(owner, bookmark);
+		final int deletedCount = favoriteRepository.deleteByOwner_idAndBookmark_id(owner.getId(), bookmark.getId());
 		assertThat(deletedCount).isEqualTo(1);
 		assertThat(favoriteRepository.findAll()).isEmpty();
 	}

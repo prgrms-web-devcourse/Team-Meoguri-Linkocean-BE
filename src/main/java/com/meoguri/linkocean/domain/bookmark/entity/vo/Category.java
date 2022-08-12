@@ -48,7 +48,7 @@ public enum Category {
 		return arg == null ? null : Arrays.stream(Category.values())
 			.filter(category -> category.korName.equals(arg))
 			.findAny()
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(String.format("no such category : %s", arg)));
 	}
 
 }
