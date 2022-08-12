@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.user.service.UserService;
+import com.meoguri.linkocean.domain.user.service.UserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class LoginController {
 
-	private final UserService userService;
+	private final UserServiceImpl userServiceImpl;
 	private final ProfileService profileService;
 
 	/* 로그인 - 토큰을 반환한다 */
@@ -29,7 +29,7 @@ public class LoginController {
 	public Map<String, Object> login(
 		@RequestBody LoginRequest request
 	) {
-		return Map.of("token", userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
+		return Map.of("token", userServiceImpl.saveOrUpdate(request.getEmail(), request.getOauthType()));
 	}
 
 	/**

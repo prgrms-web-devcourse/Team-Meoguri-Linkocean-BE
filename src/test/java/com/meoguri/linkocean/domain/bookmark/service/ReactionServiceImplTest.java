@@ -75,19 +75,19 @@ class ReactionServiceImplTest {
 
 	@Test
 	void 리액션_등록_성공() {
-
 		//사용자가_하나의_북마크에_대해_리액션을_처음_등록하는_경우
+		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
 
 		//when
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
 		reactionService.requestReaction(reactionCommand);
 
 		em.flush();
 		em.clear();
 
-		//then
 		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
 			bookmark2);
+
+		//then
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
 			.containsExactly(profile1, bookmark2, "like");
