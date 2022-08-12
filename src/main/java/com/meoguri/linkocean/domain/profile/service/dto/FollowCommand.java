@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class FollowCommand {
 
-	private final long userId;
+	private final long profileId;
 	private final long targetProfileId;
 }

@@ -17,6 +17,5 @@ public interface TagService {
 	 * 1. tag 이름이 존재하면 만들지 않고 db 에서 가져온다.
 	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db 에 저장한다.
 	 */
-
-	List<Tag> getOrSaveList(List<String> tagNames);
+	List<Tag> getOrSaveTags(List<String> tagNames);
 }

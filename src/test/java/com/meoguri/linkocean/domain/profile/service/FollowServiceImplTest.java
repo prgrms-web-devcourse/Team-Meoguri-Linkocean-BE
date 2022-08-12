@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
-import static com.meoguri.linkocean.common.LinkoceanAssert.*;
+import static com.meoguri.linkocean.common.Assertions.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
@@ -67,7 +66,7 @@ class FollowServiceImplTest {
 		followService.follow(command);
 
 		//when then
-		assertThatExceptionOfType(DataIntegrityViolationException.class)
+		assertThatDataIntegrityViolationException()
 			.isThrownBy(() -> followService.follow(command));
 	}
 
@@ -81,15 +80,14 @@ class FollowServiceImplTest {
 		followService.unfollow(command);
 
 		//then
-		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(0);
-		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(0);
+		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isZero();
+		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isZero();
 	}
 
 	@Test
 	void 언팔로우_실패() {
 		//given
 		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
-		// no follow exists
 
 		//when then
 		assertThatLinkoceanRuntimeException()

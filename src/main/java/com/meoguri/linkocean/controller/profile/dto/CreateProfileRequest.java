@@ -1,7 +1,10 @@
 package com.meoguri.linkocean.controller.profile.dto;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +18,10 @@ public final class CreateProfileRequest {
 	private List<String> categories;
 
 	public RegisterProfileCommand toCommand(final long userId) {
-		return new RegisterProfileCommand(userId, username, categories);
+		return new RegisterProfileCommand(
+			userId,
+			username,
+			categories.stream().map(Category::of).collect(toList())
+		);
 	}
-
 }

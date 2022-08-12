@@ -46,7 +46,7 @@ class LinkMetadataServiceImplTest {
 		linkMetadataRepository.save(new LinkMetadata(link, "네이버", "naver.png"));
 
 		//when
-		final String title = linkMetadataService.getTitleByLink(link);
+		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(link);
 
 		//then
 		assertThat(title).isEqualTo("네이버");
@@ -58,7 +58,7 @@ class LinkMetadataServiceImplTest {
 		final String link = "https://www.naver.com";
 
 		//when
-		final String title = linkMetadataService.getTitleByLink(link);
+		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(link);
 
 		//then
 		assertThat(title).isEqualTo("네이버");
@@ -73,7 +73,7 @@ class LinkMetadataServiceImplTest {
 			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
 		//when
-		final String title = linkMetadataService.getTitleByLink(invalidLink);
+		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(invalidLink);
 
 		// then
 		assertThat(title).isEqualTo(DEFAULT_TITLE);

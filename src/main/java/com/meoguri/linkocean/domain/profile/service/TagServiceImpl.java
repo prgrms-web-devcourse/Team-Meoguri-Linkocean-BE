@@ -15,7 +15,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 
@@ -33,23 +32,29 @@ public class TagServiceImpl implements TagService {
 
 	@Transactional
 	@Override
-	public List<Tag> getOrSaveList(final List<String> tagNames) {
+	public List<Tag> getOrSaveTags(final List<String> tagNames) {
 		return tagNames.stream()
-			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
+			.map(tagName ->
+				tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)))
+			)
 			.collect(toList());
 	}
 
 	@Override
 	public List<GetProfileTagsResult> getTags(final long profileId) {
-		final Profile profile = findProfileByIdQuery.findById(profileId);
-		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileFetchTags(profile);
+		/* 북마크 목록 조회 */
+		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileIdFetchTags(profileId);
 
+		/* 태그별 북마크 카운트 맵 생성 */
 		final Map<String, Integer> tagCountMap = getTagCountMap(bookmarks);
+
+		/* 결과 반환 */
 		return getResult(tagCountMap);
 	}
 
 	/* 북마크를 순회하며 태그별 북마크 카운트 맵 생성 */
 	private Map<String, Integer> getTagCountMap(final List<Bookmark> bookmarks) {
+
 		final Map<String, Integer> result = new HashMap<>();
 		bookmarks.stream()
 			.flatMap(bookmark -> bookmark.getTagNames().stream())

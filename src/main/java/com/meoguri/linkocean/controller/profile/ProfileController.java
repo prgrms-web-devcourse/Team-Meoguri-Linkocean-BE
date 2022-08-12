@@ -1,10 +1,13 @@
 package com.meoguri.linkocean.controller.profile;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
+import static org.springframework.util.StringUtils.*;
 
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,13 +27,14 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
+import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
-import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
-import com.meoguri.linkocean.domain.profile.service.dto.SearchProfileResult;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.infrastructure.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/v1/profiles")
 @RestController
 public class ProfileController {
+
+	private static final String PROFILES = "profiles";
 
 	private final ProfileService profileService;
 	private final CategoryService categoryService;
@@ -72,7 +78,7 @@ public class ProfileController {
 	) {
 		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getProfileId(), profileId);
 		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
-		final List<String> categories = categoryService.getUsedCategories(profileId);
+		final List<Category> categories = categoryService.getUsedCategories(profileId);
 
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
@@ -88,17 +94,27 @@ public class ProfileController {
 		profileService.updateProfile(request.toCommand(user.getProfileId(), imageUrl));
 	}
 
-	/* 프로필 목록 조회 - 머구리 찾기 */
+	/**
+	 *  프로필 목록 조회 - 머구리 찾기
+	 *  - username은 필수다
+	 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final GetProfileQueryParams queryParams
 	) {
-		final List<SearchProfileResult> results =
-			profileService.searchProfilesByUsername(queryParams.toSearchCond(user.getProfileId()));
+		checkArgument(hasText(queryParams.getUsername()), "사용자 이름을 입력해 주세요");
+
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
+			user.getProfileId(),
+			ProfileFindCond.builder()
+				.username(queryParams.getUsername())
+				.build(),
+			queryParams.toPageable()
+		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 	/**
@@ -111,11 +127,17 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
-		final List<SearchProfileResult> results = profileService.searchFollowerProfiles(cond, profileId);
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
+			user.getProfileId(),
+			ProfileFindCond.builder()
+				.profileId(profileId)
+				.follower(true)
+				.build(),
+			queryParams.toPageable()
+		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 	/**
@@ -128,11 +150,17 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final ProfileSearchCond cond = queryParams.toSearchCond(user.getProfileId());
-		final List<SearchProfileResult> results = profileService.searchFolloweeProfiles(cond, profileId);
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
+			user.getProfileId(),
+			ProfileFindCond.builder()
+				.profileId(profileId)
+				.followee(true)
+				.build(),
+			queryParams.toPageable()
+		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of("profiles", response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 }

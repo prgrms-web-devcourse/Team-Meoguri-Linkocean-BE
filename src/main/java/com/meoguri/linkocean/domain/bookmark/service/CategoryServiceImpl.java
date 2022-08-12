@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +22,10 @@ public class CategoryServiceImpl implements CategoryService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public List<String> getUsedCategories(final long profileId) {
+	public List<Category> getUsedCategories(final long profileId) {
 		final Profile writer = findProfileByIdQuery.findById(profileId);
 
-		return convert(writer);
+		return bookmarkRepository.findCategoryExistsBookmark(writer);
 	}
 
-	private List<String> convert(final Profile writer) {
-		return bookmarkRepository.findCategoryExistsBookmark(writer).stream()
-			.map(name -> Category.valueOf(name).getKorName())
-			.collect(Collectors.toList());
-	}
 }

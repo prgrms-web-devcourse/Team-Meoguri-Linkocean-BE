@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * 팔로우
- *
- * - 팔로워 - 팔로이 조합은 유일하다.
+ * - 중복 팔로우는 불가능하다
+ * - 팔로우를 취소할 수 있다
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)

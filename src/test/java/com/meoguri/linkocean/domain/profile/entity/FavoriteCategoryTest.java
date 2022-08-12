@@ -1,12 +1,12 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 class FavoriteCategoryTest {
 
@@ -14,7 +14,7 @@ class FavoriteCategoryTest {
 	void 선호_카테고리_생성_성공() {
 		//given
 		final Profile profile = createProfile();
-		final String category = "인문";
+		final Category category = HUMANITIES;
 
 		//when
 		final FavoriteCategory favoriteCategory = new FavoriteCategory(profile, category);
@@ -22,17 +22,6 @@ class FavoriteCategoryTest {
 		//then
 		assertThat(favoriteCategory).isNotNull()
 			.extracting(FavoriteCategory::getProfile, FavoriteCategory::getCategory)
-			.containsExactly(profile, Category.of(category));
-	}
-
-	@Test
-	void 정의되지_않은_카테고리로_선호_카테고리_생성_실패() {
-		//given
-		final Profile profile = createProfile();
-		final String category = "undefined category";
-
-		//when then
-		assertThatThrownBy(() -> new FavoriteCategory(profile, category))
-			.isInstanceOf(LinkoceanRuntimeException.class);
+			.containsExactly(profile, category);
 	}
 }

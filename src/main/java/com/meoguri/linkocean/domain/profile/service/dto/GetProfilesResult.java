@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public final class SearchProfileResult {
+public final class GetProfilesResult {
 
-	private final long id;
+	private final long profileId;
 	private final String username;
 	private final String image;
 	private final boolean isFollow;

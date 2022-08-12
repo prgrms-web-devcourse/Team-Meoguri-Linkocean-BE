@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -24,8 +25,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -75,6 +74,7 @@ class CustomBookmarkRepositoryImplTest {
 	private LinkMetadata github;
 
 	private Bookmark bookmark3;
+	private Bookmark bookmark2;
 
 	@BeforeEach
 	void setUp() {
@@ -103,19 +103,19 @@ class CustomBookmarkRepositoryImplTest {
 			"title1",
 			"memo1",
 			ALL,
-			Category.IT,
+			IT,
 			"www.naver.com",
 			List.of(tag1, tag2)
 		));
 
 		// 크러쉬가 북마크 2개 저장 - 구글, 가정, 일부 공개, #tag1
-		final Bookmark bookmark2 = bookmarkRepository.save(new Bookmark(
+		bookmark2 = bookmarkRepository.save(new Bookmark(
 			profile,
 			google,
 			"title2",
 			"memo2",
-			OpenType.PARTIAL,
-			Category.HOME,
+			PARTIAL,
+			HOME,
 			"www.google.com",
 			List.of(tag1)
 		));
@@ -126,8 +126,8 @@ class CustomBookmarkRepositoryImplTest {
 			github,
 			"title3",
 			"memo3",
-			OpenType.PRIVATE,
-			Category.IT,
+			PRIVATE,
+			IT,
 			"www.github.com",
 			emptyList()
 		));
@@ -160,7 +160,7 @@ class CustomBookmarkRepositoryImplTest {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
-				.category(Category.IT)
+				.category(IT)
 				.build();
 			final Pageable pageable = defaultPageableSortByUpload();
 
@@ -171,8 +171,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId3, Category.IT),
-					tuple(bookmarkId1, Category.IT)
+					tuple(bookmarkId3, IT),
+					tuple(bookmarkId1, IT)
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -182,7 +182,7 @@ class CustomBookmarkRepositoryImplTest {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
-				.category(Category.IT)
+				.category(IT)
 				.build();
 			final Pageable pageable = defaultPageableSortByLike();
 
@@ -193,8 +193,8 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(2)
 				.extracting(Bookmark::getId, Bookmark::getCategory)
 				.containsExactly(
-					tuple(bookmarkId1, Category.IT),
-					tuple(bookmarkId3, Category.IT)
+					tuple(bookmarkId1, IT),
+					tuple(bookmarkId3, IT)
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(2);
 		}
@@ -204,7 +204,7 @@ class CustomBookmarkRepositoryImplTest {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
-				.category(Category.IT)
+				.category(IT)
 				.title("1")
 				.build();
 			final Pageable pageable = defaultPageableSortByUpload();
@@ -216,7 +216,7 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarks).hasSize(1)
 				.extracting(Bookmark::getId, Bookmark::getCategory, Bookmark::getTitle)
 				.containsExactly(
-					tuple(bookmarkId1, Category.IT, "title1")
+					tuple(bookmarkId1, IT, "title1")
 				);
 			assertThat(bookmarks.getTotalElements()).isEqualTo(1);
 		}
@@ -409,7 +409,7 @@ class CustomBookmarkRepositoryImplTest {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
-				.openType(OpenType.PARTIAL)
+				.openType(PARTIAL)
 				.build();
 			final Pageable pageable = defaultPageableSortByUpload();
 
@@ -458,6 +458,25 @@ class CustomBookmarkRepositoryImplTest {
 				.extracting(Bookmark::getId, Bookmark::getTitle)
 				.containsExactly(tuple(bookmarkId1, "title1"));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+		}
+
+		@Test
+		void 북마크_조회_성공_페이징() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.targetProfileId(profileId)
+				.build();
+			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent())
+				.containsExactly(bookmark3, bookmark2);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
 	}
 

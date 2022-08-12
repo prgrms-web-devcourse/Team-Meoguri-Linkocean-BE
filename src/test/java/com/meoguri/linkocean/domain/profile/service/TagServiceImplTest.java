@@ -53,17 +53,24 @@ class TagServiceImplTest {
 	private TagRepository tagRepository;
 
 	private Profile profile;
-	private LinkMetadata link;
+
 	private Tag tag1;
 	private Tag tag2;
 	private Tag tag3;
+
+	private LinkMetadata naver;
+	private LinkMetadata google;
+	private LinkMetadata prgrms;
 
 	@BeforeEach
 	void setUp() {
 		// 프로필, 링크 셋업
 		User user = userRepository.save(createUser());
 		profile = profileRepository.save(createProfile(user));
-		link = linkMetadataRepository.save(createLinkMetadata());
+
+		naver = linkMetadataRepository.save(new LinkMetadata("www.nav.com", "naver", "naver.png"));
+		google = linkMetadataRepository.save(new LinkMetadata("www.goo.com", "google", "google.png"));
+		prgrms = linkMetadataRepository.save(new LinkMetadata("www.prg.com", "prgrms", "prgrms.png"));
 
 		// 태그 셋업
 		tag1 = tagRepository.save(new Tag("tag1"));
@@ -74,9 +81,9 @@ class TagServiceImplTest {
 	@Test
 	void 태그_목록_조회_성공() {
 		//given
-		final Bookmark bookmark1 = createBookmark(profile, link, "1", IT, "www.nav.com", List.of(tag1, tag2, tag3));
-		final Bookmark bookmark2 = createBookmark(profile, link, "2", IT, "www.goo.com", List.of(tag2, tag3));
-		final Bookmark bookmark3 = createBookmark(profile, link, "3", IT, "www.prg.com", List.of(tag3));
+		final Bookmark bookmark1 = createBookmark(profile, naver, "1", IT, "www.nav.com", List.of(tag1, tag2, tag3));
+		final Bookmark bookmark2 = createBookmark(profile, google, "2", IT, "www.goo.com", List.of(tag2, tag3));
+		final Bookmark bookmark3 = createBookmark(profile, prgrms, "3", IT, "www.prg.com", List.of(tag3));
 
 		bookmarkRepository.save(bookmark1);
 		bookmarkRepository.save(bookmark2);

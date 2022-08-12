@@ -17,13 +17,16 @@ public class SliceResponseJsonSerializer extends JsonSerializer<SliceResponse<?>
 		throws IOException {
 
 		gen.writeStartObject();
-		gen.writeArrayFieldStart(value.getName());
 
+		gen.writeFieldName("hasNext");
+		gen.writeBoolean(value.getHasNext());
+
+		gen.writeArrayFieldStart(value.getName());
 		for (Object datum : value.getData()) {
 			gen.writeObject(datum);
 		}
-
 		gen.writeEndArray();
+
 		gen.writeEndObject();
 	}
 

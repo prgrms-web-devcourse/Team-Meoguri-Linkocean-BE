@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.user.entity.User.OAuthType;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 class UserTest {
 

@@ -1,21 +1,18 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.persistence.dto.UltimateProfileFindCond;
 
 public interface CustomProfileRepository {
 
-	List<Profile> findFollowerProfilesBy(ProfileFindCond findCond);
-
-	List<Profile> findFolloweeProfilesBy(ProfileFindCond findCond);
-
-	List<Profile> findByUsernameLike(ProfileFindCond findCond);
-
-	Page<Profile> ultimateFindProfiles(UltimateProfileFindCond findCond, Pageable pageable);
+	/**
+	 * 다양한 조건으로 프로필 목록 조회
+	 * - 팔로워 목록 조회
+	 * - 팔로이 목록 조회
+	 * - 특정 username 프로필 목록 조회
+	 */
+	Slice<Profile> findProfiles(ProfileFindCond findCond, Pageable pageable);
 }
