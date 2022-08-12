@@ -13,14 +13,9 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
 
 import com.meoguri.linkocean.controller.BaseControllerTest;
 
-@TestPropertySource(properties = {
-	"spring.flyway.enabled=true",
-	"spring.flyway.locations=classpath:db/tests"
-})
 class NotificationControllerTest extends BaseControllerTest {
 
 	private final String baseUrl = getBaseUrl(NotificationController.class);

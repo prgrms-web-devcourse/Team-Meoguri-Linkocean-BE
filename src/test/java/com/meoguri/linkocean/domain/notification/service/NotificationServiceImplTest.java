@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.test.context.TestPropertySource;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
@@ -28,10 +27,6 @@ import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
-@TestPropertySource(properties = {
-	"spring.flyway.enabled=true",
-	"spring.flyway.locations=classpath:db/tests"
-})
 @SpringBootTest
 class NotificationServiceImplTest {
 
