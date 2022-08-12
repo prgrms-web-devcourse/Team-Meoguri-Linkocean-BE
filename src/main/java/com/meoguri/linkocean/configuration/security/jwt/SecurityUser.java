@@ -7,6 +7,9 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+
 import lombok.Getter;
 
 @Getter
@@ -18,12 +21,12 @@ public final class SecurityUser extends User {
 	public SecurityUser(
 		final long id,
 		final Long profileId,
-		final String email,
-		final String oAuthType,
+		final Email email,
+		final OAuthType oAuthType,
 		final Collection<? extends GrantedAuthority> authorities
 	) {
 
-		super(email, oAuthType, authorities);
+		super(Email.toString(email), oAuthType.name(), authorities);
 		this.id = id;
 		this.profileId = profileId;
 	}
