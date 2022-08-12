@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.common.Assertions.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
@@ -17,7 +18,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
@@ -88,6 +86,9 @@ class BookmarkServiceImplTest {
 
 	private long userId;
 	private Profile profile;
+
+	private long profileId;
+
 	private LinkMetadata linkMetadata;
 	private String url;
 
@@ -98,6 +99,8 @@ class BookmarkServiceImplTest {
 		userId = user.getId();
 
 		profile = profileRepository.save(createProfile(user));
+		profileId = profile.getId();
+
 		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
 
 		url = linkMetadata.getSavedLink(); // 조회를 위해서는 저장된 url 이 필요하다
@@ -110,8 +113,8 @@ class BookmarkServiceImplTest {
 			//given
 			final RegisterBookmarkCommand command =
 
-				new RegisterBookmarkCommand(userId, url, "title", "memo", Category.IT,
-					OpenType.ALL, List.of("tag1", "tag2"));
+				new RegisterBookmarkCommand(userId, url, "title", "memo", IT,
+					ALL, List.of("tag1", "tag2"));
 
 			//when
 			final long savedBookmarkId = bookmarkService.registerBookmark(command);
@@ -183,8 +186,8 @@ class BookmarkServiceImplTest {
 				bookmark.getId(),
 				"updatedTitle",
 				"updatedMemo",
-				Category.HUMANITIES,
-				OpenType.PRIVATE,
+				HUMANITIES,
+				PRIVATE,
 				List.of("tag1", "tag2")
 			);
 
@@ -222,8 +225,8 @@ class BookmarkServiceImplTest {
 				bookmark.getId(),
 				"updatedTitle",
 				"updatedMemo",
-				Category.HUMANITIES,
-				OpenType.PRIVATE,
+				HUMANITIES,
+				PRIVATE,
 				List.of("tag1", "tag2")
 			);
 
@@ -241,8 +244,8 @@ class BookmarkServiceImplTest {
 				invalidBookmarkId,
 				"updatedTitle",
 				"updatedMemo",
-				Category.HUMANITIES,
-				OpenType.PRIVATE,
+				HUMANITIES,
+				PRIVATE,
 				List.of("tag1", "tag2")
 			);
 
@@ -265,8 +268,8 @@ class BookmarkServiceImplTest {
 				bookmark.getId(),
 				"updatedTitle",
 				"updatedMemo",
-				Category.HUMANITIES,
-				OpenType.PRIVATE,
+				HUMANITIES,
+				PRIVATE,
 				List.of("tag1", "tag2")
 			);
 
@@ -340,8 +343,8 @@ class BookmarkServiceImplTest {
 				linkMetadata,
 				"title",
 				"dream company",
-				OpenType.ALL,
-				Category.IT,
+				ALL,
+				IT,
 				"www.google.com",
 				List.of(tag)
 			));
@@ -435,11 +438,11 @@ class BookmarkServiceImplTest {
 	}
 
 	private RegisterBookmarkCommand command(long userId, final String url) {
-		return new RegisterBookmarkCommand(userId, url, null, null, null, OpenType.ALL, emptyList());
+		return new RegisterBookmarkCommand(userId, url, null, null, null, ALL, emptyList());
 	}
 
 	@Nested
-	class 다른_사람_북마크_목록_조회_테스트 {
+	class 대상의_프로필_id로_북마크_페이징_조회 {
 
 		private Profile profile2;
 		private long profileId2;
@@ -451,38 +454,41 @@ class BookmarkServiceImplTest {
 		@BeforeEach
 		void setUp() {
 			User user2 = userRepository.save(new User("crush@gmail.com", "GOOGLE"));
-			profileId2 = profileRepository.save(new Profile(user2, "crush")).getId();
+
+			profile2 = profileRepository.save(new Profile(user2, "crush"));
+			profileId2 = profile2.getId();
+
 			linkMetadataRepository.save(new LinkMetadata("http://www.naver.com", "네이버", "naver.png"));
 			linkMetadataRepository.save(new LinkMetadata("http://www.daum.com", "다음", "daum.png"));
 			linkMetadataRepository.save(new LinkMetadata("http://www.kakao.com", "카카오", "kakao.png"));
 
 			final RegisterBookmarkCommand command1 = new RegisterBookmarkCommand(
-				user2.getId(),
+				profileId2,
 				"http://www.naver.com",
 				"title1",
 				null,
-				Category.IT,
-				OpenType.ALL,
+				IT,
+				ALL,
 				List.of("tag1", "tag2"));
 			bookmarkId1 = bookmarkService.registerBookmark(command1);
 
 			final RegisterBookmarkCommand command2 = new RegisterBookmarkCommand(
-				user2.getId(),
+				profileId2,
 				"http://www.kakao.com",
 				"title2",
 				null,
-				Category.IT,
-				OpenType.PARTIAL,
+				IT,
+				PARTIAL,
 				List.of("tag2"));
 			bookmarkId2 = bookmarkService.registerBookmark(command2);
 
 			final RegisterBookmarkCommand command3 = new RegisterBookmarkCommand(
-				user2.getId(),
+				profileId2,
 				"http://www.google.com",
 				"title3",
 				null,
-				Category.HOME,
-				OpenType.PRIVATE,
+				HOME,
+				PRIVATE,
 				List.of("tag1"));
 			bookmarkId3 = bookmarkService.registerBookmark(command3);
 
@@ -505,18 +511,17 @@ class BookmarkServiceImplTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(1)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId1, OpenType.ALL));
+				.containsExactly(tuple(bookmarkId1, ALL));
 
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
-		@Disabled("이상함 나중에 고칠것")
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
 			followRepository.save(new Follow(profile, profile2));
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
-				.currentUserProfileId(userId)
+				.currentUserProfileId(profileId)
 				.targetProfileId(profileId2)
 				.build();
 			final Pageable pageable = defaultPageableSortByUpload();
@@ -527,7 +532,29 @@ class BookmarkServiceImplTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId2, OpenType.PARTIAL), tuple(bookmarkId1, OpenType.ALL));
+				.containsExactly(tuple(bookmarkId2, PARTIAL), tuple(bookmarkId1, ALL));
+		}
+
+		@Test
+		void 내_북마크_목록_조회() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId2)
+				.targetProfileId(profileId2)
+				.build();
+			final Pageable pageable = defaultPageableSortByUpload();
+
+			//when
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
+
+			//then
+			assertThat(resultPage.getContent()).hasSize(3)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
+				.containsExactly(
+					tuple(bookmarkId3, PRIVATE),
+					tuple(bookmarkId2, PARTIAL),
+					tuple(bookmarkId1, ALL)
+				);
 		}
 	}
 
