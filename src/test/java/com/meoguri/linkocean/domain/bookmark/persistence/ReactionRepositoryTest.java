@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.common.Assertions.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
@@ -71,7 +71,7 @@ class ReactionRepositoryTest {
 		reactionRepository.save(new Reaction(profile, bookmark, "like"));
 
 		//when then
-		assertThatExceptionOfType(DataIntegrityViolationException.class)
+		assertThatDataIntegrityViolationException()
 			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, "hate")));
 	}
 

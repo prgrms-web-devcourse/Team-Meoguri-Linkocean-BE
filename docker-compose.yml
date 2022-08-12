@@ -18,10 +18,3 @@ services:
     depends_on:
       - db-mysql
 
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    env_file:
-      - env/mongodb.env

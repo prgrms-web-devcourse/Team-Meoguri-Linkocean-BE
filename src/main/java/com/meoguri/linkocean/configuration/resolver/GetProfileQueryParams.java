@@ -1,18 +1,24 @@
 package com.meoguri.linkocean.configuration.resolver;
 
-import com.meoguri.linkocean.domain.profile.service.dto.ProfileSearchCond;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public final class GetProfileQueryParams {
 
+	/* 페이징 정보 */
 	private final int page;
 	private final int size;
+
+	/* 필터링 정보 */
 	private final String username;
 
-	// TODO - searchCond (findCond) 변환 로직은 컨트롤러에서 생성자 이용
-	public ProfileSearchCond toSearchCond(final long profileId) {
-		return new ProfileSearchCond(profileId, page, size, username);
+	public Pageable toPageable() {
+		/* PageRequest 는 0 부터 페이지를 세기 때문에 조정해줌 */
+		return PageRequest.of(page - 1, size);
 	}
 }
