@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -90,10 +91,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
+		final long bookmarkId = command.getBookmarkId();
+
 		/* 수정 할 북마크 조회 */
-		Bookmark bookmark = bookmarkRepository
-			.findByProfileIdAndId(command.getProfileId(), command.getBookmarkId())
-			.orElseThrow(LinkoceanRuntimeException::new);
+		Bookmark bookmark = bookmarkRepository.findByProfileIdAndId(command.getProfileId(), bookmarkId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
 		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
@@ -114,7 +116,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 제거 할 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByProfileIdAndId(profileId, bookmarkId)
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* remove 진행 */
 		bookmark.remove();
@@ -125,7 +127,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		final Profile writer = bookmark.getProfile();
 

@@ -49,12 +49,6 @@ public final class Preconditions {
 		}
 	}
 
-	public static void checkCondition(final boolean expression) {
-		if (!expression) {
-			throw new LinkoceanRuntimeException();
-		}
-	}
-
 	public static void checkCondition(final boolean expression, final String errorMessage, final Object... args) {
 		if (!expression) {
 			throw new LinkoceanRuntimeException(String.format(errorMessage, args));
