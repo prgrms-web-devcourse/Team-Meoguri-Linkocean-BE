@@ -54,7 +54,7 @@ public final class GetFeedBookmarksResponse {
 			result.getUpdatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),
-			result.isFavorite(),
+			result.isWriter(),
 			result.getImage(),
 			result.getTags(),
 			new ProfileResponse(

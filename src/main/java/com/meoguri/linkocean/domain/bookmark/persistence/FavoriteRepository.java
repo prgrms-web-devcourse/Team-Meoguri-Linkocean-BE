@@ -8,11 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-	int deleteByOwnerAndBookmark(Profile owner, Bookmark bookmark);
+	int deleteByOwner_idAndBookmark_id(long ownerId, long bookmarkId);
 
 	boolean existsByOwner_idAndBookmark(long ownerId, Bookmark bookmark);
 
