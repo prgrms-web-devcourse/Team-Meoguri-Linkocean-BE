@@ -18,8 +18,6 @@ import com.meoguri.linkocean.controller.BaseControllerTest;
 
 class NotificationControllerTest extends BaseControllerTest {
 
-	private final String baseUrl = getBaseUrl(NotificationController.class);
-
 	private long senderProfileId;
 	private long shareBookmarkId;
 	private long targetProfileId;
@@ -41,14 +39,13 @@ class NotificationControllerTest extends BaseControllerTest {
 	void 공유_알림_생성하고_조회_성공() throws Exception {
 		//given
 		로그인("sender@gmail.com", "GOOGLE");
-		final Map<String, Object> request = Map.of(
-			"targetId", targetProfileId,
-			"bookmarkId", shareBookmarkId
+		final Map<String, Long> request = Map.of(
+			"targetId", targetProfileId
 		);
 
 		//when
 		//공유 알림 하나 생성
-		mockMvc.perform(post(baseUrl + "/share")
+		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", shareBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
@@ -59,7 +56,7 @@ class NotificationControllerTest extends BaseControllerTest {
 		//when
 		//공유 알림 조회
 		로그인("target@gmail.com", "GOOGLE");
-		mockMvc.perform(get(baseUrl)
+		mockMvc.perform(get("/api/v1/notifications")
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 			//then
@@ -67,8 +64,6 @@ class NotificationControllerTest extends BaseControllerTest {
 			.andExpectAll(
 
 				jsonPath("$.notifications", hasSize(1)),
-
-				jsonPath("$.notifications[0].id").exists(),
 				jsonPath("$.notifications[0].info").exists(),
 
 				jsonPath("$.notifications[0].info.sender").exists(),
@@ -93,7 +88,7 @@ class NotificationControllerTest extends BaseControllerTest {
 		);
 
 		//when
-		mockMvc.perform(post(baseUrl + "/share")
+		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", shareBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
@@ -110,7 +105,7 @@ class NotificationControllerTest extends BaseControllerTest {
 			"bookmarkId", unsharableBookmarkId
 		);
 		//when
-		mockMvc.perform(post(baseUrl + "/share")
+		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", shareBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
