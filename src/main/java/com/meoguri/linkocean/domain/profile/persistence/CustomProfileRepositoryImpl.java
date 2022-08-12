@@ -6,8 +6,8 @@ import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 
 import javax.persistence.EntityManager;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -23,7 +23,7 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 	}
 
 	@Override
-	public Page<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
+	public Slice<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
 
 		final Long currentProfileId = findCond.getProfileId();
 		final boolean isFollower = findCond.isFollower();

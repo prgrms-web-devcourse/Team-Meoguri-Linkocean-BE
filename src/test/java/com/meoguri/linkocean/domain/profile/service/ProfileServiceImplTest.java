@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.common.Ultimate;
@@ -222,11 +222,11 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final Page<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
+			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
 				condWhenFindFollowers(profile1Id), defaultPageable());
-			final Page<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
+			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
 				condWhenFindFollowers(profile2Id), defaultPageable());
-			final Page<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
+			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
 				condWhenFindFollowers(profile3Id), defaultPageable());
 
 			//then
@@ -267,11 +267,11 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user3Id, profile2Id));
 
 			//when
-			final Page<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
+			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
 				condWhenFindFollowees(profile1Id), defaultPageable());
-			final Page<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
+			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
 				condWhenFindFollowees(profile2Id), defaultPageable());
-			final Page<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
+			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
 				condWhenFindFollowees(profile3Id), defaultPageable());
 
 			//then
@@ -311,7 +311,7 @@ class ProfileServiceImplTest {
 			followService.follow(new FollowCommand(user1Id, profile2Id));
 
 			//when
-			final Page<GetProfilesResult> results = profileService.getProfiles(user1Id,
+			final Slice<GetProfilesResult> results = profileService.getProfiles(user1Id,
 				condWhenFindUsingUsername("user"), defaultPageable());
 
 			//then

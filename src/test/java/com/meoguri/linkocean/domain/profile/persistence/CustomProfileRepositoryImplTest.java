@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -60,11 +60,11 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile1.getId()), defaultPageable());
-		final Page<Profile> followerOfUser2 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser2 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile2.getId()), defaultPageable());
-		final Page<Profile> followerOfUser3 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser3 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile3.getId()), defaultPageable());
 
 		//then
@@ -80,7 +80,7 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowers(profile3.getId(), "user1"), defaultPageable());
 
 		//then
@@ -95,11 +95,11 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile2, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile1.getId()), defaultPageable());
-		final Page<Profile> followerOfUser2 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser2 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile2.getId()), defaultPageable());
-		final Page<Profile> followerOfUser3 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser3 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile3.getId()), defaultPageable());
 
 		//then
@@ -115,7 +115,7 @@ class CustomProfileRepositoryImplTest {
 		followRepository.save(new Follow(profile1, profile3));
 
 		//when
-		final Page<Profile> followerOfUser1 = profileRepository.findProfiles(
+		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
 			condWhenFindFollowees(profile1.getId(), "user3"), defaultPageable());
 
 		//then
@@ -125,7 +125,7 @@ class CustomProfileRepositoryImplTest {
 	@Test
 	void 프로필_목록_조회_성공_이름_지정() {
 		//when
-		final Page<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"),
+		final Slice<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"),
 			defaultPageable());
 
 		//then

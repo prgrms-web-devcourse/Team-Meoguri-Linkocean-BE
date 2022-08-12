@@ -7,7 +7,7 @@ import static org.springframework.util.StringUtils.*;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -105,7 +105,7 @@ public class ProfileController {
 	) {
 		checkArgument(hasText(queryParams.getUsername()), "사용자 이름을 입력해 주세요");
 
-		final Page<GetProfilesResult> results = profileService.getProfiles(
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
 			new ProfileFindCond(
 				null,
@@ -117,7 +117,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of(PROFILES, response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final Page<GetProfilesResult> results = profileService.getProfiles(
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
 			new ProfileFindCond(
 				profileId,
@@ -142,7 +142,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of(PROFILES, response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class ProfileController {
 		final @PathVariable long profileId,
 		final GetProfileQueryParams queryParams
 	) {
-		final Page<GetProfilesResult> results = profileService.getProfiles(
+		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
 			new ProfileFindCond(
 				profileId,
@@ -167,7 +167,7 @@ public class ProfileController {
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
-		return SliceResponse.of(PROFILES, response);
+		return SliceResponse.of(PROFILES, response, results.hasNext());
 	}
 
 }

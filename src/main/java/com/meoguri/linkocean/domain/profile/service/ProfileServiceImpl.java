@@ -6,9 +6,9 @@ import static java.util.Collections.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,19 +102,20 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
-	public Page<GetProfilesResult> getProfiles(
+	public Slice<GetProfilesResult> getProfiles(
 		final long currentProfileId,
 		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
 		/* 프로필 목록 가져 오기 */
-		final Page<Profile> profilesPage = profileRepository.findProfiles(findCond, pageable);
-		final List<Profile> profiles = profilesPage.getContent();
+		final Slice<Profile> profilesSlice = profileRepository.findProfiles(findCond, pageable);
+		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
 
-		return toResultPage(profiles, isFollows, pageable);
+		/* 결과 반환 */
+		return toResultSlice(profiles, isFollows, pageable, profilesSlice.hasNext());
 	}
 
 	private List<Boolean> getIsFollow(
@@ -132,24 +133,25 @@ public class ProfileServiceImpl implements ProfileService {
 		return followee && currentProfileId == profileId; /* 순서 중요!! 순서 바뀌면 NPE 가능성 존재 */
 	}
 
-	private Page<GetProfilesResult> toResultPage(
+	private Slice<GetProfilesResult> toResultSlice(
 		final List<Profile> profiles,
 		final List<Boolean> isFollows,
-		Pageable pageable
+		Pageable pageable,
+		boolean hasNext
 	) {
 		List<GetProfilesResult> results = new ArrayList<>();
 		for (int i = 0; i < profiles.size(); i++) {
-			final Profile followerProfile = profiles.get(i);
+			final Profile profile = profiles.get(i);
 			final boolean isFollow = isFollows.get(i);
 
 			results.add(new GetProfilesResult(
-				followerProfile.getId(),
-				followerProfile.getUsername(),
-				followerProfile.getImage(),
+				profile.getId(),
+				profile.getUsername(),
+				profile.getImage(),
 				isFollow
 			));
 		}
-		return new PageImpl<>(results, pageable, 0L);
+		return new SliceImpl<>(results, pageable, hasNext);
 	}
 
 	@Override
