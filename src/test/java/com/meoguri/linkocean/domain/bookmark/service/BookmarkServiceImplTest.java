@@ -112,9 +112,7 @@ class BookmarkServiceImplTest {
 		void 북마크_등록_성공() {
 			//given
 			final RegisterBookmarkCommand command =
-
-				new RegisterBookmarkCommand(userId, url, "title", "memo", IT,
-					ALL, List.of("tag1", "tag2"));
+				new RegisterBookmarkCommand(userId, url, "title", "memo", IT, ALL, List.of("tag1", "tag2"));
 
 			//when
 			final long savedBookmarkId = bookmarkService.registerBookmark(command);
