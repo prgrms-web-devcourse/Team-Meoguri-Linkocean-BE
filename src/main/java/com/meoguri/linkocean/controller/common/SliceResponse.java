@@ -15,13 +15,13 @@ public class SliceResponse<T> {
 	private final List<T> data;
 	private final Boolean hasNext;
 
-	public SliceResponse(final String name, final List<T> data, final Boolean hasNext) {
+	public SliceResponse(final String name, final List<T> data, final boolean hasNext) {
 		this.name = name;
 		this.data = data;
 		this.hasNext = hasNext;
 	}
 
-	public static <T> SliceResponse<T> of(final String name, final List<T> data, final Boolean hasNext) {
+	public static <T> SliceResponse<T> of(final String name, final List<T> data, final boolean hasNext) {
 		return new SliceResponse<>(name, data, hasNext);
 	}
 
