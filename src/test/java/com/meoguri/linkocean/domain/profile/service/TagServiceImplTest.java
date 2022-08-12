@@ -1,0 +1,107 @@
+package com.meoguri.linkocean.domain.profile.service;
+
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.repository.UserRepository;
+
+@Transactional
+@SpringBootTest
+class TagServiceImplTest {
+
+	@PersistenceContext
+	private EntityManager em;
+
+	@Autowired
+	private TagService tagService;
+
+	@Autowired
+	private BookmarkRepository bookmarkRepository;
+
+	@Autowired
+	private LinkMetadataRepository linkMetadataRepository;
+
+	@Autowired
+	private ProfileRepository profileRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private TagRepository tagRepository;
+
+	private Profile profile;
+
+	private Tag tag1;
+	private Tag tag2;
+	private Tag tag3;
+
+	private LinkMetadata naver;
+	private LinkMetadata google;
+	private LinkMetadata prgrms;
+
+	@BeforeEach
+	void setUp() {
+		// 프로필, 링크 셋업
+		User user = userRepository.save(createUser());
+		profile = profileRepository.save(createProfile(user));
+
+		naver = linkMetadataRepository.save(new LinkMetadata("www.nav.com", "naver", "naver.png"));
+		google = linkMetadataRepository.save(new LinkMetadata("www.goo.com", "google", "google.png"));
+		prgrms = linkMetadataRepository.save(new LinkMetadata("www.prg.com", "prgrms", "prgrms.png"));
+
+		// 태그 셋업
+		tag1 = tagRepository.save(new Tag("tag1"));
+		tag2 = tagRepository.save(new Tag("tag2"));
+		tag3 = tagRepository.save(new Tag("tag3"));
+	}
+
+	@Test
+	void 태그_목록_조회_성공() {
+		//given
+		final Bookmark bookmark1 = createBookmark(profile, naver, "1", IT, "www.nav.com", List.of(tag1, tag2, tag3));
+		final Bookmark bookmark2 = createBookmark(profile, google, "2", IT, "www.goo.com", List.of(tag2, tag3));
+		final Bookmark bookmark3 = createBookmark(profile, prgrms, "3", IT, "www.prg.com", List.of(tag3));
+
+		bookmarkRepository.save(bookmark1);
+		bookmarkRepository.save(bookmark2);
+		bookmarkRepository.save(bookmark3);
+
+		em.flush();
+		em.clear();
+
+		//when
+		final List<GetProfileTagsResult> result = tagService.getTags(profile.getId());
+
+		//then
+		assertThat(result).hasSize(3)
+			.extracting(GetProfileTagsResult::getTag, GetProfileTagsResult::getCount)
+			.containsExactly(
+				tuple("tag3", 3),
+				tuple("tag2", 2),
+				tuple("tag1", 1)
+			);
+	}
+}

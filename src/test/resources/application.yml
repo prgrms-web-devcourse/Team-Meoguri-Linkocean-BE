@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    include: oauth, aws
+
+  jpa:
+    database: H2
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
+  flyway:
+    enabled: true
+    locations: classpath:db/tests
+
+  mongodb:
+    embedded:
+      version: 3.5.5
+
+jwt:
+  secret-key: test
+  expiration: 3600000
