@@ -1,8 +1,6 @@
-package com.meoguri.linkocean.configuration.logger;
+package com.meoguri.linkocean.configuration.aop;
 
 import static java.util.Objects.*;
-
-import java.lang.reflect.Method;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Aspect
 @Component
-public class LinkoceanLogAop {
+public class CustomLoggingAop {
 
 	private static final String NO_USER = "No User";
 
@@ -30,10 +28,25 @@ public class LinkoceanLogAop {
 
 	@Around("controller()")
 	public Object loggingUserFlow(ProceedingJoinPoint joinPoint) throws Throwable {
-		/* 메서드 정보 받아오기 */
-		Method method = getMethod(joinPoint);
 
-		/* 요청한 사용자 정보 가져 오기 */
+		final String methodName = getMethodName(joinPoint);
+		final String user = getSecurityUser(joinPoint);
+
+		log.info("======= {} request by user {} =======", methodName, user);
+		final Object retVal = joinPoint.proceed();
+		log.info("======= {} response to user {} =======", methodName, user);
+
+		return retVal;
+	}
+
+	/* JoinPoint 로 메서드 이름 가져오기 */
+	private String getMethodName(JoinPoint joinPoint) {
+		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
+		return signature.getMethod().getName();
+	}
+
+	/* JoinPoint 로 요청한 사용자 정보 가져 오기 */
+	private String getSecurityUser(final ProceedingJoinPoint joinPoint) {
 		SecurityUser user = null;
 		Object[] args = joinPoint.getArgs();
 		for (Object arg : args) {
@@ -41,24 +54,6 @@ public class LinkoceanLogAop {
 				user = (SecurityUser)arg;
 			}
 		}
-
-		log.info("======= {} request by user {} =======",
-			method.getName(),
-			nonNull(user) ? user : NO_USER);
-
-		/* 메서드 호출 */
-		final Object retVal = joinPoint.proceed();
-
-		log.info("======= {} response to user {} =======",
-			method.getName(),
-			nonNull(user) ? user : NO_USER);
-
-		return retVal;
-	}
-
-	/* JoinPoint로 메서드 정보 가져오기 */
-	private Method getMethod(JoinPoint joinPoint) {
-		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-		return signature.getMethod();
+		return nonNull(user) ? user.toString() : NO_USER;
 	}
 }
