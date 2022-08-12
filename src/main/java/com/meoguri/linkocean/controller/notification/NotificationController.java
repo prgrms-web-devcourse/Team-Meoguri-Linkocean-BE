@@ -49,6 +49,6 @@ public class NotificationController {
 	) {
 		final Slice<Notification> result = notificationService.getNotifications(pageable);
 
-		return SliceResponse.of("notifications", result.getContent());
+		return SliceResponse.of("notifications", result.getContent(), result.hasNext());
 	}
 }

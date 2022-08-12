@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.controller.common.SliceResponse;
+import com.meoguri.linkocean.controller.common.ListResponse;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
 @RequestMapping("/api/v1/categories")
@@ -12,8 +12,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 public class CategoryController {
 
 	@GetMapping
-	public SliceResponse<String> getAllCategories() {
-
-		return SliceResponse.of("categories", Category.getKoreanNames());
+	public ListResponse<String> getAllCategories() {
+		return ListResponse.of("categories", Category.getKoreanNames());
 	}
 }

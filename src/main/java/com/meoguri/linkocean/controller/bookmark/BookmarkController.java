@@ -73,7 +73,7 @@ public class BookmarkController {
 	) {
 		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
-				user.getId(),
+				user.getProfileId(),
 				targetProfileId,
 				queryParams.getCategory(),
 				queryParams.isFavorite(),
@@ -87,7 +87,7 @@ public class BookmarkController {
 		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(result.getTotalElements(), "bookmarks", response);
+		return PageResponse.of("bookmarks", response, result.getTotalElements());
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class BookmarkController {
 		final List<GetFeedBookmarksResponse> response = result.get()
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of(response.size(), "bookmarks", response);
+		return PageResponse.of("bookmarks", response, result.getTotalElements());
 	}
 
 	/* 북마크 상세 조회 */
