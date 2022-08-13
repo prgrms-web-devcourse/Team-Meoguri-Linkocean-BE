@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class ReactionCommand {
 
-	/* 사용자의 아이디 */
-	private final long userId;
+	/* 사용자의 프로필 아이디 */
+	private final long profileId;
 
 	/* 북마크의 아이디 */
 	private final long bookmarkId;

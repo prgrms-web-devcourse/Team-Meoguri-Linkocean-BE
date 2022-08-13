@@ -12,7 +12,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByUserIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,12 +25,12 @@ public class ReactionServiceImpl implements ReactionService {
 
 	private final BookmarkService bookmarkService;
 
-	private final FindProfileByUserIdQuery findProfileByUserIdQuery;
+	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
 	@Override
 	public void requestReaction(ReactionCommand command) {
-		final Profile profile = findProfileByUserIdQuery.findByUserId(command.getUserId());
+		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 

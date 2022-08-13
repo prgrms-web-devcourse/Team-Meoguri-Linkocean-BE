@@ -61,11 +61,14 @@ class ReactionServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자, 프로필, 링크 메타 데이터 셋업
-		user1 = userRepository.save( createUser("haha@gmail.com", "GOOGLE") );
-		user2 = userRepository.save( createUser("gaga@naver.com", "NAVER") );
+		user1 = userRepository.save(createUser("haha@gmail.com", "GOOGLE"));
+		user2 = userRepository.save(createUser("gaga@naver.com", "NAVER"));
 
 		profile1 = profileRepository.save(createProfile(user1, "haha"));
 		profile2 = profileRepository.save(createProfile(user2, "gaga"));
+
+		user1.registerProfile(profile1);
+		user2.registerProfile(profile2);
 
 		link = linkMetadataRepository.save(createLinkMetadata());
 
@@ -75,19 +78,19 @@ class ReactionServiceImplTest {
 
 	@Test
 	void 리액션_등록_성공() {
-
 		//사용자가_하나의_북마크에_대해_리액션을_처음_등록하는_경우
+		final ReactionCommand reactionCommand = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
 
 		//when
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getId(), bookmark2.getId(), "like");
 		reactionService.requestReaction(reactionCommand);
 
 		em.flush();
 		em.clear();
 
-		//then
 		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
 			bookmark2);
+
+		//then
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
 			.containsExactly(profile1, bookmark2, "like");
@@ -99,61 +102,76 @@ class ReactionServiceImplTest {
 		//이미_있는_리액션이_요청의_리액션_상태가_같음
 
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+
+		em.flush();
+		em.clear();
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate");
+		reactionService.requestReaction(command); //취소됨
 
 		em.flush();
 		em.clear();
 
 		//then
-		final Optional<Reaction> findReaction
-			= reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
+			bookmark2);
 		assertThat(findReaction).isEmpty();
 	}
 
 	@Test
-	void 리액션_변경() {
-		/*이미_있는_리액션이_요청의_리액션_상태가_다름*/
+	void 리액션_취소_후_등록() {
+
+		//이미_있는_리액션이_요청의_리액션_상태가_다름
 
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
+		em.flush();
+		em.clear();
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
+		reactionService.requestReaction(command); //취소 후 등록
+
+		em.flush();
+		em.clear();
 
 		//then
-		final Optional<Reaction> ReactionChangedToLike
-			= reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2);
+		final Optional<Reaction> findReaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(),
+			bookmark2);
 
-		assertThat(ReactionChangedToLike).isPresent().get()
+		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
 			.containsExactly(profile1, bookmark2, "like");
 	}
 
 	@Test
 	void 좋아요_개수_수정_성공_Like_추가_경우() {
+		//given
+
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
 
 		//then
-		final Reaction reaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2).get();
-		final Bookmark bookmarkAddedByLike = reaction.getBookmark();
-
-		assertThat(bookmarkAddedByLike.getLikeCount()).isOne();
+		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
 	}
 
 	@Test
 	void 좋아요_개수_수정_성공_Hate_추가_경우() {
+		//given
+
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "hate"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate"));
+
+		em.flush();
+		em.clear();
 
 		//then
-		final Reaction reaction = reactionRepository.findByProfile_idAndBookmark(profile1.getId(), bookmark2).get();
-		final Bookmark bookmarkAddedByHate = reaction.getBookmark();
-
-		assertThat(bookmarkAddedByHate.getLikeCount()).isZero();
+		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
@@ -163,11 +181,13 @@ class ReactionServiceImplTest {
 		bookmarkRepository.addBookmarkLikeCount(bookmark2.getId(), 1L);
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
 
 		//then
-		final long likeCountCancelLike = bookmarkRepository.findById(bookmark2.getId()).get().getLikeCount();
-		assertThat(likeCountCancelLike).isZero();
+		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
@@ -176,10 +196,12 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(profile1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+
+		em.flush();
+		em.clear();
 
 		//then
-		final long likeCountChangedHateToLike = bookmarkRepository.findById(bookmark2.getId()).get().getLikeCount();
-		assertThat(likeCountChangedHateToLike).isOne();
+		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
 	}
 }

@@ -27,10 +27,10 @@ import lombok.NoArgsConstructor;
 )
 public class Follow extends BaseIdEntity {
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile follower;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Profile followee;
 
 	public Follow(final Profile follower, final Profile followee) {

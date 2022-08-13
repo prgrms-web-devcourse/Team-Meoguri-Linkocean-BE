@@ -20,10 +20,10 @@ import lombok.NoArgsConstructor;
 @Entity
 public class BookmarkTag extends BaseIdEntity {
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Bookmark bookmark;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, optional = false)
 	private Tag tag;
 
 	public BookmarkTag(final Bookmark bookmark, final Tag tag) {
