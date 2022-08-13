@@ -36,6 +36,7 @@ public class Profile extends BaseIdEntity {
 	public static final int MAX_PROFILE_BIO_LENGTH = 50;
 	public static final int MAX_PROFILE_IMAGE_URL_LENGTH = 255;
 
+	@Deprecated
 	@OneToOne(fetch = LAZY, mappedBy = "profile")
 	private User user;
 
@@ -56,14 +57,6 @@ public class Profile extends BaseIdEntity {
 	private String image;
 
 	/* 회원 가입시 사용하는 생성자 */
-	public Profile(final User user, final String username) {
-		checkNotNull(user);
-		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
-
-		this.user = user;
-		this.username = username;
-	}
-
 	public Profile(final String username, final List<Category> categories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
@@ -100,5 +93,14 @@ public class Profile extends BaseIdEntity {
 				.map(FavoriteCategory::getCategory)
 				.collect(toList()).contains(c))
 			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
+	}
+
+	@Deprecated
+	public Profile(final User user, final String username) {
+		checkNotNull(user);
+		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
+
+		this.user = user;
+		this.username = username;
 	}
 }

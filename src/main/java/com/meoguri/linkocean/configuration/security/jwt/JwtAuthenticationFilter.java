@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -60,17 +61,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			log.debug("request on uri : {}, by user email : {}", request.getRequestURI(), email);
 			// email 과 OauthType 으로 User 가 존재하는지 확인
-			final SecurityUserProjection projection = userRepository
-				.findSecurityUserByEmailAndOauthType(new Email(email), OAuthType.of(oauthType))
+			final User user = userRepository
+				.findByEmailAndOAuthType(new Email(email), OAuthType.of(oauthType))
 				.orElseThrow(() ->
 					new LinkoceanRuntimeException(format("사용자가 없습니다. email :%s oauthType : %s", email, oauthType)));
 
 			// @AuthenticationPrincipal 을 위한 UserDetails
 			final UserDetails userDetails = new SecurityUser(
-				projection.getId(),
-				projection.getProfile_id(),
-				projection.getEmail(),
-				projection.getOauthType(),
+				user.getId(),
+				user.getProfileId(),
+				user.getEmail(),
+				user.getOauthType(),
 				List.of(new SimpleGrantedAuthority("ROLE_USER"))
 			);
 
