@@ -82,13 +82,16 @@
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=Plastic&logo=slack&logoColor=white)
 ![Gather](https://img.shields.io/badge/Gather-%230A0FFF.svg?style=Plastic&logoColor=white)
 
-## diagram
+## architecture
 
-### architecture
+### Backend
+<img width="1080" alt="스크린샷 2022-08-13 오후 5 45 31" src="https://user-images.githubusercontent.com/68465557/184476433-f7928033-b08b-40f3-ab91-b7a31d359f00.png">
 
-![ARCHITECTURE](images/architecture.png)
+### CI/CD
+<img width="1028" alt="스크린샷 2022-08-13 오후 5 45 20" src="https://user-images.githubusercontent.com/68465557/184476445-9b948e65-ea1f-401e-8feb-5b27465c8486.png">
 
-### erd
+
+## ERD-Diagram
 
 ![ERD](images/erd.png)
 
