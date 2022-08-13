@@ -153,11 +153,9 @@ class ReactionServiceImplTest {
 		//when
 		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
 
-		em.flush();
-		em.clear();
-
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		final Optional<Bookmark> likeAddedBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(likeAddedBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 
 	@Test
@@ -171,7 +169,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		final Optional<Bookmark> hateAddedBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(hateAddedBookmark.get().getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
@@ -187,7 +186,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		final Optional<Bookmark> zeroLikeBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(zeroLikeBookmark.get().getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
@@ -202,6 +202,7 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		final Optional<Bookmark> hateLikeBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(hateLikeBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 }
