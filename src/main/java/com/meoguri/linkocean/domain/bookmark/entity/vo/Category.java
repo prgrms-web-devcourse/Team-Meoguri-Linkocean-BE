@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
+import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public enum Category {
 		return arg == null ? null : Arrays.stream(Category.values())
 			.filter(category -> category.korName.equals(arg))
 			.findAny()
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such category : %s", arg)));
 	}
 
 }

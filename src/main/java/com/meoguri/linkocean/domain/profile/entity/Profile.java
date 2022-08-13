@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -37,8 +36,8 @@ public class Profile extends BaseIdEntity {
 	public static final int MAX_PROFILE_BIO_LENGTH = 50;
 	public static final int MAX_PROFILE_IMAGE_URL_LENGTH = 255;
 
-	@OneToOne(fetch = LAZY)
-	@JoinColumn(name = "user_id")
+	@Deprecated
+	@OneToOne(fetch = LAZY, mappedBy = "profile")
 	private User user;
 
 	/* FavoriteCategory 의 생명주기는 Profile 엔티티가 관리 */
@@ -54,16 +53,15 @@ public class Profile extends BaseIdEntity {
 	private String bio;
 
 	/* 프로필 사진 주소 */
-	@Column(nullable = true, length = 255)
+	@Column(nullable = true, length = 700)
 	private String image;
 
 	/* 회원 가입시 사용하는 생성자 */
-	public Profile(final User user, final String username) {
-		checkNotNull(user);
+	public Profile(final String username, final List<Category> categories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
-		this.user = user;
 		this.username = username;
+		updateFavoriteCategories(categories);
 	}
 
 	/* 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다 */
@@ -75,13 +73,6 @@ public class Profile extends BaseIdEntity {
 		this.username = username;
 		this.bio = bio;
 		this.image = image;
-	}
-
-	//TODO 업데이트 리스트로 받아서 하기
-
-	/* 프로필 - 선호 카테고리의 연관관계 편의 메서드 */
-	public void addToFavoriteCategory(Category category) {
-		this.favoriteCategories.add(new FavoriteCategory(this, category));
 	}
 
 	/* 선호카테고리 목록 조회 */
@@ -102,5 +93,14 @@ public class Profile extends BaseIdEntity {
 				.map(FavoriteCategory::getCategory)
 				.collect(toList()).contains(c))
 			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
+	}
+
+	@Deprecated
+	public Profile(final User user, final String username) {
+		checkNotNull(user);
+		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
+
+		this.user = user;
+		this.username = username;
 	}
 }

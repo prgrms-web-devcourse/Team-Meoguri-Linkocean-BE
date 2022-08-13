@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -90,10 +91,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public void updateBookmark(final UpdateBookmarkCommand command) {
+		final long bookmarkId = command.getBookmarkId();
+
 		/* 수정 할 북마크 조회 */
-		Bookmark bookmark = bookmarkRepository
-			.findByProfileIdAndId(command.getProfileId(), command.getBookmarkId())
-			.orElseThrow(LinkoceanRuntimeException::new);
+		Bookmark bookmark = bookmarkRepository.findByProfileIdAndId(command.getProfileId(), bookmarkId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
 		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
@@ -114,7 +116,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 제거 할 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByProfileIdAndId(profileId, bookmarkId)
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* remove 진행 */
 		bookmark.remove();
@@ -125,7 +127,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
-			.orElseThrow(LinkoceanRuntimeException::new);
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		final Profile writer = bookmark.getProfile();
 
@@ -174,14 +176,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
-		//TODO isWriter logic
-
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
 		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		/* 결과 반환 */
-		return toResultPage(bookmarkPage, isFavorites, isWriter, pageable);
+		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);
 	}
 
 	@Override
@@ -232,7 +232,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
 		final List<Boolean> isFavorites,
-		final boolean isWriter,
+		final long currentUserProfileId,
 		final Pageable pageable
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
@@ -241,6 +241,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
+			final Profile writer = bookmark.getProfile();
 			bookmarkResults.add(new GetBookmarksResult(
 				bookmark.getId(),
 				bookmark.getUrl(),
@@ -251,7 +252,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				isFavorites.get(i),
 				bookmark.getLikeCount(),
 				bookmark.getLinkMetadata().getImage(),
-				isWriter,
+				writer.getId().equals(currentUserProfileId),
 				bookmark.getTagNames()
 			));
 		}

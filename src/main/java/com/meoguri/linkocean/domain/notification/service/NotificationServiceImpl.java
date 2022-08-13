@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
 		/* 비즈니스 로직 검사 */
 		final boolean isSenderFollowedByReceiver = checkIsFollowQuery.isFollow(receiver.getId(), sender);
 		final boolean isWriter = bookmark.isWrittenBy(sender);
-		checkCondition(isSenderFollowedByReceiver && isWriter);
+		checkCondition(isSenderFollowedByReceiver && isWriter, "illegal share command");
 
 		/* 공유 알림 저장 */
 		final Notification shareNotification = new Notification(
@@ -72,8 +72,8 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public Slice<Notification> getNotifications(final Pageable pageable) {
-		return notificationRepository.findBy(pageable);
+	public Slice<Notification> getNotifications(final Pageable pageable, final long profileId) {
+		return notificationRepository.findByReceiverId(pageable, profileId);
 	}
 
 }

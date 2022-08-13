@@ -42,7 +42,7 @@ public class User extends BaseIdEntity {
 	private OAuthType oauthType;
 
 	@Getter(NONE)
-	@OneToOne(fetch = LAZY, mappedBy = "user")
+	@OneToOne(fetch = LAZY)
 	private Profile profile;
 
 	/* 회원 가입시 사용하는 생성자 */
@@ -56,5 +56,9 @@ public class User extends BaseIdEntity {
 
 	public Long getProfileId() {
 		return profile == null ? null : profile.getId();
+	}
+
+	public void registerProfile(final Profile profile) {
+		this.profile = profile;
 	}
 }

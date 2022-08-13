@@ -32,10 +32,12 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public void unfollow(final FollowCommand command) {
-		long count = followRepository.deleteByFollower_idAndFollowee_id(
-			command.getProfileId(),
-			command.getTargetProfileId()
-		);
-		checkCondition(count == 1);
+		final long followerId = command.getProfileId();
+		final long followeeId = command.getTargetProfileId();
+
+		long count = followRepository.deleteByFollower_idAndFollowee_id(followerId, followeeId);
+
+		checkCondition(count == 1,
+			"illegal unfollow command of profileId " + followeeId + " on " + "targetProfileId" + followeeId);
 	}
 }

@@ -45,9 +45,10 @@ public class NotificationController {
 	/* 알림 조회 */
 	@GetMapping("/api/v1/notifications")
 	public SliceResponse<Notification> getNotifications(
+		final @AuthenticationPrincipal SecurityUser user,
 		final Pageable pageable
 	) {
-		final Slice<Notification> result = notificationService.getNotifications(pageable);
+		final Slice<Notification> result = notificationService.getNotifications(pageable, user.getProfileId());
 
 		return SliceResponse.of("notifications", result.getContent(), result.hasNext());
 	}

@@ -112,9 +112,7 @@ class BookmarkServiceImplTest {
 		void 북마크_등록_성공() {
 			//given
 			final RegisterBookmarkCommand command =
-
-				new RegisterBookmarkCommand(userId, url, "title", "memo", IT,
-					ALL, List.of("tag1", "tag2"));
+				new RegisterBookmarkCommand(userId, url, "title", "memo", IT, ALL, List.of("tag1", "tag2"));
 
 			//when
 			final long savedBookmarkId = bookmarkService.registerBookmark(command);
@@ -444,6 +442,9 @@ class BookmarkServiceImplTest {
 	@Nested
 	class 대상의_프로필_id로_북마크_페이징_조회 {
 
+		@Autowired
+		private FavoriteService favoriteService;
+
 		private Profile profile2;
 		private long profileId2;
 
@@ -555,6 +556,26 @@ class BookmarkServiceImplTest {
 					tuple(bookmarkId2, PARTIAL),
 					tuple(bookmarkId1, ALL)
 				);
+		}
+
+		@Test
+		void 다른_사람_북마크_즐겨찾기_후_조회() {
+			//given
+			favoriteService.favorite(profileId, bookmarkId1);
+
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.targetProfileId(profileId2)
+				.title("1")
+				.build();
+			final Pageable pageable = defaultPageableSortByUpload();
+
+			//when
+			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
+
+			assertThat(resultPage.getContent()).hasSize(1)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::isWriter, GetBookmarksResult::isFavorite)
+				.containsExactly(tuple(bookmarkId1, false, true));
 		}
 	}
 

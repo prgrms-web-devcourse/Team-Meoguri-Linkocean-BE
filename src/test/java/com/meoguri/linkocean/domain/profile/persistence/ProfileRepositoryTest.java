@@ -35,6 +35,7 @@ class ProfileRepositoryTest {
 		//given
 		final Profile profile = new Profile(user, "haha");
 		profileRepository.save(profile);
+		user.registerProfile(profile);
 
 		//when
 		final Optional<Profile> foundProfile = profileRepository.findByUserId(user.getId());

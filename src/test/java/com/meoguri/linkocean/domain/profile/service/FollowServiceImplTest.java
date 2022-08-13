@@ -49,7 +49,7 @@ class FollowServiceImplTest {
 	@Test
 	void 팔로우_성공() {
 		//given
-		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
+		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
 
 		//when
 		followService.follow(command);
@@ -62,7 +62,7 @@ class FollowServiceImplTest {
 	@Test
 	void 팔로우_두번_요청_실패() {
 		//given
-		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
+		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
 		followService.follow(command);
 
 		//when then
@@ -73,7 +73,7 @@ class FollowServiceImplTest {
 	@Test
 	void 언팔로우_성공() {
 		//given
-		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
+		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
 		followService.follow(command);
 
 		//when
@@ -87,7 +87,7 @@ class FollowServiceImplTest {
 	@Test
 	void 언팔로우_실패() {
 		//given
-		final FollowCommand command = new FollowCommand(user1Id, user2ProfileId);
+		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
 
 		//when then
 		assertThatLinkoceanRuntimeException()
