@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
+	private final BookmarkService bookmarkService;
+
 	private final ReactionRepository reactionRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
@@ -33,44 +35,59 @@ public class ReactionServiceImpl implements ReactionService {
 		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
 
 		updateBookmarkReaction(profile, bookmark, requestReactionType);
-		updateBookmarkLikeCount(bookmark);
 	}
+
 
 	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
 		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profile.getId(), bookmark);
+		final long bookmarkId = bookmark.getId();
 
-		oReaction.ifPresentOrElse(
-			/* 리액션이 존재하는 경우 */
-			reaction -> {
-				ReactionType existedReactionType = ReactionType.of(reaction.getType());
+		/* 리액션이 존재하는 경우 */
+		if (oReaction.isPresent()) {
+			final Reaction reaction = oReaction.get();
+			final ReactionType existedReactionType = ReactionType.of(reaction.getType());
 
-				/* 기존의 리액션 타입이 요청 리액션 타입과 같은경우 */
-				if (existedReactionType == requestReactionType) {
-					cancelReaction(profile, bookmark, existedReactionType);
+			/*이미 있던 reaction의 reactionType 이 request reactionType 과 같다면*/
+			if (existedReactionType.equals(requestReactionType)) {
+				/*리액션 삭제(취소)*/
+				cancelReaction(reaction);
 
-					/* 기존의 리액션이 요청과 다른경우 */
-				} else {
-					reaction.changeTypeTo(requestReactionType);
+				if (existedReactionType.equals(ReactionType.LIKE)) {
+					bookmarkService.subtractLikeCount(bookmarkId);
 				}
-			},
 
-			/* 리액션이 존재하지 않은 경우 */
-			() -> {
-				addReaction(profile, bookmark, requestReactionType);
+			/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
+			} else {
+				/*리액션 변경*/
+				changeReaction(reaction, requestReactionType);
+
+				if (existedReactionType.equals(ReactionType.HATE) && requestReactionType.equals(ReactionType.LIKE)) {
+					bookmarkService.addLikeCount(bookmarkId);
+				} else {
+					bookmarkService.subtractLikeCount(bookmarkId);
+				}
 			}
-		);
+
+		/* 리액션이 존재하지 않은 경우 */
+		} else {
+			/*리액션 추가*/
+			addReaction(profile, bookmark, requestReactionType);
+			if (requestReactionType.equals(ReactionType.LIKE)) {
+				bookmarkService.addLikeCount(bookmarkId);
+			}
+		}
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
 		reactionRepository.save(new Reaction(profile, bookmark, reactionType.toString()));
 	}
 
-	private void cancelReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
-		reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, reactionType);
+	private void cancelReaction(final Reaction reaction) {
+		reactionRepository.deleteByProfileAndBookmark(reaction.getProfile(), reaction.getBookmark());
 	}
 
-	private void updateBookmarkLikeCount(Bookmark bookmark) {
-		final long likeCount = reactionRepository.countReactionByBookmarkAndType(bookmark, ReactionType.LIKE);
-		bookmark.changeLikeCount(likeCount);
+	private void changeReaction(final Reaction reaction, ReactionType requestReactionType) {
+		reactionRepository.updateReaction(
+			reaction.getProfile(), reaction.getBookmark(), requestReactionType);
 	}
 }

@@ -34,4 +34,10 @@ public interface BookmarkService {
 
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
+
+	/* Bookmark likeCount + 1 */
+	int addLikeCount(long bookmarkId);
+
+	/* Bookmark likeCount - 1 */
+	int subtractLikeCount(long bookmarkId);
 }

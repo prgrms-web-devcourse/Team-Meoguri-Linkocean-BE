@@ -153,11 +153,9 @@ class ReactionServiceImplTest {
 		//when
 		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
 
-		em.flush();
-		em.clear();
-
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		final Optional<Bookmark> likeAddedBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(likeAddedBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 
 	@Test
@@ -171,13 +169,15 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		final Optional<Bookmark> hateAddedBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(hateAddedBookmark.get().getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
 	void 좋아요_개수_수정_성공_좋아요_좋아요_경우() {
 		//given
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+		bookmarkRepository.addLikeCount(bookmark2.getId());
 
 		//when
 		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
@@ -186,7 +186,8 @@ class ReactionServiceImplTest {
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(0);
+		final Optional<Bookmark> zeroLikeBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(zeroLikeBookmark.get().getLikeCount()).isEqualTo(0);
 	}
 
 	@Test
@@ -195,12 +196,13 @@ class ReactionServiceImplTest {
 		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
 
 		em.flush();
 		em.clear();
 
 		//then
-		assertThat(bookmark2.getLikeCount()).isEqualTo(1);
+		final Optional<Bookmark> hateLikeBookmark = bookmarkRepository.findById(bookmark2.getId());
+		assertThat(hateLikeBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 }

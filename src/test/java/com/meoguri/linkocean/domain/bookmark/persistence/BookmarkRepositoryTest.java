@@ -196,4 +196,16 @@ class BookmarkRepositoryTest {
 		assertThat(oBookmarkId2).isEmpty();
 	}
 
+	@Test
+	void 북마크_LikeCount_증가_성공() {
+		//given
+		final Bookmark bookmark =
+			bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "https://www.google.com"));
+
+		//when
+		bookmarkRepository.addLikeCount(bookmark.getId());
+
+		//then
+		assertThat(bookmarkRepository.findById(bookmark.getId()).get().getLikeCount()).isOne();
+	}
 }
