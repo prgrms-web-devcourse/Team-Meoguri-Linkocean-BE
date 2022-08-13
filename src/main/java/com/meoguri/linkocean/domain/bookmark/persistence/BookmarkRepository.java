@@ -65,6 +65,11 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	List<Category> findCategoryExistsBookmark(Profile profile);
 
 	@Modifying(clearAutomatically = true)
-	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount + :likeVariance WHERE b.id = :bookmarkId")
-	int addBookmarkLikeCount(Long bookmarkId, Long likeVariance);
+	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount + 1 WHERE b.id = :bookmarkId")
+	int addLikeCount(long bookmarkId);
+
+
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount - 1 WHERE b.id = :bookmarkId")
+	int subtractLikeCount(long bookmarkId);
 }

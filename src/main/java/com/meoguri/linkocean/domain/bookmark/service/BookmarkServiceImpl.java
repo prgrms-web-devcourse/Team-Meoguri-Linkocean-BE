@@ -308,7 +308,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 	}
 
 	@Override
-	public int updateBookmarkLikeCount(long profileId, Long bookmarkLikeCount) {
-		return bookmarkRepository.addBookmarkLikeCount(profileId, bookmarkLikeCount);
+	public int addLikeCount(long bookmarkId) {
+		return bookmarkRepository.addLikeCount(bookmarkId);
+	}
+
+	@Override
+	public int subtractLikeCount(long bookmarkId) {
+		return bookmarkRepository.subtractLikeCount(bookmarkId);
 	}
 }

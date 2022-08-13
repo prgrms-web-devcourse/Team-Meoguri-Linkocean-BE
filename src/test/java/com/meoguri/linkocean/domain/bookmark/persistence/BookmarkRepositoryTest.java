@@ -204,7 +204,7 @@ class BookmarkRepositoryTest {
 			bookmarkRepository.save(createBookmark(profile, link, "제목", Category.IT, "https://www.google.com"));
 
 		//when
-		bookmarkRepository.addBookmarkLikeCount(bookmark.getId(), 1L);
+		bookmarkRepository.addLikeCount(bookmark.getId());
 
 		//then
 		assertThat(bookmarkRepository.findById(bookmark.getId()).get().getLikeCount()).isOne();

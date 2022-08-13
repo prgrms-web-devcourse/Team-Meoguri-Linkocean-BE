@@ -21,9 +21,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
-	private final ReactionRepository reactionRepository;
-
 	private final BookmarkService bookmarkService;
+
+	private final ReactionRepository reactionRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
@@ -40,11 +40,12 @@ public class ReactionServiceImpl implements ReactionService {
 
 	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
 		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profile.getId(), bookmark);
+		final long bookmarkId = bookmark.getId();
 
 		/* 리액션이 존재하는 경우 */
 		if (oReaction.isPresent()) {
 			final Reaction reaction = oReaction.get();
-			ReactionType existedReactionType = ReactionType.of(reaction.getType());
+			final ReactionType existedReactionType = ReactionType.of(reaction.getType());
 
 			/*이미 있던 reaction의 reactionType 이 request reactionType 과 같다면*/
 			if (existedReactionType.equals(requestReactionType)) {
@@ -52,7 +53,7 @@ public class ReactionServiceImpl implements ReactionService {
 				cancelReaction(reaction);
 
 				if (existedReactionType.equals(ReactionType.LIKE)) {
-					bookmarkService.updateBookmarkLikeCount(bookmark.getId(), -1L);
+					bookmarkService.subtractLikeCount(bookmarkId);
 				}
 
 			/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
@@ -61,9 +62,9 @@ public class ReactionServiceImpl implements ReactionService {
 				changeReaction(reaction, requestReactionType);
 
 				if (existedReactionType.equals(ReactionType.HATE) && requestReactionType.equals(ReactionType.LIKE)) {
-					bookmarkService.updateBookmarkLikeCount(bookmark.getId(), 1L);
+					bookmarkService.addLikeCount(bookmarkId);
 				} else {
-					bookmarkService.updateBookmarkLikeCount(bookmark.getId(), -1L);
+					bookmarkService.subtractLikeCount(bookmarkId);
 				}
 			}
 
@@ -72,7 +73,7 @@ public class ReactionServiceImpl implements ReactionService {
 			/*리액션 추가*/
 			addReaction(profile, bookmark, requestReactionType);
 			if (requestReactionType.equals(ReactionType.LIKE)) {
-				bookmarkService.updateBookmarkLikeCount(bookmark.getId(), 1L);
+				bookmarkService.addLikeCount(bookmarkId);
 			}
 		}
 	}
