@@ -82,24 +82,26 @@
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=Plastic&logo=slack&logoColor=white)
 ![Gather](https://img.shields.io/badge/Gather-%230A0FFF.svg?style=Plastic&logoColor=white)
 
+## 테스트
+
+![Tests](https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c/raw/36cedbf4c62e1ba37ae9c6fee95af99ac80a8c05/badge.svg)
+
 ## architecture
 
 ### Backend
+
 <img width="1057" alt="스크린샷 2022-08-13 오후 8 05 10" src="https://user-images.githubusercontent.com/68465557/184480816-3966fc6c-f37a-4ed2-bd19-e08fdaa24c6f.png">
 
-
 ### CI/CD
+
 <img width="861" alt="스크린샷 2022-08-13 오후 8 08 01" src="https://user-images.githubusercontent.com/68465557/184482893-5e9695ef-95dd-49cb-9952-e13caab62963.png">
 
-
-
-## ERD-Diagram
-
+### ERD
 ![ERD](images/erd.png)
 
 ## 위키
 
-- 용례
+- [Namings](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/Namings)
 - 규칙
 - 패키지/클래스 구조도
 - 깃 컨벤션
