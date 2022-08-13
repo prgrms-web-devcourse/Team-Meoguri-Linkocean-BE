@@ -148,6 +148,20 @@ public class BookmarkController {
 		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
 	}
 
+	/* 북마크 공유 알림 */
+	@PostMapping("/{bookmarkId}/share")
+	public void shareNotification(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @RequestBody Map<String, Long> request,
+		final @PathVariable Long bookmarkId
+	) {
+		bookmarkService.shareNotification(
+			user.getProfileId(),
+			request.get("targetId"),
+			bookmarkId
+		);
+	}
+
 	/* 중복 url 확인 */
 	@GetMapping
 	public ResponseEntity<Map<String, Object>> getBookmarkIdIfDuplicated(

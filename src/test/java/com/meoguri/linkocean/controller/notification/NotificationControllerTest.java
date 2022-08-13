@@ -45,7 +45,7 @@ class NotificationControllerTest extends BaseControllerTest {
 
 		//when
 		//공유 알림 하나 생성
-		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", shareBookmarkId)
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}" + "/share", shareBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
@@ -87,7 +87,7 @@ class NotificationControllerTest extends BaseControllerTest {
 		);
 
 		//when
-		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", unsharableBookmarkId)
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
@@ -103,7 +103,7 @@ class NotificationControllerTest extends BaseControllerTest {
 			"targetId", targetProfileId
 		);
 		//when
-		mockMvc.perform(post("/api/v1/bookmark/{bookmarkId}" + "/share", unsharableBookmarkId)
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
