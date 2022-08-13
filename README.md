@@ -85,10 +85,12 @@
 ## architecture
 
 ### Backend
-<img width="1080" alt="스크린샷 2022-08-13 오후 5 45 31" src="https://user-images.githubusercontent.com/68465557/184476433-f7928033-b08b-40f3-ab91-b7a31d359f00.png">
+<img width="1057" alt="스크린샷 2022-08-13 오후 8 05 10" src="https://user-images.githubusercontent.com/68465557/184480816-3966fc6c-f37a-4ed2-bd19-e08fdaa24c6f.png">
+
 
 ### CI/CD
-<img width="1028" alt="스크린샷 2022-08-13 오후 5 45 20" src="https://user-images.githubusercontent.com/68465557/184476445-9b948e65-ea1f-401e-8feb-5b27465c8486.png">
+<img width="861" alt="스크린샷 2022-08-13 오후 8 08 01" src="https://user-images.githubusercontent.com/68465557/184482893-5e9695ef-95dd-49cb-9952-e13caab62963.png">
+
 
 
 ## ERD-Diagram
