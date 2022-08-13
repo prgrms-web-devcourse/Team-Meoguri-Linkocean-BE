@@ -15,5 +15,5 @@ public interface NotificationService {
 	 */
 	void shareNotification(ShareNotificationCommand command);
 
-	Slice<Notification> getNotifications(Pageable pageable);
+	Slice<Notification> getNotifications(Pageable pageable, long profileId);
 }

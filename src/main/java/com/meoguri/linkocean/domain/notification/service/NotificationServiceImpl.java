@@ -72,8 +72,8 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public Slice<Notification> getNotifications(final Pageable pageable) {
-		return notificationRepository.findBy(pageable);
+	public Slice<Notification> getNotifications(final Pageable pageable, final long profileId) {
+		return notificationRepository.findByReceiverId(pageable, profileId);
 	}
 
 }
