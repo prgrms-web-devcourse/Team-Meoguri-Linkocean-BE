@@ -63,28 +63,42 @@
 
 ## 사용 기술
 
-![Java](https://img.shields.io/badge/java_11-%23ED8B00.svg?style=Plastic&logo=java&logoColor=white)
-![Spring](https://img.shields.io/badge/spring_Boot_2.7.0-%236DB33F.svg?style=Plastic&logo=spring&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-%23121011.svg?style=Plastic&logo=mysql&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?style=Plastic&logo=JSON%20web%20tokens)
-![JUnit5](https://img.shields.io/badge/JUnit5-white?style=Plastic&logo=JUnit5)
-
-![Spring](https://img.shields.io/badge/spring_Security-%236DB33F.svg?style=Plastic&logo=spring&logoColor=white)
-![Spring_Rest_Docs](https://img.shields.io/badge/spring_Rest--Docs-%236DB33F.svg?style=Plastic&logo=Asciidoctor&logoColor=white)
+![JAVA_11](https://img.shields.io/badge/JAVA_11-blue?style=flat&logo=OpenJDK&logoColor=000000)
 ![Gradle](https://img.shields.io/badge/Gradle_7.4.1-02303A.svg?style=Plastic&logo=Gradle&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=Plastic&logo=JSON%20web%20tokens)
 ![Flyway](https://img.shields.io/badge/flyway-white.svg?style=Plastic&logo=Flyway&logoColor=red)
-![AWS](https://img.shields.io/badge/S3-%23FF9900.svg?style=Plastic&logo=amazon-aws&logoColor=white)
+![querydsl](https://img.shields.io/badge/querydsl-black.svg?style=Plastic&logo=Elastic&logoColor=white)
+
+![spring_Boot_2](https://img.shields.io/badge/spring_Boot_2.7.1-%236DB33F.svg?style=Plastic&logo=SpringBoot&logoColor=white)
+![Spring_Web](https://img.shields.io/badge/Spring_Web-%236DB33F.svg?style=Plastic&logo=spring&logoColor=white)
+![Spring_Data_Jpa](https://img.shields.io/badge/Spring_Data_Jpa-%236DB33F.svg?style=Plastic&logo=spring&logoColor=white)
+![spring_Security](https://img.shields.io/badge/spring_Security-%236DB33F.svg?style=Plastic&logo=springsecurity&logoColor=white)
+![Spring_Rest_Docs](https://img.shields.io/badge/spring_Rest--Docs-%236DB33F.svg?style=Plastic&logo=Asciidoctor&logoColor=white)
+
+## 인프라
+
+![MySQL](https://img.shields.io/badge/mysql-%23121011.svg?style=Plastic&logo=mysql&logoColor=white)
+![h2](https://img.shields.io/badge/H2-darkblue.svg?style=Plastic&logo=h2&logoColor=red)
+
+![AWS](https://img.shields.io/badge/EC2,RDS,S3-%23FF9900.svg?style=Plastic&logo=amazon-aws&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-4A154B?style=flat&logo=Docker&logoColor=#4A154B)
+![GitHub_Actions](https://img.shields.io/badge/GitHub_Actions-%23121011.svg?style=Plastic&logo=GitHubActions&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white)
+![NGINX](https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white)
 
 ## 협업
 
+![git](https://img.shields.io/badge/git-F05032?style=flat&logo=Git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=Plastic&logo=github&logoColor=white)
 ![Jira](https://img.shields.io/badge/jira-%230A0FFF.svg?style=Plastic&logo=jira&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=Plastic&logo=slack&logoColor=white)
-![Gather](https://img.shields.io/badge/Gather-%230A0FFF.svg?style=Plastic&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?style=Plastic&logo=Notion&logoColor=white)
 
 ## 테스트
 
 ![Tests](https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c/raw/36cedbf4c62e1ba37ae9c6fee95af99ac80a8c05/badge.svg)
+![JUnit5](https://img.shields.io/badge/JUnit5-white?style=Plastic&logo=JUnit5)
+![jacoco](https://img.shields.io/badge/jacoco-white.svg?style=Plastic&logo=jacoco&logoColor=red)
 
 ## architecture
 
@@ -102,10 +116,10 @@
 ## 위키
 
 - [Namings](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/Namings)
-- 규칙
-- 패키지/클래스 구조도
-- 깃 컨벤션
+- [규칙](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/%EA%B7%9C%EC%B9%99)
+- [깃 컨벤션](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/git-github-%EC%BB%A8%EB%B2%A4%EC%85%98)
 
 <p align="center">
   <img src="images/logo.png" alt="drawing" width="150"/>
 </p>
+
