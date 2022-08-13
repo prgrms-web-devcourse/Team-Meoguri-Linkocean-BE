@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -137,11 +136,11 @@ class BookmarkRepositoryTest {
 			);
 	}
 
-	@Disabled
 	@Test
 	void 북마크와_연관관계_맺은_엔티티_페치_조인_이용해_같이_조회() {
 		//given
-		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, link));
+		final Bookmark bookmark = bookmarkRepository.save(
+			createBookmark(profile, link, "title", ART, link.getFullLink(), List.of(tag1)));
 
 		em.flush();
 		em.clear();
