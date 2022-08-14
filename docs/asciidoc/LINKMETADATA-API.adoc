@@ -1,0 +1,8 @@
+[[LINKMETADATA-API]]
+== 링크 메타데이터 API
+
+'''
+
+=== 링크 메타데이터 조회
+
+operation::/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/[snippets='http-request,request-parameters,http-response,response-body,response-fields']
