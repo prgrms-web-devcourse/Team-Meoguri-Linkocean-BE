@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
+import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
 class ReactionControllerTest extends BaseControllerTest {
 
