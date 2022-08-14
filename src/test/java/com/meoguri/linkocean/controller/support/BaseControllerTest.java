@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller;
+package com.meoguri.linkocean.controller.support;
 
 import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
