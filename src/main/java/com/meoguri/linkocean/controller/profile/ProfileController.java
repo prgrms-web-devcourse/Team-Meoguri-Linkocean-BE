@@ -55,7 +55,7 @@ public class ProfileController {
 
 	/* 프로필 등록 */
 	@PostMapping
-	public Map<String, Object> createProfile(
+	public Map<String, Object> registerProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
@@ -83,9 +83,9 @@ public class ProfileController {
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
 
-	/* 내 프로필 수정 */
+	/* 프로필 수정 */
 	@PutMapping("/me")
-	public void updateMyProfile(
+	public void updateProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@ModelAttribute UpdateProfileRequest request,
 		@RequestPart(required = false, name = "image") MultipartFile profileImage

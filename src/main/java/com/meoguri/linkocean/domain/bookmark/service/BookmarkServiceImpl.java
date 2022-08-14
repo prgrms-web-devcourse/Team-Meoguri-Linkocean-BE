@@ -30,6 +30,8 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
+import com.meoguri.linkocean.domain.notification.service.NotificationService;
+import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
@@ -44,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 public class BookmarkServiceImpl implements BookmarkService {
 
 	private final TagService tagService;
+	private final NotificationService notificationService;
 
 	private final BookmarkRepository bookmarkRepository;
 
@@ -200,6 +203,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
 		return toResultPage(bookmarkPage, isFavorites, isFollows, currentUserProfileId, pageable);
+	}
+
+	/* 북마크 공유 알림 */
+	@Transactional
+	@Override
+	public void shareNotification(final long profileId, final long targetId, final long bookmarkId) {
+
+		final ShareNotificationCommand command = new ShareNotificationCommand(profileId, targetId, bookmarkId);
+		notificationService.shareNotification(command);
 	}
 
 	@Override

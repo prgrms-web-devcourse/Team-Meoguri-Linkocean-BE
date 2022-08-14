@@ -32,6 +32,9 @@ public interface BookmarkService {
 	/* 피드 북마크 목록 */
 	Page<GetFeedBookmarksResult> getFeedBookmarks(BookmarkFindCond searchCond, Pageable pageable);
 
+	/* 북마크 공유 알림 */
+	void shareNotification(long profileId, long targetId, long bookmarkId);
+
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
 
