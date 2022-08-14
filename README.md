@@ -103,12 +103,11 @@
 ## architecture
 
 ### Backend
-
-<img width="1057" alt="스크린샷 2022-08-13 오후 8 05 10" src="https://user-images.githubusercontent.com/68465557/184480816-3966fc6c-f37a-4ed2-bd19-e08fdaa24c6f.png">
+<img width="993" alt="스크린샷 2022-08-14 오후 1 38 01" src="https://user-images.githubusercontent.com/68465557/184539427-6c114d7a-d273-482d-99ee-c3ebc7203df1.png">
 
 ### CI/CD
+<img width="858" alt="스크린샷 2022-08-14 오후 1 36 38" src="https://user-images.githubusercontent.com/68465557/184539425-ddb7dd6a-7e24-491f-98a0-3b7b2187ec2f.png">
 
-<img width="861" alt="스크린샷 2022-08-13 오후 8 08 01" src="https://user-images.githubusercontent.com/68465557/184482893-5e9695ef-95dd-49cb-9952-e13caab62963.png">
 
 ### ERD
 ![ERD](images/erd.png)
