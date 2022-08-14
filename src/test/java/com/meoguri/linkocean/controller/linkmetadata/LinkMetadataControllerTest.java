@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
 class LinkMetadataControllerTest extends BaseControllerTest {
 

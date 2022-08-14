@@ -10,10 +10,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 
-class LoginControllerTest extends BaseControllerTest {
+class LoginControllerTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);
 
@@ -32,8 +32,12 @@ class LoginControllerTest extends BaseControllerTest {
 
 			//then
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.token").exists())
-			.andDo(print());
+			.andExpect(jsonPath("$.token").exists());
+
+		// docs
+		// .andDo(
+		// 	restDocs.document()
+		// )
 
 	}
 
