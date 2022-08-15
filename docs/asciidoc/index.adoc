@@ -10,5 +10,6 @@
 include::LOGIN-API.adoc[]
 include::PROFILE_API.adoc[]
 include::FOLLOW-API.adoc[]
-include::NOTIFICATION-API.adoc[]
+include::CATEGORY-API.adoc[]
 include::LINKMETADATA-API.adoc[]
+include::NOTIFICATION-API.adoc[]

@@ -1,0 +1,10 @@
+[[CATEGORY-API]]
+== 카테고리 API
+
+'''
+
+=== 카테고리 목록 조회
+
+operation::/category-docs-controller/카테고리_전체_조회_-api_성공/[snippets='http-request,http-response,response-fields']
+
+
