@@ -1,4 +1,4 @@
-# Team-Meoguri-Linkocean-BE
+# 🐳 Team-Meoguri-Linkocean-BE
 
 <p align="center">
   <img src="images/Small_Logo.png" alt="drawing"/>
@@ -7,20 +7,22 @@
   <img src="images/logo2.png" alt="drawing"/>
 </p>
 
-## 프로젝트 소개
+## 🔍 프로젝트 소개
 
-소셜 북마크 서비스
+**소셜 북마크 서비스**
+
+웹 즐겨찾기 기능인 **북마크**, 좋은 사이트나 게시물을 발견하면 즐겨찾기도 해놓고 남들과 **공유**도 하면서 인사이트를 얻어보자.
 
 ## 기획 배경 및 동기
 
-개발공부 또는 인터넷을 통해 새로운 정보를 얻는 과정에서 좋은 웹 사이트를 발견하면, 나중을 위해 브라우저에서 제공하는 북마크 기능을 활용해 페이지를 저장해 둔다.
+개발공부 또는 인터넷을 통해 새로운 정보를 얻는 과정에서 좋은 웹 사이트를 발견하면, 나중을 위해 브라우저에서 제공하는 `북마크 기능을 활용해 페이지를 저장`해 둔다.
 
-하지만 북마킹만 하고는 아쉬움이 남는다. 좋은 글을 나와 비슷한 관심사를 가진 친구들과 나누고 싶다. 그리고 나도 친구들이 좋다고 생각하는 글을 공유받아 읽어보고 싶다. 그런 서비스들이 존재하긴 하지만 대중적인
+하지만 북마킹만 하고는 아쉬움이 남는다. `좋은 글을 나와 비슷한 관심사를 가진 친구들과 나누고 싶다.` 그리고 나도 친구들이 좋다고 생각하는 글을 공유받아 읽어보고 싶다. 그런 서비스들이 존재하긴 하지만 대중적인
 서비스는 존재하지 않는다.
 소셜 북마킹 도메인은 누구에게나 친숙한 도메인이다. 또한 자주 사용하는 기능이기도 하다. 우리가 사용할 애플리케이션을 만들면 더 애정이 생기고 더 열심히 할 수 있지 않을까? 또 지금까지 불편했던 점을 우리가 만드는
 애플리케이션에 녹여낼 수 있지 않을까?
 
-## 기간
+## ✔️ 기간
 
 ### 2022.07.21 ~ 2022.08.17
 
@@ -64,7 +66,7 @@
   </tr>
 </table>
 
-## 사용 기술
+## 🌐 사용 기술
 
 ![JAVA_11](https://img.shields.io/badge/JAVA_11-blue?style=flat&logo=OpenJDK&logoColor=000000)
 ![Gradle](https://img.shields.io/badge/Gradle_7.4.1-02303A.svg?style=Plastic&logo=Gradle&logoColor=white)
@@ -103,7 +105,7 @@
 ![JUnit5](https://img.shields.io/badge/JUnit5-white?style=Plastic&logo=JUnit5)
 ![jacoco](https://img.shields.io/badge/jacoco-white.svg?style=Plastic&logo=jacoco&logoColor=red)
 
-## architecture
+## 🏗️ architecture
 
 ### Backend
 <img width="993" alt="스크린샷 2022-08-14 오후 1 38 01" src="https://user-images.githubusercontent.com/68465557/184539427-6c114d7a-d273-482d-99ee-c3ebc7203df1.png">
