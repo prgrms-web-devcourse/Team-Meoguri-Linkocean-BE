@@ -35,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 	/**
 	 * 북마크 공유 알림 생성
 	 * - 나를 팔로우 해주는 상대에게만 공유 할 수 있다.
-	 * - 자신의 북마크만 공유할 수 있다.
+	 * - 전체 공유 북마크만 공유할 수 있다.
 	 */
 	@Transactional
 	@Override
@@ -49,8 +49,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 		/* 비즈니스 로직 검사 */
 		final boolean isSenderFollowedByReceiver = checkIsFollowQuery.isFollow(receiver.getId(), sender);
-		final boolean isWriter = bookmark.isWrittenBy(sender);
-		checkCondition(isSenderFollowedByReceiver && isWriter, "illegal share command");
+		final boolean isOpenTypeAll = bookmark.isOpenTypeAll();
+		checkCondition(isSenderFollowedByReceiver && isOpenTypeAll, "illegal share command");
 
 		/* 공유 알림 저장 */
 		final Notification shareNotification = new Notification(

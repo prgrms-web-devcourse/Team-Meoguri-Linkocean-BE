@@ -31,7 +31,7 @@ class NotificationControllerTest extends BaseControllerTest {
 
 		유저_등록_로그인("target@gmail.com", "GOOGLE");
 		targetProfileId = 프로필_등록("target", List.of("IT"));
-		unsharableBookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
+		unsharableBookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "partial");
 		팔로우(senderProfileId);
 	}
 
@@ -96,7 +96,7 @@ class NotificationControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 남의글_공유_알림_생성_요청_실패() throws Exception {
+	void 일부_공개글_공유_알림_생성_요청_실패() throws Exception {
 		//given
 		로그인("sender@gmail.com", "GOOGLE");
 		final Map<String, Object> request = Map.of(
