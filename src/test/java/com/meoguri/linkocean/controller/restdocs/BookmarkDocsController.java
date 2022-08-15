@@ -1,8 +1,11 @@
-package com.meoguri.linkocean.controller.bookmark;
+package com.meoguri.linkocean.controller.restdocs;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -12,12 +15,14 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
+import com.meoguri.linkocean.controller.bookmark.BookmarkController;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 
-class BookmarkControllerTest extends BaseControllerTest {
+public class BookmarkDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
@@ -30,7 +35,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 북마크_등록_Api_성공() throws Exception {
+	void 북마크_등록_api() throws Exception {
 
 		final String title = "title1";
 		final String memo = "memo";
@@ -49,7 +54,26 @@ class BookmarkControllerTest extends BaseControllerTest {
 			//then
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").exists())
-			.andDo(print());
+
+			//docs
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					requestFields(
+						fieldWithPath("url").description("북마크 url"),
+						fieldWithPath("title").optional().description("북마크 제목"),
+						fieldWithPath("memo").optional().description("북마크 메모"),
+						fieldWithPath("category").optional().description("북마크 카테고리"),
+						fieldWithPath("tags").optional().description("북마크 태그 목록"),
+						fieldWithPath("openType").description("북마크 공개 여부")
+					),
+					responseFields(
+						fieldWithPath("id").description("북마크 ID")
+					)
+				)
+			);
 	}
 
 	@Test
@@ -66,98 +90,60 @@ class BookmarkControllerTest extends BaseControllerTest {
 		final UpdateBookmarkRequest updateBookmarkRequest = new UpdateBookmarkRequest(updateTitle, updateMemo,
 			updateCategory, updateOpenType, updateTags);
 		//when
-		mockMvc.perform(put(basePath + "/" + bookmarkId)
+		mockMvc.perform(put(basePath + "/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(updateBookmarkRequest)))
 
 			//then
 			.andExpect(status().isOk())
-			.andDo(print());
 
-		// 수정한 북마크 조회
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.bookmarkId").value(bookmarkId),
-				jsonPath("$.title").value(updateTitle),
-				jsonPath("$.url").value("https://www.naver.com"),
-				jsonPath("$.imageUrl").exists(),
-				jsonPath("$.category").value(updateCategory),
-				jsonPath("$.memo").value(updateMemo),
-				jsonPath("$.openType").value(updateOpenType),
-				jsonPath("$.isFavorite").value(false),
-				jsonPath("$.updatedAt").exists(),
-				jsonPath("$.tags", hasItems("Spring", "React", "LinkOcean")),
-				jsonPath("$.reactionCount.LIKE").value(0),
-				jsonPath("$.reactionCount.HATE").value(0),
-				jsonPath("$.reaction.LIKE").value(false),
-				jsonPath("$.reaction.HATE").value(false),
-				jsonPath("$.profile.profileId").value(profileId),
-				jsonPath("$.profile.username").value("hani"),
-				jsonPath("$.profile.imageUrl").value(nullValue()),
-				jsonPath("$.profile.isFollow").value(false)
-			).andDo(print());
+			//docs
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					pathParameters(
+						parameterWithName("bookmarkId").description("북마크 ID")
+					),
+					requestFields(
+						fieldWithPath("title").optional().description("북마크 제목"),
+						fieldWithPath("memo").optional().description("북마크 메모"),
+						fieldWithPath("category").optional().description("북마크 카테고리"),
+						fieldWithPath("tags").optional().description("북마크 태그 목록"),
+						fieldWithPath("openType").description("북마크 공개 여부")
+					)
+				)
+			);
 	}
 
 	@Test
-	void 북마크_삭제_Api_성공() throws Exception {
+	void 북마크_삭제_api() throws Exception {
 
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
 
 		// 북마크 삭제
 		//when
-		mockMvc.perform(delete(basePath + "/" + bookmarkId)
+		mockMvc.perform(RestDocumentationRequestBuilders.delete(basePath + "/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
 
 			//then
 			.andExpect(status().isOk())
-			.andDo(print());
 
-		// 삭제한 북마크 조회
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpect(status().isBadRequest());
-	}
+			//docs
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					pathParameters(
+						parameterWithName("bookmarkId").description("북마크 ID")
+					)
+				)
+			);
 
-	@Test
-	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
-		//given
-		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"),
-			"title", "IT", List.of("good", "spring"), "all");
-
-		//when
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.bookmarkId").value(bookmarkId),
-				jsonPath("$.title").value("title"),
-				jsonPath("$.url").value("https://www.naver.com"),
-				jsonPath("$.imageUrl").exists(),
-				jsonPath("$.category").value("IT"),
-				jsonPath("$.memo").value("memo"),
-				jsonPath("$.openType").value("all"),
-				jsonPath("$.isFavorite").value(false),
-				jsonPath("$.updatedAt").exists(),
-				jsonPath("$.tags", hasItems("good", "spring")),
-				jsonPath("$.reactionCount.LIKE").value(0),
-				jsonPath("$.reactionCount.HATE").value(0),
-				jsonPath("$.reaction.LIKE").value(false),
-				jsonPath("$.reaction.HATE").value(false),
-				jsonPath("$.profile.profileId").value(profileId),
-				jsonPath("$.profile.username").value("hani"),
-				jsonPath("$.profile.imageUrl").value(nullValue()),
-				jsonPath("$.profile.isFollow").value(false)
-			).andDo(print());
 	}
 
 	@Nested
@@ -248,23 +234,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void Url_중복확인_성공_새로운_url() throws Exception {
-		//given <- ?!?!?
-		final String locationHeader = "Location";
-
-		//when
-		mockMvc.perform(get(basePath + "?url=https://www.google.com")
-				.header(AUTHORIZATION, token)
-				.accept(APPLICATION_JSON))
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.isDuplicateUrl").value(false)
-			).andDo(print());
-	}
-
-	@Test
-	void Url_중복확인_성공_이미있는_url() throws Exception {
+	void url_중복확인_url() throws Exception {
 		//given
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title1", "IT", List.of("공부"), "all");
 		final String expectedLocationHeader = "api/v1/bookmarks/" + bookmarkId;
@@ -281,7 +251,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Nested
-	class 다른_유저_북마크_목록_조회_테스트 {
+	class 다른_사람_북마크_목록_조회_api {
 
 		private long bookmarkId1;
 		private long bookmarkId2;
@@ -307,22 +277,6 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회() throws Exception {
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(2),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[0].openType").value("all"),
-					jsonPath("$.bookmarks[1].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[1].openType").value("all"))
-				.andDo(print());
-		}
-
-		@Test
 		void 팔로우_유저_북마크_목록_조회() throws Exception {
 			//given
 			팔로우(otherProfileId);
@@ -343,96 +297,10 @@ class BookmarkControllerTest extends BaseControllerTest {
 				.andDo(print());
 		}
 
-		@Test
-		void 모르는_유저_북마크_목록_조회_즐겨찾기_필터링() throws Exception {
-			//given
-			로그인("otherUser@gmail.com", "GOOGLE");
-			북마크_즐겨찾기(bookmarkId1);
-
-			로그인("crush@gmail.com", "GOOGLE");
-
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("favorite", "true")
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[0].isFavorite").value(false), //사용자 기준 즐겨찾기 이므로 false가 맞다.
-					jsonPath("$.bookmarks[0].openType").value("all"));
-		}
-
-		@Test
-		void 모르는_유저_북마크_목록_조회_카테고리_필터링() throws Exception {
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("category", "IT")
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[0].category").value("IT"));
-		}
-
-		@Test
-		void 모르는_유저_북마크_목록_조회_태그로_필터링() throws Exception {
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("tags", "머구리")
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[0].tags[0]").value("머구리"));
-		}
-
-		@Test
-		void 모르는_유저_북마크_목록_조회_제목으로_필터링() throws Exception {
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("searchTitle", "1")
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[0].title").value("title1"));
-		}
-
-		@Test
-		void 모르는_유저_북마크_목록_조회_좋아요_순으로_정렬() throws Exception {
-			//given
-			북마크_좋아요(bookmarkId1);
-
-			//when then
-			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("order", "like")
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.totalCount").value(2),
-					jsonPath("$.bookmarks[0].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[0].likeCount").value(1),
-					jsonPath("$.bookmarks[1].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[1].likeCount").value(0));
-		}
 	}
 
 	@Nested
 	class 피드_북마크_조회 {
-
-		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
-		// bookmark4 all,    		bookmark7 all, 		bookmark10 all
-		// bookmark5 partial,		bookmark8 partial	bookmark11 partial
-		// bookmark6 private,       bookmark9 private   bookmark12 private
 
 		private long bookmarkId4;
 		private long bookmarkId5;
@@ -525,5 +393,4 @@ class BookmarkControllerTest extends BaseControllerTest {
 				).andDo(print());
 		}
 	}
-
 }
