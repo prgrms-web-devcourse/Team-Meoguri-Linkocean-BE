@@ -1,7 +1,10 @@
 # Team-Meoguri-Linkocean-BE
 
 <p align="center">
-  <img src="images/logo.png" alt="drawing"/>
+  <img src="images/Small_Logo.png" alt="drawing"/>
+</p>
+<p align="center">
+  <img src="images/logo2.png" alt="drawing"/>
 </p>
 
 ## 프로젝트 소개
