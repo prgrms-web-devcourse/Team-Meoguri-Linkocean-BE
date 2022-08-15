@@ -97,15 +97,14 @@ public class NotificationDocsController extends RestDocsTestSupport {
 						fieldWithPath("hasNext").optional().description("프로필 리스트"),
 						fieldWithPath("notifications[]").optional().description("프로필 리스트"),
 						fieldWithPath("notifications[].type").description("프로필 ID"),
-						fieldWithPath("notifications[].info").description("유저 이름"),
-						fieldWithPath("notifications[].info").description("유저 이름"),
-						fieldWithPath("notifications[].info.bookmark").description("유저 이름"),
-						fieldWithPath("notifications[].info.bookmark.id").description("유저 이름"),
-						fieldWithPath("notifications[].info.bookmark.title").description("유저 이름"),
-						fieldWithPath("notifications[].info.bookmark.link").description("유저 이름"),
-						fieldWithPath("notifications[].info.sender").description("유저 이름"),
-						fieldWithPath("notifications[].info.sender.id").description("유저 이름"),
-						fieldWithPath("notifications[].info.sender.username").description("유저 이름")
+						fieldWithPath("notifications[].info").description("알림 정보"),
+						fieldWithPath("notifications[].info.bookmark").description("알림 정보 - 북마크"),
+						fieldWithPath("notifications[].info.bookmark.id").description("알림 정보 - 북마크 ID"),
+						fieldWithPath("notifications[].info.bookmark.title").description("알림 정보 - 북마크 제목"),
+						fieldWithPath("notifications[].info.bookmark.link").description("알림 정보 - 북마크 링크"),
+						fieldWithPath("notifications[].info.sender").description("알림 정보 - 송신자"),
+						fieldWithPath("notifications[].info.sender.id").description("알림 정보 - 송신자 프로필 ID"),
+						fieldWithPath("notifications[].info.sender.username").description("알림 정보 - 송신자 유저 이름")
 					)
 				)
 			);
