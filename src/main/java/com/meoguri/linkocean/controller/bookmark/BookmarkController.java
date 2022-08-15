@@ -41,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class BookmarkController {
 
+	private static final String BOOKMARKS = "bookmarks";
+
 	private final BookmarkService bookmarkService;
 
 	/* 북마크 등록 */
@@ -87,7 +89,7 @@ public class BookmarkController {
 		final List<GetBookmarksResponse> response = result.get()
 			.map(GetBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of("bookmarks", response, result.getTotalElements());
+		return PageResponse.of(BOOKMARKS, response, result.getTotalElements());
 	}
 
 	/**
@@ -115,7 +117,7 @@ public class BookmarkController {
 		final List<GetFeedBookmarksResponse> response = result.get()
 			.map(GetFeedBookmarksResponse::of)
 			.collect(toList());
-		return PageResponse.of("bookmarks", response, result.getTotalElements());
+		return PageResponse.of(BOOKMARKS, response, result.getTotalElements());
 	}
 
 	/* 북마크 상세 조회 */
@@ -144,6 +146,20 @@ public class BookmarkController {
 		final @PathVariable long bookmarkId
 	) {
 		bookmarkService.removeBookmark(user.getProfileId(), bookmarkId);
+	}
+
+	/* 북마크 공유 알림 */
+	@PostMapping("/{bookmarkId}/share")
+	public void shareNotification(
+		final @AuthenticationPrincipal SecurityUser user,
+		final @RequestBody Map<String, Long> request,
+		final @PathVariable Long bookmarkId
+	) {
+		bookmarkService.shareNotification(
+			user.getProfileId(),
+			request.get("targetId"),
+			bookmarkId
+		);
 	}
 
 	/* 중복 url 확인 */

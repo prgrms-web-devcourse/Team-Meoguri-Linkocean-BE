@@ -1,8 +1,10 @@
-package com.meoguri.linkocean.controller.linkmetadata;
+package com.meoguri.linkocean.controller.restdocs;
 
 import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -11,9 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
+import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 
-class LinkMetadataControllerTest extends BaseControllerTest {
+public class LinkMetadataDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LinkMetadataController.class);
 
@@ -36,8 +39,21 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 			//then
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.title").exists())
-			.andDo(print());
+
+			//docs
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					requestParameters(
+						parameterWithName("link").description("url 링크")
+					),
+					responseFields(
+						fieldWithPath("title").optional().description("링크 메타데이터 제목")
+					)
+				)
+			);
 
 	}
-
 }

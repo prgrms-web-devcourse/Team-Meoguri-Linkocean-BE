@@ -15,5 +15,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 	Optional<Profile> findByUserId(long userId);
 
 	boolean existsByUsername(String username);
+
+	@Query("select count(p) > 0 "
+		+ "from Profile p "
+		+ "where p.username = :updateUsername "
+		+ "and not p.id = :profileId")
+	boolean existsByUsernameExceptMe(String updateUsername, long profileId);
 }
 

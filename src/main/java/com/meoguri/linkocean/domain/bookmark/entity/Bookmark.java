@@ -148,4 +148,8 @@ public class Bookmark extends BaseIdEntity {
 	public boolean isWrittenBy(final Profile profile) {
 		return this.profile.equals(profile);
 	}
+
+	public boolean isOpenTypeAll() {
+		return this.openType.equals(OpenType.ALL);
+	}
 }

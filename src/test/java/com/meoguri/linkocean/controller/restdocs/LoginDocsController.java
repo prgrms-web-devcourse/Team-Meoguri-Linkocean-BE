@@ -1,6 +1,8 @@
-package com.meoguri.linkocean.controller.user;
+package com.meoguri.linkocean.controller.restdocs;
 
 import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -11,14 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 
-class LoginControllerTest extends RestDocsTestSupport {
+public class LoginDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);
 
 	@Test
-	void 로그인_성공_Api() throws Exception {
+	void 로그인_api() throws Exception {
 		//given
 		final String email = "jk05018@naver.com";
 		final String oauthType = "NAVER";
@@ -32,17 +35,25 @@ class LoginControllerTest extends RestDocsTestSupport {
 
 			//then
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.token").exists());
+			.andExpect(jsonPath("$.token").exists())
 
-		// docs
-		// .andDo(
-		// 	restDocs.document()
-		// )
+			//docs
+			.andDo(
+				restDocs.document(
+					requestFields(
+						fieldWithPath("email").description("이메일"),
+						fieldWithPath("oauthType").description("소셜 타입[GOOGLE, NAVER, KAKAO]")
+					),
+					responseFields(
+						fieldWithPath("token").description("jwt 토큰")
+					)
+				)
+			);
 
 	}
 
 	@Test
-	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_true() throws Exception {
+	void 로그인_성공_api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
@@ -55,25 +66,19 @@ class LoginControllerTest extends RestDocsTestSupport {
 			//then
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.hasProfile").value(true))
-			.andDo(print());
+			.andDo(print())
+
+			//docs
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					responseFields(
+						fieldWithPath("hasProfile").description("이메일")
+					)
+				)
+			);
 
 	}
-
-	@Test
-	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_false() throws Exception {
-		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
-
-		//when
-		mockMvc.perform(get(basePath + "/success")
-				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON))
-
-			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.hasProfile").value(false))
-			.andDo(print());
-
-	}
-
 }

@@ -87,11 +87,18 @@ public class ProfileServiceImpl implements ProfileService {
 	@Transactional
 	@Override
 	public void updateProfile(final UpdateProfileCommand command) {
+		final long profileId = command.getProfileId();
+		final String updateUsername = command.getUsername();
+
 		/* 프로필 조회 */
-		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
+		final Profile profile = findProfileByIdQuery.findById(profileId);
+
+		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
+		final boolean exists = profileRepository.existsByUsernameExceptMe(updateUsername, profileId);
+		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 업데이트 */
-		profile.update(command.getUsername(), command.getBio(), command.getImage());
+		profile.update(updateUsername, command.getBio(), command.getImage());
 
 		/* 선호 카테고리 업데이트 */
 		profile.updateFavoriteCategories(command.getCategories());

@@ -83,7 +83,7 @@ class ReactionRepositoryTest {
 		em.clear();
 
 		//when
-		reactionRepository.deleteByProfileAndBookmarkAndType(profile, bookmark, ReactionType.LIKE);
+		reactionRepository.deleteByProfileAndBookmark(profile, bookmark);
 		em.flush();
 		em.clear();
 

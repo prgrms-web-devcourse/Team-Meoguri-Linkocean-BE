@@ -2,7 +2,6 @@ package com.meoguri.linkocean.util;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -88,27 +87,6 @@ public abstract class Querydsl4RepositorySupport {
 
 	protected <T> JPAQuery<T> selectFrom(EntityPath<T> from) {
 		return getQueryFactory().selectFrom(from);
-	}
-
-	protected <T> Page<T> applyPagination(
-		Pageable pageable,
-		Function<JPAQueryFactory, JPAQuery<T>> contentQuery,
-		Consumer<T> lazyLoader
-	) {
-		return applyPagination(pageable, contentQuery, lazyLoader, contentQuery);
-	}
-
-	protected <T> Page<T> applyPagination(
-		Pageable pageable,
-		Function<JPAQueryFactory, JPAQuery<T>> contentQuery,
-		Consumer<T> lazyLoader,
-		Function<JPAQueryFactory, JPAQuery<T>> countQuery
-	) {
-		JPAQuery<T> jpaContentQuery = contentQuery.apply(getQueryFactory());
-		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
-		content.forEach(lazyLoader);
-		JPAQuery<T> jpaCountQuery = countQuery.apply(getQueryFactory());
-		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
 	}
 
 	protected <T> Page<T> applyPagination(

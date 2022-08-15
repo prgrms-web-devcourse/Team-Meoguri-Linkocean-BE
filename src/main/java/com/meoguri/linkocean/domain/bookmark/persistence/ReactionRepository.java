@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Tuple;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -17,10 +18,9 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
-	void deleteByProfileAndBookmarkAndType(Profile profile, Bookmark bookmark, ReactionType type);
-
-	/* TODO - 리팩터링 제거 대상입니당, 항상 LIKE 로만 호출 되는데 ReactionType 을 받는 점이 아쉽네용 */
-	long countReactionByBookmarkAndType(Bookmark bookmark, ReactionType reactionType);
+	@Modifying(clearAutomatically = true)
+	@Query("delete from Reaction r where r.profile = :profile and r.bookmark = :bookmark")
+	void deleteByProfileAndBookmark(Profile profile, Bookmark bookmark);
 
 	Optional<Reaction> findByProfile_idAndBookmark(long profileId, Bookmark bookmark);
 
@@ -38,4 +38,8 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 				tuple -> ((long)tuple.get("cnt")))
 			);
 	}
+
+	@Modifying(clearAutomatically = true)
+	@Query("update Reaction r set r.type = :type where r.profile = :profile and r.bookmark = :bookmark")
+	void updateReaction(Profile profile, Bookmark bookmark, ReactionType type);
 }
