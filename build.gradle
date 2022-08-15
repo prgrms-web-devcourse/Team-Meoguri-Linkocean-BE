@@ -149,8 +149,8 @@ task copyDev(type: Copy) {
 }
 
 tasks.named('asciidoctor') {
-    inputs.dir snippetsDir
     dependsOn test
+    inputs.dir snippetsDir
 }
 
 build {
