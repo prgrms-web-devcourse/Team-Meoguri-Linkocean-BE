@@ -80,9 +80,6 @@ public class FavoriteDocsController extends RestDocsTestSupport {
 					requestHeaders(
 						headerWithName(AUTHORIZATION).description("인증 토큰")
 					),
-					requestParameters(
-						parameterWithName("")
-					),
 					pathParameters(
 						parameterWithName("bookmarkId").description("북마크 ID")
 					)
