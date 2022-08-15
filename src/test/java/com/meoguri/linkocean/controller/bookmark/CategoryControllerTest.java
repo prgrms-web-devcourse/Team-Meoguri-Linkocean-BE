@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.BaseControllerTest;
+import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
 class CategoryControllerTest extends BaseControllerTest {
 

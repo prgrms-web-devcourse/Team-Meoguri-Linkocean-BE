@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.bookmark.service;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
@@ -15,7 +15,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,6 @@ public class TagServiceImpl implements TagService {
 
 	private final TagRepository tagRepository;
 	private final BookmarkRepository bookmarkRepository;
-
-	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Transactional
 	@Override

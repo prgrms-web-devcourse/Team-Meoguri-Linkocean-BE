@@ -29,9 +29,9 @@ import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
+import com.meoguri.linkocean.domain.bookmark.service.TagService;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
@@ -55,7 +55,7 @@ public class ProfileController {
 
 	/* 프로필 등록 */
 	@PostMapping
-	public Map<String, Object> createProfile(
+	public Map<String, Object> registerProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestBody CreateProfileRequest request
 	) {
@@ -83,9 +83,9 @@ public class ProfileController {
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
 
-	/* 내 프로필 수정 */
+	/* 프로필 수정 */
 	@PutMapping("/me")
-	public void updateMyProfile(
+	public void updateProfile(
 		@AuthenticationPrincipal SecurityUser user,
 		@ModelAttribute UpdateProfileRequest request,
 		@RequestPart(required = false, name = "image") MultipartFile profileImage

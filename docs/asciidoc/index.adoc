@@ -1,0 +1,14 @@
+= LinkOcean
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+include::LOGIN-API.adoc[]
+include::PROFILE_API.adoc[]
+include::FOLLOW-API.adoc[]
+include::NOTIFICATION-API.adoc[]
+include::LINKMETADATA-API.adoc[]

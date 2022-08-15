@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.controller.BaseControllerTest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
+import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
 class FollowControllerTest extends BaseControllerTest {
 

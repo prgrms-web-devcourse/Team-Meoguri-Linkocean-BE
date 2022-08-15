@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -62,4 +63,13 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(Profile profile);
+
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount + 1 WHERE b.id = :bookmarkId")
+	int addLikeCount(long bookmarkId);
+
+
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount - 1 WHERE b.id = :bookmarkId")
+	int subtractLikeCount(long bookmarkId);
 }

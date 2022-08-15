@@ -30,11 +30,12 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
+import com.meoguri.linkocean.domain.notification.service.NotificationService;
+import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 public class BookmarkServiceImpl implements BookmarkService {
 
 	private final TagService tagService;
+	private final NotificationService notificationService;
 
 	private final BookmarkRepository bookmarkRepository;
 
@@ -203,6 +205,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return toResultPage(bookmarkPage, isFavorites, isFollows, currentUserProfileId, pageable);
 	}
 
+	/* 북마크 공유 알림 */
+	@Transactional
+	@Override
+	public void shareNotification(final long profileId, final long targetId, final long bookmarkId) {
+
+		final ShareNotificationCommand command = new ShareNotificationCommand(profileId, targetId, bookmarkId);
+		notificationService.shareNotification(command);
+	}
+
 	@Override
 	public Optional<Long> getBookmarkIdIfExist(final long profileId, final String url) {
 		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
@@ -307,4 +318,13 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
+	@Override
+	public int addLikeCount(long bookmarkId) {
+		return bookmarkRepository.addLikeCount(bookmarkId);
+	}
+
+	@Override
+	public int subtractLikeCount(long bookmarkId) {
+		return bookmarkRepository.subtractLikeCount(bookmarkId);
+	}
 }
