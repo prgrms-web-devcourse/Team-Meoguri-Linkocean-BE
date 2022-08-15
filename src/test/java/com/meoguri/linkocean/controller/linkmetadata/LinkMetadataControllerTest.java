@@ -6,10 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
@@ -24,20 +24,16 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 
 		final String link = "http://www.naver.com";
-		//when
-		mockMvc.perform(post(UriComponentsBuilder.fromUriString(basePath)
-				.pathSegment("obtain")
-				.queryParam("link", link)
-				.build()
-				.toUri())
-				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON))
+		final Map<String, String> request = Map.of("url", link);
 
-			//then
+		//when
+		mockMvc.perform(post(basePath + "/obtain")
+				.header(AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createJson(request)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.title").exists())
 			.andDo(print());
-
 	}
 
 }
