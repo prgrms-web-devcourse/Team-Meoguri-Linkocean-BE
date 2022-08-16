@@ -38,19 +38,4 @@ public final class Link {
 	public static String toString(final Link link) {
 		return link.getLink();
 	}
-
-	@Deprecated
-	private String removeSchemaAndWwwIfExists(final String link) {
-		return link.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "");
-	}
-
-	@Deprecated
-	public String getFullLink() {
-		return "https://www." + this.link;
-	}
-
-	@Deprecated
-	public String getSavedLink() {
-		return this.link;
-	}
 }
