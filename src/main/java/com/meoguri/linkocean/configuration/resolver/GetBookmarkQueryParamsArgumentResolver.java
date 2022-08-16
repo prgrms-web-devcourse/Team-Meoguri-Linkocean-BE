@@ -3,7 +3,6 @@ package com.meoguri.linkocean.configuration.resolver;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
-import static org.apache.commons.lang3.math.NumberUtils.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgumentResolver {
 
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 8;
-	private static final String DEFAULT_ORDER = "upload";
-
 	@Override
 	public boolean supportsParameter(final MethodParameter parameter) {
 		return GetBookmarkQueryParams.class.isAssignableFrom(parameter.getParameterType());
@@ -45,17 +40,10 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 		final String follow = webRequest.getParameter("follow");
 		final String tags = webRequest.getParameter("tags");
 
-		final String orderBy = order == null ? DEFAULT_ORDER : order;
-		final List<String> orderProperties =
-			orderBy.equals(DEFAULT_ORDER) ? List.of(DEFAULT_ORDER) : List.of(order, DEFAULT_ORDER);
-
 		log.info("bookmark 조회 요청 : page : {}, size : {}, order : {}, category : {}, "
 				+ "searchTitle : {}, favorite : {}, follow : {}, tags : {}",
 			page, size, order, category, searchTitle, favorite, follow, tags);
 		return new GetBookmarkQueryParams(
-			toInt(page, DEFAULT_PAGE),
-			toInt(size, DEFAULT_SIZE),
-			orderProperties,
 			Category.of(category),
 			searchTitle,
 			toBoolean(favorite),

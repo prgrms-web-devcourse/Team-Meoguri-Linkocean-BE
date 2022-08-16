@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,9 +59,10 @@ public class BookmarkController {
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
-		return getByTargetProfileId(user, user.getProfileId(), queryParams);
+		return getByTargetProfileId(user, user.getProfileId(), queryParams, pageable);
 	}
 
 	/**
@@ -71,7 +73,8 @@ public class BookmarkController {
 	public PageResponse<GetBookmarksResponse> getByTargetProfileId(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable("profileId") long targetProfileId,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
 		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
@@ -83,7 +86,7 @@ public class BookmarkController {
 				queryParams.isFollow(),
 				queryParams.getTitle()
 			),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetBookmarksResponse> response = result.get()
@@ -99,7 +102,8 @@ public class BookmarkController {
 	@GetMapping("/feed")
 	public PageResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
 			new BookmarkFindCond(
@@ -111,7 +115,7 @@ public class BookmarkController {
 				queryParams.isFollow(),
 				queryParams.getTitle()
 			),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetFeedBookmarksResponse> response = result.get()

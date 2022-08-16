@@ -34,6 +34,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		/* set default pageable as Page request [number:0, size 8, sort: id: DESC] */
 		SortHandlerMethodArgumentResolver sortArgumentResolver = new SortHandlerMethodArgumentResolver();
 		sortArgumentResolver.setFallbackSort(Sort.by(Sort.Direction.DESC, ID));
+		sortArgumentResolver.setSortParameter("order");
 
 		PageableHandlerMethodArgumentResolver resolver =
 			new PageableHandlerMethodArgumentResolver(sortArgumentResolver);

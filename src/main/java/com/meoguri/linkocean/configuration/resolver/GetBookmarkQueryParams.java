@@ -2,10 +2,6 @@ package com.meoguri.linkocean.configuration.resolver;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
 import lombok.Getter;
@@ -15,20 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class GetBookmarkQueryParams {
 
-	/* 페이징 정보 */
-	private final int page;
-	private final int size;
-	private final List<String> orderProperties;
-
-	/* 필터링 정보 */
 	private final Category category;
 	private final String title;
 	private final boolean favorite;
 	private final boolean follow;
 	private final List<String> tags;
-
-	public Pageable toPageable() {
-		/* PageRequest 는 0 부터 페이지를 세기 때문에 조정해줌 */
-		return PageRequest.of(page - 1, this.size, Sort.by(orderProperties.toArray(new String[0])));
-	}
 }

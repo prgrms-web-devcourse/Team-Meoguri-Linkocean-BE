@@ -185,19 +185,27 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private List<OrderSpecifier<?>> toBookmarkOrderSpecifiers(Pageable pageable) {
-		final Order direction = Order.DESC;
 		final List<OrderSpecifier<?>> result = new ArrayList<>();
 
 		for (Sort.Order order : pageable.getSort()) {
-			switch (order.getProperty()) {
-				case "like":
-					result.add(new OrderSpecifier<>(direction, bookmark.likeCount));
-					break;
-				case "upload":
-					result.add(new OrderSpecifier<>(direction, bookmark.createdAt));
-					break;
+			final String property = order.getProperty();
+			if ("like".equals(property)) {
+				/* 좋아요 숫자 내림 차순 정렬 */
+				result.add(new OrderSpecifier<>(Order.DESC, bookmark.likeCount));
+			} else if ("upload".equals(property)) {
+				/* 생성일시 내림 차순 정렬 */
+				result.add(new OrderSpecifier<>(Order.DESC, bookmark.createdAt));
 			}
 		}
+
+		/* 생성일시 내림 차순 정렬이 적용되지 않았다면 적용 */
+		final boolean containsCreatedAtOrderSpecifier = result.stream()
+			.map(OrderSpecifier::getTarget)
+			.anyMatch(t -> t.equals(bookmark.createdAt));
+		if (!containsCreatedAtOrderSpecifier) {
+			result.add(new OrderSpecifier<>(Order.DESC, bookmark.createdAt));
+		}
+
 		return result;
 	}
 }
