@@ -25,7 +25,7 @@ public final class GetDetailedBookmarkResult {
 	private final Category category;
 	private final String memo;
 	private final OpenType openType;
-	private final LocalDateTime updatedAt;
+	private final LocalDateTime createdAt;
 
 	private final boolean isFavorite;
 	private final List<String> tags;

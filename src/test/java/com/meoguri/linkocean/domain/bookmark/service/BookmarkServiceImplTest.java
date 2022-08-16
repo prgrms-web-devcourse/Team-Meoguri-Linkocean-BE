@@ -366,7 +366,7 @@ class BookmarkServiceImplTest {
 				GetDetailedBookmarkResult::getMemo,
 				GetDetailedBookmarkResult::getOpenType,
 				GetDetailedBookmarkResult::isFavorite,
-				GetDetailedBookmarkResult::getUpdatedAt
+				GetDetailedBookmarkResult::getCreatedAt
 			).containsExactly(
 				bookmark.getTitle(),
 				bookmark.getUrl(),
@@ -375,7 +375,7 @@ class BookmarkServiceImplTest {
 				bookmark.getMemo(),
 				bookmark.getOpenType(),
 				false,
-				bookmark.getUpdatedAt()
+				bookmark.getCreatedAt()
 			);
 			assertThat(result.getTags())
 				.contains("tag1");
@@ -427,7 +427,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_조회_실패_존재하지_않는_북마크() {
 			//given
-			final long invalidBookmarkId = 10L;
+			final long invalidBookmarkId = -1L;
 
 			//when then
 			assertThatLinkoceanRuntimeException()
