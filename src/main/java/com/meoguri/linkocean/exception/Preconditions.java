@@ -43,6 +43,13 @@ public final class Preconditions {
 		}
 	}
 
+	public static void checkUniqueConstraintIllegalCommand(final Optional<? extends BaseIdEntity> target,
+		final String errorMessage) {
+		if (target.isPresent()) {
+			throw new LinkoceanRuntimeException(String.format("%s id: %d", errorMessage, target.get().getId()));
+		}
+	}
+
 	public static void checkState(final boolean expression, final String errorMessage) {
 		if (!expression) {
 			throw new IllegalStateException(errorMessage);

@@ -30,8 +30,8 @@ public class FollowServiceImpl implements FollowService {
 		final Profile followee = findProfileByIdQuery.findById(targetProfileId);
 
 		final Optional<Follow> oFollow = followRepository.findByProfiles(follower, followee);
-		checkUniqueConstraint(oFollow,
-			format("illegal unfollow command of profileId: %d on targetProfileId: %d", profileId, targetProfileId));
+		checkUniqueConstraintIllegalCommand(oFollow,
+			format("illegal follow command of profileId: %d on targetProfileId: %d", profileId, targetProfileId));
 
 		followRepository.save(new Follow(follower, followee));
 	}
