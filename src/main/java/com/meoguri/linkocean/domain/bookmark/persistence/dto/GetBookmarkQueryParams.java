@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.configuration.resolver;
+package com.meoguri.linkocean.domain.bookmark.persistence.dto;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 public final class GetBookmarkQueryParams {
 
 	private final Category category;
-	private final String title;
-	private final boolean favorite;
-	private final boolean follow;
+	private final String searchTitle;
+	private final Boolean favorite;
+	private final Boolean follow;
 	private final List<String> tags;
 }

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
@@ -31,6 +30,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.GetBookmarkQueryParams;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -81,10 +81,10 @@ public class BookmarkController {
 				user.getProfileId(),
 				targetProfileId,
 				queryParams.getCategory(),
-				queryParams.isFavorite(),
+				queryParams.getFavorite(),
 				queryParams.getTags(),
-				queryParams.isFollow(),
-				queryParams.getTitle()
+				queryParams.getFollow(),
+				queryParams.getSearchTitle()
 			),
 			pageable
 		);
@@ -110,10 +110,10 @@ public class BookmarkController {
 				user.getProfileId(),
 				null, // 대상이 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
-				queryParams.isFavorite(),
+				queryParams.getFavorite(),
 				queryParams.getTags(),
-				queryParams.isFollow(),
-				queryParams.getTitle()
+				queryParams.getFollow(),
+				queryParams.getSearchTitle()
 			),
 			pageable
 		);

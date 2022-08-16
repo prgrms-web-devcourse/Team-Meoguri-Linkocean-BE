@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
+import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
 		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
-		final boolean isFavorite = findCond.isFavorite();
+		final boolean isFavorite = toBoolean(findCond.getFavorite());
 		final List<String> tags = findCond.getTags();
 		final String title = findCond.getTitle();
 		final OpenType openType = findCond.getOpenType();
@@ -60,7 +61,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
 
 		/* 즐겨찾기 요청이라면 작성자 id 기준 필터링이 없다 */
-		final Long writerId = isFavorite ? null : targetProfileId;
+		final Long writerId = toBoolean(isFavorite) ? null : targetProfileId;
 		return applyPagination(
 			convertBookmarkSort(pageable),
 			base.where(
@@ -80,8 +81,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Category category = findCond.getCategory();
 		final String title = findCond.getTitle();
-		final boolean isFavorite = findCond.isFavorite();
-		final boolean isFollow = findCond.isFollow();
+		final boolean isFavorite = toBoolean(findCond.getFavorite());
+		final boolean isFollow = toBoolean(findCond.getFollow());
 		final List<String> tags = findCond.getTags();
 
 		JPAQuery<Bookmark> base = selectFrom(bookmark)
