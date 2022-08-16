@@ -5,7 +5,6 @@ import static java.lang.String.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
@@ -23,17 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
-	private final JwtProvider jwtProvider;
 
 	@Transactional
 	@Override
-	public String getOrSaveAndRetrieveToken(final Email email, final OAuthType oAuthType) {
+	public void saveIfNotExists(final Email email, final OAuthType oAuthType) {
 		userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
 				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
 				return userRepository.save(new User(email, oAuthType));
 			});
-		return jwtProvider.generate(email, oAuthType);
 	}
 
 	@Transactional

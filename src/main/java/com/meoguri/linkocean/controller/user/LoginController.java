@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
@@ -26,17 +27,18 @@ public class LoginController {
 	private final UserService userService;
 	private final ProfileService profileService;
 
+	private final JwtProvider jwtProvider;
+
 	/* 로그인 - 토큰을 반환한다 */
 	@PostMapping
 	public Map<String, Object> login(
 		@RequestBody LoginRequest request
 	) {
-		final String result = userService.getOrSaveAndRetrieveToken(
-			new Email(request.getEmail()),
-			OAuthType.of(request.getOauthType())
-		);
+		final Email email = new Email(request.getEmail());
+		final OAuthType oAuthType = OAuthType.of(request.getOauthType());
 
-		return Map.of("token", result);
+		userService.saveIfNotExists(email, oAuthType);
+		return Map.of("token", jwtProvider.generate(email, oAuthType));
 	}
 
 	/**
