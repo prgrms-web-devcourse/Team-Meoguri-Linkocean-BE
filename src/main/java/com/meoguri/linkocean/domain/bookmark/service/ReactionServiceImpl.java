@@ -71,6 +71,8 @@ public class ReactionServiceImpl implements ReactionService {
 				bookmarkService.addLikeCount(bookmarkId);
 			}
 		}
+
+		// bookmarkService.updateLikeCount()
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
