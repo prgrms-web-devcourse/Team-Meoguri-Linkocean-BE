@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 
 import lombok.RequiredArgsConstructor;
@@ -23,9 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public List<Category> getUsedCategories(final long profileId) {
-		final Profile writer = findProfileByIdQuery.findById(profileId);
-
-		return bookmarkRepository.findCategoryExistsBookmark(writer);
+		return bookmarkRepository.findCategoryExistsBookmark(profileId);
 	}
 
 }
