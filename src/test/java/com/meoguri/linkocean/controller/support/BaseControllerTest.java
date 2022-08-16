@@ -4,10 +4,12 @@ import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -188,6 +190,19 @@ public class BaseControllerTest {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.findAndRegisterModules();
 		return mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), GetDetailedBookmarkResponse.class);
+	}
+
+	protected void 북마크_공유(final long bookmarkId, final long targetProfileId) throws Exception {
+		final Map<String, Long> request = Map.of(
+			"targetId", targetProfileId
+		);
+
+		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}/share", bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON)
+				.content(createJson(request)))
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
