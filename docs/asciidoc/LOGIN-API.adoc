@@ -1,3 +1,6 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
 [[LOGIN-API]]
 == 로그인 API
 
@@ -5,8 +8,33 @@
 
 === 로그인
 
-operation::/login-docs-controller/로그인_api/[snippets='http-request,request-fields,http-response,response-fields']
+Request HTTP Example:
+
+include::{snippets}/login-docs-controller/로그인_api/http-request.adoc[]
+
+Request Fields:
+
+include::{snippets}/login-docs-controller/로그인_api/request-fields.adoc[]
+
+Response Http Example:
+
+include::{snippets}/login-docs-controller/로그인_api/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/login-docs-controller/로그인_api/response-fields.adoc[]
 
 === 로그인 성공
 
-operation::/login-docs-controller/로그인_성공_api/[snippets='http-request,http-response,response-fields']
+Request HTTP Example:
+
+include::{snippets}/login-docs-controller/로그인_성공_api/http-request.adoc[]
+
+Response Http Example:
+
+include::{snippets}/login-docs-controller/로그인_성공_api/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/login-docs-controller/로그인_성공_api/response-fields.adoc[]
+

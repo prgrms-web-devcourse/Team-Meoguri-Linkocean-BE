@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+
+[[CATEGORY-API]]
+== 카테고리 API
+
+'''
+
+=== 카테고리 목록 조회
+
+Request HTTP Example:
+
+include::{snippets}/category-docs-controller/카테고리_전체_조회_-api_성공/http-request.adoc[]
+
+Response Http Example:
+
+include::{snippets}/category-docs-controller/카테고리_전체_조회_-api_성공/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/category-docs-controller/카테고리_전체_조회_-api_성공/response-fields.adoc[]
+
