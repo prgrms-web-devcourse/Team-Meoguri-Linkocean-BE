@@ -20,7 +20,7 @@ public final class GetFeedBookmarksResponse {
 	private final String url;
 	private final String openType;
 	private final String category;
-	private final LocalDateTime updatedAt;
+	private final LocalDateTime createdAt;
 
 	private final long likeCount;
 	private final Boolean isFavorite;
@@ -51,7 +51,7 @@ public final class GetFeedBookmarksResponse {
 			result.getUrl(),
 			openType,
 			category,
-			result.getUpdatedAt(),
+			result.getCreatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),
 			result.isWriter(),

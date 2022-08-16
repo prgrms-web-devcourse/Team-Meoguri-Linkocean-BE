@@ -30,7 +30,7 @@ public final class GetDetailedBookmarkResponse {
 	private String openType;
 
 	private Boolean isFavorite;
-	private LocalDateTime updatedAt;
+	private LocalDateTime createdAt;
 	private List<String> tags;
 	private Map<Reaction.ReactionType, Long> reactionCount;
 	private Map<Reaction.ReactionType, Boolean> reaction;
@@ -50,7 +50,7 @@ public final class GetDetailedBookmarkResponse {
 			result.getMemo(),
 			openType,
 			result.isFavorite(),
-			result.getUpdatedAt(),
+			result.getCreatedAt(),
 			result.getTags(),
 			result.getReactionCount(),
 			result.getReaction(),

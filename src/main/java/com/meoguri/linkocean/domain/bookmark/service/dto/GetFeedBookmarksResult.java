@@ -21,7 +21,7 @@ public final class GetFeedBookmarksResult {
 	private final String url;
 	private final OpenType openType;
 	private final Category category;
-	private final LocalDateTime updatedAt;
+	private final LocalDateTime createdAt;
 
 	private final String image;
 	private final long likeCount;
