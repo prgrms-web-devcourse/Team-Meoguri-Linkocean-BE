@@ -7,6 +7,7 @@ import static org.springframework.util.StringUtils.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -96,12 +97,13 @@ public class ProfileController {
 
 	/**
 	 *  프로필 목록 조회 - 머구리 찾기
-	 *  - username은 필수다
+	 *  - username 은 필수다
 	 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetProfileQueryParams queryParams
+		final GetProfileQueryParams queryParams,
+		final Pageable pageable
 	) {
 		checkArgument(hasText(queryParams.getUsername()), "사용자 이름을 입력해 주세요");
 
@@ -110,7 +112,7 @@ public class ProfileController {
 			ProfileFindCond.builder()
 				.username(queryParams.getUsername())
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -125,7 +127,7 @@ public class ProfileController {
 	public SliceResponse<GetProfilesResponse> getFollowerProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId,
-		final GetProfileQueryParams queryParams
+		final Pageable pageable
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
@@ -133,7 +135,7 @@ public class ProfileController {
 				.profileId(profileId)
 				.follower(true)
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -148,7 +150,7 @@ public class ProfileController {
 	public SliceResponse<GetProfilesResponse> getFolloweeProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId,
-		final GetProfileQueryParams queryParams
+		final Pageable pageable
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
@@ -156,7 +158,7 @@ public class ProfileController {
 				.profileId(profileId)
 				.followee(true)
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
