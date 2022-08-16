@@ -1,16 +1,14 @@
 package com.meoguri.linkocean.controller.restdocs;
 
-import static org.apache.http.HttpHeaders.*;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -26,7 +24,7 @@ public class FavoriteDocsController extends RestDocsTestSupport {
 
 	@Test
 	void 즐겨찾기_추가_Api() throws Exception {
-		유저_등록_로그인("haha@gmail.com", "NAVER");
+		유저_등록_로그인("haha@gmail.com", NAVER);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("tag1", "tag2"), "all");
 
@@ -56,7 +54,7 @@ public class FavoriteDocsController extends RestDocsTestSupport {
 	void 즐겨찾기_취소_Api() throws Exception {
 
 		//given
-		유저_등록_로그인("haha@gmail.com", "NAVER");
+		유저_등록_로그인("haha@gmail.com", NAVER);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("tag1", "tag2"), "all");
 

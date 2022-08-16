@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -76,7 +77,7 @@ class FavoriteRepositoryTest {
 	@Test
 	void 여러_북마크에_대해_즐겨찾기_PK를_조회() {
 		//given
-		final User user = userRepository.save(createUser("crush@mail.com", "GOOGLE"));
+		final User user = userRepository.save(createUser("crush@mail.com", GOOGLE));
 		final Profile profile = profileRepository.save(createProfile(user, "crush"));
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 

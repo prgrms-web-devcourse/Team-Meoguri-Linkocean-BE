@@ -34,22 +34,19 @@ class UserServiceImplTest {
 	@Test
 	void 새로운_사용자_저장_성공() {
 		//given
-		final String email = "crush@github.com";
-		final String oAuthType = "GITHUB";
+		final Email email = new Email("crush@github.com");
+		final OAuthType oAuthType = OAuthType.GITHUB;
 
 		//when
 		final String token = userService.saveOrUpdate(email, oAuthType);
 
 		//then
-		final Optional<User> retrievedUser = userRepository.findByEmailAndOAuthType(new Email(email),
-			OAuthType.of(oAuthType));
-
+		final Optional<User> retrievedUser = userRepository.findByEmailAndOAuthType(email, oAuthType);
 		assertAll(
-			() -> assertThat(retrievedUser).isPresent(),
-			() -> assertThat(retrievedUser.get())
+			() -> assertThat(retrievedUser).isPresent().get()
 				.extracting(User::getEmail, User::getOauthType)
-				.containsExactly(new Email(email), OAuthType.of(oAuthType)),
-			() -> assertThat(jwtProvider.getClaims(token, Claims::getAudience)).isEqualTo(oAuthType)
+				.containsExactly(email, oAuthType),
+			() -> assertThat(jwtProvider.getClaims(token, Claims::getAudience)).isEqualTo(oAuthType.name())
 		);
 	}
 }

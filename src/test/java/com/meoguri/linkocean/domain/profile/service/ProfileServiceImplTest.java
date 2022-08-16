@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.profile.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -126,8 +127,8 @@ class ProfileServiceImplTest {
 		@Test
 		void 사용자_이름_중복_등록_실패() {
 			//given
-			final User user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
-			final User user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
+			final User user1 = userRepository.save(createUser("haha@gmail.com", GOOGLE));
+			final User user2 = userRepository.save(createUser("papa@gmail.com", GOOGLE));
 
 			final String username = "duplicated";
 			final RegisterProfileCommand command1 = new RegisterProfileCommand(user1.getId(), username, emptyList());
@@ -144,8 +145,8 @@ class ProfileServiceImplTest {
 	@Test
 	void 프로필_상세_조회_성공() {
 		//given
-		final User user1 = userRepository.save(new User("user1@gamil.com", "GOOGLE"));
-		final User user2 = userRepository.save(new User("user2@gamil.com", "GOOGLE"));
+		final User user1 = userRepository.save(createUser("user1@gamil.com", GOOGLE));
+		final User user2 = userRepository.save(createUser("user2@gamil.com", GOOGLE));
 
 		final long profileId1 = profileService.registerProfile(registerCommandOf(createProfile(user1, "user1")));
 		final long profileId2 = profileService.registerProfile(registerCommandOf(createProfile(user2, "user2")));
@@ -190,9 +191,9 @@ class ProfileServiceImplTest {
 		@BeforeEach
 		void setUp() {
 			// set up 3 users
-			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-			final User user2 = userRepository.save(new User("user2@naver.com", "NAVER"));
-			final User user3 = userRepository.save(new User("user3@kakao.com", "KAKAO"));
+			final User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
+			final User user2 = userRepository.save(createUser("user2@naver.com", NAVER));
+			final User user3 = userRepository.save(createUser("user3@kakao.com", KAKAO));
 
 			user1Id = user1.getId();
 			user2Id = user2.getId();

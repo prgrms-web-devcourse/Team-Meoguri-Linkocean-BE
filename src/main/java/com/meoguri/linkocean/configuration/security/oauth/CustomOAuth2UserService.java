@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.configuration.security.oauth;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -26,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+	private static final Set<SimpleGrantedAuthority> ROLE_USER = Collections.singleton(
+		new SimpleGrantedAuthority("ROLE_USER"));
+
 	private final UserRepository userRepository;
 	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
 
@@ -41,28 +46,25 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		log.info("CustomOAuth2UserService loadUser start");
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
-		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
-		final User user = userOf(attributes);
+		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		final SecurityOAuthType securityOAuthType = SecurityOAuthType.valueOf(registrationId.toUpperCase());
+
+		final Map<String, Object> attributes = oAuth2User.getAttributes();
+		final User user = getOrSaveUser(securityOAuthType, attributes);
 
 		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOauthType());
-		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-			attributes.getAttributes(),
-			"email"
-		);
+		return new DefaultOAuth2User(ROLE_USER, attributes, "email");
 	}
 
-	private User userOf(final OAuthAttributes attributes) {
-		return userRepository.findByEmailAndOAuthType(
-				new Email(attributes.getEmail()), OAuthType.of(attributes.getOAuthType()))
-			.orElseGet(() -> {
-				final User user = userRepository.save(attributes.toEntity());
+	private User getOrSaveUser(final SecurityOAuthType securityOAuthType, final Map<String, Object> attributes) {
+		final Email email = securityOAuthType.parseEmail(attributes);
+		final OAuthType oAuthType = securityOAuthType.getOAuthType();
 
-				log.info("new user save with email : {}, oauthType : {}",
-					Email.toString(user.getEmail()), user.getOauthType());
-				return user;
+		return userRepository.findByEmailAndOAuthType(email, oAuthType)
+			.orElseGet(() -> {
+				log.info("new user save with email : {}, oauthType : {}", Email.toString(email), oAuthType);
+				return userRepository.save(new User(email, oAuthType));
 			});
 	}
 }

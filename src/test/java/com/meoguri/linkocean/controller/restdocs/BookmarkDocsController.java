@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -29,7 +30,7 @@ public class BookmarkDocsController extends RestDocsTestSupport {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		profileId = 프로필_등록("hani", List.of("정치", "인문", "사회"));
 	}
 
@@ -245,10 +246,10 @@ public class BookmarkDocsController extends RestDocsTestSupport {
 	@Test
 	void 다른_사람_북마크_목록_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("crush@gmail.com", "GOOGLE");
+		유저_등록_로그인("crush@gmail.com", GOOGLE);
 		프로필_등록("crush", List.of("IT"));
 
-		유저_등록_로그인("otherUser@gmail.com", "GOOGLE");
+		유저_등록_로그인("otherUser@gmail.com", GOOGLE);
 		long otherProfileId = 프로필_등록("user1", List.of("IT"));
 
 		long bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
@@ -257,7 +258,7 @@ public class BookmarkDocsController extends RestDocsTestSupport {
 		북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
 		long bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
 
-		로그인("crush@gmail.com", "GOOGLE");
+		로그인("crush@gmail.com", GOOGLE);
 
 		팔로우(otherProfileId);
 
@@ -326,21 +327,21 @@ public class BookmarkDocsController extends RestDocsTestSupport {
 
 		@BeforeEach
 		void setUp() throws Exception {
-			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			유저_등록_로그인("user3@gmail.com", GOOGLE);
 			프로필_등록("user3", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 			bookmarkId10 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			유저_등록_로그인("user2@gmail.com", GOOGLE);
 			final long profileId2 = 프로필_등록("user2", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 			bookmarkId8 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 			bookmarkId7 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			유저_등록_로그인("user1@gmail.com", GOOGLE);
 			프로필_등록("user1", List.of("IT"));
 
 			bookmarkId6 = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");

@@ -27,17 +27,11 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public String saveOrUpdate(final String email, final String oAuthType) {
-		log.info("user save start email : {} ", email);
-		final Email emailField = new Email(email);
-		final OAuthType oAuthTypeField = OAuthType.of(oAuthType.toUpperCase());
-
-		userRepository.findByEmailAndOAuthType(emailField, oAuthTypeField)
+	public String saveOrUpdate(final Email email, final OAuthType oAuthType) {
+		userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
-				final User savedUser = userRepository.save(new User(email, oAuthType.toUpperCase()));
-				log.info("새로운 사용자 저장 email : {}, oauth type : {}",
-					Email.toString(savedUser.getEmail()), savedUser.getOauthType());
-				return savedUser;
+				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
+				return userRepository.save(new User(email, oAuthType));
 			});
 		return jwtProvider.generate(email, oAuthType);
 	}

@@ -15,15 +15,17 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 public final class Fixture {
 
 	public static User createUser() {
-		return createUser("haha@crush.com", "GOOGLE");
+		return createUser("haha@crush.com", OAuthType.GOOGLE);
 	}
 
-	public static User createUser(String email, String oauthType) {
-		return new User(email, oauthType);
+	public static User createUser(String email, OAuthType oauthType) {
+		return new User(new Email(email), oauthType);
 	}
 
 	public static Profile createProfile() {

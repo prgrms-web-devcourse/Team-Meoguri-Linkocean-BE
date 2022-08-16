@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,12 @@ public class LoginController {
 	public Map<String, Object> login(
 		@RequestBody LoginRequest request
 	) {
-		return Map.of("token", userService.saveOrUpdate(request.getEmail(), request.getOauthType()));
+		final String result = userService.saveOrUpdate(
+			new Email(request.getEmail()),
+			OAuthType.of(request.getOauthType())
+		);
+
+		return Map.of("token", result);
 	}
 
 	/**
