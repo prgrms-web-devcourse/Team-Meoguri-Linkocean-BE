@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.domain.profile.service.FollowService;
-import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,7 @@ public class FollowController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestParam long followeeId
 	) {
-		followService.follow(new FollowCommand(user.getProfileId(), followeeId));
+		followService.follow(user.getProfileId(), followeeId);
 	}
 
 	/* 언팔로우 */
@@ -34,6 +33,6 @@ public class FollowController {
 		@AuthenticationPrincipal SecurityUser user,
 		@RequestParam long followeeId
 	) {
-		followService.unfollow(new FollowCommand(user.getProfileId(), followeeId));
+		followService.unfollow(user.getProfileId(), followeeId);
 	}
 }

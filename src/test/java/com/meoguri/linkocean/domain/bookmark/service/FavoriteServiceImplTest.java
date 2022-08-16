@@ -88,7 +88,7 @@ class FavoriteServiceImplTest {
 		favoriteService.favorite(userId, bookmarkId);
 
 		//when then
-		assertThatDataIntegrityViolationException()
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> favoriteService.favorite(userId, bookmarkId));
 	}
 
