@@ -7,7 +7,8 @@ package com.meoguri.linkocean.domain.user.entity.vo;
 public enum OAuthType {
 	GOOGLE,
 	NAVER,
-	KAKAO;
+	KAKAO,
+	GITHUB;
 
 	public static OAuthType of(final String type) {
 		return OAuthType.valueOf(type);
