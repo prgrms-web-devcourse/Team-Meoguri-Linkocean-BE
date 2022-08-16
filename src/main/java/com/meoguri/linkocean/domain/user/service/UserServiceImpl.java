@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public String saveOrUpdate(final Email email, final OAuthType oAuthType) {
+	public String getOrSaveAndRetrieveToken(final Email email, final OAuthType oAuthType) {
 		userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
 				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	@Override
 	public void registerProfile(final long userId, final Profile profile) {
-
 		final User user = userRepository.findById(userId)
 			.orElseThrow((() -> new LinkoceanRuntimeException(format("no such user id :%d", userId))));
 

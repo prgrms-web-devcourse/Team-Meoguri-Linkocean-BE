@@ -6,7 +6,7 @@ import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 public interface UserService {
 
-	String saveOrUpdate(Email email, OAuthType oAuthType);
+	String getOrSaveAndRetrieveToken(Email email, OAuthType oAuthType);
 
 	void registerProfile(long userId, Profile profile);
 }

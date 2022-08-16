@@ -38,7 +38,7 @@ class UserServiceImplTest {
 		final OAuthType oAuthType = OAuthType.GITHUB;
 
 		//when
-		final String token = userService.saveOrUpdate(email, oAuthType);
+		final String token = userService.getOrSaveAndRetrieveToken(email, oAuthType);
 
 		//then
 		final Optional<User> retrievedUser = userRepository.findByEmailAndOAuthType(email, oAuthType);

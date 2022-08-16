@@ -31,7 +31,7 @@ public class LoginController {
 	public Map<String, Object> login(
 		@RequestBody LoginRequest request
 	) {
-		final String result = userService.saveOrUpdate(
+		final String result = userService.getOrSaveAndRetrieveToken(
 			new Email(request.getEmail()),
 			OAuthType.of(request.getOauthType())
 		);
