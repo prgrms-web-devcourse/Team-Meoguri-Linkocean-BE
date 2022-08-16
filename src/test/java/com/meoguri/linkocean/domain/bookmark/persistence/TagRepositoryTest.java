@@ -27,6 +27,6 @@ class TagRepositoryTest {
 		final Optional<Tag> retrievedTag = tagRepository.findByName(tag.getName());
 
 		//then
-		assertThat(retrievedTag.get()).isEqualTo(savedTag);
+		assertThat(retrievedTag).isPresent().get().isEqualTo(savedTag);
 	}
 }
