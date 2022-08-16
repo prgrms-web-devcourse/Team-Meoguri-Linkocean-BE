@@ -67,7 +67,7 @@ class FollowServiceImplTest {
 		followService.follow(profileId, targetProfileId);
 
 		//when then
-		assertThatDataIntegrityViolationException()
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> followService.follow(profileId, targetProfileId));
 	}
 

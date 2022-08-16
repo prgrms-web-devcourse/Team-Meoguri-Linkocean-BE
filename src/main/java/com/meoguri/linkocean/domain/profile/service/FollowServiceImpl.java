@@ -3,6 +3,8 @@ package com.meoguri.linkocean.domain.profile.service;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,10 @@ public class FollowServiceImpl implements FollowService {
 	public void follow(final long profileId, final long targetProfileId) {
 		final Profile follower = findProfileByIdQuery.findById(profileId);
 		final Profile followee = findProfileByIdQuery.findById(targetProfileId);
+
+		final Optional<Follow> oFollow = followRepository.findByProfiles(follower, followee);
+		checkUniqueConstraint(oFollow,
+			format("illegal unfollow command of profileId: %d on targetProfileId: %d", profileId, targetProfileId));
 
 		followRepository.save(new Follow(follower, followee));
 	}
