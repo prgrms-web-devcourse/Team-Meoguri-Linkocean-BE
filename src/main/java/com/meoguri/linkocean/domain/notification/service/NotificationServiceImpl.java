@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.notification.entity.Notification;
-import com.meoguri.linkocean.domain.notification.entity.NotificationType;
+import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
 import com.meoguri.linkocean.domain.notification.persistence.NotificationRepository;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;

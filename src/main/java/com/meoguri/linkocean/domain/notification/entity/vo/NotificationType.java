@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.notification.entity;
+package com.meoguri.linkocean.domain.notification.entity.vo;
 
 public enum NotificationType {
 

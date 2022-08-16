@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.notification.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.notification.entity.NotificationType.*;
+import static com.meoguri.linkocean.domain.notification.entity.vo.NotificationType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
