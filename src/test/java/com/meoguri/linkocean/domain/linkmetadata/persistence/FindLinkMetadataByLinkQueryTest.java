@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 
 @Import(FindLinkMetadataByUrlQuery.class)
@@ -28,7 +29,7 @@ class FindLinkMetadataByLinkQueryTest {
 
 		//when
 		final LinkMetadata findLinkMetadata =
-			findLinkMetadataByUrlQuery.findByUrl(linkMetadata.getSavedLink());
+			findLinkMetadataByUrlQuery.findByUrl(Link.toString(linkMetadata.getLink()));
 
 		//then
 		assertThat(findLinkMetadata).isEqualTo(linkMetadata);
