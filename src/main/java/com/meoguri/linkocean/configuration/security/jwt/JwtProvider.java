@@ -38,11 +38,11 @@ public class JwtProvider {
 	}
 
 	public <R> R getClaims(final String token, Function<Claims, R> claimsResolver) {
-		final Claims claims = parseClaimsJws(token);
+		final Claims claims = parseClaimsJwt(token);
 		return claimsResolver.apply(claims);
 	}
 
-	private Claims parseClaimsJws(final String token) {
+	private Claims parseClaimsJwt(final String token) {
 		try {
 			final String secretKey = jwtProperties.getSecretKey();
 			return Jwts.parser()
