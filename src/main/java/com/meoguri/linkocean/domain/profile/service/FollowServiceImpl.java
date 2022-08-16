@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.profile.service;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,6 @@ import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
-import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,21 +23,18 @@ public class FollowServiceImpl implements FollowService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Override
-	public void follow(final FollowCommand command) {
-		final Profile follower = findProfileByIdQuery.findById(command.getProfileId());
-		final Profile followee = findProfileByIdQuery.findById(command.getTargetProfileId());
+	public void follow(final long profileId, final long targetProfileId) {
+		final Profile follower = findProfileByIdQuery.findById(profileId);
+		final Profile followee = findProfileByIdQuery.findById(targetProfileId);
 
 		followRepository.save(new Follow(follower, followee));
 	}
 
 	@Override
-	public void unfollow(final FollowCommand command) {
-		final long followerId = command.getProfileId();
-		final long followeeId = command.getTargetProfileId();
-
-		long count = followRepository.deleteByFollower_idAndFollowee_id(followerId, followeeId);
+	public void unfollow(final long profileId, final long targetProfileId) {
+		long count = followRepository.deleteByFollower_idAndFollowee_id(profileId, targetProfileId);
 
 		checkCondition(count == 1,
-			"illegal unfollow command of profileId " + followeeId + " on " + "targetProfileId" + followeeId);
+			format("illegal unfollow command of profileId: %d on targetProfileId: %d", profileId, targetProfileId));
 	}
 }

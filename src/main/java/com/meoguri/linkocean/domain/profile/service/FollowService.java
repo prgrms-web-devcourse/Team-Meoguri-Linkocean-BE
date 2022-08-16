@@ -1,12 +1,10 @@
 package com.meoguri.linkocean.domain.profile.service;
 
-import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
-
 public interface FollowService {
 
 	/* 팔로우 */
-	void follow(FollowCommand command);
+	void follow(long profileId, long targetProfileId);
 
 	/* 언팔로우 */
-	void unfollow(FollowCommand command);
+	void unfollow(long profileId, long targetProfileId);
 }

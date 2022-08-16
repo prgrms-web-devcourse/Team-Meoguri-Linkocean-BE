@@ -22,7 +22,6 @@ import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -151,7 +150,7 @@ class ProfileServiceImplTest {
 		final long profileId1 = profileService.registerProfile(registerCommandOf(createProfile(user1, "user1")));
 		final long profileId2 = profileService.registerProfile(registerCommandOf(createProfile(user2, "user2")));
 
-		followService.follow(new FollowCommand(user1.getId(), profileId2));
+		followService.follow(profileId1, profileId2);
 
 		//when
 		GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(user1.getId(), profileId1);
@@ -209,17 +208,17 @@ class ProfileServiceImplTest {
 		}
 
 		/**
-		 * user1 -> profile1, profile2 팔로우
+		 * user1 -> profile2, profile3 팔로우
 		 * user2 -> profile3 팔로우
 		 * user3 -> profile2 팔로우
 		 */
 		@Test
 		void 팔로워_목록_조회_성공() {
 			//given
-			followService.follow(new FollowCommand(user1Id, profile2Id));
-			followService.follow(new FollowCommand(user1Id, profile3Id));
-			followService.follow(new FollowCommand(user2Id, profile3Id));
-			followService.follow(new FollowCommand(user3Id, profile2Id));
+			followService.follow(profile1Id, profile3Id);
+			followService.follow(profile1Id, profile2Id);
+			followService.follow(profile2Id, profile3Id);
+			followService.follow(profile3Id, profile2Id);
 
 			//when
 			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
@@ -261,10 +260,10 @@ class ProfileServiceImplTest {
 		@Test
 		void 팔로이_목록_조회_성공() {
 			//given
-			followService.follow(new FollowCommand(user1Id, profile2Id));
-			followService.follow(new FollowCommand(user1Id, profile3Id));
-			followService.follow(new FollowCommand(user2Id, profile3Id));
-			followService.follow(new FollowCommand(user3Id, profile2Id));
+			followService.follow(profile1Id, profile2Id);
+			followService.follow(profile1Id, profile3Id);
+			followService.follow(profile2Id, profile3Id);
+			followService.follow(profile3Id, profile2Id);
 
 			//when
 			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
@@ -308,7 +307,7 @@ class ProfileServiceImplTest {
 		@Test
 		void 프로필_목록_조회_이름으로_필터링_성공() {
 			//given
-			followService.follow(new FollowCommand(user1Id, profile2Id));
+			followService.follow(profile1Id, profile2Id);
 
 			//when
 			final Slice<GetProfilesResult> results = profileService.getProfiles(user1Id,

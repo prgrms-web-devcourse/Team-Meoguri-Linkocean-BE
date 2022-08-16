@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.service.dto.FollowCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
@@ -49,10 +48,11 @@ class FollowServiceImplTest {
 	@Test
 	void 팔로우_성공() {
 		//given
-		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
+		final long profileId = user1ProfileId;
+		final long targetProfileId = user2ProfileId;
 
 		//when
-		followService.follow(command);
+		followService.follow(profileId, targetProfileId);
 
 		//then
 		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(1);
@@ -62,22 +62,24 @@ class FollowServiceImplTest {
 	@Test
 	void 팔로우_두번_요청_실패() {
 		//given
-		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
-		followService.follow(command);
+		final long profileId = user1ProfileId;
+		final long targetProfileId = user2ProfileId;
+		followService.follow(profileId, targetProfileId);
 
 		//when then
 		assertThatDataIntegrityViolationException()
-			.isThrownBy(() -> followService.follow(command));
+			.isThrownBy(() -> followService.follow(profileId, targetProfileId));
 	}
 
 	@Test
 	void 언팔로우_성공() {
 		//given
-		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
-		followService.follow(command);
+		final long profileId = user1ProfileId;
+		final long targetProfileId = user2ProfileId;
+		followService.follow(profileId, targetProfileId);
 
 		//when
-		followService.unfollow(command);
+		followService.unfollow(profileId, targetProfileId);
 
 		//then
 		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isZero();
@@ -85,12 +87,13 @@ class FollowServiceImplTest {
 	}
 
 	@Test
-	void 언팔로우_실패() {
+	void 팔로우_한적이_없으면_언팔로우_실패() {
 		//given
-		final FollowCommand command = new FollowCommand(user1ProfileId, user2ProfileId);
+		final long profileId = user1ProfileId;
+		final long targetProfileId = user2ProfileId;
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> followService.unfollow(command));
+			.isThrownBy(() -> followService.unfollow(profileId, targetProfileId));
 	}
 }
