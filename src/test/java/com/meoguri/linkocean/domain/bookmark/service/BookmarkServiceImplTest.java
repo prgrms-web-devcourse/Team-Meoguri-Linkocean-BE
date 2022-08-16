@@ -1,9 +1,9 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.common.Assertions.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
@@ -398,7 +398,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 내가_좋아요_누른_북마크_상세_조회_성공() {
 			//given
-			reactionRepository.save(new Reaction(profile, bookmark, "like"));
+			reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 
 			//when
 			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());

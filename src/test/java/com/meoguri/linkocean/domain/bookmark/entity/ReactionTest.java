@@ -1,10 +1,12 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 class ReactionTest {
@@ -14,7 +16,7 @@ class ReactionTest {
 		//given
 		final Profile profile = createProfile();
 		final Bookmark bookmark = createBookmark();
-		final String reactionType = "like";
+		final ReactionType reactionType = LIKE;
 
 		//when
 		final Reaction reaction = new Reaction(profile, bookmark, reactionType);

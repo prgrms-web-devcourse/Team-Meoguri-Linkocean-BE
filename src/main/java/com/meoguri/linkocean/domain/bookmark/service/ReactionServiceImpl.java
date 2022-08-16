@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
@@ -32,20 +32,15 @@ public class ReactionServiceImpl implements ReactionService {
 	public void requestReaction(ReactionCommand command) {
 		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
-		final ReactionType requestReactionType = ReactionType.of(command.getReactionType());
+		final ReactionType requestReactionType = command.getReactionType();
 
-		updateBookmarkReaction(profile, bookmark, requestReactionType);
-	}
-
-
-	private void updateBookmarkReaction(Profile profile, Bookmark bookmark, ReactionType requestReactionType) {
 		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profile.getId(), bookmark);
 		final long bookmarkId = bookmark.getId();
 
 		/* 리액션이 존재하는 경우 */
 		if (oReaction.isPresent()) {
 			final Reaction reaction = oReaction.get();
-			final ReactionType existedReactionType = ReactionType.of(reaction.getType());
+			final ReactionType existedReactionType = reaction.getType();
 
 			/*이미 있던 reaction의 reactionType 이 request reactionType 과 같다면*/
 			if (existedReactionType.equals(requestReactionType)) {
@@ -56,7 +51,7 @@ public class ReactionServiceImpl implements ReactionService {
 					bookmarkService.subtractLikeCount(bookmarkId);
 				}
 
-			/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
+				/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
 			} else {
 				/*리액션 변경*/
 				changeReaction(reaction, requestReactionType);
@@ -68,7 +63,7 @@ public class ReactionServiceImpl implements ReactionService {
 				}
 			}
 
-		/* 리액션이 존재하지 않은 경우 */
+			/* 리액션이 존재하지 않은 경우 */
 		} else {
 			/*리액션 추가*/
 			addReaction(profile, bookmark, requestReactionType);
@@ -79,7 +74,7 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
-		reactionRepository.save(new Reaction(profile, bookmark, reactionType.toString()));
+		reactionRepository.save(new Reaction(profile, bookmark, reactionType));
 	}
 
 	private void cancelReaction(final Reaction reaction) {
@@ -87,7 +82,6 @@ public class ReactionServiceImpl implements ReactionService {
 	}
 
 	private void changeReaction(final Reaction reaction, ReactionType requestReactionType) {
-		reactionRepository.updateReaction(
-			reaction.getProfile(), reaction.getBookmark(), requestReactionType);
+		reactionRepository.updateReaction(reaction.getProfile(), reaction.getBookmark(), requestReactionType);
 	}
 }

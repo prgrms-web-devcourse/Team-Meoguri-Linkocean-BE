@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {

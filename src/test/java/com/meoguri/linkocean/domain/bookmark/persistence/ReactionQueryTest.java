@@ -16,6 +16,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -68,27 +69,27 @@ class ReactionQueryTest {
 		final User user1 = userRepository.save(createUser("test@gmail.com", "GOOGLE"));
 		final Profile profile1 = profileRepository.save(createProfile(user1, "test"));
 
-		reactionRepository.save(new Reaction(profile, bookmark, Reaction.ReactionType.LIKE.name()));
-		reactionRepository.save(new Reaction(profile1, bookmark, Reaction.ReactionType.HATE.name()));
+		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));
+		reactionRepository.save(new Reaction(profile1, bookmark, ReactionType.HATE));
 
 		//when
-		final Map<Reaction.ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
+		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
 
 		//then
-		assertThat(reactionCountMap.get(Reaction.ReactionType.LIKE)).isEqualTo(1);
-		assertThat(reactionCountMap.get(Reaction.ReactionType.HATE)).isEqualTo(1);
+		assertThat(reactionCountMap.get(ReactionType.LIKE)).isEqualTo(1);
+		assertThat(reactionCountMap.get(ReactionType.HATE)).isEqualTo(1);
 	}
 
 	@Test
 	void 리액션_여부_맵을_조회할_수_있다() {
 		//given
-		reactionRepository.save(new Reaction(profile, bookmark, Reaction.ReactionType.LIKE.name()));
+		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));
 
 		//when
-		final Map<Reaction.ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
+		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
 
 		//then
-		assertThat(reactionMap.get(Reaction.ReactionType.LIKE)).isTrue();
-		assertThat(reactionMap.get(Reaction.ReactionType.HATE)).isFalse();
+		assertThat(reactionMap.get(ReactionType.LIKE)).isTrue();
+		assertThat(reactionMap.get(ReactionType.HATE)).isFalse();
 	}
 }

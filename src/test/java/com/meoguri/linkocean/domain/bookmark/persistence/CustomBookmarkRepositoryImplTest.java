@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -133,9 +134,9 @@ class CustomBookmarkRepositoryImplTest {
 		));
 
 		// 크러쉬가 네이버에 좋아요를 누름
-		reactionRepository.save(new Reaction(profile, bookmark1, "like"));
+		reactionRepository.save(new Reaction(profile, bookmark1, LIKE));
 		// 크러쉬가 구글에 싫어요를 누름
-		reactionRepository.save(new Reaction(profile, bookmark2, "hate"));
+		reactionRepository.save(new Reaction(profile, bookmark2, HATE));
 
 		// 크러쉬가 네이버와 구글에 즐겨찾기를 누름
 		bookmark1.changeLikeCount(1L);

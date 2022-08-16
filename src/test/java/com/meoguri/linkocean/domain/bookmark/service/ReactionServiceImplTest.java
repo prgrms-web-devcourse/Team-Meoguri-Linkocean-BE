@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
@@ -79,7 +80,7 @@ class ReactionServiceImplTest {
 	@Test
 	void 리액션_등록_성공() {
 		//사용자가_하나의_북마크에_대해_리액션을_처음_등록하는_경우
-		final ReactionCommand reactionCommand = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
+		final ReactionCommand reactionCommand = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), LIKE);
 
 		//when
 		reactionService.requestReaction(reactionCommand);
@@ -93,7 +94,7 @@ class ReactionServiceImplTest {
 		//then
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
-			.containsExactly(profile1, bookmark2, "like");
+			.containsExactly(profile1, bookmark2, LIKE);
 	}
 
 	@Test
@@ -102,13 +103,13 @@ class ReactionServiceImplTest {
 		//이미_있는_리액션이_요청의_리액션_상태가_같음
 
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, HATE));
 
 		em.flush();
 		em.clear();
 
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate");
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), HATE);
 		reactionService.requestReaction(command); //취소됨
 
 		em.flush();
@@ -126,12 +127,12 @@ class ReactionServiceImplTest {
 		//이미_있는_리액션이_요청의_리액션_상태가_다름
 
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, HATE));
 
 		em.flush();
 		em.clear();
 		//when
-		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like");
+		final ReactionCommand command = new ReactionCommand(user1.getProfileId(), bookmark2.getId(), LIKE);
 		reactionService.requestReaction(command); //취소 후 등록
 
 		em.flush();
@@ -143,7 +144,7 @@ class ReactionServiceImplTest {
 
 		assertThat(findReaction).isPresent().get()
 			.extracting(Reaction::getProfile, Reaction::getBookmark, Reaction::getType)
-			.containsExactly(profile1, bookmark2, "like");
+			.containsExactly(profile1, bookmark2, LIKE);
 	}
 
 	@Test
@@ -151,7 +152,7 @@ class ReactionServiceImplTest {
 		//given
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), LIKE));
 
 		//then
 		final Optional<Bookmark> likeAddedBookmark = bookmarkRepository.findById(bookmark2.getId());
@@ -163,7 +164,7 @@ class ReactionServiceImplTest {
 		//given
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "hate"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), HATE));
 
 		em.flush();
 		em.clear();
@@ -176,11 +177,11 @@ class ReactionServiceImplTest {
 	@Test
 	void 좋아요_개수_수정_성공_좋아요_좋아요_경우() {
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.LIKE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, LIKE));
 		bookmarkRepository.addLikeCount(bookmark2.getId());
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getProfileId(), bookmark2.getId(), LIKE));
 
 		em.flush();
 		em.clear();
@@ -193,10 +194,10 @@ class ReactionServiceImplTest {
 	@Test
 	void 좋아요_개수_수정_성공_싫어요_좋아요_경우() {
 		//given
-		reactionRepository.save(new Reaction(profile1, bookmark2, Reaction.ReactionType.HATE.toString()));
+		reactionRepository.save(new Reaction(profile1, bookmark2, HATE));
 
 		//when
-		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), "like"));
+		reactionService.requestReaction(new ReactionCommand(user1.getId(), bookmark2.getId(), LIKE));
 
 		em.flush();
 		em.clear();

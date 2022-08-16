@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

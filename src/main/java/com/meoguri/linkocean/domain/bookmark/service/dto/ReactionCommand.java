@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +19,6 @@ public final class ReactionCommand {
 	private final long bookmarkId;
 
 	/* 리액션 종류 */
-	private final String reactionType;
+	private final ReactionType reactionType;
 
 }
