@@ -17,7 +17,7 @@ import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
@@ -28,62 +28,35 @@ public class ReactionServiceImpl implements ReactionService {
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
+	@Transactional
 	@Override
 	public void requestReaction(ReactionCommand command) {
-		final Profile profile = findProfileByIdQuery.findById(command.getProfileId());
-		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
-		final ReactionType requestReactionType = command.getReactionType();
+		final long profileId = command.getProfileId();
+		final long bookmarkId = command.getBookmarkId();
 
-		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profile.getId(), bookmark);
-		final long bookmarkId = bookmark.getId();
+		final Profile profile = findProfileByIdQuery.findById(profileId);
+		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
+		final ReactionType requestType = command.getReactionType();
 
-		/* 리액션이 존재하는 경우 */
-		if (oReaction.isPresent()) {
-			final Reaction reaction = oReaction.get();
-			final ReactionType existedReactionType = reaction.getType();
+		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profileId, bookmark);
+		final boolean isAlreadyReacted = oReaction.isPresent();
+		final ReactionType existedType = isAlreadyReacted ? oReaction.get().getType() : null;
 
-			/*이미 있던 reaction의 reactionType 이 request reactionType 과 같다면*/
-			if (existedReactionType.equals(requestReactionType)) {
-				/*리액션 삭제(취소)*/
-				cancelReaction(reaction);
-
-				if (existedReactionType.equals(ReactionType.LIKE)) {
-					bookmarkService.subtractLikeCount(bookmarkId);
-				}
-
-				/*이미 있던 reaction의 reactionType 이 request reactionType 과 다르다면*/
+		if (isAlreadyReacted) {
+			if (existedType.equals(requestType)) {
+				/* 북마크에 리액션을 가지고 있으며 같은 타입의 리액션을 하는 경우 취소 */
+				reactionRepository.deleteByProfile_idAndBookmark_id(profileId, bookmarkId);
 			} else {
-				/*리액션 변경*/
-				changeReaction(reaction, requestReactionType);
-
-				if (existedReactionType.equals(ReactionType.HATE) && requestReactionType.equals(ReactionType.LIKE)) {
-					bookmarkService.addLikeCount(bookmarkId);
-				} else {
-					bookmarkService.subtractLikeCount(bookmarkId);
-				}
+				/* 북마크에 리액션을 가지고 있으며 다른 타입의 리액션을 하는 경우 변경*/
+				reactionRepository.updateReaction(profileId, bookmarkId, requestType);
 			}
-
-			/* 리액션이 존재하지 않은 경우 */
 		} else {
-			/*리액션 추가*/
-			addReaction(profile, bookmark, requestReactionType);
-			if (requestReactionType.equals(ReactionType.LIKE)) {
-				bookmarkService.addLikeCount(bookmarkId);
-			}
+			/* 북마크에 리액션을 가지고 있지 않으면 추가 */
+			reactionRepository.save(new Reaction(profile, bookmark, requestType));
 		}
 
-		// bookmarkService.updateLikeCount()
+		/* 북마크 좋아요 숫자 업데이트 */
+		bookmarkService.updateLikeCount(bookmarkId, isAlreadyReacted, existedType, requestType);
 	}
 
-	private void addReaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
-		reactionRepository.save(new Reaction(profile, bookmark, reactionType));
-	}
-
-	private void cancelReaction(final Reaction reaction) {
-		reactionRepository.deleteByProfileAndBookmark(reaction.getProfile(), reaction.getBookmark());
-	}
-
-	private void changeReaction(final Reaction reaction, ReactionType requestReactionType) {
-		reactionRepository.updateReaction(reaction.getProfile(), reaction.getBookmark(), requestReactionType);
-	}
 }

@@ -734,4 +734,9 @@ class BookmarkServiceImplTest {
 		assertThat(duplicated).isPresent().get().isEqualTo(bookmark.getId());
 		assertThat(notDuplicated).isEmpty();
 	}
+
+	@Test
+	void 북마크_좋아요_숫자_업데이트() {
+
+	}
 }

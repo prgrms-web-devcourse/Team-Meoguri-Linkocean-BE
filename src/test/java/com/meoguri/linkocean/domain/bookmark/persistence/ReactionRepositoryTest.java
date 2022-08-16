@@ -84,7 +84,7 @@ class ReactionRepositoryTest {
 		em.clear();
 
 		//when
-		reactionRepository.deleteByProfileAndBookmark(profile, bookmark);
+		reactionRepository.deleteByProfile_idAndBookmark_id(profile.getId(), bookmark.getId());
 		em.flush();
 		em.clear();
 
