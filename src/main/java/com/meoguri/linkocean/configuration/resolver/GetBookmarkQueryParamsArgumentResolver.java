@@ -29,7 +29,7 @@ public class GetBookmarkQueryParamsArgumentResolver implements HandlerMethodArgu
 
 	@Override
 	public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
-		final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) throws Exception {
+		final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) {
 
 		final String page = webRequest.getParameter("page");
 		final String size = webRequest.getParameter("size");
