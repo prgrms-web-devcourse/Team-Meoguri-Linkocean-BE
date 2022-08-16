@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
 import static java.util.Collections.*;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
@@ -9,7 +8,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.net.URI;
 import java.util.List;
@@ -24,7 +22,7 @@ import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 
-public class ProfileDocsController extends RestDocsTestSupport {
+class ProfileDocsController extends RestDocsTestSupport {
 
 	private final String baseUrl = getBaseUrl(ProfileController.class);
 
@@ -41,11 +39,8 @@ public class ProfileDocsController extends RestDocsTestSupport {
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(createProfileRequest)))
-			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").exists())
 
-			//docs
+			//then
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -63,7 +58,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 내프로필_조회_api() throws Exception {
+	void 내_프로필_조회_Api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("인문", "정치", "사회"));
@@ -72,21 +67,8 @@ public class ProfileDocsController extends RestDocsTestSupport {
 		//when
 		mockMvc.perform(get(baseUrl + "/me")
 				.header(AUTHORIZATION, token))
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.profileId").exists(),
-				jsonPath("$.imageUrl").isEmpty(),
-				jsonPath("$.favoriteCategories", hasSize(3)),
-				jsonPath("$.username").value("hani"),
-				jsonPath("$.bio").isEmpty(),
-				jsonPath("$.followerCount").value(0),
-				jsonPath("$.followeeCount").value(0),
-				jsonPath("$.tags", hasSize(2)),
-				jsonPath("$.categories", hasSize(1))
-			)
 
-			//docs
+			//then
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -111,10 +93,10 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 다른_사람_프로필_조회_api() throws Exception {
+	void 다른_사람_프로필_조회_Api() throws Exception {
 		//given
 		유저_등록_로그인("user1@gmail.com", "GOOGLE");
-		final long user1ProfileId = 프로필_등록("user1", emptyList());
+		프로필_등록("user1", emptyList());
 
 		유저_등록_로그인("user2@gmail.com", "GOOGLE");
 		final long user2ProfileId = 프로필_등록("user2", emptyList());
@@ -129,14 +111,6 @@ public class ProfileDocsController extends RestDocsTestSupport {
 				.contentType(APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.isFollow").value(true),
-				jsonPath("$.followerCount").value(1),
-				jsonPath("$.followeeCount").value(0)
-			)
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -164,14 +138,13 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 내_프로필_수정_api() throws Exception {
+	void 내_프로필_수정_Api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", "GOOGLE");
 		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("스프링", "Spring Boot"), "private");
 
 		final String updateUsername = "updateHani";
-		final List<String> updateCategories = List.of("자기계발", "과학");
 		final String bio = "i like programming";
 		final MockMultipartFile mockImage = new MockMultipartFile("image", "test.png", "image/png",
 			"image".getBytes());
@@ -183,10 +156,8 @@ public class ProfileDocsController extends RestDocsTestSupport {
 				.param("categories", "자기계발", "과학")
 				.param("bio", bio)
 				.header(AUTHORIZATION, token))
-			//then
-			.andExpect(status().isOk())
 
-			//docs
+			//then
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -202,7 +173,6 @@ public class ProfileDocsController extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
 
 	@Nested
@@ -222,7 +192,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 			유저_등록_로그인("user3@gmail.com", "GOOGLE");
 			user3ProfileId = 프로필_등록("user3", List.of("IT"));
 
-			// 팔로우 화살표 : user1 <-> user2 -> user3
+			/* 팔로우 화살표 : user1 <-> user2 -> user3 */
 			로그인("user1@gmail.com", "GOOGLE");
 			팔로우(user2ProfileId);
 
@@ -232,27 +202,16 @@ public class ProfileDocsController extends RestDocsTestSupport {
 		}
 
 		@Test
-		void 프로필_목록_조회_api() throws Exception {
-
+		void 프로필_목록_조회_Api() throws Exception {
+			//given
 			로그인("user1@gmail.com", "GOOGLE");
 
+			//when
 			mockMvc.perform(get(baseUrl + "?username=" + "user")
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.hasNext").value(false),
-					jsonPath("$.profiles").isArray(),
-					jsonPath("$.profiles", hasSize(3)),
-					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
-					jsonPath("$.profiles[1].profileId").value(user2ProfileId),
-					jsonPath("$.profiles[2].profileId").value(user3ProfileId),
-					jsonPath("$.profiles[0].isFollow").value(false),
-					jsonPath("$.profiles[1].isFollow").value(true),
-					jsonPath("$.profiles[2].isFollow").value(false)
-				)
 
-				//docs
+				//then
 				.andDo(
 					restDocs.document(
 						requestHeaders(
@@ -277,22 +236,54 @@ public class ProfileDocsController extends RestDocsTestSupport {
 
 		@Test
 		void 팔로워_조회_Api_성공() throws Exception {
+			//given
 			로그인("user1@gmail.com", "GOOGLE");
 
-			// user1 -> user1 의 팔로워 조회
+			//when
 			mockMvc.perform(
 					RestDocumentationRequestBuilders.get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "follower")
 						.header(AUTHORIZATION, token)
 						.contentType(APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpectAll(
-					jsonPath("$.hasNext").value(false),
-					jsonPath("$.profiles", hasSize(1)),
-					jsonPath("$.profiles[0].profileId").value(user2ProfileId),
-					jsonPath("$.profiles[0].isFollow").value(true)
-				)
 
-				//docs
+				//then
+				.andDo(
+					restDocs.document(
+						requestHeaders(
+							headerWithName(AUTHORIZATION).description("인증 토큰")
+						),
+						pathParameters(
+							parameterWithName("profileId").description("프로필 ID"),
+							parameterWithName("tab").description("팔로우, 팔로위 토클")
+						),
+						requestParameters(
+							parameterWithName("page").optional().description("현재 페이지(page)"),
+							parameterWithName("size").optional().description("프로필 개수(size)"),
+							parameterWithName("username").optional().description("유저 이름")
+						),
+						responseFields(
+							fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
+							fieldWithPath("profiles[]").optional().description("프로필 리스트"),
+							fieldWithPath("profiles[].profileId").description("프로필 ID"),
+							fieldWithPath("profiles[].username").description("유저 이름"),
+							fieldWithPath("profiles[].imageUrl").optional().description("이미지 URL"),
+							fieldWithPath("profiles[].isFollow").description("팔로우 여부")
+						)
+					)
+				);
+		}
+
+		@Test
+		void 팔로이_목록_조회_Api_성공() throws Exception {
+			//given
+			로그인("user2@gmail.com", "GOOGLE");
+
+			//when
+			mockMvc.perform(
+					RestDocumentationRequestBuilders.get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "followee")
+						.header(AUTHORIZATION, token)
+						.contentType(APPLICATION_JSON))
+
+				//then
 				.andDo(
 					restDocs.document(
 						requestHeaders(
