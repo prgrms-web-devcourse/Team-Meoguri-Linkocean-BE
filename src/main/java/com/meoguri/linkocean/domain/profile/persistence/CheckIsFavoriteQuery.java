@@ -17,7 +17,7 @@ public class CheckIsFavoriteQuery {
 	private final FavoriteRepository favoriteRepository;
 
 	public boolean isFavorite(final long ownerId, final Bookmark bookmark) {
-		return favoriteRepository.existsByOwner_idAndBookmark(ownerId, bookmark);
+		return favoriteRepository.existsByProfile_idAndBookmark(ownerId, bookmark);
 	}
 
 	/* owner 가 북마크 목록에 대해 즐겨찾기를 했는지 입력받은 순서대로 말아준다 */

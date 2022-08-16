@@ -20,7 +20,7 @@ class FavoriteTest {
 
 		//then
 		assertThat(favorite).isNotNull()
-			.extracting(Favorite::getBookmark, Favorite::getOwner)
+			.extracting(Favorite::getBookmark, Favorite::getProfile)
 			.containsExactly(bookmark, owner);
 	}
 }

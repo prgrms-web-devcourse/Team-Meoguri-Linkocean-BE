@@ -52,7 +52,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		joinIf(isFavorite, base,
 			() -> join(favorite)
 				.on(favorite.bookmark.eq(bookmark),
-					favorite.owner.id.eq(targetProfileId)));
+					favorite.profile.id.eq(targetProfileId)));
 
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
