@@ -4,7 +4,6 @@ import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
 import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 
-public class LinkMetadataDocsController extends RestDocsTestSupport {
+class LinkMetadataDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LinkMetadataController.class);
 
@@ -39,10 +38,6 @@ public class LinkMetadataDocsController extends RestDocsTestSupport {
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.title").exists())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -56,6 +51,5 @@ public class LinkMetadataDocsController extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
 }
