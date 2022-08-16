@@ -1,11 +1,9 @@
 package com.meoguri.linkocean.controller.restdocs;
 
-import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -13,7 +11,7 @@ import org.springframework.http.MediaType;
 import com.meoguri.linkocean.controller.bookmark.CategoryController;
 import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 
-public class CategoryDocsController extends RestDocsTestSupport {
+class CategoryDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(CategoryController.class);
 
@@ -26,16 +24,8 @@ public class CategoryDocsController extends RestDocsTestSupport {
 		mockMvc.perform(get(basePath)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(AUTHORIZATION, token))
+			
 			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.categories").isArray(),
-				jsonPath("$.categories", hasSize(12)),
-				jsonPath("$.categories",
-					hasItems("자기계발", "인문", "정치", "사회", "예술", "과학", "기술", "IT", "가정", "건강", "여행", "요리"))
-			)
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
