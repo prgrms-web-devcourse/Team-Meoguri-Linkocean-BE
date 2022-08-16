@@ -122,6 +122,7 @@
 - [Namings](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/Namings)
 - [규칙](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/%EA%B7%9C%EC%B9%99)
 - [깃 컨벤션](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/git-github-%EC%BB%A8%EB%B2%A4%EC%85%98)
+- [API Document with Rest Docs](https://github.com/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE/wiki/LinkOcean-API-Document)
 
 <p align="center">
   <img src="images/logo.png" alt="drawing" width="150"/>
