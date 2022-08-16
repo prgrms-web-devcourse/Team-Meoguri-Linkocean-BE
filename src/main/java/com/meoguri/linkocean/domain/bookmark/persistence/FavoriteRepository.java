@@ -22,7 +22,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 	/* 즐겨찾기 중인 북마크의 id 집합 조회 */
 	@Query("select f.bookmark.id "
 		+ "from Favorite f "
-		+ "where f.profile.id = :ownerId "
+		+ "where f.profile.id = :profileId "
 		+ "and f.bookmark in :bookmarks")
-	Set<Long> findBookmarkIdByOwnerIdAndBookmark(long ownerId, List<Bookmark> bookmarks);
+	Set<Long> findBookmarkIdByProfileIdAndInBookmarks(long profileId, List<Bookmark> bookmarks);
 }

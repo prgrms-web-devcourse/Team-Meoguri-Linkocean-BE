@@ -63,7 +63,7 @@ class FollowRepositoryTest {
 		followRepository.save(new Follow(follower, followee));
 
 		//when
-		final Optional<Follow> oFollow = followRepository.findByProfiles(follower, followee);
+		final Optional<Follow> oFollow = followRepository.findByFollowerAndFollowee(follower, followee);
 
 		//then
 		assertThat(oFollow).isPresent().get()
