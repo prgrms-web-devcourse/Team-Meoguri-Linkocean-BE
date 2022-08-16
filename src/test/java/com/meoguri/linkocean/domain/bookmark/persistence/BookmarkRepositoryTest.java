@@ -83,7 +83,7 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Bookmark> oBookmark =
-			bookmarkRepository.findByProfileAndLinkMetadata(bookmark.getProfile(), bookmark.getLinkMetadata());
+			bookmarkRepository.findByProfileAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
 
 		//then
 		assertThat(oBookmark).isPresent();
@@ -153,7 +153,7 @@ class BookmarkRepositoryTest {
 		//then
 		assertAll(
 			() -> assertThat(oRetrievedBookmark).isPresent(),
-			() -> assertThat(isLoaded(oRetrievedBookmark.get().getProfile())).isTrue(),
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getWriter())).isTrue(),
 			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue(),
 			() -> assertThat(oRetrievedBookmark.get().getTagNames()).contains(tag1.getName())
 		);

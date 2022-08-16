@@ -131,7 +131,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
-		final Profile writer = bookmark.getProfile();
+		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(profileId, bookmark);
@@ -196,7 +196,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
-		final List<Profile> writers = bookmarks.stream().map(Bookmark::getProfile).collect(toList());
+		final List<Profile> writers = bookmarks.stream().map(Bookmark::getWriter).collect(toList());
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
@@ -252,7 +252,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
-			final Profile writer = bookmark.getProfile();
+			final Profile writer = bookmark.getWriter();
 			bookmarkResults.add(new GetBookmarksResult(
 				bookmark.getId(),
 				bookmark.getUrl(),
@@ -292,7 +292,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
-			final Profile writer = bookmark.getProfile();
+			final Profile writer = bookmark.getWriter();
 			bookmarkResults.add(new GetFeedBookmarksResult(
 				bookmark.getId(),
 				bookmark.getTitle(),

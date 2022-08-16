@@ -16,21 +16,21 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 
 	@Query("select b "
 		+ "from Bookmark b "
-		+ "where b.profile = :profile "
+		+ "where b.writer = :profile "
 		+ "and b.linkMetadata = :linkMetadata "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Bookmark> findByProfileAndLinkMetadata(Profile profile, LinkMetadata linkMetadata);
 
 	@Query("select b "
 		+ "from Bookmark b "
-		+ "where b.profile.id = :profileId "
+		+ "where b.writer.id = :profileId "
 		+ "and b.id = :id "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Bookmark> findByProfileIdAndId(long profileId, long id);
 
 	@Query("select b.id "
 		+ "from Bookmark b "
-		+ "where b.profile.id = :profileId "
+		+ "where b.writer.id = :profileId "
 		+ "and b.url = :url "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Long> findBookmarkIdByProfileIdAndUrl(long profileId, String url);
@@ -39,13 +39,13 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "from Bookmark b "
 		+ "join fetch b.bookmarkTags bt "
 		+ "join fetch bt.tag "
-		+ "where b.profile.id = :profileId "
+		+ "where b.writer.id = :profileId "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Bookmark> findByProfileIdFetchTags(long profileId);
 
 	@Query("select distinct b "
 		+ "from Bookmark b "
-		+ "join fetch b.profile "
+		+ "join fetch b.writer "
 		+ "join fetch b.linkMetadata "
 		+ "left join fetch b.bookmarkTags bt "
 		+ "left join fetch bt.tag "
@@ -59,7 +59,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	 */
 	@Query("select distinct b.category "
 		+ "from Bookmark b "
-		+ "where b.profile = :profile "
+		+ "where b.writer = :profile "
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(Profile profile);

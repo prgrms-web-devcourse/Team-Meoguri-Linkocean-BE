@@ -46,7 +46,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		JPAQuery<Bookmark> base = selectFrom(bookmark);
 
 		joinIf(category != null, base,
-			() -> join(bookmark.profile).fetchJoin()
+			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
 		joinIf(isFavorite, base,
@@ -55,7 +55,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					favorite.owner.id.eq(targetProfileId)));
 
 		joinIf(tags != null, base,
-			() -> join(bookmark.profile).fetchJoin());
+			() -> join(bookmark.writer).fetchJoin());
 
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
 
@@ -66,7 +66,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			base.where(
 				titleContains(title),
 				categoryEq(category),
-				profileIdEq(writerId),
+				writerIdEq(writerId),
 				bookmarkIdsIn(bookmarkIds),
 				availableByOpenType(openType),
 				registered()
@@ -85,10 +85,10 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final List<String> tags = findCond.getTags();
 
 		JPAQuery<Bookmark> base = selectFrom(bookmark)
-			.join(bookmark.profile).fetchJoin();
+			.join(bookmark.writer).fetchJoin();
 
 		joinIf(category != null, base,
-			() -> join(bookmark.profile).fetchJoin()
+			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
 		joinIf(isFavorite, base,
@@ -96,7 +96,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.on(favorite.bookmark.eq(bookmark)));
 
 		joinIf(tags != null, base,
-			() -> join(bookmark.profile).fetchJoin());
+			() -> join(bookmark.writer).fetchJoin());
 
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
 		return applyPagination(
@@ -130,8 +130,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.category.eq(category));
 	}
 
-	private BooleanBuilder profileIdEq(final Long profileId) {
-		return nullSafeBuilder(() -> bookmark.profile.id.eq(profileId));
+	private BooleanBuilder writerIdEq(final Long writerId) {
+		return nullSafeBuilder(() -> bookmark.writer.id.eq(writerId));
 	}
 
 	private BooleanBuilder bookmarkIdsIn(final List<Long> bookmarkIds) {
@@ -143,7 +143,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private BooleanBuilder followedBy(long currentUserProfileId) {
-		return nullSafeBuilder(() -> bookmark.profile.in(
+		return nullSafeBuilder(() -> bookmark.writer.in(
 			select(follow.followee)
 				.from(follow)
 				.where(follow.follower.id.eq(currentUserProfileId))
@@ -167,7 +167,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() ->
 			bookmark.openType.eq(OpenType.ALL)
 				.or(bookmark.openType.eq(OpenType.PARTIAL).and(followedBy(currentUserProfileId)))
-				.or(bookmark.profile.id.eq(currentUserProfileId))
+				.or(bookmark.writer.id.eq(currentUserProfileId))
 		);
 	}
 
