@@ -1,3 +1,6 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
 [[LINKMETADATA-API]]
 == 링크 메타데이터 API
 
@@ -5,4 +8,18 @@
 
 === 링크 메타데이터 조회
 
-operation::/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/[snippets='http-request,request-parameters,http-response,response-body,response-fields']
+Request HTTP Example:
+
+include::{snippets}/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/http-request.adoc[]
+
+Request Parameters:
+
+include::{snippets}/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/request-parameters.adoc[]
+
+Response Http Example:
+
+include::{snippets}/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/http-response.adoc[]
+
+Response Fields:
+
+include::{snippets}/link-metadata-docs-controller/링크메타데이터_제목_조회_-api/response-fields.adoc[]

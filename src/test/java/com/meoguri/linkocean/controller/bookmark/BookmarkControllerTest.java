@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
+import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.support.BaseControllerTest;
 
 class BookmarkControllerTest extends BaseControllerTest {
@@ -49,6 +50,57 @@ class BookmarkControllerTest extends BaseControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
+	}
+
+	@Test
+	void 북마크_수정_Api_성공() throws Exception {
+		//given
+		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
+
+		final String updateTitle = "updateTitle";
+		final String updateMemo = "updatedMemo";
+		final String updateCategory = "IT";
+		final String updateOpenType = "all";
+		final List<String> updateTags = List.of("Spring", "React", "LinkOcean");
+
+		final UpdateBookmarkRequest updateBookmarkRequest = new UpdateBookmarkRequest(updateTitle, updateMemo,
+			updateCategory, updateOpenType, updateTags);
+		//when
+		mockMvc.perform(put(basePath + "/" + bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON)
+				.content(createJson(updateBookmarkRequest)))
+
+			//then
+			.andExpect(status().isOk())
+			.andDo(print());
+
+		// 수정한 북마크 조회
+		mockMvc.perform(get(basePath + "/" + bookmarkId)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON))
+			//then
+			.andExpect(status().isOk())
+			.andExpectAll(
+				jsonPath("$.bookmarkId").value(bookmarkId),
+				jsonPath("$.title").value(updateTitle),
+				jsonPath("$.url").value("https://www.naver.com"),
+				jsonPath("$.imageUrl").exists(),
+				jsonPath("$.category").value(updateCategory),
+				jsonPath("$.memo").value(updateMemo),
+				jsonPath("$.openType").value(updateOpenType),
+				jsonPath("$.isFavorite").value(false),
+				jsonPath("$.createdAt").exists(),
+				jsonPath("$.tags", hasItems("Spring", "React", "LinkOcean")),
+				jsonPath("$.reactionCount.LIKE").value(0),
+				jsonPath("$.reactionCount.HATE").value(0),
+				jsonPath("$.reaction.LIKE").value(false),
+				jsonPath("$.reaction.HATE").value(false),
+				jsonPath("$.profile.profileId").value(profileId),
+				jsonPath("$.profile.username").value("hani"),
+				jsonPath("$.profile.imageUrl").value(nullValue()),
+				jsonPath("$.profile.isFollow").value(false)
+			).andDo(print());
 	}
 
 	@Test
@@ -95,7 +147,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.memo").value("memo"),
 				jsonPath("$.openType").value("all"),
 				jsonPath("$.isFavorite").value(false),
-				jsonPath("$.updatedAt").exists(),
+				jsonPath("$.createdAt").exists(),
 				jsonPath("$.tags", hasItems("good", "spring")),
 				jsonPath("$.reactionCount.LIKE").value(0),
 				jsonPath("$.reactionCount.HATE").value(0),
@@ -136,7 +188,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[1].title").value("title1"),
 					jsonPath("$.bookmarks[1].url").value("https://www.naver.com"),
 					jsonPath("$.bookmarks[1].openType").value("all"),
-					jsonPath("$.bookmarks[1].updatedAt").exists(),
+					jsonPath("$.bookmarks[1].createdAt").exists(),
 					jsonPath("$.bookmarks[1].imageUrl").exists(),
 					jsonPath("$.bookmarks[1].likeCount").value(0),
 					jsonPath("$.bookmarks[1].isFavorite").value(false),

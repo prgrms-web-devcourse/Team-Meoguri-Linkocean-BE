@@ -41,6 +41,7 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
+import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -103,7 +104,7 @@ class BookmarkServiceImplTest {
 
 		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
 
-		url = linkMetadata.getSavedLink(); // 조회를 위해서는 저장된 url 이 필요하다
+		url = Link.toString(linkMetadata.getLink()); // 조회를 위해서는 저장된 url 이 필요하다
 	}
 
 	@Nested
@@ -365,7 +366,7 @@ class BookmarkServiceImplTest {
 				GetDetailedBookmarkResult::getMemo,
 				GetDetailedBookmarkResult::getOpenType,
 				GetDetailedBookmarkResult::isFavorite,
-				GetDetailedBookmarkResult::getUpdatedAt
+				GetDetailedBookmarkResult::getCreatedAt
 			).containsExactly(
 				bookmark.getTitle(),
 				bookmark.getUrl(),
@@ -374,7 +375,7 @@ class BookmarkServiceImplTest {
 				bookmark.getMemo(),
 				bookmark.getOpenType(),
 				false,
-				bookmark.getUpdatedAt()
+				bookmark.getCreatedAt()
 			);
 			assertThat(result.getTags())
 				.contains("tag1");
@@ -426,7 +427,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_조회_실패_존재하지_않는_북마크() {
 			//given
-			final long invalidBookmarkId = 10L;
+			final long invalidBookmarkId = -1L;
 
 			//when then
 			assertThatLinkoceanRuntimeException()
@@ -475,7 +476,7 @@ class BookmarkServiceImplTest {
 
 			final RegisterBookmarkCommand command2 = new RegisterBookmarkCommand(
 				profileId2,
-				"http://www.kakao.com",
+				"http://www.daum.com",
 				"title2",
 				null,
 				IT,
@@ -485,7 +486,7 @@ class BookmarkServiceImplTest {
 
 			final RegisterBookmarkCommand command3 = new RegisterBookmarkCommand(
 				profileId2,
-				"http://www.google.com",
+				"http://www.kakao.com",
 				"title3",
 				null,
 				HOME,

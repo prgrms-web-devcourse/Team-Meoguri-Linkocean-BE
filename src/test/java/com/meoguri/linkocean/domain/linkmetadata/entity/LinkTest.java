@@ -9,7 +9,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 class LinkTest {
 
 	@ParameterizedTest
-	@ValueSource(strings = {"http://www.naver.com", "www.naver.com"})
+	@ValueSource(
+		strings = {
+			"http://www.naver.com",
+			"https://www.naver.com",
+			"www.naver.com",
+			"naver.com",
+			"dev.naver.com"
+		}
+	)
 	void url_생성_성공(final String textUrl) {
 		//when
 		final Link link = new Link(textUrl);

@@ -53,7 +53,7 @@ class FavoriteServiceImplTest {
 		profileId = profileService.registerProfile(command(createProfile(user)));
 
 		linkMetadataService.getOrSaveLinkMetadataTitle("https://www.naver.com");
-		bookmarkId = bookmarkService.registerBookmark(command(user, "www.naver.com"));
+		bookmarkId = bookmarkService.registerBookmark(command(user, "https://www.naver.com"));
 	}
 
 	@Test

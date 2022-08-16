@@ -21,7 +21,7 @@ public final class GetBookmarksResult {
 	private final String title;
 	private final OpenType openType;
 	private final Category category;
-	private final LocalDateTime updatedAt;
+	private final LocalDateTime createdAt;
 
 	private final boolean isFavorite;
 	private final long likeCount;
