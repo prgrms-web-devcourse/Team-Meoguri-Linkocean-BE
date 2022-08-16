@@ -63,15 +63,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
-		final long profileId = command.getProfileId();
+		final long writerId = command.getWriterId();
 		final String url = command.getUrl();
 
 		/* 연관 필드 조회 */
-		final Profile profile = findProfileByIdQuery.findById(profileId);
+		final Profile writer = findProfileByIdQuery.findById(writerId);
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
-		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndLinkMetadata(profile, linkMetadata);
+		final Optional<Bookmark> oBookmark = bookmarkRepository.findByWriterAndLinkMetadata(writer, linkMetadata);
 		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
@@ -79,7 +79,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
-			profile,
+			writer,
 			linkMetadata,
 			command.getTitle(),
 			command.getMemo(),
@@ -96,7 +96,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long bookmarkId = command.getBookmarkId();
 
 		/* 수정 할 북마크 조회 */
-		Bookmark bookmark = bookmarkRepository.findByIdAndWriterId(bookmarkId, command.getProfileId())
+		Bookmark bookmark = bookmarkRepository.findByIdAndWriterId(bookmarkId, command.getWriterId())
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
@@ -114,10 +114,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional
 	@Override
-	public void removeBookmark(final long profileId, final long bookmarkId) {
+	public void removeBookmark(final long writerId, final long bookmarkId) {
 		/* 제거 할 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
-			.findByIdAndWriterId(bookmarkId, profileId)
+			.findByIdAndWriterId(bookmarkId, writerId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* remove 진행 */
@@ -130,7 +130,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchAll(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
-
 		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
@@ -180,7 +179,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		/* 결과 반환 */
 		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);

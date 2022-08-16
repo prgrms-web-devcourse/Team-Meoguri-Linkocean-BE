@@ -83,7 +83,7 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Bookmark> oBookmark =
-			bookmarkRepository.findByProfileAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
+			bookmarkRepository.findByWriterAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
 
 		//then
 		assertThat(oBookmark).isPresent();

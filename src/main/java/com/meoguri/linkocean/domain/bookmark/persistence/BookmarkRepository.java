@@ -19,7 +19,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "where b.writer = :writer "
 		+ "and b.linkMetadata = :linkMetadata "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByProfileAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
+	Optional<Bookmark> findByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
 
 	@Query("select b "
 		+ "from Bookmark b "
