@@ -24,7 +24,7 @@ class CategoryDocsController extends RestDocsTestSupport {
 		mockMvc.perform(get(basePath)
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(AUTHORIZATION, token))
-			
+
 			//then
 			.andDo(
 				restDocs.document(
