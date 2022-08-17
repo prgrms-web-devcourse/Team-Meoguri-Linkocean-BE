@@ -267,91 +267,91 @@ include::{snippets}/notification-docs-controller/공유_알림_생성하고_조�
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_등록_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_등록_api/http-request.adoc[]
 
 Request Fields:
 
-include::{snippets}/bookmark-docs-controller/북마크_등록_api/request-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_등록_api/request-fields.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_등록_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_등록_api/http-response.adoc[]
 
 Response Fields:
 
-include::{snippets}/bookmark-docs-controller/북마크_등록_api/response-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_등록_api/response-fields.adoc[]
 
 === 북마크 수정
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_수정_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_수정_api/http-request.adoc[]
 
 Path Parameters:
 
-include::{snippets}/bookmark-docs-controller/북마크_수정_api/path-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_수정_api/path-parameters.adoc[]
 
 Request Fields:
 
-include::{snippets}/bookmark-docs-controller/북마크_수정_api/request-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_수정_api/request-fields.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_수정_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_수정_api/http-response.adoc[]
 
 === 북마크 삭제
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_삭제_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_삭제_api/http-request.adoc[]
 
 Path Parameters:
 
-include::{snippets}/bookmark-docs-controller/북마크_삭제_api/path-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_삭제_api/path-parameters.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/북마크_삭제_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/북마크_삭제_api/http-response.adoc[]
 
 === 내 북마크 목록 조회
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/내_북마크_목록_조회_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/내_북마크_목록_조회_api/http-request.adoc[]
 
 Request Parameters:
 
-include::{snippets}/bookmark-docs-controller/내_북마크_목록_조회_api/request-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/내_북마크_목록_조회_api/request-parameters.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/내_북마크_목록_조회_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/내_북마크_목록_조회_api/http-response.adoc[]
 
 Response Fields:
 
-include::{snippets}/bookmark-docs-controller/내_북마크_목록_조회_api/response-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/내_북마크_목록_조회_api/response-fields.adoc[]
 
 === 다른 사람 북마크 목록 조회
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/다른_사람_북마크_목록_조회_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/다른_사람_북마크_목록_조회_api/http-request.adoc[]
 
 Path Parameters:
 
-include::{snippets}/bookmark-docs-controller/다른_사람_북마크_목록_조회_api/path-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/다른_사람_북마크_목록_조회_api/path-parameters.adoc[]
 
 Request Parameters:
 
-include::{snippets}/bookmark-docs-controller/다른_사람_북마크_목록_조회_api/request-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/다른_사람_북마크_목록_조회_api/request-parameters.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/다른_사람_북마크_목록_조회_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/다른_사람_북마크_목록_조회_api/http-response.adoc[]
 
 Response Fields:
 
-include::{snippets}/bookmark-docs-controller/다른_사람_북마크_목록_조회_api/response-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/다른_사람_북마크_목록_조회_api/response-fields.adoc[]
 
 === 피드 북마크 목록 조회
 
@@ -375,16 +375,16 @@ include::{snippets}/피드_북마크_조회/피드_북마크_조회_api/response
 
 Request HTTP Example:
 
-include::{snippets}/bookmark-docs-controller/url_중복확인_api/http-request.adoc[]
+include::{snippets}/bookmark-docs-controller-test/url_중복확인_api/http-request.adoc[]
 
 Request Parameters:
 
-include::{snippets}/bookmark-docs-controller/url_중복확인_api/request-parameters.adoc[]
+include::{snippets}/bookmark-docs-controller-test/url_중복확인_api/request-parameters.adoc[]
 
 Response Http Example:
 
-include::{snippets}/bookmark-docs-controller/url_중복확인_api/http-response.adoc[]
+include::{snippets}/bookmark-docs-controller-test/url_중복확인_api/http-response.adoc[]
 
 Response Fields:
-include::{snippets}/bookmark-docs-controller/url_중복확인_api/response-fields.adoc[]
+include::{snippets}/bookmark-docs-controller-test/url_중복확인_api/response-fields.adoc[]
 
