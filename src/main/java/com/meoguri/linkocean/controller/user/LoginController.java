@@ -50,6 +50,7 @@ public class LoginController {
 	public Map<String, Object> loginSuccess(
 		@AuthenticationPrincipal SecurityUser user
 	) {
+		// TODO - Question : SecurityUser 에 profile 이 not null 인 것으로는 확인 불가능 한지?
 		return Map.of("hasProfile", profileService.existsByUserId(user.getId()));
 	}
 

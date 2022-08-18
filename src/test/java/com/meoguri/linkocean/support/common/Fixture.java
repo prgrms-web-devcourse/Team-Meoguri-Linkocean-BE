@@ -1,7 +1,9 @@
 package com.meoguri.linkocean.support.common;
 
 import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -28,14 +30,21 @@ public final class Fixture {
 		return new User(new Email(email), oauthType);
 	}
 
+	public static Profile createProfile(final String username, final Category... categories) {
+		return new Profile(username, Arrays.stream(categories).collect(toList()));
+	}
+
+	@Deprecated
 	public static Profile createProfile() {
 		return createProfile(createUser());
 	}
 
+	@Deprecated
 	public static Profile createProfile(User user) {
 		return createProfile(user, "haha");
 	}
 
+	@Deprecated
 	public static Profile createProfile(User user, String username) {
 		return new Profile(user, username);
 	}
