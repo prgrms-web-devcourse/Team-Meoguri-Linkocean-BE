@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.support.common.Fixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 import java.util.Optional;

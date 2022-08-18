@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.support.common.Fixture.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
