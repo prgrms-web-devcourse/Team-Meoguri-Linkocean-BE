@@ -36,14 +36,22 @@ public class BasePersistenceTest {
 		return profileRepository.save(createProfile(username, categories));
 	}
 
-	protected void 프로필_등록(final User user, final Profile profile) {
+	protected Profile 프로필_등록(final User user, final Profile profile) {
 		user.registerProfile(profile);
+		return profile;
 	}
 
 	protected Profile 프로필_저장_등록(final User user, final String username, final Category... categories) {
-		final Profile profile = profileRepository.save(createProfile(username, categories));
-		user.registerProfile(profile);
-		return profile;
+		return 프로필_등록(user, 프로필_저장(username, categories));
+	}
+
+	protected Profile 사용자_프로필_저장_등록(
+		final String email,
+		final OAuthType oAuthType,
+		final String username,
+		final Category... categories
+	) {
+		return 프로필_저장_등록(사용자_저장(email, oAuthType), username, categories);
 	}
 
 	protected void 팔로우_저장(final Profile follower, final Profile followee) {

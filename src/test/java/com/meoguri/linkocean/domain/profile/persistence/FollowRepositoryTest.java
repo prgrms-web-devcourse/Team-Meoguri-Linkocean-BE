@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
 class FollowRepositoryTest extends BasePersistenceTest {
@@ -30,11 +29,8 @@ class FollowRepositoryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		User user1 = 사용자_저장("haha@gmail.com", GOOGLE);
-		User user2 = 사용자_저장("papa@gmail.com", GOOGLE);
-
-		profile1 = 프로필_저장_등록(user1, "haha", IT);
-		profile2 = 프로필_저장_등록(user2, "papa", IT);
+		profile1 = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		profile2 = 사용자_프로필_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
 		profileId1 = profile1.getId();
 		profileId2 = profile2.getId();

@@ -34,11 +34,12 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 	@Test
 	void 사용자_이름_중복_확인_성공() {
 		//given
-		프로필_저장("haha", IT, ART);
+		final String savedUsername = "haha";
+		사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, savedUsername, IT, ART);
 
 		//when
-		final boolean exists1 = profileRepository.existsByUsername("haha");
-		final boolean exists2 = profileRepository.existsByUsername("papa");
+		final boolean exists1 = profileRepository.existsByUsername(savedUsername);
+		final boolean exists2 = profileRepository.existsByUsername("unsavedUsername");
 
 		//then
 		assertThat(exists1).isTrue();
@@ -47,13 +48,9 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 
 	@Test
 	void existsByUsernameExceptMe_성공() {
-
 		//given
-		User user1 = 사용자_저장("user1@gmail.com", GOOGLE);
-		User user2 = 사용자_저장("user2@gmail.com", GOOGLE);
-
-		long profileId1 = 프로필_저장_등록(user1, "user1", IT).getId();
-		long profileId2 = 프로필_저장_등록(user2, "user2", IT).getId();
+		long profileId1 = 사용자_프로필_저장_등록("user1@gmail.com", GOOGLE, "user1", IT).getId();
+		long profileId2 = 사용자_프로필_저장_등록("user2@gmail.com", GOOGLE, "user2", IT).getId();
 
 		//when
 		final boolean exists1 = profileRepository.existsByUsernameExceptMe("user1", profileId1);

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
 @Import(FindProfileByIdQuery.class)
@@ -21,11 +20,11 @@ class FindProfileByIdQueryTest extends BasePersistenceTest {
 	@Test
 	void 프로필_아이디로_조회_성공() {
 		//given
-		final User user = 사용자_저장("haha@gmail.com", GOOGLE);
-		final Profile profile = 프로필_저장_등록(user, "haha", IT, ART);
+		final Profile profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		final long profileId = profile.getId();
 
 		//when
-		final Profile foundProfile = query.findById(profile.getId());
+		final Profile foundProfile = query.findById(profileId);
 
 		//then
 		assertThat(foundProfile).isEqualTo(profile);
