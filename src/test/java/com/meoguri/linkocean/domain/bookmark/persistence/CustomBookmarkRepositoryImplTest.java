@@ -164,7 +164,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.category(IT)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -186,7 +186,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.category(IT)
 				.build();
-			final Pageable pageable = defaultPageableSortByLike();
+			final Pageable pageable = defaultPageable("like");
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -209,7 +209,7 @@ class CustomBookmarkRepositoryImplTest {
 				.category(IT)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -234,7 +234,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -255,7 +255,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.favorite(true)
 				.build();
-			final Pageable pageable = defaultPageableSortByLike();
+			final Pageable pageable = defaultPageable("like");
 
 			// when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -278,7 +278,7 @@ class CustomBookmarkRepositoryImplTest {
 			favoriteRepository.save(new Favorite(bookmark4, profile));
 			favoriteRepository.save(new Favorite(bookmark3, profile2));
 			favoriteRepository.save(new Favorite(bookmark5, profile2));
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//user1 -> user1
 			//given
@@ -327,7 +327,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -349,7 +349,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.tags(List.of("tag1"))
 				.build();
-			final Pageable pageable = defaultPageableSortByLike();
+			final Pageable pageable = defaultPageable("like");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -372,7 +372,7 @@ class CustomBookmarkRepositoryImplTest {
 				.tags(List.of("tag1"))
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -394,7 +394,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -413,7 +413,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.openType(PARTIAL)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -431,7 +431,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
 				.build();
-			final Pageable pageable = defaultPageableSortByLike();
+			final Pageable pageable = defaultPageable("like");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -450,7 +450,7 @@ class CustomBookmarkRepositoryImplTest {
 				.targetProfileId(profileId)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
@@ -539,7 +539,7 @@ class CustomBookmarkRepositoryImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
@@ -558,7 +558,7 @@ class CustomBookmarkRepositoryImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);

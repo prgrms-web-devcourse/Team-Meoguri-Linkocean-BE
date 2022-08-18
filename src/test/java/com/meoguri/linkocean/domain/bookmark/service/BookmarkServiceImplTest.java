@@ -506,7 +506,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -527,7 +527,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -545,7 +545,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId2)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -570,7 +570,7 @@ class BookmarkServiceImplTest {
 				.targetProfileId(profileId2)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -656,7 +656,7 @@ class BookmarkServiceImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -698,7 +698,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = defaultPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);

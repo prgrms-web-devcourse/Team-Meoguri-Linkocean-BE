@@ -106,16 +106,8 @@ public final class Fixture {
 		return new Tag("tag");
 	}
 
-	public static Pageable defaultPageable() {
-		return PageRequest.of(0, 8);
-	}
-
-	public static Pageable defaultPageableSortByUpload() {
-		return PageRequest.of(0, 8, Sort.by("upload"));
-	}
-
-	public static Pageable defaultPageableSortByLike() {
-		return PageRequest.of(0, 8, Sort.by("like", "upload"));
+	public static Pageable defaultPageable(String... properties) {
+		return PageRequest.of(0, 8, Sort.by(properties));
 	}
 
 }
