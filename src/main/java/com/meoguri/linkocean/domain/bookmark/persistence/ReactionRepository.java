@@ -13,14 +13,16 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
 	@Modifying(clearAutomatically = true)
-	@Query("delete from Reaction r where r.profile = :profile and r.bookmark = :bookmark")
-	void deleteByProfileAndBookmark(Profile profile, Bookmark bookmark);
+	@Query("delete "
+		+ "from Reaction r "
+		+ "where r.profile.id = :profileId "
+		+ "and r.bookmark.id = :bookmarkId")
+	void deleteByProfile_idAndBookmark_id(long profileId, long bookmarkId);
 
 	Optional<Reaction> findByProfile_idAndBookmark(long profileId, Bookmark bookmark);
 
@@ -40,6 +42,9 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 	}
 
 	@Modifying(clearAutomatically = true)
-	@Query("update Reaction r set r.type = :type where r.profile = :profile and r.bookmark = :bookmark")
-	void updateReaction(Profile profile, Bookmark bookmark, ReactionType type);
+	@Query("update Reaction r "
+		+ "set r.type = :type "
+		+ "where r.profile.id = :profileId "
+		+ "and r.bookmark.id = :bookmarkId")
+	void updateReaction(long profileId, long bookmarkId, ReactionType type);
 }

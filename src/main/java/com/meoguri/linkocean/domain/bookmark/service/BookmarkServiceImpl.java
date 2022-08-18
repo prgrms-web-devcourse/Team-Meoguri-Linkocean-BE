@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
@@ -316,13 +317,27 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
+	@Transactional
 	@Override
-	public int addLikeCount(long bookmarkId) {
-		return bookmarkRepository.addLikeCount(bookmarkId);
-	}
-
-	@Override
-	public int subtractLikeCount(long bookmarkId) {
-		return bookmarkRepository.subtractLikeCount(bookmarkId);
+	public void updateLikeCount(
+		final long bookmarkId,
+		final boolean isAlreadyReacted,
+		final ReactionType existedType,
+		final ReactionType requestType
+	) {
+		if (requestType.equals(LIKE)) {
+			if (isAlreadyReacted && existedType.equals(LIKE)) {
+				/* like 를 두번 요청하여 취소 */
+				bookmarkRepository.subtractLikeCount(bookmarkId);
+			} else {
+				/* like 등록 혹은 hate -> like 변경 */
+				bookmarkRepository.addLikeCount(bookmarkId);
+			}
+		} else if (requestType.equals(HATE)) {
+			if (isAlreadyReacted && existedType.equals(LIKE)) {
+				/* like -> hate 변경 */
+				bookmarkRepository.subtractLikeCount(bookmarkId);
+			}
+		}
 	}
 }

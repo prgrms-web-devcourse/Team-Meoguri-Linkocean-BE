@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.service.ReactionService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 
@@ -33,7 +34,8 @@ public class ReactionController {
 		final @PathVariable long bookmarkId,
 		final @PathVariable String reactionType
 	) {
-		reactionService.requestReaction(new ReactionCommand(user.getProfileId(), bookmarkId, reactionType));
+		reactionService.requestReaction(
+			new ReactionCommand(user.getProfileId(), bookmarkId, ReactionType.of(reactionType)));
 	}
 
 }

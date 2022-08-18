@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.apache.http.HttpHeaders.*;
 import static org.assertj.core.api.Assertions.*;

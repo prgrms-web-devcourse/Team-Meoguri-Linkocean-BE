@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.common.Assertions.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -18,9 +19,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -69,22 +70,22 @@ class ReactionRepositoryTest {
 	@Test
 	void 리액션의_프로필_북마크_조합은_유니크하다() {
 		//given
-		reactionRepository.save(new Reaction(profile, bookmark, "like"));
+		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 
 		//when then
 		assertThatDataIntegrityViolationException()
-			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, "hate")));
+			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, HATE)));
 	}
 
 	@Test
 	void 리액션을_프로필_북마크_리액션타입_조합으로_삭제할수_있다() {
 		//given
-		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, "like"));
+		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 		em.flush();
 		em.clear();
 
 		//when
-		reactionRepository.deleteByProfileAndBookmark(profile, bookmark);
+		reactionRepository.deleteByProfile_idAndBookmark_id(profile.getId(), bookmark.getId());
 		em.flush();
 		em.clear();
 
@@ -101,15 +102,15 @@ class ReactionRepositoryTest {
 		final User user1 = userRepository.save(createUser("test@gmail.com", GOOGLE));
 		final Profile profile1 = profileRepository.save(createProfile(user1, "test"));
 
-		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE.name()));
-		reactionRepository.save(new Reaction(profile1, bookmark, ReactionType.HATE.name()));
+		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
+		reactionRepository.save(new Reaction(profile1, bookmark, HATE));
 
 		//when
 		final Map<ReactionType, Long> group = reactionRepository.countReactionGroup(bookmark);
 
 		//then
-		assertThat(group.getOrDefault(ReactionType.LIKE, 0L)).isEqualTo(1);
-		assertThat(group.getOrDefault(ReactionType.HATE, 0L)).isEqualTo(1);
+		assertThat(group.getOrDefault(LIKE, 0L)).isEqualTo(1);
+		assertThat(group.getOrDefault(HATE, 0L)).isEqualTo(1);
 	}
 
 }
