@@ -3,7 +3,9 @@ package com.meoguri.linkocean.infrastructure.s3;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -35,7 +37,7 @@ public class S3Uploader {
 
 	private File convert(MultipartFile multipartFile) {
 		final String originalFilename = multipartFile.getOriginalFilename();
-		File convertFile = new File(multipartFile.getOriginalFilename());
+		File convertFile = new File(originalFilename);
 		try {
 			if (convertFile.createNewFile()) {
 				try (FileOutputStream fos = new FileOutputStream(convertFile)) {
@@ -50,13 +52,23 @@ public class S3Uploader {
 		return null;
 	}
 
-	//TODO 이미지 url 겹치지 않게 로직 작성
 	private String upload(File file, String dirName) {
-		String fileName = dirName + "/" + file.getName();
-		amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file)
+		final String saveFilePath = getSaveFilePath(file, dirName);
+
+		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, file)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
-		final String uploadUrl = amazonS3Client.getUrl(bucket, fileName).toString();
-		file.delete(); // local 에 남는 파일을 지우기 위한 용도
-		return uploadUrl;
+
+		final String uploadedUrl = amazonS3Client.getUrl(bucket, saveFilePath).toString();
+
+		/* local 에 남는 파일 삭제 */
+		file.delete();
+		return uploadedUrl;
+	}
+
+	private String getSaveFilePath(final File file, final String dirName) {
+		final String extension = FilenameUtils.getExtension(file.getName());
+		final String saveFilename = String.join(".", UUID.randomUUID().toString(), extension);
+		final String saveFilePath = dirName + "/" + saveFilename;
+		return saveFilePath;
 	}
 }
