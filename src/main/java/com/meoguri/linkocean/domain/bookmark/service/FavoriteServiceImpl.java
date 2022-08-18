@@ -32,7 +32,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 		final Profile owner = findProfileByIdQuery.findById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
-		final Optional<Favorite> oFavorite = favoriteRepository.findByOwnerAndBookmark(owner, bookmark);
+		final Optional<Favorite> oFavorite = favoriteRepository.findByProfileAndBookmark(owner, bookmark);
 		checkUniqueConstraintIllegalCommand(oFavorite,
 			format("illegal favorite command of profileId: %d on bookmarkId: %d", profileId, bookmarkId));
 
@@ -41,7 +41,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
 	@Override
 	public void unfavorite(final long profileId, final long bookmarkId) {
-		final int count = favoriteRepository.deleteByOwner_idAndBookmark_id(profileId, bookmarkId);
+		final int count = favoriteRepository.deleteByProfile_idAndBookmark_id(profileId, bookmarkId);
 
 		checkCondition(count == 1,
 			"illegal unfavorite command of profileId " + profileId + " on " + "bookmarkId" + bookmarkId);

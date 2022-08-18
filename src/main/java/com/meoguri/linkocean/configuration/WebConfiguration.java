@@ -11,9 +11,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParamsArgumentResolver;
-import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParamsArgumentResolver;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -22,18 +19,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 	private static final String ID = "id";
 	private static final int MAX_PAGE_SIZE = 8;
-	private final GetBookmarkQueryParamsArgumentResolver getBookmarkQueryParamsArgumentResolver;
-	private final GetProfileQueryParamsArgumentResolver getProfileQueryParamsArgumentResolver;
 
 	@Override
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
-		/* add query parameter argument resolvers */
-		resolvers.add(getBookmarkQueryParamsArgumentResolver);
-		resolvers.add(getProfileQueryParamsArgumentResolver);
-
 		/* set default pageable as Page request [number:0, size 8, sort: id: DESC] */
 		SortHandlerMethodArgumentResolver sortArgumentResolver = new SortHandlerMethodArgumentResolver();
 		sortArgumentResolver.setFallbackSort(Sort.by(Sort.Direction.DESC, ID));
+		sortArgumentResolver.setSortParameter("order");
 
 		PageableHandlerMethodArgumentResolver resolver =
 			new PageableHandlerMethodArgumentResolver(sortArgumentResolver);

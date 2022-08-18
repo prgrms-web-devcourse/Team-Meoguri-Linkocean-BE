@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -10,7 +9,7 @@ import java.util.Optional;
 import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,7 +37,8 @@ public class ReactionQuery {
 		return Arrays.stream(ReactionType.values())
 			.collect(toMap(
 				reactionType -> reactionType,
-				reactionType -> oReaction.map(reaction -> of(reaction.getType()).equals(reactionType)).orElse(false)
+				reactionType -> oReaction.map(reaction -> reaction.getType().equals(reactionType))
+					.orElse(false)
 			));
 	}
 }

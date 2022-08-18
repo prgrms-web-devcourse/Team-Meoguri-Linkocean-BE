@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import static java.util.List.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
@@ -33,8 +35,8 @@ class FollowRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		User user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
-		User user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
+		User user1 = userRepository.save(createUser("haha@gmail.com", GOOGLE));
+		User user2 = userRepository.save(createUser("papa@gmail.com", GOOGLE));
 
 		profile1 = profileRepository.save(new Profile(user1, "haha"));
 		profile2 = profileRepository.save(new Profile(user2, "papa"));
@@ -63,7 +65,7 @@ class FollowRepositoryTest {
 		followRepository.save(new Follow(follower, followee));
 
 		//when
-		final Optional<Follow> oFollow = followRepository.findByProfiles(follower, followee);
+		final Optional<Follow> oFollow = followRepository.findByFollowerAndFollowee(follower, followee);
 
 		//then
 		assertThat(oFollow).isPresent().get()

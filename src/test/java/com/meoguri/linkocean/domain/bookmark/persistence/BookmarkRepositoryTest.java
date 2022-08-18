@@ -23,8 +23,8 @@ import com.meoguri.linkocean.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
@@ -83,7 +83,7 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Bookmark> oBookmark =
-			bookmarkRepository.findByProfileAndLinkMetadata(bookmark.getProfile(), bookmark.getLinkMetadata());
+			bookmarkRepository.findByWriterAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
 
 		//then
 		assertThat(oBookmark).isPresent();
@@ -97,7 +97,7 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Bookmark> oBookmark =
-			bookmarkRepository.findByProfileIdAndId(profile.getId(), bookmark.getId());
+			bookmarkRepository.findByIdAndWriterId(bookmark.getId(), profile.getId());
 
 		//then
 		assertThat(oBookmark).isPresent().get()
@@ -122,7 +122,7 @@ class BookmarkRepositoryTest {
 		em.clear();
 
 		//when
-		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileIdFetchTags(profile.getId());
+		final List<Bookmark> bookmarks = bookmarkRepository.findByWriterIdFetchTags(profile.getId());
 
 		em.flush();
 		em.clear();
@@ -148,12 +148,12 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Bookmark> oRetrievedBookmark = bookmarkRepository
-			.findByIdFetchProfileAndLinkMetadataAndTags(bookmark.getId());
+			.findByIdFetchAll(bookmark.getId());
 
 		//then
 		assertAll(
 			() -> assertThat(oRetrievedBookmark).isPresent(),
-			() -> assertThat(isLoaded(oRetrievedBookmark.get().getProfile())).isTrue(),
+			() -> assertThat(isLoaded(oRetrievedBookmark.get().getWriter())).isTrue(),
 			() -> assertThat(isLoaded(oRetrievedBookmark.get().getLinkMetadata())).isTrue(),
 			() -> assertThat(oRetrievedBookmark.get().getTagNames()).contains(tag1.getName())
 		);
@@ -174,7 +174,7 @@ class BookmarkRepositoryTest {
 		bookmarkRepository.save(createBookmark(profile, linkMetadata, "제목", SCIENCE, "www.linkocean.com"));
 
 		//when
-		final List<Category> categories = bookmarkRepository.findCategoryExistsBookmark(profile);
+		final List<Category> categories = bookmarkRepository.findCategoryExistsBookmark(profile.getId());
 
 		//then
 		assertThat(categories).contains(IT, SOCIAL, SCIENCE);
@@ -188,9 +188,9 @@ class BookmarkRepositoryTest {
 
 		//when
 		final Optional<Long> oBookmarkId1 =
-			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.google.com");
+			bookmarkRepository.findIdByWriterIdAndUrl(profile.getId(), "https://www.google.com");
 		final Optional<Long> oBookmarkId2 =
-			bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profile.getId(), "https://www.does.not.exist");
+			bookmarkRepository.findIdByWriterIdAndUrl(profile.getId(), "https://www.does.not.exist");
 
 		//then
 		assertThat(oBookmarkId1).isPresent().get().isEqualTo(bookmark.getId());

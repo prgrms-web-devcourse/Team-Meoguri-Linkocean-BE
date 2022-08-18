@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -65,8 +66,8 @@ class ProfileRepositoryTest {
 	@Test
 	void 사용자_이름_변경_남이름을_먹으려_하면_실패() {
 		//given
-		User user1 = new User("user1@gmail.com", "GOOGLE");
-		User user2 = new User("user2@gmail.com", "GOOGLE");
+		User user1 = createUser("user1@gmail.com", GOOGLE);
+		User user2 = createUser("user2@gmail.com", GOOGLE);
 
 		user1 = userRepository.save(user1);
 		user2 = userRepository.save(user2);

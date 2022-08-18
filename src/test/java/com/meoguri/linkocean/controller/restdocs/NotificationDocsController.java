@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -26,11 +27,11 @@ class NotificationDocsController extends RestDocsTestSupport {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("sender@gmail.com", "GOOGLE");
+		유저_등록_로그인("sender@gmail.com", GOOGLE);
 		senderProfileId = 프로필_등록("sender", List.of("IT"));
 		bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
 
-		유저_등록_로그인("target@gmail.com", "GOOGLE");
+		유저_등록_로그인("target@gmail.com", GOOGLE);
 		targetProfileId = 프로필_등록("target", List.of("IT"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
 		팔로우(senderProfileId);
@@ -39,10 +40,10 @@ class NotificationDocsController extends RestDocsTestSupport {
 	@Test
 	void 공유_알림_생성하고_조회_성공() throws Exception {
 		//given
-		로그인("sender@gmail.com", "GOOGLE");
+		로그인("sender@gmail.com", GOOGLE);
 		북마크_공유(bookmarkId, targetProfileId);
 
-		로그인("target@gmail.com", "GOOGLE");
+		로그인("target@gmail.com", GOOGLE);
 
 		//when
 		mockMvc.perform(get(baseUrl)

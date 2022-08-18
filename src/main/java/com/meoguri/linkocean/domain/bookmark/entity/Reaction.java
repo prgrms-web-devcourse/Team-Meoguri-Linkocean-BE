@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.Getter;
@@ -40,44 +41,14 @@ public class Reaction extends BaseIdEntity {
 	@Enumerated(STRING)
 	private ReactionType type;
 
-	public Reaction(final Profile profile, final Bookmark bookmark, final String type) {
+	public Reaction(final Profile profile, final Bookmark bookmark, final ReactionType reactionType) {
 		checkNotNull(profile);
 		checkNotNull(bookmark);
-		checkNotNull(type);
+		checkNotNull(reactionType);
 
 		this.profile = profile;
 		this.bookmark = bookmark;
-		this.type = ReactionType.of(type);
-	}
-
-	public String getType() {
-		return type.getName();
-	}
-
-	/**
-	 * 사용자는 북마크에 대한 리액션을 변경할 수 있다.
-	 */
-	public void changeTypeTo(ReactionType reactionType) {
 		this.type = reactionType;
 	}
 
-	/**
-	 * 북마크 리액션 타입
-	 */
-	public enum ReactionType {
-
-		/* 좋아요 👍 */
-		LIKE,
-
-		/* 싫어요 👎 */
-		HATE;
-
-		public String getName() {
-			return name().toLowerCase();
-		}
-
-		public static ReactionType of(String arg) {
-			return ReactionType.valueOf(arg.toUpperCase());
-		}
-	}
 }

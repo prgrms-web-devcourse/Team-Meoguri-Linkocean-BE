@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,9 +46,9 @@ class CustomProfileRepositoryImplTest {
 	@BeforeEach
 	void setUp() {
 		//set up 3 users
-		User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-		User user2 = userRepository.save(new User("user2@naver.com", "NAVER"));
-		User user3 = userRepository.save(new User("user3@kakao.com", "KAKAO"));
+		User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
+		User user2 = userRepository.save(createUser("user2@naver.com", NAVER));
+		User user3 = userRepository.save(createUser("user3@kakao.com", KAKAO));
 
 		profile1 = profileRepository.save(new Profile(user1, "user1"));
 		profile2 = profileRepository.save(new Profile(user2, "user2"));

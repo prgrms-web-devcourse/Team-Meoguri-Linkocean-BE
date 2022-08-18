@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -7,11 +8,13 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
@@ -24,9 +27,11 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
+	private long profileId;
+
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 	}
 
@@ -98,10 +103,10 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 	@Test
 	void 다른_사람_북마크_목록_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("crush@gmail.com", "GOOGLE");
+		유저_등록_로그인("crush@gmail.com", GOOGLE);
 		프로필_등록("crush", List.of("IT"));
 
-		유저_등록_로그인("otherUser@gmail.com", "GOOGLE");
+		유저_등록_로그인("otherUser@gmail.com", GOOGLE);
 		final long otherProfileId = 프로필_등록("user1", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
@@ -109,7 +114,7 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 		북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
 		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
 
-		로그인("crush@gmail.com", "GOOGLE");
+		로그인("crush@gmail.com", GOOGLE);
 
 		팔로우(otherProfileId);
 
@@ -146,21 +151,21 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 	@Test
 	void 피드_북마크_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("user3@gmail.com", "GOOGLE");
+		유저_등록_로그인("user3@gmail.com", GOOGLE);
 		프로필_등록("user3", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-		유저_등록_로그인("user2@gmail.com", "GOOGLE");
+		유저_등록_로그인("user2@gmail.com", GOOGLE);
 		final long profileId2 = 프로필_등록("user2", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-		유저_등록_로그인("user1@gmail.com", "GOOGLE");
+		유저_등록_로그인("user1@gmail.com", GOOGLE);
 		프로필_등록("user1", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
@@ -203,7 +208,7 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 	@Test
 	void 북마크_상세_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("user1@gmail.com", "GOOGLE");
+		유저_등록_로그인("user1@gmail.com", GOOGLE);
 		프로필_등록("user1", List.of("IT"));
 
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
@@ -314,16 +319,16 @@ class BookmarkDocsControllerTest extends RestDocsTestSupport {
 	@Test
 	void 북마크_공유_알림_api() throws Exception {
 		//given
-		유저_등록_로그인("sender@gmail.com", "GOOGLE");
+		유저_등록_로그인("sender@gmail.com", GOOGLE);
 		final long senderProfileId = 프로필_등록("sender", List.of("IT"));
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
 
-		유저_등록_로그인("target@gmail.com", "GOOGLE");
+		유저_등록_로그인("target@gmail.com", GOOGLE);
 		final long targetProfileId = 프로필_등록("target", List.of("IT"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
 		팔로우(senderProfileId);
 
-		로그인("sender@gmail.com", "GOOGLE");
+		로그인("sender@gmail.com", GOOGLE);
 		final Map<String, Long> request = Map.of("targetId", targetProfileId);
 
 		//when

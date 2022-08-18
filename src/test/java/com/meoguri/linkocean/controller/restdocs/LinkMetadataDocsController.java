@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -22,7 +23,7 @@ class LinkMetadataDocsController extends RestDocsTestSupport {
 	@Test
 	void 링크메타데이터_제목_조회_Api() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 
 		final String url = "http://www.naver.com";

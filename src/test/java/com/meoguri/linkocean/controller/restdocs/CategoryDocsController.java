@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -18,7 +19,7 @@ class CategoryDocsController extends RestDocsTestSupport {
 	@Test
 	void 카테고리_전체_조회_Api_성공() throws Exception {
 		//given
-		유저_등록_로그인("hello@gmail.com", "GOOGLE");
+		유저_등록_로그인("hello@gmail.com", GOOGLE);
 
 		//when
 		mockMvc.perform(get(basePath)

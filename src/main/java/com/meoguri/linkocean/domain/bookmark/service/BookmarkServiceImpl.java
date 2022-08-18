@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
@@ -63,15 +64,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
-		final long profileId = command.getProfileId();
+		final long writerId = command.getWriterId();
 		final String url = command.getUrl();
 
 		/* 연관 필드 조회 */
-		final Profile profile = findProfileByIdQuery.findById(profileId);
+		final Profile writer = findProfileByIdQuery.findById(writerId);
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
-		final Optional<Bookmark> oBookmark = bookmarkRepository.findByProfileAndLinkMetadata(profile, linkMetadata);
+		final Optional<Bookmark> oBookmark = bookmarkRepository.findByWriterAndLinkMetadata(writer, linkMetadata);
 		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
@@ -79,7 +80,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
-			profile,
+			writer,
 			linkMetadata,
 			command.getTitle(),
 			command.getMemo(),
@@ -96,7 +97,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long bookmarkId = command.getBookmarkId();
 
 		/* 수정 할 북마크 조회 */
-		Bookmark bookmark = bookmarkRepository.findByProfileIdAndId(command.getProfileId(), bookmarkId)
+		Bookmark bookmark = bookmarkRepository.findByIdAndWriterId(bookmarkId, command.getWriterId())
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
@@ -114,10 +115,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional
 	@Override
-	public void removeBookmark(final long profileId, final long bookmarkId) {
+	public void removeBookmark(final long writerId, final long bookmarkId) {
 		/* 제거 할 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
-			.findByProfileIdAndId(profileId, bookmarkId)
+			.findByIdAndWriterId(bookmarkId, writerId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* remove 진행 */
@@ -128,10 +129,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 		/* 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
-			.findByIdFetchProfileAndLinkMetadataAndTags(bookmarkId)
+			.findByIdFetchAll(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
-
-		final Profile writer = bookmark.getProfile();
+		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
 		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(profileId, bookmark);
@@ -180,7 +180,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
-		final boolean isWriter = currentUserProfileId == findCond.getTargetProfileId();
 
 		/* 결과 반환 */
 		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);
@@ -196,7 +195,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
-		final List<Profile> writers = bookmarks.stream().map(Bookmark::getProfile).collect(toList());
+		final List<Profile> writers = bookmarks.stream().map(Bookmark::getWriter).collect(toList());
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
@@ -216,7 +215,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public Optional<Long> getBookmarkIdIfExist(final long profileId, final String url) {
-		return bookmarkRepository.findBookmarkIdByProfileIdAndUrl(profileId, url);
+		return bookmarkRepository.findIdByWriterIdAndUrl(profileId, url);
 	}
 
 	/**
@@ -252,7 +251,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
-			final Profile writer = bookmark.getProfile();
+			final Profile writer = bookmark.getWriter();
 			bookmarkResults.add(new GetBookmarksResult(
 				bookmark.getId(),
 				bookmark.getUrl(),
@@ -292,7 +291,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
 			final Bookmark bookmark = bookmarks.get(i);
-			final Profile writer = bookmark.getProfile();
+			final Profile writer = bookmark.getWriter();
 			bookmarkResults.add(new GetFeedBookmarksResult(
 				bookmark.getId(),
 				bookmark.getTitle(),
@@ -318,13 +317,27 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
+	@Transactional
 	@Override
-	public int addLikeCount(long bookmarkId) {
-		return bookmarkRepository.addLikeCount(bookmarkId);
-	}
-
-	@Override
-	public int subtractLikeCount(long bookmarkId) {
-		return bookmarkRepository.subtractLikeCount(bookmarkId);
+	public void updateLikeCount(
+		final long bookmarkId,
+		final boolean isAlreadyReacted,
+		final ReactionType existedType,
+		final ReactionType requestType
+	) {
+		if (requestType.equals(LIKE)) {
+			if (isAlreadyReacted && existedType.equals(LIKE)) {
+				/* like 를 두번 요청하여 취소 */
+				bookmarkRepository.subtractLikeCount(bookmarkId);
+			} else {
+				/* like 등록 혹은 hate -> like 변경 */
+				bookmarkRepository.addLikeCount(bookmarkId);
+			}
+		} else if (requestType.equals(HATE)) {
+			if (isAlreadyReacted && existedType.equals(LIKE)) {
+				/* like -> hate 변경 */
+				bookmarkRepository.subtractLikeCount(bookmarkId);
+			}
+		}
 	}
 }

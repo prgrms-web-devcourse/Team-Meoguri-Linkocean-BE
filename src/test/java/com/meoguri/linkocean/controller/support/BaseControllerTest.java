@@ -32,8 +32,8 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
@@ -75,14 +75,16 @@ public class BaseControllerTest {
 			.orElseThrow(NullPointerException::new);
 	}
 
-	protected void 유저_등록_로그인(final String email, final String oAuthType) {
-		userRepository.save(new User(email, oAuthType));
-		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
+	protected void 유저_등록_로그인(final String email, final OAuthType oAuthType) {
+		final Email emailField = new Email(email);
+		userRepository.save(new User(emailField, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
 	}
 
-	protected void 로그인(final String email, final String oAuthType) {
-		userRepository.findByEmailAndOAuthType(new Email(email), OAuthType.valueOf(oAuthType)).orElseThrow();
-		token = String.format("Bearer %s", jwtProvider.generate(email, oAuthType));
+	protected void 로그인(final String email, final OAuthType oAuthType) {
+		final Email emailField = new Email(email);
+		userRepository.findByEmailAndOAuthType(emailField, oAuthType).orElseThrow();
+		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {

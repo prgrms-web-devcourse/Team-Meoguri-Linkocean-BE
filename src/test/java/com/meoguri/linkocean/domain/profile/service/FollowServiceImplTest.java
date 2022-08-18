@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.domain.profile.service;
 
 import static com.meoguri.linkocean.common.Assertions.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -11,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
 @Transactional
@@ -35,8 +36,8 @@ class FollowServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		user1Id = userRepository.save(new User("haha@gmail.com", "GOOGLE")).getId();
-		user2Id = userRepository.save(new User("papa@gmail.com", "GOOGLE")).getId();
+		user1Id = userRepository.save(createUser("haha@gmail.com", GOOGLE)).getId();
+		user2Id = userRepository.save(createUser("papa@gmail.com", GOOGLE)).getId();
 
 		final RegisterProfileCommand command1 = new RegisterProfileCommand(user1Id, "haha", emptyList());
 		final RegisterProfileCommand command2 = new RegisterProfileCommand(user2Id, "papa", emptyList());

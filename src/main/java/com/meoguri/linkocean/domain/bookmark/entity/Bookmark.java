@@ -15,6 +15,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -48,7 +49,8 @@ public class Bookmark extends BaseIdEntity {
 	public static final int MAX_TAGS_COUNT = 5;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	private Profile profile;
+	@JoinColumn(name = "profile_id")
+	private Profile writer;
 
 	@ManyToOne(fetch = LAZY, optional = false)
 	private LinkMetadata linkMetadata;
@@ -90,13 +92,13 @@ public class Bookmark extends BaseIdEntity {
 	private LocalDateTime updatedAt;
 
 	/* 북마크 등록시 사용하는 생성자 */
-	public Bookmark(final Profile profile, final LinkMetadata linkMetadata, final String title, final String memo,
+	public Bookmark(final Profile writer, final LinkMetadata linkMetadata, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
 		checkNotNull(openType);
 		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
-		this.profile = profile;
+		this.writer = writer;
 		this.linkMetadata = linkMetadata;
 		this.title = title;
 		this.memo = memo;
@@ -143,10 +145,6 @@ public class Bookmark extends BaseIdEntity {
 
 	public void changeLikeCount(long likeCount) {
 		this.likeCount = likeCount;
-	}
-
-	public boolean isWrittenBy(final Profile profile) {
-		return this.profile.equals(profile);
 	}
 
 	public boolean isOpenTypeAll() {

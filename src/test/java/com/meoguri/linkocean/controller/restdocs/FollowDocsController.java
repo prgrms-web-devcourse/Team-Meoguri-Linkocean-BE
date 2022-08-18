@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
@@ -22,10 +23,10 @@ class FollowDocsController extends RestDocsTestSupport {
 	@BeforeEach
 	void setUp() throws Exception {
 		/* given - 두 사용자 haha 와 papa */
-		유저_등록_로그인("haha@gmail.com", "GOOGLE");
+		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		hahaId = 프로필_등록("haha", List.of("IT"));
 
-		유저_등록_로그인("papa@gmail.com", "GOOGLE");
+		유저_등록_로그인("papa@gmail.com", GOOGLE);
 		프로필_등록("papa", List.of("자기계발"));
 	}
 

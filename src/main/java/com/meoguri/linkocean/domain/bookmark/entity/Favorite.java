@@ -5,6 +5,7 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -31,13 +32,14 @@ public class Favorite extends BaseIdEntity {
 	private Bookmark bookmark;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	private Profile owner;
+	@JoinColumn(name = "owner_id")
+	private Profile profile;
 
-	public Favorite(final Bookmark bookmark, final Profile owner) {
+	public Favorite(final Bookmark bookmark, final Profile profile) {
 		checkNotNull(bookmark);
-		checkNotNull(owner);
+		checkNotNull(profile);
 
 		this.bookmark = bookmark;
-		this.owner = owner;
+		this.profile = profile;
 	}
 }
