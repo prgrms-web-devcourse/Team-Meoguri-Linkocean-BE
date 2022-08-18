@@ -19,12 +19,12 @@ class FindUserByIdQueryTest extends BasePersistenceTest {
 	@Test
 	void 아이디로_사용자_조회_성공() {
 		//given
-		long userId = 사용자_저장("haha@gmail.com", GOOGLE);
+		User savedUser = 사용자_저장("haha@gmail.com", GOOGLE);
 
 		//when
-		final User foundUser = query.findById(userId);
+		final User foundUser = query.findById(savedUser.getId());
 
 		//then
-		assertThat(foundUser.getId()).isEqualTo(userId);
+		assertThat(foundUser).isEqualTo(savedUser);
 	}
 }
