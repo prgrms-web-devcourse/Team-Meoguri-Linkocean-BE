@@ -77,7 +77,7 @@ public class ProfileServiceImpl implements ProfileService {
 			targetProfile.getUsername(),
 			targetProfile.getImage(),
 			targetProfile.getBio(),
-			targetProfile.getMyFavoriteCategories(),
+			targetProfile.getFavoriteCategories(),
 			isFollow,
 			followerCount,
 			followeeCount

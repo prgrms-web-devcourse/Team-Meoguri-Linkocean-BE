@@ -1,17 +1,18 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.util.stream.Collectors.*;
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
@@ -40,10 +41,11 @@ public class Profile extends BaseIdEntity {
 	@OneToOne(fetch = LAZY, mappedBy = "profile")
 	private User user;
 
-	/* FavoriteCategory 의 생명주기는 Profile 엔티티가 관리 */
-	@Getter(NONE)
-	@OneToMany(mappedBy = "profile", cascade = ALL, orphanRemoval = true)
-	private List<FavoriteCategory> favoriteCategories = new ArrayList<>();
+	@ElementCollection
+	@CollectionTable(name = "favorite_category")
+	@Column(name = "category")
+	@Enumerated(STRING)
+	private List<Category> favoriteCategories = new ArrayList<>();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
@@ -75,24 +77,15 @@ public class Profile extends BaseIdEntity {
 		this.image = image;
 	}
 
-	/* 선호카테고리 목록 조회 */
-	public List<Category> getMyFavoriteCategories() {
-		return this.favoriteCategories.stream()
-			.map(FavoriteCategory::getCategory)
-			.collect(toList());
-	}
-
 	/* 선호 카테고리 목록 업데이트 */
 	public void updateFavoriteCategories(final List<Category> categories) {
 		/* 기존 목록 중 업데이트 목록에 없다면 삭제 */
-		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory()));
+		favoriteCategories.removeIf(fc -> !categories.contains(fc));
 
 		/* 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가 */
 		categories.stream()
-			.filter(c -> !favoriteCategories.stream()
-				.map(FavoriteCategory::getCategory)
-				.collect(toList()).contains(c))
-			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
+			.filter(c -> !favoriteCategories.contains(c))
+			.forEach(c -> favoriteCategories.add(c));
 	}
 
 	@Deprecated
