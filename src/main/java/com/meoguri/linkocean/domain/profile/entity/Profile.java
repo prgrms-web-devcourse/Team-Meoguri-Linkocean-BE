@@ -67,7 +67,7 @@ public class Profile extends BaseIdEntity {
 	}
 
 	/* 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다 */
-	public void update(final String username, final String bio, final String image) {
+	public void update(final String username, final String bio, final String image, final List<Category> categories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
 		checkNullableStringLength(image, MAX_PROFILE_IMAGE_URL_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
@@ -75,10 +75,14 @@ public class Profile extends BaseIdEntity {
 		this.username = username;
 		this.bio = bio;
 		this.image = image;
+		updateFavoriteCategories(categories);
 	}
 
 	/* 선호 카테고리 목록 업데이트 */
-	public void updateFavoriteCategories(final List<Category> categories) {
+	private void updateFavoriteCategories(final List<Category> categories) {
+		// TODO - uncomment below after remove all deprecated constructor below
+		// checkCondition(categories.size() >= 1 && categories.size() <= 12, "category size must be in between 1 & 12");
+
 		/* 기존 목록 중 업데이트 목록에 없다면 삭제 */
 		favoriteCategories.removeIf(fc -> !categories.contains(fc));
 
