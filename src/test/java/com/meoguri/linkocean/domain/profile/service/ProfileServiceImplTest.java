@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
@@ -177,9 +176,8 @@ class ProfileServiceImplTest {
 		assertThat(user1ToUser1ProfileResult.isFollow()).isEqualTo(expectedFollow);
 	}
 
-	@Ultimate
 	@Nested
-	class 궁극의_프로필_목록_조회_테스트 {
+	class 프로필_목록_조회_테스트 {
 		private long user1Id;
 		private long user2Id;
 		private long user3Id;
