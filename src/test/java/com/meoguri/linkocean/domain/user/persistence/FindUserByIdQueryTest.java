@@ -1,35 +1,30 @@
 package com.meoguri.linkocean.domain.user.persistence;
 
-import static com.meoguri.linkocean.support.common.Fixture.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
 @Import(FindUserByIdQuery.class)
-@DataJpaTest
-class FindUserByIdQueryTest {
+class FindUserByIdQueryTest extends BasePersistenceTest {
 
 	@Autowired
 	private FindUserByIdQuery query;
 
-	@Autowired
-	private UserRepository userRepository;
-
 	@Test
 	void 아이디로_사용자_조회_성공() {
 		//given
-		final User user = createUser();
-		userRepository.save(user);
+		long userId = 사용자_저장("haha@gmail.com", GOOGLE);
 
 		//when
-		final User foundUser = query.findById(user.getId());
+		final User foundUser = query.findById(userId);
 
 		//then
-		assertThat(foundUser).isEqualTo(user);
+		assertThat(foundUser.getId()).isEqualTo(userId);
 	}
 }

@@ -16,7 +16,7 @@ public class BasePersistenceTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	protected void 사용자_저장(final String email, final OAuthType oAuthType) {
-		userRepository.save(createUser(email, oAuthType));
+	protected long 사용자_저장(final String email, final OAuthType oAuthType) {
+		return userRepository.save(createUser(email, oAuthType)).getId();
 	}
 }
