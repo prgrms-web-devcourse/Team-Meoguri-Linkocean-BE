@@ -101,9 +101,10 @@
 
 ## 테스트
 
-![Tests](https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c/raw/36cedbf4c62e1ba37ae9c6fee95af99ac80a8c05/badge.svg)
+![Tests](https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c/raw/17c7425370438b723740dbd03ff890aabf108dfa/badge.svg)
 ![JUnit5](https://img.shields.io/badge/JUnit5-white?style=Plastic&logo=JUnit5)
 ![jacoco](https://img.shields.io/badge/jacoco-white.svg?style=Plastic&logo=jacoco&logoColor=red)
+![Postman](https://img.shields.io/badge/postman-white?style=Plastic&logo=postman)
 
 ## 🏗️ architecture
 
