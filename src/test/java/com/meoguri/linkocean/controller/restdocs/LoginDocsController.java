@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -55,7 +56,7 @@ public class LoginDocsController extends RestDocsTestSupport {
 	@Test
 	void 로그인_성공_api() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 
 		//when

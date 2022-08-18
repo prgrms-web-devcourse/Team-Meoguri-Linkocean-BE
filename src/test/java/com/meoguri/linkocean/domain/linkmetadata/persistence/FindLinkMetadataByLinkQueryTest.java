@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 
 @Import(FindLinkMetadataByUrlQuery.class)
 @DataJpaTest

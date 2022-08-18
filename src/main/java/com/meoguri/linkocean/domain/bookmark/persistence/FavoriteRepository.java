@@ -13,16 +13,16 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-	int deleteByOwner_idAndBookmark_id(long ownerId, long bookmarkId);
+	int deleteByProfile_idAndBookmark_id(long profileId, long bookmarkId);
 
-	boolean existsByOwner_idAndBookmark(long ownerId, Bookmark bookmark);
+	boolean existsByProfile_idAndBookmark(long profileId, Bookmark bookmark);
 
-	Optional<Favorite> findByOwnerAndBookmark(Profile owner, Bookmark bookmark);
+	Optional<Favorite> findByProfileAndBookmark(Profile profile, Bookmark bookmark);
 
 	/* 즐겨찾기 중인 북마크의 id 집합 조회 */
 	@Query("select f.bookmark.id "
 		+ "from Favorite f "
-		+ "where f.owner.id = :ownerId "
+		+ "where f.profile.id = :profileId "
 		+ "and f.bookmark in :bookmarks")
-	Set<Long> findBookmarkIdByOwnerIdAndBookmark(long ownerId, List<Bookmark> bookmarks);
+	Set<Long> findBookmarkIdByProfileIdAndInBookmarks(long profileId, List<Bookmark> bookmarks);
 }

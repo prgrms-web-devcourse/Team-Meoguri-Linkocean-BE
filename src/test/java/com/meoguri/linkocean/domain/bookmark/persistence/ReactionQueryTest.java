@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -66,7 +67,7 @@ class ReactionQueryTest {
 	@Test
 	void 리액션_별_카운트를_조회할_수_있다() {
 		//given
-		final User user1 = userRepository.save(createUser("test@gmail.com", "GOOGLE"));
+		final User user1 = userRepository.save(createUser("test@gmail.com", GOOGLE));
 		final Profile profile1 = profileRepository.save(createProfile(user1, "test"));
 
 		reactionRepository.save(new Reaction(profile, bookmark, ReactionType.LIKE));

@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class RegisterBookmarkCommand {
 
-	private final long profileId;
+	private final long writerId;
 	private final String url;
 	private final String title;
 	private final String memo;

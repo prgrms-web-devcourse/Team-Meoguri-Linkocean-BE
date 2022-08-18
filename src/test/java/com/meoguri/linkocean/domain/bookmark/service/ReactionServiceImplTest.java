@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
@@ -47,7 +48,7 @@ class ReactionServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자, 프로필, 링크 메타 데이터 셋업
-		User user = userRepository.save(createUser("haha@gmail.com", "GOOGLE"));
+		User user = userRepository.save(createUser("haha@gmail.com", GOOGLE));
 		final Profile profile = profileRepository.save(createProfile(user, "haha"));
 		user.registerProfile(profile);
 		profileId = profile.getId();

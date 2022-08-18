@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.resolver.GetBookmarkQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.bookmark.dto.GetBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
@@ -30,6 +30,7 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.GetBookmarkQueryParams;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -58,9 +59,10 @@ public class BookmarkController {
 	@GetMapping("/me")
 	public PageResponse<GetBookmarksResponse> getMyBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
-		return getByTargetProfileId(user, user.getProfileId(), queryParams);
+		return getByTargetProfileId(user, user.getProfileId(), queryParams, pageable);
 	}
 
 	/**
@@ -71,19 +73,20 @@ public class BookmarkController {
 	public PageResponse<GetBookmarksResponse> getByTargetProfileId(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable("profileId") long targetProfileId,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
 		final Page<GetBookmarksResult> result = bookmarkService.getByTargetProfileId(
 			new BookmarkFindCond(
 				user.getProfileId(),
 				targetProfileId,
 				queryParams.getCategory(),
-				queryParams.isFavorite(),
+				queryParams.getFavorite(),
 				queryParams.getTags(),
-				queryParams.isFollow(),
-				queryParams.getTitle()
+				queryParams.getFollow(),
+				queryParams.getSearchTitle()
 			),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetBookmarksResponse> response = result.get()
@@ -99,19 +102,20 @@ public class BookmarkController {
 	@GetMapping("/feed")
 	public PageResponse<GetFeedBookmarksResponse> getFeedBookmarks(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetBookmarkQueryParams queryParams
+		final GetBookmarkQueryParams queryParams,
+		final Pageable pageable
 	) {
 		final Page<GetFeedBookmarksResult> result = bookmarkService.getFeedBookmarks(
 			new BookmarkFindCond(
 				user.getProfileId(),
 				null, // 대상이 따로 없는 조회 이므로 null
 				queryParams.getCategory(),
-				queryParams.isFavorite(),
+				queryParams.getFavorite(),
 				queryParams.getTags(),
-				queryParams.isFollow(),
-				queryParams.getTitle()
+				queryParams.getFollow(),
+				queryParams.getSearchTitle()
 			),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetFeedBookmarksResponse> response = result.get()

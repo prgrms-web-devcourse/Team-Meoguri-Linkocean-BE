@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -59,7 +60,7 @@ class FavoriteRepositoryTest {
 		assertThat(favoriteRepository.findAll()).hasSize(1);
 
 		// 삭제
-		final int deletedCount = favoriteRepository.deleteByOwner_idAndBookmark_id(owner.getId(), bookmark.getId());
+		final int deletedCount = favoriteRepository.deleteByProfile_idAndBookmark_id(owner.getId(), bookmark.getId());
 		assertThat(deletedCount).isEqualTo(1);
 		assertThat(favoriteRepository.findAll()).isEmpty();
 	}
@@ -67,7 +68,7 @@ class FavoriteRepositoryTest {
 	@Test
 	void 즐겨찾기_여부_조회() {
 		//when
-		final boolean isFavorite = favoriteRepository.existsByOwner_idAndBookmark(owner.getId(), bookmark);
+		final boolean isFavorite = favoriteRepository.existsByProfile_idAndBookmark(owner.getId(), bookmark);
 
 		//then
 		assertThat(isFavorite).isFalse();
@@ -76,14 +77,14 @@ class FavoriteRepositoryTest {
 	@Test
 	void 여러_북마크에_대해_즐겨찾기_PK를_조회() {
 		//given
-		final User user = userRepository.save(createUser("crush@mail.com", "GOOGLE"));
+		final User user = userRepository.save(createUser("crush@mail.com", GOOGLE));
 		final Profile profile = profileRepository.save(createProfile(user, "crush"));
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		favoriteRepository.save(new Favorite(bookmark, owner));
 
 		//when
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByOwnerIdAndBookmark(owner.getId(),
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByProfileIdAndInBookmarks(owner.getId(),
 			List.of(this.bookmark, bookmark));
 
 		//then

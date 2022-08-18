@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.configuration.converter;
+package com.meoguri.linkocean.domain.bookmark.persistence.converter;
 
 import java.util.stream.Stream;
 

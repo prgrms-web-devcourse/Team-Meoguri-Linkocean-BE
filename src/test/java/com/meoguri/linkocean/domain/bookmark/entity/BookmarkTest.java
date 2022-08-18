@@ -40,7 +40,7 @@ class BookmarkTest {
 		//then
 		assertThat(bookmark).isNotNull()
 			.extracting(
-				Bookmark::getProfile,
+				Bookmark::getWriter,
 				Bookmark::getTitle,
 				Bookmark::getLinkMetadata,
 				Bookmark::getMemo,

@@ -7,8 +7,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 
 public interface LinkMetadataRepository extends JpaRepository<LinkMetadata, Long> {
 

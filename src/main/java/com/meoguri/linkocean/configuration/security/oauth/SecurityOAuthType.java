@@ -3,6 +3,10 @@ package com.meoguri.linkocean.configuration.security.oauth;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -18,43 +22,32 @@ import lombok.RequiredArgsConstructor;
 public enum SecurityOAuthType {
 
 	GOOGLE(attributes ->
-		new OAuthAttributes(
-			attributes,
-			(String)attributes.get("email"),
-			"GOOGLE"
-		)
+		new Email((String)attributes.get("email")),
+		OAuthType.GOOGLE
 	),
 
 	NAVER(attributes -> {
 		@SuppressWarnings("unchecked") // Api Spec 상 항상 Map 이 보장된다.
 		Map<String, Object> response = (Map<String, Object>)attributes.get("response");
-
-		return new OAuthAttributes(
-			response,
-			(String)response.get("email"),
-			"NAVER"
-		);
-	}),
+		return new Email((String)response.get("email"));
+	},
+		OAuthType.NAVER
+	),
 
 	KAKAO(attributes -> {
 		@SuppressWarnings("unchecked") // Api Spec 상 항상 Map 이 보장된다.
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
+		return new Email((String)kakaoAccount.get("email"));
+	},
+		OAuthType.KAKAO
+	);
 
-		return new OAuthAttributes(
-			kakaoAccount,
-			(String)kakaoAccount.get("email"),
-			"KAKAO"
-		);
-	});
+	private final Function<Map<String, Object>, Email> emailFunction;
 
-	public final Function<Map<String, Object>, OAuthAttributes> toOAuthAttributes;
+	@Getter
+	private final OAuthType oAuthType;
 
-	public static SecurityOAuthType of(final String type) {
-		try {
-			return SecurityOAuthType.valueOf(type.toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new IllegalStateException();
-		}
+	public Email parseEmail(final Map<String, Object> attributes) {
+		return emailFunction.apply(attributes);
 	}
-
 }
