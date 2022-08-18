@@ -4,7 +4,6 @@ import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.UnsupportedEncodingException;
@@ -203,8 +202,7 @@ public class BaseControllerTest {
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(request)))
-			.andExpect(status().isOk())
-			.andDo(print());
+			.andExpect(status().isOk());
 	}
 
 	private long toId(final MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
