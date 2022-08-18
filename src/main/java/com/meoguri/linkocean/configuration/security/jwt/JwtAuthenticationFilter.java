@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.util.TokenUtil;
 

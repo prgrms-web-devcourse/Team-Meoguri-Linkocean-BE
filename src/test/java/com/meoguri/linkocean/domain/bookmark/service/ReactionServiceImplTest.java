@@ -21,7 +21,7 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataReposit
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @Transactional
 @SpringBootTest

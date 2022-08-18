@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.repository;
+package com.meoguri.linkocean.domain.user.persistence;
 
 import java.util.Optional;
 

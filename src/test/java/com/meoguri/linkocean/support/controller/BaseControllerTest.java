@@ -35,7 +35,7 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataReposit
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.support.common.P6spyLogMessageFormatConfiguration;
 
 @AutoConfigureMockMvc
