@@ -56,13 +56,14 @@ class DependencyRuleTest {
 
 	private DescribedPredicate<JavaClass> serviceDescribe() {
 		return new DescribedPredicate<>(
-			"@Service || service 패키지에 포함 || 클래스 이름에 Service 포함 || 클래스 이름에 Scheduler 포함 ") {
+			"@Service || service 패키지에 포함 || 클래스 이름에 Service 포함 || 클래스 이름에 Scheduler 포함 || 클래스 이름에 Filter 포함 ") {
 			@Override
 			public boolean apply(JavaClass input) {
 				return input.isAnnotatedWith(Service.class)
 					|| input.getPackage().getName().contains("service")
 					|| input.getName().contains("Service")
-					|| input.getName().contains("Scheduler");
+					|| input.getName().contains("Scheduler")
+					|| input.getName().contains("Filter");
 			}
 		};
 	}
