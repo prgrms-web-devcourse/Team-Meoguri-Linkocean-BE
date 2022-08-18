@@ -7,7 +7,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
@@ -22,6 +24,9 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
+
+	@Autowired
+	private FollowRepository followRepository;
 
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
 		return userRepository.save(createUser(email, oAuthType));
@@ -39,6 +44,10 @@ public class BasePersistenceTest {
 		final Profile profile = profileRepository.save(createProfile(username, categories));
 		user.registerProfile(profile);
 		return profile;
+	}
+
+	protected void 팔로우_저장(final Profile follower, final Profile followee) {
+		followRepository.save(new Follow(follower, followee));
 	}
 
 }
