@@ -1,5 +1,13 @@
+= REST Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
 ifndef::snippets[]
-:snippets: ../../build/generated-snippets
+:snippets: ./build/generated-snippets
 endif::[]
 
 [[BOOKMARK-API]]
