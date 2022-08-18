@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.common.Ultimate;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
@@ -30,6 +31,7 @@ import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
 
+// TODO - apply BaseServiceTest
 @Transactional
 @SpringBootTest
 class ProfileServiceImplTest {
@@ -46,6 +48,9 @@ class ProfileServiceImplTest {
 	@Autowired
 	private FollowService followService;
 
+	@Autowired
+	private ProfileRepository profileRepository;
+
 	@Nested
 	class 프로필_등록_수정_조회_테스트 {
 
@@ -53,9 +58,11 @@ class ProfileServiceImplTest {
 
 		private List<Category> categories;
 
+		private User user;
+
 		@BeforeEach
 		void setUp() {
-			User user = userRepository.save(createUser());
+			user = userRepository.save(createUser());
 
 			profile = createProfile(user);
 
@@ -98,30 +105,26 @@ class ProfileServiceImplTest {
 		@Test
 		void 프로필_등록하고_수정하고_조회_성공() {
 			//given
-			final RegisterProfileCommand registerCommand = registerCommandOf(profile, categories);
-			final long profileId = profileService.registerProfile(registerCommand);
+			final Profile profile = profileRepository.save(new Profile("haha", List.of(IT, HUMANITIES)));
+			final long profileId = profile.getId();
+			user.registerProfile(profile);
+
+			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
+				profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
+			);
 
 			em.flush();
 			em.clear();
 
 			//when
-			final UpdateProfileCommand updateCommand =
-				new UpdateProfileCommand(profileId, "papa", "updated image url", "updated bio",
-					List.of(HUMANITIES, SCIENCE));
 			profileService.updateProfile(updateCommand);
-
-			em.flush();
-			em.clear();
 
 			//then
 			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
-			assertThat(result)
-				.extracting(GetDetailedProfileResult::getUsername, GetDetailedProfileResult::getImage,
-					GetDetailedProfileResult::getBio)
-				.containsExactly("papa", "updated image url", "updated bio");
-
-			final List<Category> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly(HUMANITIES, SCIENCE);
+			assertThat(result.getUsername()).isEqualTo("papa");
+			assertThat(result.getImage()).isEqualTo("updated image url");
+			assertThat(result.getBio()).isEqualTo("updated bio");
+			assertThat(result.getFavoriteCategories()).containsExactly(HUMANITIES, SCIENCE);
 		}
 
 		@Test
