@@ -7,32 +7,27 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
-@DataJpaTest
-class UserRepositoryTest {
+class UserRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Test
-	void 이메일과_벤더로_사용자_조회_성공() {
+	void findByEmailAndOAuthType_성공() {
 		//given
-		final Email email = new Email("user@naver.com");
-		final OAuthType oAuthType = NAVER;
-		userRepository.save(new User(email, oAuthType));
+		사용자_저장("user@naver.com", NAVER);
 
 		//when
-		final Optional<User> foundUser = userRepository.findByEmailAndOAuthType(email, oAuthType);
+		final Optional<User> oFindUser = userRepository.findByEmailAndOAuthType(new Email("user@naver.com"), NAVER);
 
 		//then
-		assertThat(foundUser).isPresent().get()
-			.extracting(User::getEmail, User::getOauthType)
-			.containsExactly(email, oAuthType);
+		assertThat(oFindUser).isPresent();
+		assertThat(oFindUser.get().getEmail()).isEqualTo(new Email("user@naver.com"));
+		assertThat(oFindUser.get().getOauthType()).isEqualTo(NAVER);
 	}
-
 }
