@@ -248,7 +248,8 @@ class ProfileControllerTest extends BaseControllerTest {
 			mockMvc.perform(get(baseUrl)
 					.header(AUTHORIZATION, token)
 					.contentType(APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andDo(print());
 		}
 
 		// 2. 팔로워 목록 조회

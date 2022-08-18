@@ -1,12 +1,11 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
-import static org.springframework.util.StringUtils.*;
 
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.meoguri.linkocean.configuration.resolver.GetProfileQueryParams;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
@@ -96,21 +95,20 @@ public class ProfileController {
 
 	/**
 	 *  프로필 목록 조회 - 머구리 찾기
-	 *  - username은 필수다
+	 *  - username 은 필수다
 	 */
 	@GetMapping
 	public SliceResponse<GetProfilesResponse> getProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
-		final GetProfileQueryParams queryParams
+		final @RequestParam String username,
+		final Pageable pageable
 	) {
-		checkArgument(hasText(queryParams.getUsername()), "사용자 이름을 입력해 주세요");
-
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
 			ProfileFindCond.builder()
-				.username(queryParams.getUsername())
+				.username(username)
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -125,7 +123,7 @@ public class ProfileController {
 	public SliceResponse<GetProfilesResponse> getFollowerProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId,
-		final GetProfileQueryParams queryParams
+		final Pageable pageable
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
@@ -133,7 +131,7 @@ public class ProfileController {
 				.profileId(profileId)
 				.follower(true)
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());
@@ -148,7 +146,7 @@ public class ProfileController {
 	public SliceResponse<GetProfilesResponse> getFolloweeProfiles(
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId,
-		final GetProfileQueryParams queryParams
+		final Pageable pageable
 	) {
 		final Slice<GetProfilesResult> results = profileService.getProfiles(
 			user.getProfileId(),
@@ -156,7 +154,7 @@ public class ProfileController {
 				.profileId(profileId)
 				.followee(true)
 				.build(),
-			queryParams.toPageable()
+			pageable
 		);
 
 		final List<GetProfilesResponse> response = results.stream().map(GetProfilesResponse::of).collect(toList());

@@ -379,17 +379,19 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_태그로_필터링() throws Exception {
+		void 모르는_유저_북마크_목록_조회_태그_두개로_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("tags", "머구리")
+					.param("tags", "머구리", "공부")
 					.header(AUTHORIZATION, token)
 					.accept(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
+					jsonPath("$.totalCount").value(2),
 					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[0].tags[0]").value("머구리"));
+					jsonPath("$.bookmarks[1].id").value(bookmarkId1)
+					// 다른 사용자의 private bookmark 는 조회할 수 없음
+				);
 		}
 
 		@Test
