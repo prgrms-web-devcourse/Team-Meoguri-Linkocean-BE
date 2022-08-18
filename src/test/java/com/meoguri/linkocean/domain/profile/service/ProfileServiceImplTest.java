@@ -221,11 +221,11 @@ class ProfileServiceImplTest {
 
 			//when
 			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
-				condWhenFindFollowers(profile1Id), defaultPageable());
+				condWhenFindFollowers(profile1Id), createPageable());
 			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
-				condWhenFindFollowers(profile2Id), defaultPageable());
+				condWhenFindFollowers(profile2Id), createPageable());
 			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
-				condWhenFindFollowers(profile3Id), defaultPageable());
+				condWhenFindFollowers(profile3Id), createPageable());
 
 			//then
 			assertThat(result1).isEmpty();
@@ -266,11 +266,11 @@ class ProfileServiceImplTest {
 
 			//when
 			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
-				condWhenFindFollowees(profile1Id), defaultPageable());
+				condWhenFindFollowees(profile1Id), createPageable());
 			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
-				condWhenFindFollowees(profile2Id), defaultPageable());
+				condWhenFindFollowees(profile2Id), createPageable());
 			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
-				condWhenFindFollowees(profile3Id), defaultPageable());
+				condWhenFindFollowees(profile3Id), createPageable());
 
 			//then
 			assertThat(result1)
@@ -310,7 +310,7 @@ class ProfileServiceImplTest {
 
 			//when
 			final Slice<GetProfilesResult> results = profileService.getProfiles(user1Id,
-				condWhenFindUsingUsername("user"), defaultPageable());
+				condWhenFindUsingUsername("user"), createPageable());
 
 			//then
 			assertThat(results)

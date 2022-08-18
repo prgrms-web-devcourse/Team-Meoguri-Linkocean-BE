@@ -106,7 +106,7 @@ public final class Fixture {
 		return new Tag("tag");
 	}
 
-	public static Pageable defaultPageable(String... properties) {
+	public static Pageable createPageable(String... properties) {
 		return PageRequest.of(0, 8, Sort.by(properties));
 	}
 

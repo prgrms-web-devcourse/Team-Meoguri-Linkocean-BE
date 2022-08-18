@@ -90,7 +90,7 @@ class NotificationServiceImplTest {
 		notificationService.shareNotification(command);
 
 		//when
-		final Slice<Notification> result = notificationService.getNotifications(defaultPageable(), receiver1ProfileId);
+		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);
@@ -122,7 +122,7 @@ class NotificationServiceImplTest {
 		notificationService.shareNotification(command2);
 
 		//when
-		final Slice<Notification> result = notificationService.getNotifications(defaultPageable(), receiver1ProfileId);
+		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);
