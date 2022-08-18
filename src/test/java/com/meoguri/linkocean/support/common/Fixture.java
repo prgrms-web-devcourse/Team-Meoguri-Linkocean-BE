@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.util;
+package com.meoguri.linkocean.support.common;
 
 import static java.util.Collections.*;
 
