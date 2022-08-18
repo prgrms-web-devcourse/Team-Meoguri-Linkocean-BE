@@ -1,8 +1,8 @@
 package com.meoguri.linkocean.domain.profile.service;
 
-import static com.meoguri.linkocean.common.Assertions.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.support.common.Assertions.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 

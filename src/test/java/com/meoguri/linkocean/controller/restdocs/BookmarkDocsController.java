@@ -20,7 +20,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import com.meoguri.linkocean.controller.bookmark.BookmarkController;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 public class BookmarkDocsController extends RestDocsTestSupport {
 

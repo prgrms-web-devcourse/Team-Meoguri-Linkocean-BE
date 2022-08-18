@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 class LoginControllerTest extends RestDocsTestSupport {
 

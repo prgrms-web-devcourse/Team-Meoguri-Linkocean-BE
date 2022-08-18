@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.common;
+package com.meoguri.linkocean;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.*;

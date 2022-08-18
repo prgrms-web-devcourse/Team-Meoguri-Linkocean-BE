@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.support;
+package com.meoguri.linkocean.support.controller;
 
 import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meoguri.linkocean.common.P6spyLogMessageFormatConfiguration;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
@@ -37,6 +36,7 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.support.common.P6spyLogMessageFormatConfiguration;
 
 @AutoConfigureMockMvc
 @Transactional

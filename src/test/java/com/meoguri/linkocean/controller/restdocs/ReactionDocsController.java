@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.meoguri.linkocean.controller.bookmark.ReactionController;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 public class ReactionDocsController extends RestDocsTestSupport {
 

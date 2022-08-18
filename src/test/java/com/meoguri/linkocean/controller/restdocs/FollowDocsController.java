@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.profile.FollowController;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 public class FollowDocsController extends RestDocsTestSupport {
 	private final String baseUrl = getBaseUrl(FollowController.class);

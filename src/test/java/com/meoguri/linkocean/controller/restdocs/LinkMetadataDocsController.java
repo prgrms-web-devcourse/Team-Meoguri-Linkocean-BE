@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 public class LinkMetadataDocsController extends RestDocsTestSupport {
 

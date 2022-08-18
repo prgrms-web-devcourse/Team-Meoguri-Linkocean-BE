@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.common;
+package com.meoguri.linkocean.support.common;
 
 import static org.assertj.core.api.Assertions.*;
 
