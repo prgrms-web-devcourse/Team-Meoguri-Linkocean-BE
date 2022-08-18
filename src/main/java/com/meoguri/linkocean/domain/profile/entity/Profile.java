@@ -83,13 +83,8 @@ public class Profile extends BaseIdEntity {
 		// TODO - uncomment below after remove all deprecated constructor below
 		// checkCondition(categories.size() >= 1 && categories.size() <= 12, "category size must be in between 1 & 12");
 
-		/* 기존 목록 중 업데이트 목록에 없다면 삭제 */
-		favoriteCategories.removeIf(fc -> !categories.contains(fc));
-
-		/* 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가 */
-		categories.stream()
-			.filter(c -> !favoriteCategories.contains(c))
-			.forEach(c -> favoriteCategories.add(c));
+		favoriteCategories.clear();
+		favoriteCategories.addAll(categories);
 	}
 
 	@Deprecated
