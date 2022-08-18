@@ -156,9 +156,4 @@ public class ProfileServiceImpl implements ProfileService {
 		}
 		return new SliceImpl<>(results, pageable, hasNext);
 	}
-
-	@Override
-	public boolean existsByUserId(final long userId) {
-		return profileRepository.findByUserId(userId).isPresent();
-	}
 }

@@ -4,32 +4,15 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
 class ProfileRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
-
-	@Test
-	void 사용자_아이디로_프로필_조회_성공() {
-		//given
-		User user = 사용자_저장("haha@gmail.com", GOOGLE);
-		Profile profile = 프로필_저장_등록(user, "haha", IT, ART);
-
-		//when
-		final Optional<Profile> oFoundProfile = profileRepository.findByUserId(user.getId());
-
-		//then
-		assertThat(oFoundProfile).isPresent().get().isEqualTo(profile);
-	}
 
 	@Test
 	void 사용자_이름_중복_확인_성공() {
