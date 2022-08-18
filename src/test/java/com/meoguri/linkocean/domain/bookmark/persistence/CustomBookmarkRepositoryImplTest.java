@@ -241,7 +241,7 @@ class CustomBookmarkRepositoryImplTest {
 			assertThat(bookmarkPage).hasSize(1)
 				.extracting(Bookmark::getId)
 				.containsExactly(bookmarkId1);
-			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByOwner_idAndBookmark(profileId, b));
+			assertThat(bookmarkPage).allSatisfy(b -> favoriteRepository.existsByProfile_idAndBookmark(profileId, b));
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1L);
 		}
 

@@ -21,7 +21,7 @@ public interface BookmarkService {
 	void updateBookmark(UpdateBookmarkCommand command);
 
 	/* 북마크 삭제 */
-	void removeBookmark(long profileId, long bookmarkId);
+	void removeBookmark(long writerId, long bookmarkId);
 
 	/* 북마크 상세 조회 */
 	GetDetailedBookmarkResult getDetailedBookmark(long profileId, long bookmarkId);

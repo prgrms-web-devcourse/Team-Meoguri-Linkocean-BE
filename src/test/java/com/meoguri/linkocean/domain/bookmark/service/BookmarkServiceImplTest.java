@@ -125,7 +125,7 @@ class BookmarkServiceImplTest {
 			final Optional<Bookmark> oBookmark = bookmarkRepository.findById(savedBookmarkId);
 			assertThat(oBookmark).isPresent().get()
 				.extracting(
-					Bookmark::getProfile,
+					Bookmark::getWriter,
 					Bookmark::getLinkMetadata,
 					Bookmark::getTitle,
 					Bookmark::getMemo,

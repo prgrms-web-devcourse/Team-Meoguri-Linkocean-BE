@@ -59,7 +59,7 @@ class FavoriteRepositoryTest {
 		assertThat(favoriteRepository.findAll()).hasSize(1);
 
 		// 삭제
-		final int deletedCount = favoriteRepository.deleteByOwner_idAndBookmark_id(owner.getId(), bookmark.getId());
+		final int deletedCount = favoriteRepository.deleteByProfile_idAndBookmark_id(owner.getId(), bookmark.getId());
 		assertThat(deletedCount).isEqualTo(1);
 		assertThat(favoriteRepository.findAll()).isEmpty();
 	}
@@ -67,7 +67,7 @@ class FavoriteRepositoryTest {
 	@Test
 	void 즐겨찾기_여부_조회() {
 		//when
-		final boolean isFavorite = favoriteRepository.existsByOwner_idAndBookmark(owner.getId(), bookmark);
+		final boolean isFavorite = favoriteRepository.existsByProfile_idAndBookmark(owner.getId(), bookmark);
 
 		//then
 		assertThat(isFavorite).isFalse();
@@ -83,7 +83,7 @@ class FavoriteRepositoryTest {
 		favoriteRepository.save(new Favorite(bookmark, owner));
 
 		//when
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByOwnerIdAndBookmark(owner.getId(),
+		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByProfileIdAndInBookmarks(owner.getId(),
 			List.of(this.bookmark, bookmark));
 
 		//then

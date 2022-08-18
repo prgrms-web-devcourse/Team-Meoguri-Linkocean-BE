@@ -16,8 +16,9 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
 	@Query("select f "
 		+ "from Follow f "
-		+ "where f.follower = :follower and f. followee = :followee")
-	Optional<Follow> findByProfiles(Profile follower, Profile followee);
+		+ "where f.follower = :follower "
+		+ "and f. followee = :followee")
+	Optional<Follow> findByFollowerAndFollowee(Profile follower, Profile followee);
 
 	/* user 를 팔로우 하는 사용자의 카운트 */
 	@Query("select count(f) "
