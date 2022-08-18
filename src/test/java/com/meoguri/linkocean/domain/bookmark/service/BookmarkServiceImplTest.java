@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -41,8 +42,8 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -256,7 +257,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_업데이트_실패_다른_사용자의_북마크_조회() {
 			//given
-			final User anotherUser = createUser("crush@mail.com", "NAVER");
+			final User anotherUser = createUser("crush@mail.com", NAVER);
 			userRepository.save(anotherUser);
 
 			final Profile anotherProfile = createProfile(anotherUser, "crush");
@@ -315,7 +316,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_삭제_실패_다른_사용자의_북마크_삭제_시도() {
 			//given
-			final User anotherUser = createUser("hani@mail.com", "NAVER");
+			final User anotherUser = createUser("hani@mail.com", NAVER);
 			userRepository.save(anotherUser);
 
 			final Profile anotherProfile = createProfile(anotherUser, "crush");
@@ -455,7 +456,7 @@ class BookmarkServiceImplTest {
 
 		@BeforeEach
 		void setUp() {
-			User user2 = userRepository.save(new User("crush@gmail.com", "GOOGLE"));
+			User user2 = userRepository.save(createUser("crush@gmail.com", GOOGLE));
 
 			profile2 = profileRepository.save(new Profile(user2, "crush"));
 			profileId2 = profile2.getId();
@@ -614,9 +615,9 @@ class BookmarkServiceImplTest {
 			favoriteRepository.deleteAll();
 			bookmarkRepository.deleteAll(); // clean data by crush @ above setUp method
 
-			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-			final User user2 = userRepository.save(new User("user2@gmail.com", "GOOGLE"));
-			final User user3 = userRepository.save(new User("user3@gmail.com", "GOOGLE"));
+			final User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
+			final User user2 = userRepository.save(createUser("user2@gmail.com", GOOGLE));
+			final User user3 = userRepository.save(createUser("user3@gmail.com", GOOGLE));
 
 			final Profile profile1 = profileRepository.save(new Profile(user1, "user1"));
 			final Profile profile2 = profileRepository.save(new Profile(user2, "user2"));

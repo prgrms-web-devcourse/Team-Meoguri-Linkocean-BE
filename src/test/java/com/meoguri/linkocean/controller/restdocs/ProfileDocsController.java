@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.restdocs;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -31,7 +32,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	@Test
 	void 프로필_등록_api() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		final String username = "hani";
 		final List<String> categories = List.of("인문", "정치", "사회");
 		final CreateProfileRequest createProfileRequest = new CreateProfileRequest(username, categories);
@@ -65,7 +66,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	@Test
 	void 내프로필_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("인문", "정치", "사회"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("스프링", "Spring Boot"), "private");
 
@@ -113,14 +114,14 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	@Test
 	void 다른_사람_프로필_조회_api() throws Exception {
 		//given
-		유저_등록_로그인("user1@gmail.com", "GOOGLE");
+		유저_등록_로그인("user1@gmail.com", GOOGLE);
 		final long user1ProfileId = 프로필_등록("user1", emptyList());
 
-		유저_등록_로그인("user2@gmail.com", "GOOGLE");
+		유저_등록_로그인("user2@gmail.com", GOOGLE);
 		final long user2ProfileId = 프로필_등록("user2", emptyList());
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("스프링", "Spring Boot"), "all");
 
-		로그인("user1@gmail.com", "GOOGLE");
+		로그인("user1@gmail.com", GOOGLE);
 		팔로우(user2ProfileId);
 
 		//when
@@ -166,7 +167,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 	@Test
 	void 내_프로필_수정_api() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("스프링", "Spring Boot"), "private");
 
@@ -213,20 +214,20 @@ public class ProfileDocsController extends RestDocsTestSupport {
 
 		@BeforeEach
 		void setUp() throws Exception {
-			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			유저_등록_로그인("user1@gmail.com", GOOGLE);
 			user1ProfileId = 프로필_등록("user1", List.of("IT"));
 
-			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			유저_등록_로그인("user2@gmail.com", GOOGLE);
 			user2ProfileId = 프로필_등록("user2", List.of("IT"));
 
-			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			유저_등록_로그인("user3@gmail.com", GOOGLE);
 			user3ProfileId = 프로필_등록("user3", List.of("IT"));
 
 			// 팔로우 화살표 : user1 <-> user2 -> user3
-			로그인("user1@gmail.com", "GOOGLE");
+			로그인("user1@gmail.com", GOOGLE);
 			팔로우(user2ProfileId);
 
-			로그인("user2@gmail.com", "GOOGLE");
+			로그인("user2@gmail.com", GOOGLE);
 			팔로우(user1ProfileId);
 			팔로우(user3ProfileId);
 		}
@@ -234,7 +235,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 		@Test
 		void 프로필_목록_조회_api() throws Exception {
 
-			로그인("user1@gmail.com", "GOOGLE");
+			로그인("user1@gmail.com", GOOGLE);
 
 			mockMvc.perform(get(baseUrl + "?username=" + "user")
 					.header(AUTHORIZATION, token)
@@ -277,7 +278,7 @@ public class ProfileDocsController extends RestDocsTestSupport {
 
 		@Test
 		void 팔로워_조회_Api_성공() throws Exception {
-			로그인("user1@gmail.com", "GOOGLE");
+			로그인("user1@gmail.com", GOOGLE);
 
 			// user1 -> user1 의 팔로워 조회
 			mockMvc.perform(

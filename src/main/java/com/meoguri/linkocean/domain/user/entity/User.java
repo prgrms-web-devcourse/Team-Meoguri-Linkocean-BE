@@ -46,12 +46,12 @@ public class User extends BaseIdEntity {
 	private Profile profile;
 
 	/* 회원 가입시 사용하는 생성자 */
-	public User(final String email, final String oauthType) {
+	public User(final Email email, final OAuthType oauthType) {
 		checkNotNull(email);
 		checkNotNull(oauthType);
 
-		this.email = new Email(email);
-		this.oauthType = OAuthType.of(oauthType);
+		this.email = email;
+		this.oauthType = oauthType;
 	}
 
 	public Long getProfileId() {

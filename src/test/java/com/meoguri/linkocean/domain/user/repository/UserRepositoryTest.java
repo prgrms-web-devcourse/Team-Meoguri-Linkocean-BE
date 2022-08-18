@@ -1,8 +1,8 @@
 package com.meoguri.linkocean.domain.user.repository;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -20,22 +20,19 @@ class UserRepositoryTest {
 	private UserRepository userRepository;
 
 	@Test
-	void 이메일과_벤터로_사용자_조회_성공() {
+	void 이메일과_벤더로_사용자_조회_성공() {
 		//given
-		final String email = "user@naver.com";
-		final String oAuthType = "NAVER";
-
-		final User user = new User(email, oAuthType);
-		userRepository.save(user);
+		final Email email = new Email("user@naver.com");
+		final OAuthType oAuthType = NAVER;
+		userRepository.save(new User(email, oAuthType));
 
 		//when
-		final Optional<User> foundUser = userRepository.findByEmailAndOAuthType(new Email(email),
-			OAuthType.of(oAuthType));
+		final Optional<User> foundUser = userRepository.findByEmailAndOAuthType(email, oAuthType);
 
 		//then
-		assertThat(foundUser).isPresent();
-		assertThat(foundUser.get()).extracting(User::getEmail, User::getOauthType)
-			.isEqualTo(List.of(new Email(email), OAuthType.of(oAuthType)));
+		assertThat(foundUser).isPresent().get()
+			.extracting(User::getEmail, User::getOauthType)
+			.containsExactly(email, oAuthType);
 	}
 
 }

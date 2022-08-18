@@ -1,7 +1,8 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
-import static java.util.List.*;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -38,8 +39,8 @@ class CheckIsFollowQueryTest {
 
 	@BeforeEach
 	void setUp() {
-		final User follower = userRepository.save(new User("follower@gmail.com", "GOOGLE"));
-		final User followee = userRepository.save(new User("followee@gmail.com", "GOOGLE"));
+		final User follower = userRepository.save(createUser("follower@gmail.com", GOOGLE));
+		final User followee = userRepository.save(createUser("followee@gmail.com", GOOGLE));
 
 		this.follower = profileRepository.save(createProfile(follower, "follower"));
 		this.followee = profileRepository.save(createProfile(followee, "followee"));

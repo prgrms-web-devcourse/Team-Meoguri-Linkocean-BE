@@ -30,6 +30,7 @@ public final class Email {
 	private String email;
 
 	public Email(final String email) {
+		checkNotNull(email);
 		checkArgument(EMAIL_PATTERN.matcher(email).find(), "이메일 형식이 잘못 되었습니다.");
 
 		this.email = email;

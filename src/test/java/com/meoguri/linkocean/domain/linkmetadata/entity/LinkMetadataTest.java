@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+
 class LinkMetadataTest {
 
 	@Test

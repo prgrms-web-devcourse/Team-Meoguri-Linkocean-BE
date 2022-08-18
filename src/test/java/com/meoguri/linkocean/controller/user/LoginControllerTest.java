@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.user;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -44,7 +45,7 @@ class LoginControllerTest extends RestDocsTestSupport {
 	@Test
 	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_true() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 
 		//when
@@ -62,7 +63,7 @@ class LoginControllerTest extends RestDocsTestSupport {
 	@Test
 	void 로그인_성공후_Profile_소지여부조회_Api_hasProfile_false() throws Exception {
 		//given
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 
 		//when
 		mockMvc.perform(get(basePath + "/success")

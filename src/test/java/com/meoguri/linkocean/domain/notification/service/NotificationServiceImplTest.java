@@ -1,7 +1,8 @@
 package com.meoguri.linkocean.domain.notification.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.notification.entity.NotificationType.*;
+import static com.meoguri.linkocean.domain.notification.entity.vo.NotificationType.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -60,9 +61,9 @@ class NotificationServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자, 프로필, 링크 메타 데이터 셋업
-		User sender = userRepository.save(new User("sender@gmail.com", "GOOGLE"));
-		User receiver1 = userRepository.save(new User("receiver1@gmail.com", "GOOGLE"));
-		User receiver2 = userRepository.save(new User("receiver2@gmail.com", "GOOGLE"));
+		User sender = userRepository.save(createUser("sender@gmail.com", GOOGLE));
+		User receiver1 = userRepository.save(createUser("receiver1@gmail.com", GOOGLE));
+		User receiver2 = userRepository.save(createUser("receiver2@gmail.com", GOOGLE));
 
 		senderProfile = profileRepository.save(new Profile(sender, "sender"));
 		receiver1Profile = profileRepository.save(new Profile(receiver1, "receiver1"));

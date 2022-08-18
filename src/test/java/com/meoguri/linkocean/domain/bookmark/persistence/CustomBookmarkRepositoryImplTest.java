@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -79,7 +80,7 @@ class CustomBookmarkRepositoryImplTest {
 	@BeforeEach
 	void setUp() {
 		// 사용자 1명 셋업 - 크러쉬
-		final User user = userRepository.save(createUser("crush@mail.com", "NAVER"));
+		final User user = userRepository.save(createUser("crush@mail.com", NAVER));
 		profile = profileRepository.save(createProfile(user, "crush"));
 		profileId = profile.getId();
 
@@ -268,7 +269,7 @@ class CustomBookmarkRepositoryImplTest {
 		@Test
 		void 북마크_즐겨찾기_다른사람의_글도_있는경우() {
 			//setup
-			final User user2 = userRepository.save(createUser("user2@naver.com", "NAVER"));
+			final User user2 = userRepository.save(createUser("user2@naver.com", NAVER));
 			final Profile profile2 = profileRepository.save(createProfile(user2, "user2"));
 			final Bookmark bookmark4 = bookmarkRepository.save(createBookmark(profile2, google, "google.com"));
 			final Bookmark bookmark5 = bookmarkRepository.save(createBookmark(profile2, naver, "naver.com"));
@@ -507,9 +508,9 @@ class CustomBookmarkRepositoryImplTest {
 			favoriteRepository.deleteAll();
 			bookmarkRepository.deleteAll(); // clean data by crush @ above setUp method
 
-			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-			final User user2 = userRepository.save(new User("user2@gmail.com", "GOOGLE"));
-			final User user3 = userRepository.save(new User("user3@gmail.com", "GOOGLE"));
+			final User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
+			final User user2 = userRepository.save(createUser("user2@gmail.com", GOOGLE));
+			final User user3 = userRepository.save(createUser("user3@gmail.com", GOOGLE));
 
 			final Profile profile1 = profileRepository.save(new Profile(user1, "user1"));
 			final Profile profile2 = profileRepository.save(new Profile(user2, "user2"));
