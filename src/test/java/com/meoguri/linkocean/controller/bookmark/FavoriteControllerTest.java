@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.support.controller.BaseControllerTest;
 
 class FavoriteControllerTest extends BaseControllerTest {
 

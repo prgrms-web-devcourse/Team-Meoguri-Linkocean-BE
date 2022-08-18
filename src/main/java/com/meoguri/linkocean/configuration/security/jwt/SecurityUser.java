@@ -36,6 +36,10 @@ public final class SecurityUser extends User {
 		return profileId;
 	}
 
+	public boolean hasProfile() {
+		return profileId != null;
+	}
+
 	@Override
 	public String toString() {
 		return new StringBuilder()

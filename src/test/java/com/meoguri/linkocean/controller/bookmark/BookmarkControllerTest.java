@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.support.controller.BaseControllerTest;
 
 class BookmarkControllerTest extends BaseControllerTest {
 
