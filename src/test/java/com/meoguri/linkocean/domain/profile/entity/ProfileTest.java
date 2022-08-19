@@ -1,14 +1,20 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
+import static com.meoguri.linkocean.support.common.Assertions.*;
 import static com.meoguri.linkocean.support.common.Fixture.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 class ProfileTest {
@@ -67,14 +73,16 @@ class ProfileTest {
 		final String username = "papa";
 		final String bio = "Hello world!";
 		final String imageUrl = "papa.png";
+		final List<Category> categories = List.of(IT, HOME);
 
 		//when
-		profile.update(username, bio, imageUrl);
+		profile.update(username, bio, imageUrl, categories);
 
 		//then
-		assertThat(profile).isNotNull()
-			.extracting(Profile::getUsername, Profile::getBio, Profile::getImage)
-			.containsExactly(username, bio, imageUrl);
+		assertThat(profile.getUsername()).isEqualTo(username);
+		assertThat(profile.getBio()).isEqualTo(bio);
+		assertThat(profile.getImage()).isEqualTo(imageUrl);
+		assertThat(profile.getFavoriteCategories()).containsExactlyElementsOf(categories);
 	}
 
 	@ParameterizedTest
@@ -83,41 +91,53 @@ class ProfileTest {
 		//given
 		final Profile profile = createProfile();
 
-		//then
+		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> profile.update(username, "bio", "imageUrl"));
+			.isThrownBy(() -> profile.update(username, "bio", "imageUrl", List.of(IT)));
 	}
 
 	@Test
-	void 사용자_이름_길이_조건에따른_프로필_업데이트_실패() {
+	void 사용자_이름_길이가_너무_길면_프로필_업데이트_실패() {
 		//given
 		final Profile profile = createProfile();
-		final String invalidUsername = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
+		final String tooLongUsername = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 
-		//then
+		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> profile.update(invalidUsername, "bio", "imageUrl"));
+			.isThrownBy(() -> profile.update(tooLongUsername, "bio", "imageUrl", List.of(IT)));
 	}
 
 	@Test
-	void 프로필_메시지_길이_조건에따른_프로필_업데이트_실패() {
+	void 프로필_메시지_길이가_너무_길면_프로필_업데이트_실패() {
 		//given
 		final Profile profile = createProfile();
-		final String invalidBio = RandomString.make(MAX_PROFILE_BIO_LENGTH + 1);
+		final String tooLongBio = RandomString.make(MAX_PROFILE_BIO_LENGTH + 1);
 
-		//then
+		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> profile.update("username", invalidBio, "imageUrl"));
+			.isThrownBy(() -> profile.update("username", tooLongBio, "imageUrl", List.of(IT)));
 	}
 
 	@Test
-	void 프로필_사진_주소_길이_조건에따른_프로필_업데이트_실패() {
+	void 프로필_사진_주소_길이가_너무길면_프로필_업데이트_실패() {
 		//given
 		final Profile profile = createProfile();
-		final String invalidImageUrl = RandomString.make(MAX_PROFILE_IMAGE_URL_LENGTH + 1);
+		final String tooLongImageUrl = RandomString.make(MAX_PROFILE_IMAGE_URL_LENGTH + 1);
 
-		//then
+		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> profile.update("username", "bio", invalidImageUrl));
+			.isThrownBy(() -> profile.update("username", "bio", tooLongImageUrl, List.of(IT)));
+	}
+
+	// TODO - uncomment below after remove all deprecated constructor @ Profile
+	//@Test
+	void 카테고리를_주지_않으면_프로필_업데이트_실패() {
+		//given
+		final Profile profile = createProfile();
+		final List<Category> emptyCategoryList = emptyList();
+
+		//when then
+		assertThatLinkoceanRuntimeException()
+			.isThrownBy(() -> profile.update("username", "bio", "image.png", emptyCategoryList));
 	}
 }
