@@ -110,7 +110,7 @@ public class Bookmark extends BaseIdEntity {
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
-		setBookmarkTags(tags);
+		updateBookmarkTags(tags);
 	}
 
 	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
@@ -125,13 +125,13 @@ public class Bookmark extends BaseIdEntity {
 		this.category = category;
 		this.openType = openType;
 		this.updatedAt = now();
-		setBookmarkTags(tags);
+		updateBookmarkTags(tags);
 	}
 
-	private void setBookmarkTags(List<Tag> tags) {
+	private void updateBookmarkTags(List<Tag> tags) {
 		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
 
-		this.bookmarkTags.clear();
+		bookmarkTags.clear();
 		tags.forEach(tag -> bookmarkTags.add(new BookmarkTag(this, tag)));
 	}
 
