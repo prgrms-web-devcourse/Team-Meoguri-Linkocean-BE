@@ -1,11 +1,9 @@
 package com.meoguri.linkocean.infrastructure.s3;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.lang.String.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -38,45 +37,34 @@ public class S3Uploader {
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			return null;
 		}
-		return upload(convert(multipartFile), dirName);
+
+		final String saveFilePath = getSaveFilePath(multipartFile.getOriginalFilename(), dirName);
+		final InputStream input = getInputStream(multipartFile);
+		final ObjectMetadata metadata = new ObjectMetadata();
+
+		return uploadInternal(saveFilePath, input, metadata);
 	}
 
-	private File convert(MultipartFile multipartFile) {
-		final String originalFilename = multipartFile.getOriginalFilename();
-		checkNotNull(originalFilename);
-
-		final File convertFile = new File(originalFilename);
-		try {
-			if (convertFile.createNewFile()) {
-				try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-					fos.write(multipartFile.getBytes());
-				}
-				return convertFile;
-			} else {
-				convertFile.delete();
-				throw new IllegalStateException(format("the named file already exists : %s", originalFilename));
-			}
-		} catch (IOException e) {
-			convertFile.delete();
-			throw new RuntimeException(format("failed to convert MultipartFile : %s to File", originalFilename), e);
-		}
-	}
-
-	private String upload(File file, String dirName) {
-		final String saveFilePath = getSaveFilePath(file, dirName);
-
-		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, file)
+	private String uploadInternal(String saveFilePath, InputStream input, ObjectMetadata metadata) {
+		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, input, metadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 
-		file.delete();
 		return amazonS3Client.getUrl(bucket, saveFilePath).toString();
 	}
 
-	private String getSaveFilePath(final File file, final String dirName) {
-		final String extension = FilenameUtils.getExtension(file.getName());
+	private String getSaveFilePath(final String originalFileName, final String dirName) {
+		final String extension = FilenameUtils.getExtension(originalFileName);
 		checkArgument(EXTENSIONS_IMAGE.contains(extension), "유효하지 않은 파일 형식입니다.");
 
 		final String saveFilename = String.join(".", UUID.randomUUID().toString(), extension);
 		return String.join("/", dirName, saveFilename);
+	}
+
+	private InputStream getInputStream(MultipartFile multipartFile) {
+		try {
+			return multipartFile.getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
