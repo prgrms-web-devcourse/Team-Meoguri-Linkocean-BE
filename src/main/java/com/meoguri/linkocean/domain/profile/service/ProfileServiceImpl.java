@@ -77,7 +77,7 @@ public class ProfileServiceImpl implements ProfileService {
 			targetProfile.getUsername(),
 			targetProfile.getImage(),
 			targetProfile.getBio(),
-			targetProfile.getMyFavoriteCategories(),
+			targetProfile.getFavoriteCategories(),
 			isFollow,
 			followerCount,
 			followeeCount
@@ -98,10 +98,7 @@ public class ProfileServiceImpl implements ProfileService {
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 업데이트 */
-		profile.update(updateUsername, command.getBio(), command.getImage());
-
-		/* 선호 카테고리 업데이트 */
-		profile.updateFavoriteCategories(command.getCategories());
+		profile.update(updateUsername, command.getBio(), command.getImage(), command.getCategories());
 	}
 
 	@Override

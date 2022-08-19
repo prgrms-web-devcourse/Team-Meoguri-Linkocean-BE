@@ -59,7 +59,7 @@ class ProfileDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 내_프로필_조회_Api() throws Exception {
+	void 내프로필_조회_api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("인문", "정치", "사회"));

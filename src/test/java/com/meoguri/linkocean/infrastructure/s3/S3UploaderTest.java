@@ -14,7 +14,6 @@ class S3UploaderTest {
 	@Autowired
 	private S3Uploader s3Uploader;
 
-
 	@Test
 	void S3uploader_업로드_성공() {
 		// given
