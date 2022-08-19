@@ -11,16 +11,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -33,6 +32,7 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 public class BasePersistenceTest {
 
@@ -62,9 +62,6 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private ReactionRepository reactionRepository;
-
-	@Autowired
-	private FavoriteRepository favoriteRepository;
 
 	protected boolean isLoaded(final Object entity) {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
@@ -175,6 +172,6 @@ public class BasePersistenceTest {
 	}
 
 	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
-		favoriteRepository.save(new Favorite(profile, bookmark));
+		profile.favorite(bookmark);
 	}
 }

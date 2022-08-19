@@ -1,15 +1,25 @@
 spring:
   profiles:
     include: oauth, aws
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/linkoceantest
+    username: root
+    password: root1234
 
   jpa:
-    database: H2
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+      default_batch_fetch_size: 100
+    show-sql: true
 
   flyway:
     enabled: true
-    locations: classpath:db/tests
 
 jwt:
   secret-key: test
