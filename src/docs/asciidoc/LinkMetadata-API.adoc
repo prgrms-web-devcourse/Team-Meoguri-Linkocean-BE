@@ -1,0 +1,21 @@
+[[LinkMetadata-API]]
+== 링크 메타데이터 API
+
+'''
+
+=== 링크 메타데이터 제목 조회
+
+Request HTTP Example:
+include::{snippets}/link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/http-request.adoc[]
+
+Request Headers:
+include::{snippets}//link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/request-headers.adoc[]
+
+Request Fields:
+include::{snippets}/link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/request-fields.adoc[]
+
+Response Http Example:
+include::{snippets}/link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/http-response.adoc[]
+
+Response Fields:
+include::{snippets}/link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/response-fields.adoc[]
