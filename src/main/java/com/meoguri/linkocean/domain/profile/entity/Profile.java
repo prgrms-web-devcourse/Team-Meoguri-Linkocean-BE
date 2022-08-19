@@ -16,8 +16,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
@@ -64,13 +62,13 @@ public class Profile extends BaseIdEntity {
 	@Column(nullable = true, length = 700)
 	private String image;
 
-	@ManyToMany
-	@JoinTable(
+	@ElementCollection
+	@CollectionTable(
 		name = "favorite",
-		joinColumns = @JoinColumn(name = "owner_id"),
-		inverseJoinColumns = @JoinColumn(name = "bookmark_id")
+		joinColumns = @JoinColumn(name = "owner_id")
 	)
-	private Set<Bookmark> favoriteBookmarks = new HashSet<>();
+	@Column(name = "bookmark_id")
+	private Set<Long> favoriteBookmarkIds = new HashSet<>();
 
 	/* 회원 가입시 사용하는 생성자 */
 	public Profile(final String username, final List<Category> favoriteCategories) {
@@ -98,13 +96,13 @@ public class Profile extends BaseIdEntity {
 	}
 
 	public void favorite(final Bookmark bookmark) {
-		checkCondition(!favoriteBookmarks.contains(bookmark), "illegal favorite command");
-		favoriteBookmarks.add(bookmark);
+		checkCondition(!favoriteBookmarkIds.contains(bookmark.getId()), "illegal favorite command");
+		favoriteBookmarkIds.add(bookmark.getId());
 	}
 
 	public void unfavorite(final Bookmark bookmark) {
-		checkCondition(favoriteBookmarks.contains(bookmark), "illegal unfavorite command");
-		favoriteBookmarks.remove(bookmark);
+		checkCondition(favoriteBookmarkIds.contains(bookmark.getId()), "illegal unfavorite command");
+		favoriteBookmarkIds.remove(bookmark.getId());
 	}
 
 	@Deprecated

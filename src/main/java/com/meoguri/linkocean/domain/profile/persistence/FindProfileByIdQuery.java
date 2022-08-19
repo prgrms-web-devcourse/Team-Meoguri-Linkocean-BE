@@ -20,7 +20,7 @@ public class FindProfileByIdQuery {
 	}
 
 	public Profile findProfileFetchFavoriteById(long profileId) {
-		return profileRepository.findProfileFetchFavoriteById(profileId)
+		return profileRepository.findProfileFetchFavoriteIdsById(profileId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
 	}
 }
