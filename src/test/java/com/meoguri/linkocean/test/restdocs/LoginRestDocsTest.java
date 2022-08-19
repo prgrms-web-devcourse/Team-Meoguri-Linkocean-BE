@@ -10,12 +10,13 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class LoginDocsController extends RestDocsTestSupport {
+class LoginRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);
 
@@ -28,11 +29,12 @@ class LoginDocsController extends RestDocsTestSupport {
 		final LoginRequest loginRequest = new LoginRequest(email, oauthType);
 
 		//when
-		mockMvc.perform(post(basePath)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(createJson(loginRequest)))
+		final ResultActions perform = mockMvc.perform(post(basePath)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(createJson(loginRequest)));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestFields(
@@ -47,24 +49,25 @@ class LoginDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 로그인_성공_api() throws Exception {
+	void 사용자_프로필_유무_확인_api() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("정치", "인문", "사회"));
 
 		//when
-		mockMvc.perform(get(basePath + "/success")
-				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(get(basePath + "/success")
+			.header(AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
 						headerWithName(AUTHORIZATION).description("인증 토큰")
 					),
 					responseFields(
-						fieldWithPath("hasProfile").description("이메일")
+						fieldWithPath("hasProfile").description("프로필 유무")
 					)
 				)
 			);
