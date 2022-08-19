@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.common.Assertions.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.support.common.Assertions.*;
+import static com.meoguri.linkocean.support.common.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
@@ -19,7 +19,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @Transactional
 @SpringBootTest

@@ -1,135 +1,148 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.common.CustomP6spySqlFormat;
-import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.support.common.CustomP6spySqlFormat;
+import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
 
 @Import(CustomP6spySqlFormat.class)
-@DataJpaTest
-class CustomProfileRepositoryImplTest {
+class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private FollowRepository followRepository;
-
-	@PersistenceContext
-	private EntityManager em;
 
 	private Profile profile1;
 	private Profile profile2;
 	private Profile profile3;
 
+	private long profileId1;
+	private long profileId2;
+	private long profileId3;
+	private Pageable pageable;
+
 	@BeforeEach
 	void setUp() {
 		//set up 3 users
-		User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
-		User user2 = userRepository.save(createUser("user2@naver.com", NAVER));
-		User user3 = userRepository.save(createUser("user3@kakao.com", KAKAO));
+		profile1 = 사용자_프로필_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+		profile2 = 사용자_프로필_저장_등록("user2@naver.com", NAVER, "user2", IT);
+		profile3 = 사용자_프로필_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
 
-		profile1 = profileRepository.save(new Profile(user1, "user1"));
-		profile2 = profileRepository.save(new Profile(user2, "user2"));
-		profile3 = profileRepository.save(new Profile(user3, "user3"));
+		profileId1 = profile1.getId();
+		profileId2 = profile2.getId();
+		profileId3 = profile3.getId();
+
+		pageable = createPageable();
 	}
 
+	/* profile 1 <-> profile 2 -> profile 3 */
 	@Test
 	void 팔로워_목록_조회_성공_이름_지정_X() {
 		//given
-		followRepository.save(new Follow(profile1, profile2));
-		followRepository.save(new Follow(profile1, profile3));
-		followRepository.save(new Follow(profile2, profile3));
+		팔로우_저장(profile1, profile2);
+		팔로우_저장(profile2, profile1);
+		팔로우_저장(profile2, profile3);
+
+		ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).follower(true).build();
+		ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).follower(true).build();
+		ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).follower(true).build();
 
 		//when
-		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
-			condWhenFindFollowers(profile1.getId()), defaultPageable());
-		final Slice<Profile> followerOfUser2 = profileRepository.findProfiles(
-			condWhenFindFollowers(profile2.getId()), defaultPageable());
-		final Slice<Profile> followerOfUser3 = profileRepository.findProfiles(
-			condWhenFindFollowers(profile3.getId()), defaultPageable());
+		final Slice<Profile> followerSlice1 = profileRepository.findProfiles(cond1, pageable);
+		final Slice<Profile> followerSlice2 = profileRepository.findProfiles(cond2, pageable);
+		final Slice<Profile> followerSlice3 = profileRepository.findProfiles(cond3, pageable);
 
 		//then
-		assertThat(followerOfUser1).isEmpty();
-		assertThat(followerOfUser2).containsExactly(profile1);
-		assertThat(followerOfUser3).containsExactly(profile1, profile2);
+		assertThat(followerSlice1).containsExactly(profile2);
+		assertThat(followerSlice2).containsExactly(profile1);
+		assertThat(followerSlice3).containsExactly(profile2);
 	}
 
+	/* profile1, profile 2 -> profile3 */
 	@Test
 	void 팔로워_목록_조회_성공_이름_지정() {
 		//given
-		followRepository.save(new Follow(profile1, profile3));
-		followRepository.save(new Follow(profile2, profile3));
+		팔로우_저장(profile1, profile3);
+		팔로우_저장(profile2, profile3);
+
+		ProfileFindCond cond = ProfileFindCond.builder()
+			.username("user1")
+			.profileId(profileId3)
+			.follower(true)
+			.build();
 
 		//when
-		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
-			condWhenFindFollowers(profile3.getId(), "user1"), defaultPageable());
+		final Slice<Profile> followerSlice = profileRepository.findProfiles(cond, pageable);
 
 		//then
-		assertThat(followerOfUser1).containsExactly(profile1);
+		assertThat(followerSlice).containsExactly(profile1);
 	}
 
+	/* profile 1 <-> profile2 -> profile3 */
 	@Test
 	void 팔로이_목록_조회_성공_이름_지정_X() {
 		//given
-		followRepository.save(new Follow(profile1, profile2));
-		followRepository.save(new Follow(profile1, profile3));
-		followRepository.save(new Follow(profile2, profile3));
+		팔로우_저장(profile1, profile2);
+		팔로우_저장(profile2, profile1);
+		팔로우_저장(profile2, profile3);
+
+		ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).followee(true).build();
+		ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).followee(true).build();
+		ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).followee(true).build();
 
 		//when
-		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
-			condWhenFindFollowees(profile1.getId()), defaultPageable());
-		final Slice<Profile> followerOfUser2 = profileRepository.findProfiles(
-			condWhenFindFollowees(profile2.getId()), defaultPageable());
-		final Slice<Profile> followerOfUser3 = profileRepository.findProfiles(
-			condWhenFindFollowees(profile3.getId()), defaultPageable());
+		final Slice<Profile> followeeSlice1 = profileRepository.findProfiles(cond1, pageable);
+		final Slice<Profile> followeeSlice2 = profileRepository.findProfiles(cond2, pageable);
+		final Slice<Profile> followeeSlice3 = profileRepository.findProfiles(cond3, pageable);
 
 		//then
-		assertThat(followerOfUser1).containsExactly(profile2, profile3);
-		assertThat(followerOfUser2).containsExactly(profile3);
-		assertThat(followerOfUser3).isEmpty();
+		assertThat(followeeSlice1).containsExactly(profile2);
+		assertThat(followeeSlice2).containsExactly(profile1, profile3);
+		assertThat(followeeSlice3).isEmpty();
 	}
 
+	/* profile1, profile 2 -> profile3 */
 	@Test
 	void 팔로이_목록_조회_성공_이름_지정() {
 		//given
-		followRepository.save(new Follow(profile1, profile2));
-		followRepository.save(new Follow(profile1, profile3));
+		팔로우_저장(profile1, profile2);
+		팔로우_저장(profile1, profile3);
+
+		ProfileFindCond cond = ProfileFindCond.builder()
+			.username("user3")
+			.profileId(profileId1)
+			.followee(true)
+			.build();
 
 		//when
-		final Slice<Profile> followerOfUser1 = profileRepository.findProfiles(
-			condWhenFindFollowees(profile1.getId(), "user3"), defaultPageable());
+		final Slice<Profile> followerSlice = profileRepository.findProfiles(cond, pageable);
 
 		//then
-		assertThat(followerOfUser1).containsExactly(profile3);
+		assertThat(followerSlice).containsExactly(profile3);
 	}
 
 	@Test
 	void 프로필_목록_조회_성공_이름_지정() {
+		//given
+		ProfileFindCond cond = ProfileFindCond.builder()
+			.username("user")
+			.build();
+
 		//when
-		final Slice<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"),
-			defaultPageable());
+		final Slice<Profile> profiles = profileRepository.findProfiles(cond, pageable);
 
 		//then
 		assertAll(
@@ -139,37 +152,21 @@ class CustomProfileRepositoryImplTest {
 	}
 
 	@Test
-	void 프로필_목록_조회_다음_페이지_있음() {
+	void 프로필_목록_조회_페이지_초과() {
 		//given
-		final PageRequest pageable = PageRequest.of(0, 2);
+		ProfileFindCond cond = ProfileFindCond.builder()
+			.username("user")
+			.build();
+		final PageRequest pageableWithSize2 = PageRequest.of(0, 2);
 
 		//when
-		final Slice<Profile> profiles = profileRepository.findProfiles(condWhenFindUsingUsername("user"), pageable);
+		final Slice<Profile> profiles = profileRepository.findProfiles(cond, pageableWithSize2);
 
 		//then
 		assertAll(
-			() -> assertThat(profiles.getSize()).isEqualTo(pageable.getPageSize()),
+			() -> assertThat(profiles.getSize()).isEqualTo(pageableWithSize2.getPageSize()),
 			() -> assertThat(profiles.hasNext()).isTrue()
 		);
 	}
 
-	private ProfileFindCond condWhenFindUsingUsername(final String username) {
-		return ProfileFindCond.builder().username(username).build();
-	}
-
-	private ProfileFindCond condWhenFindFollowees(final long profileId) {
-		return condWhenFindFollowees(profileId, null);
-	}
-
-	private ProfileFindCond condWhenFindFollowees(final long profileId, final String username) {
-		return ProfileFindCond.builder().profileId(profileId).followee(true).username(username).build();
-	}
-
-	private ProfileFindCond condWhenFindFollowers(final long profileId) {
-		return condWhenFindFollowers(profileId, null);
-	}
-
-	private ProfileFindCond condWhenFindFollowers(final long profileId, final String username) {
-		return ProfileFindCond.builder().profileId(profileId).follower(true).username(username).build();
-	}
 }

@@ -22,7 +22,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
 
 public class ProfileDocsController extends RestDocsTestSupport {
 

@@ -1,8 +1,10 @@
 package com.meoguri.linkocean.infrastructure.s3;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import static com.meoguri.linkocean.exception.Preconditions.*;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
@@ -10,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class S3Uploader {
+
+	private static final List<String> EXTENSIONS_IMAGE = List.of("jpg", "png", "jpeg");
 
 	private final AmazonS3Client amazonS3Client;
 
@@ -28,47 +33,38 @@ public class S3Uploader {
 	 * 주어진 multipartFile 이 저장된 imageUrl 을 반환한다.
 	 * 주어진 multipartFile 이 null 이라면 null 을 반환한다.
 	 */
-	public String upload(MultipartFile multipartFile, String dirName) {
+	public String upload(final MultipartFile multipartFile, final String dirName) {
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			return null;
 		}
-		return upload(convert(multipartFile), dirName);
+
+		final String saveFilePath = getSaveFilePath(multipartFile.getOriginalFilename(), dirName);
+		final InputStream input = getInputStream(multipartFile);
+		final ObjectMetadata metadata = new ObjectMetadata();
+
+		return uploadInternal(saveFilePath, input, metadata);
 	}
 
-	private File convert(MultipartFile multipartFile) {
-		final String originalFilename = multipartFile.getOriginalFilename();
-		File convertFile = new File(originalFilename);
-		try {
-			if (convertFile.createNewFile()) {
-				try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-					fos.write(multipartFile.getBytes());
-				}
-				return convertFile;
-			}
-		} catch (IOException e) {
-			log.info("failed to convert MultipartFile with original file name : {} to File", originalFilename);
-			throw new RuntimeException(e);
-		}
-		return null;
-	}
-
-	private String upload(File file, String dirName) {
-		final String saveFilePath = getSaveFilePath(file, dirName);
-
-		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, file)
+	private String uploadInternal(final String saveFilePath, final InputStream input, final ObjectMetadata metadata) {
+		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, input, metadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 
-		final String uploadedUrl = amazonS3Client.getUrl(bucket, saveFilePath).toString();
-
-		/* local 에 남는 파일 삭제 */
-		file.delete();
-		return uploadedUrl;
+		return amazonS3Client.getUrl(bucket, saveFilePath).toString();
 	}
 
-	private String getSaveFilePath(final File file, final String dirName) {
-		final String extension = FilenameUtils.getExtension(file.getName());
+	private String getSaveFilePath(final String originalFileName, final String dirName) {
+		final String extension = FilenameUtils.getExtension(originalFileName);
+		checkArgument(EXTENSIONS_IMAGE.contains(extension), "유효하지 않은 파일 형식입니다.");
+
 		final String saveFilename = String.join(".", UUID.randomUUID().toString(), extension);
-		final String saveFilePath = dirName + "/" + saveFilename;
-		return saveFilePath;
+		return String.join("/", dirName, saveFilename);
+	}
+
+	private InputStream getInputStream(final MultipartFile multipartFile) {
+		try {
+			return multipartFile.getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
