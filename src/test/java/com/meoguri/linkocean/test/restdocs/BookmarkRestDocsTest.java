@@ -15,6 +15,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.BookmarkController;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
@@ -43,12 +44,13 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 			new RegisterBookmarkRequest(링크_메타데이터_얻기("http://www.naver.com"), title, memo, category, openType, null);
 
 		//when
-		mockMvc.perform(post(basePath)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON)
-				.content(createJson(registerBookmarkRequest)))
+		final ResultActions perform = mockMvc.perform(post(basePath)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON)
+			.content(createJson(registerBookmarkRequest)));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -61,7 +63,11 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 						fieldWithPath("category").optional().description("북마크 카테고리"),
 						fieldWithPath("tags").optional().description("북마크 태그 목록"),
 						fieldWithPath("openType").description("북마크 공개 여부")),
-					responseFields(fieldWithPath("id").description("북마크 ID"))));
+					responseFields(
+						fieldWithPath("id").description("북마크 ID")
+					)
+				)
+			);
 	}
 
 	@Test
@@ -70,30 +76,43 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
 
 		//when
-		mockMvc.perform(get(basePath + "/me").header(AUTHORIZATION, token).accept(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(get(basePath + "/me")
+			.header(AUTHORIZATION, token)
+			.accept(APPLICATION_JSON));
 
-			//then
-			.andDo(restDocs.document(requestHeaders(headerWithName(AUTHORIZATION).description("인증 토큰")),
-				requestParameters(parameterWithName("page").optional().description("현재 페이지(page)"),
-					parameterWithName("size").optional().description("북마크 개수(size)"),
-					parameterWithName("order").optional().description("북마크 정렬 기준"),
-					parameterWithName("tags").optional().description("필터링 태그 목록"),
-					parameterWithName("category").optional().description("카테고리"),
-					parameterWithName("searchTitle").optional().description("검색 제목"),
-					parameterWithName("favorite").optional().description("필터링 태그 목록")),
-				responseFields(fieldWithPath("totalCount").description("북마크 총 개수"),
-					fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
-					fieldWithPath("bookmarks[].id").description("북마크 ID"),
-					fieldWithPath("bookmarks[].title").description("북마크 제목"),
-					fieldWithPath("bookmarks[].url").description("북마크 url"),
-					fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
-					fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
-					fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
-					fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
-					fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
-					fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
-					fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
-					fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록"))));
+		//then
+		perform
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					requestParameters(
+						parameterWithName("page").optional().description("현재 페이지(page)"),
+						parameterWithName("size").optional().description("북마크 개수(size)"),
+						parameterWithName("order").optional().description("북마크 정렬 기준"),
+						parameterWithName("tags").optional().description("필터링 태그 목록"),
+						parameterWithName("category").optional().description("카테고리"),
+						parameterWithName("searchTitle").optional().description("검색 제목"),
+						parameterWithName("favorite").optional().description("필터링 태그 목록")
+					),
+					responseFields(
+						fieldWithPath("totalCount").description("북마크 총 개수"),
+						fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
+						fieldWithPath("bookmarks[].id").description("북마크 ID"),
+						fieldWithPath("bookmarks[].title").description("북마크 제목"),
+						fieldWithPath("bookmarks[].url").description("북마크 url"),
+						fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
+						fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
+						fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
+						fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
+						fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
+						fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
+						fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
+						fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록")
+					)
+				)
+			);
 	}
 
 	@Test
@@ -115,33 +134,45 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		팔로우(otherProfileId);
 
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders.get(basePath + "/others/{profileId}", otherProfileId)
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.get(basePath + "/others/{profileId}", otherProfileId)
 				.header(AUTHORIZATION, token)
-				.accept(APPLICATION_JSON))
+				.accept(APPLICATION_JSON));
 
-			//then
-			.andDo(restDocs.document(requestHeaders(headerWithName(AUTHORIZATION).description("인증 토큰")),
-				pathParameters(parameterWithName("profileId").description("다른 사용자 프로필 ID")),
-				requestParameters(parameterWithName("page").optional().description("현재 페이지(page)"),
-					parameterWithName("size").optional().description("북마크 개수(size)"),
-					parameterWithName("order").optional().description("북마크 정렬 기준"),
-					parameterWithName("tags").optional().description("필터링 태그 목록"),
-					parameterWithName("category").optional().description("카테고리"),
-					parameterWithName("searchTitle").optional().description("제목 검색"),
-					parameterWithName("favorite").optional().description("필터링 태그 목록")),
-				responseFields(fieldWithPath("totalCount").description("북마크 총 개수"),
-					fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
-					fieldWithPath("bookmarks[].id").description("북마크 ID"),
-					fieldWithPath("bookmarks[].title").description("북마크 제목"),
-					fieldWithPath("bookmarks[].url").description("북마크 url"),
-					fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
-					fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
-					fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
-					fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
-					fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
-					fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
-					fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
-					fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록"))));
+		//then
+		perform
+			.andDo(
+				restDocs.document(
+					requestHeaders(headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					pathParameters(
+						parameterWithName("profileId").description("다른 사용자 프로필 ID")
+					),
+					requestParameters(
+						parameterWithName("page").optional().description("현재 페이지(page)"),
+						parameterWithName("size").optional().description("북마크 개수(size)"),
+						parameterWithName("order").optional().description("북마크 정렬 기준"),
+						parameterWithName("tags").optional().description("필터링 태그 목록"),
+						parameterWithName("category").optional().description("카테고리"),
+						parameterWithName("searchTitle").optional().description("제목 검색"),
+						parameterWithName("favorite").optional().description("필터링 태그 목록")
+					),
+					responseFields(
+						fieldWithPath("totalCount").description("북마크 총 개수"),
+						fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
+						fieldWithPath("bookmarks[].id").description("북마크 ID"),
+						fieldWithPath("bookmarks[].title").description("북마크 제목"),
+						fieldWithPath("bookmarks[].url").description("북마크 url"),
+						fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
+						fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
+						fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
+						fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
+						fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
+						fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
+						fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
+						fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록"))
+				)
+			);
 	}
 
 	@Test
@@ -171,34 +202,46 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		팔로우(profileId2);
 
 		//when
-		mockMvc.perform(get(basePath + "/feed").header(AUTHORIZATION, token).accept(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(get(basePath + "/feed")
+			.header(AUTHORIZATION, token)
+			.accept(APPLICATION_JSON));
 
-			//then
-			.andDo(restDocs.document(requestHeaders(headerWithName(AUTHORIZATION).description("인증 토큰")),
-				requestParameters(parameterWithName("page").optional().description("현재 페이지(page)"),
-					parameterWithName("size").optional().description("북마크 개수(size)"),
-					parameterWithName("order").optional().description("북마크 정렬 기준"),
-					parameterWithName("category").optional().description("카테고리"),
-					parameterWithName("searchTitle").optional().description("제목 검색"),
-					parameterWithName("follow").optional().description("팔로우 여부")),
-				responseFields(fieldWithPath("totalCount").description("북마크 총 개수"),
-					fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
-					fieldWithPath("bookmarks[].id").description("북마크 ID"),
-					fieldWithPath("bookmarks[].title").description("북마크 제목"),
-					fieldWithPath("bookmarks[].url").description("북마크 url"),
-					fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
-					fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
-					fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
-					fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
-					fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
-					fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
-					fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
-					fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록"),
-					fieldWithPath("bookmarks[].profile").description("작성자"),
-					fieldWithPath("bookmarks[].profile.profileId").description("작성자 ID"),
-					fieldWithPath("bookmarks[].profile.imageUrl").description("작성자 이미지 url"),
-					fieldWithPath("bookmarks[].profile.username").description("작성자 이름"),
-					fieldWithPath("bookmarks[].profile.isFollow").description("작성자 팔로우 여부"))));
+		//then
+		perform
+			.andDo(
+				restDocs.document(
+					requestHeaders(headerWithName(AUTHORIZATION).description("인증 토큰")
+					),
+					requestParameters(
+						parameterWithName("page").optional().description("현재 페이지(page)"),
+						parameterWithName("size").optional().description("북마크 개수(size)"),
+						parameterWithName("order").optional().description("북마크 정렬 기준"),
+						parameterWithName("category").optional().description("카테고리"),
+						parameterWithName("searchTitle").optional().description("제목 검색"),
+						parameterWithName("follow").optional().description("팔로우 여부")
+					),
+					responseFields(
+						fieldWithPath("totalCount").description("북마크 총 개수"),
+						fieldWithPath("bookmarks[]").optional().description("북마크 목록"),
+						fieldWithPath("bookmarks[].id").description("북마크 ID"),
+						fieldWithPath("bookmarks[].title").description("북마크 제목"),
+						fieldWithPath("bookmarks[].url").description("북마크 url"),
+						fieldWithPath("bookmarks[].openType").description("북마크 공개 범위"),
+						fieldWithPath("bookmarks[].category").description("북마크 카테고리"),
+						fieldWithPath("bookmarks[].createdAt").description("북마크 생성 일자"),
+						fieldWithPath("bookmarks[].imageUrl").description("북마크 이미지 url"),
+						fieldWithPath("bookmarks[].likeCount").description("북마크 좋아요 수"),
+						fieldWithPath("bookmarks[].isFavorite").description("북마크 즐겨찾기 여부"),
+						fieldWithPath("bookmarks[].isWriter").description("북마크 작성자 여부"),
+						fieldWithPath("bookmarks[].tags[]").optional().description("북마크 태그 목록"),
+						fieldWithPath("bookmarks[].profile").description("작성자"),
+						fieldWithPath("bookmarks[].profile.profileId").description("작성자 ID"),
+						fieldWithPath("bookmarks[].profile.imageUrl").description("작성자 이미지 url"),
+						fieldWithPath("bookmarks[].profile.username").description("작성자 이름"),
+						fieldWithPath("bookmarks[].profile.isFollow").description("작성자 팔로우 여부")
+					)
+				)
+			);
 	}
 
 	@Test
@@ -210,12 +253,13 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 
 		//when
-		mockMvc.perform(
-				RestDocumentationRequestBuilders.get(basePath + "/{bookmarkId}", bookmarkId)
-					.header(AUTHORIZATION, token)
-					.accept(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.get(basePath + "/{bookmarkId}", bookmarkId)
+				.header(AUTHORIZATION, token)
+				.accept(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -264,12 +308,14 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 			updateTitle, updateMemo, updateCategory, updateOpenType, updateTags);
 
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders.put(basePath + "/{bookmarkId}", bookmarkId)
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.put(basePath + "/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
-				.content(createJson(updateBookmarkRequest)))
+				.content(createJson(updateBookmarkRequest)));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -295,11 +341,13 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
 
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders.delete(basePath + "/{bookmarkId}", bookmarkId)
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.delete(basePath + "/{bookmarkId}", bookmarkId)
 				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+				.contentType(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -328,12 +376,14 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		final Map<String, Long> request = Map.of("targetId", targetProfileId);
 
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders.post(basePath + "/{bookmarkId}/share", bookmarkId)
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.post(basePath + "/{bookmarkId}/share", bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
-				.content(createJson(request)))
+				.content(createJson(request)));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -354,11 +404,13 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title1", "IT", List.of("공부"), "all");
 
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders.get(basePath + "?url=https://www.google.com")
+		final ResultActions perform = mockMvc.perform(
+			RestDocumentationRequestBuilders.get(basePath + "?url=https://www.google.com")
 				.header(AUTHORIZATION, token)
-				.accept(APPLICATION_JSON))
+				.accept(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
