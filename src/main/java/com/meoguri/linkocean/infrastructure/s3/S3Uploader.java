@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.infrastructure.s3;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +43,8 @@ public class S3Uploader {
 
 	private File convert(MultipartFile multipartFile) {
 		final String originalFilename = multipartFile.getOriginalFilename();
+		checkNotNull(originalFilename);
+
 		final File convertFile = new File(originalFilename);
 		try {
 			if (convertFile.createNewFile()) {
@@ -49,12 +52,13 @@ public class S3Uploader {
 					fos.write(multipartFile.getBytes());
 				}
 				return convertFile;
+			} else {
+				throw new IllegalStateException(format("the named file already exists : %s", originalFilename));
 			}
 		} catch (IOException e) {
 			log.info("failed to convert MultipartFile with original file name : {} to File", originalFilename);
 			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	private String upload(File file, String dirName) {
@@ -64,8 +68,9 @@ public class S3Uploader {
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 
 		/* local 에 남는 파일 삭제 */
+		final String imageUrl = amazonS3Client.getUrl(bucket, saveFilePath).toString();
 		file.delete();
-		return amazonS3Client.getUrl(bucket, saveFilePath).toString();
+		return imageUrl;
 	}
 
 	private String getSaveFilePath(final File file, final String dirName) {
