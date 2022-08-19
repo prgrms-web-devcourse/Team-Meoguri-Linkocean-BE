@@ -36,7 +36,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 		checkUniqueConstraintIllegalCommand(oFavorite,
 			format("illegal favorite command of profileId: %d on bookmarkId: %d", profileId, bookmarkId));
 
-		favoriteRepository.save(new Favorite(bookmark, owner));
+		favoriteRepository.save(new Favorite(owner, bookmark));
 	}
 
 	@Override

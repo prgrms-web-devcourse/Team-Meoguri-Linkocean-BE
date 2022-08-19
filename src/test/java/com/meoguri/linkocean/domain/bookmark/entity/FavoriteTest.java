@@ -16,7 +16,7 @@ class FavoriteTest {
 		final Profile owner = createProfile();
 
 		//when
-		final Favorite favorite = new Favorite(bookmark, owner);
+		final Favorite favorite = new Favorite(owner, bookmark);
 
 		//then
 		assertThat(favorite).isNotNull()

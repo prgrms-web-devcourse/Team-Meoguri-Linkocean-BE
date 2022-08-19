@@ -3,7 +3,6 @@ package com.meoguri.linkocean.test.support.persistence;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -13,11 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -54,6 +55,9 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private ReactionRepository reactionRepository;
+
+	@Autowired
+	private FavoriteRepository favoriteRepository;
 
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
 		return userRepository.save(createUser(email, oAuthType));
@@ -93,20 +97,8 @@ public class BasePersistenceTest {
 		return tagRepository.save(new Tag(name));
 	}
 
-	protected Bookmark 북마크_저장(
-		final Profile writer,
-		final LinkMetadata linkMetadata,
-		final String url
-	) {
-		return bookmarkRepository.save(new Bookmark(writer,
-			linkMetadata,
-			null,
-			null,
-			ALL,
-			null,
-			url,
-			emptyList()
-		));
+	protected Bookmark 북마크_저장(final Profile writer, final LinkMetadata linkMetadata, final String url) {
+		return 북마크_저장(writer, linkMetadata, null, null, ALL, null, url);
 	}
 
 	protected Bookmark 북마크_저장(
@@ -130,11 +122,22 @@ public class BasePersistenceTest {
 		));
 	}
 
+	protected Bookmark 북마크_링크_메타데이터_저장(
+		final Profile writer,
+		final String url
+	) {
+		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), url);
+	}
+
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
 		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 	}
 
 	protected void 싫어요_저장(final Profile profile, final Bookmark bookmark) {
 		reactionRepository.save(new Reaction(profile, bookmark, HATE));
+	}
+
+	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
+		favoriteRepository.save(new Favorite(profile, bookmark));
 	}
 }

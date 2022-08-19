@@ -141,8 +141,8 @@ class CustomBookmarkRepositoryImplTest {
 
 		// 크러쉬가 네이버와 구글에 즐겨찾기를 누름
 		bookmark1.changeLikeCount(1L);
-		favoriteRepository.save(new Favorite(bookmark1, profile));
-		favoriteRepository.save(new Favorite(bookmark2, profile));
+		favoriteRepository.save(new Favorite(profile, bookmark1));
+		favoriteRepository.save(new Favorite(profile, bookmark2));
 
 		em.flush();
 		em.clear();
@@ -275,9 +275,9 @@ class CustomBookmarkRepositoryImplTest {
 			final Bookmark bookmark4 = bookmarkRepository.save(createBookmark(profile2, google, "google.com"));
 			final Bookmark bookmark5 = bookmarkRepository.save(createBookmark(profile2, naver, "naver.com"));
 
-			favoriteRepository.save(new Favorite(bookmark4, profile));
-			favoriteRepository.save(new Favorite(bookmark3, profile2));
-			favoriteRepository.save(new Favorite(bookmark5, profile2));
+			favoriteRepository.save(new Favorite(profile, bookmark4));
+			favoriteRepository.save(new Favorite(profile2, bookmark3));
+			favoriteRepository.save(new Favorite(profile2, bookmark5));
 			final Pageable pageable = createPageable("upload");
 
 			//user1 -> user1

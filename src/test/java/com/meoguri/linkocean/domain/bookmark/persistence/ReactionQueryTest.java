@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
@@ -30,9 +29,7 @@ class ReactionQueryTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-
-		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
-		bookmark = 북마크_저장(profile, linkMetadata, "www.google.com");
+		bookmark = 북마크_링크_메타데이터_저장(profile, "google.com");
 	}
 
 	@Test
