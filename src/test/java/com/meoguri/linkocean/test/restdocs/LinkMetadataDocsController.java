@@ -1,11 +1,10 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
-import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-public class LinkMetadataDocsController extends RestDocsTestSupport {
+class LinkMetadataDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LinkMetadataController.class);
 
@@ -40,10 +39,6 @@ public class LinkMetadataDocsController extends RestDocsTestSupport {
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.title").exists())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -57,6 +52,5 @@ public class LinkMetadataDocsController extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
 }

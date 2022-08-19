@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(CheckIsFollowQuery.class)
 class CheckIsFollowQueryTest extends BasePersistenceTest {

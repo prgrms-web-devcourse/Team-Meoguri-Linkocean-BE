@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class ProfileRepositoryTest extends BasePersistenceTest {
 

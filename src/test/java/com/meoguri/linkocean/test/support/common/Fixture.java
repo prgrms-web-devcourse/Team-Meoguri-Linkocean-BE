@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.support.common;
+package com.meoguri.linkocean.test.support.common;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;

@@ -2,8 +2,8 @@ package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
-import static com.meoguri.linkocean.support.common.Assertions.*;
-import static com.meoguri.linkocean.support.common.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 

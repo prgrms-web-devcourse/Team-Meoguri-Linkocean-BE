@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class UserRepositoryTest extends BasePersistenceTest {
 

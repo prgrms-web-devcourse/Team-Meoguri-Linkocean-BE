@@ -1,10 +1,9 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
@@ -14,9 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.meoguri.linkocean.controller.bookmark.ReactionController;
-import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-public class ReactionDocsController extends RestDocsTestSupport {
+class ReactionDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(ReactionController.class);
 
@@ -38,9 +37,6 @@ public class ReactionDocsController extends RestDocsTestSupport {
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(

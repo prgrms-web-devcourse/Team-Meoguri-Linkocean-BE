@@ -15,7 +15,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.support.controller.BaseControllerTest;
+import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class NotificationControllerTest extends BaseControllerTest {
 

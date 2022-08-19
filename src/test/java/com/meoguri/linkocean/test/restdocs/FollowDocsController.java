@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -6,7 +6,6 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
@@ -14,16 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.profile.FollowController;
-import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-public class FollowDocsController extends RestDocsTestSupport {
+class FollowDocsController extends RestDocsTestSupport {
 	private final String baseUrl = getBaseUrl(FollowController.class);
 
 	long hahaId;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		//given - 두 사용자 haha 와 papa
+		/* given - 두 사용자 haha 와 papa */
 		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		hahaId = 프로필_등록("haha", List.of("IT"));
 
@@ -39,9 +38,6 @@ public class FollowDocsController extends RestDocsTestSupport {
 				.header(AUTHORIZATION, token))
 
 			//then
-			.andExpect(status().isOk())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -66,9 +62,6 @@ public class FollowDocsController extends RestDocsTestSupport {
 				.contentType(APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -79,6 +72,5 @@ public class FollowDocsController extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
 }

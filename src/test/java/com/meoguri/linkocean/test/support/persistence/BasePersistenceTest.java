@@ -1,6 +1,6 @@
-package com.meoguri.linkocean.support.persistence;
+package com.meoguri.linkocean.test.support.persistence;
 
-import static com.meoguri.linkocean.support.common.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

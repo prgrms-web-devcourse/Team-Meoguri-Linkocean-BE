@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.asciidoctor.convert' version '1.5.8'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'java'
     id 'checkstyle'
     id 'jacoco'
@@ -18,7 +18,7 @@ configurations {
 }
 
 ext {
-    set('snippetsDir', file("build/generated-snippets"))
+    snippetsDir = file('build/generated-snippets')
 }
 
 checkstyle {
@@ -60,7 +60,6 @@ jacocoTestReport {
 }
 
 jacocoTestCoverageVerification {
-
     violationRules {
         rule {
             enabled = false
@@ -75,6 +74,8 @@ jacocoTestCoverageVerification {
             excludes = []
         }
     }
+
+    finalizedBy 'asciidoctor'
 }
 
 repositories {
@@ -131,22 +132,36 @@ dependencies {
 }
 
 tasks.named('test') {
-    outputs.dir snippetsDir
     useJUnitPlatform()
+    outputs.dir snippetsDir
 
     finalizedBy 'jacocoTestReport'
 }
 
-task copyDev(type: Copy) {
-    from './config'
-    into './src/main/resources'
+asciidoctor {
+    dependsOn test
+
+    inputs.dir snippetsDir
+
+    sourceDir file('docs/asciidoc')
+    sources {
+        include 'BOOKMARK-API.adoc'
+    }
 }
 
-tasks.named('asciidoctor') {
-    dependsOn test
-    inputs.dir snippetsDir
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file('build/docs/asciidoc/')
+    into file('src/main/resources/static/docs')
+}
+
+task copyDev(type: Copy) {
+    from file('./config')
+    into file('./src/main/resources')
 }
 
 build {
     dependsOn copyDev
+    dependsOn copyDocument
 }

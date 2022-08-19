@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.support.common;
+package com.meoguri.linkocean.test.support.common;
 
 import javax.annotation.PostConstruct;
 

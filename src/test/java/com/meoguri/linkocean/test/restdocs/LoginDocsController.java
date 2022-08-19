@@ -1,12 +1,10 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
@@ -15,9 +13,9 @@ import org.springframework.http.MediaType;
 
 import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
-import com.meoguri.linkocean.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-public class LoginDocsController extends RestDocsTestSupport {
+class LoginDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);
 
@@ -35,22 +33,17 @@ public class LoginDocsController extends RestDocsTestSupport {
 				.content(createJson(loginRequest)))
 
 			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.token").exists())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestFields(
 						fieldWithPath("email").description("이메일"),
-						fieldWithPath("oauthType").description("소셜 타입[GOOGLE, NAVER, KAKAO]")
+						fieldWithPath("oauthType").description("소셜 타입[GOOGLE, GITHUB, NAVER]")
 					),
 					responseFields(
 						fieldWithPath("token").description("jwt 토큰")
 					)
 				)
 			);
-
 	}
 
 	@Test
@@ -65,11 +58,6 @@ public class LoginDocsController extends RestDocsTestSupport {
 				.contentType(MediaType.APPLICATION_JSON))
 
 			//then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.hasProfile").value(true))
-			.andDo(print())
-
-			//docs
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -80,6 +68,5 @@ public class LoginDocsController extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
 }
