@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,50 +10,40 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(CheckIsFollowQuery.class)
-@DataJpaTest
-class CheckIsFollowQueryTest {
+class CheckIsFollowQueryTest extends BasePersistenceTest {
 
 	@Autowired
 	private CheckIsFollowQuery query;
 
-	@Autowired
-	private FollowRepository followRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
 	private Profile follower;
 	private Profile followee;
 
+	private long followerId;
+	private long followeeId;
+
 	@BeforeEach
 	void setUp() {
-		final User follower = userRepository.save(createUser("follower@gmail.com", GOOGLE));
-		final User followee = userRepository.save(createUser("followee@gmail.com", GOOGLE));
+		this.follower = 사용자_프로필_저장_등록("follower@gmail.com", GOOGLE, "follower", IT);
+		this.followee = 사용자_프로필_저장_등록("followee@gmail.com", GOOGLE, "followee", IT);
 
-		this.follower = profileRepository.save(createProfile(follower, "follower"));
-		this.followee = profileRepository.save(createProfile(followee, "followee"));
+		followerId = follower.getId();
+		followeeId = followee.getId();
 	}
 
 	@Test
 	void 팔로우_여부_체크_성공() {
 		//given
-		followRepository.save(new Follow(follower, followee));
+		팔로우_저장(follower, followee);
 
 		//when
-		final boolean follow1 = query.isFollow(follower.getId(), followee);
-		final boolean follow2 = query.isFollow(followee.getId(), follower);
+		final boolean follow1 = query.isFollow(followerId, followee);
+		final boolean follow2 = query.isFollow(followeeId, follower);
 
 		//then
 		assertThat(follow1).isTrue();
@@ -61,13 +51,13 @@ class CheckIsFollowQueryTest {
 	}
 
 	@Test
-	void 팔로이_아이디_집합_조회_성공() {
+	void 팔로잉_여부_목록_조회_성공() {
 		//given
-		followRepository.save(new Follow(follower, followee));
+		팔로우_저장(follower, followee);
 
 		//when
-		final List<Boolean> followeeIdsOfUser1 = query.isFollows(follower.getId(), of(follower, followee));
-		final List<Boolean> followeeIdsOfUser2 = query.isFollows(followee.getId(), of(follower, followee));
+		final List<Boolean> followeeIdsOfUser1 = query.isFollows(followerId, of(follower, followee));
+		final List<Boolean> followeeIdsOfUser2 = query.isFollows(followeeId, of(follower, followee));
 
 		//then
 		assertThat(followeeIdsOfUser1).containsExactly(false, true);

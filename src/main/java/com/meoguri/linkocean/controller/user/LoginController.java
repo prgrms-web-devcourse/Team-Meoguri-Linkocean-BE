@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
@@ -25,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class LoginController {
 
 	private final UserService userService;
-	private final ProfileService profileService;
 
 	private final JwtProvider jwtProvider;
 
@@ -50,7 +48,7 @@ public class LoginController {
 	public Map<String, Object> loginSuccess(
 		@AuthenticationPrincipal SecurityUser user
 	) {
-		return Map.of("hasProfile", profileService.existsByUserId(user.getId()));
+		return Map.of("hasProfile", user.hasProfile());
 	}
 
 }

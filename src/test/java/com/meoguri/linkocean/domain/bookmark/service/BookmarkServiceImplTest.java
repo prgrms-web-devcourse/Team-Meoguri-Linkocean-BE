@@ -1,12 +1,10 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.common.Assertions.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +48,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @SpringBootTest
 @Transactional
@@ -506,7 +504,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -527,7 +525,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -545,7 +543,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId2)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -570,7 +568,7 @@ class BookmarkServiceImplTest {
 				.targetProfileId(profileId2)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -656,7 +654,7 @@ class BookmarkServiceImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -698,7 +696,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);

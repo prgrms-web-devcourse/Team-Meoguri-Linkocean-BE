@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.common;
+package com.meoguri.linkocean.test.support.common;
 
 import java.util.Locale;
 

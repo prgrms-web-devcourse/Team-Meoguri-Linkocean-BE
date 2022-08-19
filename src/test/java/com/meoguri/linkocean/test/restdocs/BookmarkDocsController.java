@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
@@ -8,22 +8,20 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.meoguri.linkocean.controller.bookmark.BookmarkController;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class BookmarkDocsControllerTest extends RestDocsTestSupport {
+class BookmarkDocsController extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 

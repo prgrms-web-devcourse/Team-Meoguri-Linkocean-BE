@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.profile.FollowController;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
 class FollowDocsController extends RestDocsTestSupport {
 	private final String baseUrl = getBaseUrl(FollowController.class);

@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.notification.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.notification.entity.vo.NotificationType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Map;
@@ -26,7 +25,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @Transactional
 @SpringBootTest
@@ -90,7 +89,7 @@ class NotificationServiceImplTest {
 		notificationService.shareNotification(command);
 
 		//when
-		final Slice<Notification> result = notificationService.getNotifications(defaultPageable(), receiver1ProfileId);
+		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);
@@ -122,7 +121,7 @@ class NotificationServiceImplTest {
 		notificationService.shareNotification(command2);
 
 		//when
-		final Slice<Notification> result = notificationService.getNotifications(defaultPageable(), receiver1ProfileId);
+		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);

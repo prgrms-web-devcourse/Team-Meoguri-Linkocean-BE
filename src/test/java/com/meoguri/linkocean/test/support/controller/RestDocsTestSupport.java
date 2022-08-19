@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.support;
+package com.meoguri.linkocean.test.support.controller;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 

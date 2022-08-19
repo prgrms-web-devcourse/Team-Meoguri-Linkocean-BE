@@ -12,7 +12,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class LinkMetadataControllerTest extends BaseControllerTest {
 

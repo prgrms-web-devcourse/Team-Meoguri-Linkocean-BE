@@ -28,6 +28,4 @@ public interface ProfileService {
 	 */
 	Slice<GetProfilesResult> getProfiles(long currentProfileId, ProfileFindCond searchCond, Pageable pageable);
 
-	/* 프로필 보유 여부 확인 */
-	boolean existsByUserId(long userId);
 }

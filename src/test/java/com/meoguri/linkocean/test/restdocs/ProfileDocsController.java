@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
@@ -21,7 +21,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
 class ProfileDocsController extends RestDocsTestSupport {
 

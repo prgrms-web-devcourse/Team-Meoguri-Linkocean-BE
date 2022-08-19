@@ -21,7 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class ProfileControllerTest extends BaseControllerTest {
 

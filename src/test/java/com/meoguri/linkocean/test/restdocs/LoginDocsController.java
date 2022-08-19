@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.restdocs;
+package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -11,9 +11,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import com.meoguri.linkocean.controller.support.RestDocsTestSupport;
 import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
+import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
 class LoginDocsController extends RestDocsTestSupport {
 
