@@ -6,7 +6,9 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -68,7 +70,7 @@ public class Profile extends BaseIdEntity {
 		joinColumns = @JoinColumn(name = "owner_id"),
 		inverseJoinColumns = @JoinColumn(name = "bookmark_id")
 	)
-	private List<Bookmark> favoriteBookmarks;
+	private Set<Bookmark> favoriteBookmarks = new HashSet<>();
 
 	/* 회원 가입시 사용하는 생성자 */
 	public Profile(final String username, final List<Category> favoriteCategories) {
@@ -93,6 +95,16 @@ public class Profile extends BaseIdEntity {
 		this.bio = bio;
 		this.image = image;
 		this.favoriteCategories = favoriteCategories;
+	}
+
+	public void favorite(final Bookmark bookmark) {
+		checkCondition(!favoriteBookmarks.contains(bookmark), "illegal favorite command");
+		favoriteBookmarks.add(bookmark);
+	}
+
+	public void unfavorite(final Bookmark bookmark) {
+		checkCondition(favoriteBookmarks.contains(bookmark), "illegal unfavorite command");
+		favoriteBookmarks.remove(bookmark);
 	}
 
 	@Deprecated

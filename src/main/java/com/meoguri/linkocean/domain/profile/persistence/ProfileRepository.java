@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,5 +17,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 		+ "where p.username = :updateUsername "
 		+ "and not p.id = :profileId")
 	boolean existsByUsernameExceptMe(String updateUsername, long profileId);
+
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.favoriteBookmarks "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFavoriteById(long profileId);
 }
 

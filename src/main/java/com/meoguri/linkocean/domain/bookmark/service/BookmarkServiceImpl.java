@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +35,6 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByU
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.CheckIsFavoriteQuery;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
@@ -52,7 +52,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final BookmarkRepository bookmarkRepository;
 
 	private final CheckIsFollowQuery checkIsFollowQuery;
-	private final CheckIsFavoriteQuery checkIsFavoriteQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final ReactionQuery reactionQuery;
@@ -134,7 +133,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
-		final boolean isFavorite = checkIsFavoriteQuery.isFavorite(profileId, bookmark);
+		final boolean isFavorite = writer.getFavoriteBookmarks()
+			.stream()
+			.map(Bookmark::getId)
+			.anyMatch(id -> id.equals(bookmarkId));
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
@@ -179,7 +181,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
 		/* 추가 정보 조회 */
-		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
+		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
+
+		final Set<Long> currentUserFavoriteBookmarkIdSet =
+			currentUserProfile.getFavoriteBookmarks().stream().map(Bookmark::getId).collect(toSet());
+		final List<Boolean> isFavorites = bookmarks.stream()
+			.map(Bookmark::getId)
+			.map(currentUserFavoriteBookmarkIdSet::contains)
+			.collect(toList());
+
 
 		/* 결과 반환 */
 		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);
@@ -198,7 +208,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Profile> writers = bookmarks.stream().map(Bookmark::getWriter).collect(toList());
 
 		/* 추가 정보 조회 */
-		final List<Boolean> isFavorites = checkIsFavoriteQuery.isFavorites(currentUserProfileId, bookmarks);
+		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
+		final Set<Long> currentUserFavoriteBookmarkIdSet =
+			currentUserProfile.getFavoriteBookmarks().stream().map(Bookmark::getId).collect(toSet());
+		final List<Boolean> isFavorites = bookmarks.stream()
+			.map(Bookmark::getId)
+			.map(currentUserFavoriteBookmarkIdSet::contains)
+			.collect(toList());
+
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
 		return toResultPage(bookmarkPage, isFavorites, isFollows, currentUserProfileId, pageable);
