@@ -12,6 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -129,11 +130,13 @@ dependencies {
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     testImplementation 'io.findify:s3mock_2.12:0.2.6'
+
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
     outputs.dir snippetsDir
+    useJUnitPlatform()
 
     finalizedBy 'jacocoTestReport'
 }
@@ -141,12 +144,18 @@ tasks.named('test') {
 asciidoctor {
     dependsOn test
 
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
 
-    sourceDir file('docs/asciidoc')
     sources {
-        include 'BOOKMARK-API.adoc'
+        include("index.adoc")
     }
+
+    baseDirFollowsSourceDir()
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
 }
 
 task copyDocument(type: Copy) {
@@ -156,12 +165,12 @@ task copyDocument(type: Copy) {
     into file('src/main/resources/static/docs')
 }
 
-task copyDev(type: Copy) {
+task copyProperty(type: Copy) {
     from file('./config')
     into file('./src/main/resources')
 }
 
 build {
-    dependsOn copyDev
+    dependsOn copyProperty
     dependsOn copyDocument
 }
