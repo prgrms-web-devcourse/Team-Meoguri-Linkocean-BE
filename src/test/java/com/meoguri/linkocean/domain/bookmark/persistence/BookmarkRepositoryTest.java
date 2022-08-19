@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 

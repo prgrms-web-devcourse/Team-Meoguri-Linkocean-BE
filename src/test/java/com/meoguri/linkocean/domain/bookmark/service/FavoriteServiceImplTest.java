@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 

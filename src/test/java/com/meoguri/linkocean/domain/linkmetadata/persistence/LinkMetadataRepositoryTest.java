@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
