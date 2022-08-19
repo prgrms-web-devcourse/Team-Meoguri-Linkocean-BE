@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -32,6 +34,9 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
+
+	@Autowired
+	private TagRepository tagRepository;
 
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
 		return userRepository.save(createUser(email, oAuthType));
@@ -67,4 +72,7 @@ public class BasePersistenceTest {
 		return linkMetadataRepository.save(new LinkMetadata(link, title, image));
 	}
 
+	protected Tag 태그_저장(final String name) {
+		return tagRepository.save(new Tag(name));
+	}
 }
