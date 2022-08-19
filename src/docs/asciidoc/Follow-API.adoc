@@ -1,0 +1,32 @@
+[[Follow-API]]
+== 팔로우 API
+
+'''
+
+=== 팔로우
+
+Request HTTP Example:
+include::{snippets}/follow-rest-docs-test/팔로우_api/http-request.adoc[]
+
+Request Headers:
+include::{snippets}/follow-rest-docs-test/팔로우_api/request-headers.adoc[]
+
+Request Parameters:
+include::{snippets}/follow-rest-docs-test/팔로우_api/request-parameters.adoc[]
+
+Response Http Example:
+include::{snippets}/follow-rest-docs-test/팔로우_api/http-response.adoc[]
+
+=== 언팔로우
+
+Request HTTP Example:
+include::{snippets}/follow-rest-docs-test/언팔로우_api/http-request.adoc[]
+
+Request Headers:
+include::{snippets}/follow-rest-docs-test/언팔로우_api/request-headers.adoc[]
+
+Request Parameters:
+include::{snippets}/follow-rest-docs-test/언팔로우_api/request-parameters.adoc[]
+
+Response Http Example:
+include::{snippets}/follow-rest-docs-test/언팔로우_api/http-response.adoc[]

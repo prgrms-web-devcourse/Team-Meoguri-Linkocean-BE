@@ -9,3 +9,4 @@
 include::Boomark-API.adoc[]
 include::Category-API.adoc[]
 include::Favorite-API.adoc[]
+include::Follow-API.adoc[]
