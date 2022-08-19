@@ -53,11 +53,12 @@ public class S3Uploader {
 				}
 				return convertFile;
 			} else {
+				convertFile.delete();
 				throw new IllegalStateException(format("the named file already exists : %s", originalFilename));
 			}
 		} catch (IOException e) {
-			log.info("failed to convert MultipartFile with original file name : {} to File", originalFilename);
-			throw new RuntimeException(e);
+			convertFile.delete();
+			throw new RuntimeException(format("failed to convert MultipartFile : %s to File", originalFilename), e);
 		}
 	}
 
@@ -67,10 +68,8 @@ public class S3Uploader {
 		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, file)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 
-		/* local 에 남는 파일 삭제 */
-		final String imageUrl = amazonS3Client.getUrl(bucket, saveFilePath).toString();
 		file.delete();
-		return imageUrl;
+		return amazonS3Client.getUrl(bucket, saveFilePath).toString();
 	}
 
 	private String getSaveFilePath(final File file, final String dirName) {
