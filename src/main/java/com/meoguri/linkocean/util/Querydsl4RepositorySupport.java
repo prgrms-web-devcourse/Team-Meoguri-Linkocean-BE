@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.util;
 
+import static lombok.AccessLevel.*;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -29,6 +31,10 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.sql.JPASQLQuery;
+import com.querydsl.sql.MySQLTemplates;
+
+import lombok.Getter;
 
 /**
  * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리
@@ -36,12 +42,18 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  * @author Younghan Kim - 인프런 김영한 - 실전! Querydsl! 강의에서 소개한 코드를 활용 하였습니다
  * @see org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  */
+@Getter(PROTECTED)
 @Repository
 public abstract class Querydsl4RepositorySupport {
+
+	@Getter(NONE)
 	private final Class<?> domainClass;
+
 	private Querydsl querydsl;
 	private EntityManager entityManager;
 	private JPAQueryFactory queryFactory;
+
+	private JPASQLQuery<?> jpasqlQuery;
 
 	public Querydsl4RepositorySupport(Class<?> domainClass) {
 		Assert.notNull(domainClass, "Domain class must not be null!");
@@ -59,6 +71,7 @@ public abstract class Querydsl4RepositorySupport {
 		this.querydsl = new Querydsl(entityManager, new
 			PathBuilder<>(path.getType(), path.getMetadata()));
 		this.queryFactory = new JPAQueryFactory(entityManager);
+		this.jpasqlQuery = new JPASQLQuery<Void>(entityManager, new MySQLTemplates());
 	}
 
 	@PostConstruct
@@ -66,21 +79,8 @@ public abstract class Querydsl4RepositorySupport {
 		Assert.notNull(entityManager, "EntityManager must not be null!");
 		Assert.notNull(querydsl, "Querydsl must not be null!");
 		Assert.notNull(queryFactory, "QueryFactory must not be null!");
+		Assert.notNull(jpasqlQuery, "JPASQLQuery must not be null!");
 	}
-
-	protected JPAQueryFactory getQueryFactory() {
-		return queryFactory;
-	}
-
-	protected Querydsl getQuerydsl() {
-		return querydsl;
-	}
-
-	protected EntityManager getEntityManager() {
-		return entityManager;
-
-	}
-
 	protected <T> JPAQuery<T> select(Expression<T> expr) {
 		return getQueryFactory().select(expr);
 	}
