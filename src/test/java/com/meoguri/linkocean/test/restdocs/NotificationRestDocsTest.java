@@ -13,22 +13,22 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.notification.NotificationController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class NotificationDocsController extends RestDocsTestSupport {
+class NotificationRestDocsTest extends RestDocsTestSupport {
 
 	private final String baseUrl = getBaseUrl(NotificationController.class);
 
-	private long senderProfileId;
 	private long bookmarkId;
 	private long targetProfileId;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		유저_등록_로그인("sender@gmail.com", GOOGLE);
-		senderProfileId = 프로필_등록("sender", List.of("IT"));
+		long senderProfileId = 프로필_등록("sender", List.of("IT"));
 		bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, emptyList(), "all");
 
 		유저_등록_로그인("target@gmail.com", GOOGLE);
@@ -38,7 +38,7 @@ class NotificationDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 공유_알림_생성하고_조회_성공() throws Exception {
+	void 알림_조회_api() throws Exception {
 		//given
 		로그인("sender@gmail.com", GOOGLE);
 		북마크_공유(bookmarkId, targetProfileId);
@@ -46,11 +46,12 @@ class NotificationDocsController extends RestDocsTestSupport {
 		로그인("target@gmail.com", GOOGLE);
 
 		//when
-		mockMvc.perform(get(baseUrl)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(get(baseUrl)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
