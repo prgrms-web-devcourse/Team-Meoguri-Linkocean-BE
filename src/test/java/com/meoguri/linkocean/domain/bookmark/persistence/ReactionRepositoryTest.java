@@ -32,7 +32,7 @@ class ReactionRepositoryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
 		profileId = profile.getId();
 
 		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
@@ -65,7 +65,7 @@ class ReactionRepositoryTest extends BasePersistenceTest {
 	@Test
 	void 북마크의_리액션_별_카운트_조회_성공() {
 		//given
-		final Profile anotherProfile = 사용자_프로필_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+		final Profile anotherProfile = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
 		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 		reactionRepository.save(new Reaction(anotherProfile, bookmark, HATE));

@@ -25,14 +25,14 @@ class FavoriteRepositoryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
 		profileId = profile.getId();
 	}
 
 	@Test
 	void 페이보릿_저장_삭제_성공() {
 		//given
-		final Bookmark naver = 북마크_링크_메타데이터_저장(profile, "www.naver.com");
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
 		즐겨찾기_저장(profile, naver);
 
 		//when
@@ -46,8 +46,8 @@ class FavoriteRepositoryTest extends BasePersistenceTest {
 	@Test
 	void existsByProfile_idAndBookmark_성공() {
 		//given
-		final Bookmark naver = 북마크_링크_메타데이터_저장(profile, "www.naver.com");
-		final Bookmark github = 북마크_링크_메타데이터_저장(profile, "www.github.com");
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
+		final Bookmark github = 북마크_링크_메타데이터_동시_저장(profile, "www.github.com");
 		즐겨찾기_저장(profile, naver);
 
 		//when
@@ -62,8 +62,8 @@ class FavoriteRepositoryTest extends BasePersistenceTest {
 	@Test
 	void 즐겨찾기_중인_북마크의_id_집합_조회_성공() {
 		//given
-		final Bookmark naver = 북마크_링크_메타데이터_저장(profile, "www.naver.com");
-		final Bookmark github = 북마크_링크_메타데이터_저장(profile, "www.github.com");
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
+		final Bookmark github = 북마크_링크_메타데이터_동시_저장(profile, "www.github.com");
 		즐겨찾기_저장(profile, naver);
 
 		//when

@@ -27,8 +27,8 @@ class FollowRepositoryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		profile1 = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
-		profile2 = 사용자_프로필_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+		profile1 = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
 		profileId1 = profile1.getId();
 		profileId2 = profile2.getId();

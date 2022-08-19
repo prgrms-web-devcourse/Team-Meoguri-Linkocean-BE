@@ -37,9 +37,9 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		//set up 3 users
-		profile1 = 사용자_프로필_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
-		profile2 = 사용자_프로필_저장_등록("user2@naver.com", NAVER, "user2", IT);
-		profile3 = 사용자_프로필_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
+		profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+		profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
+		profile3 = 사용자_프로필_동시_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
 
 		profileId1 = profile1.getId();
 		profileId2 = profile2.getId();

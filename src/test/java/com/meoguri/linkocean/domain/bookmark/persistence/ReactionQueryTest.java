@@ -28,14 +28,14 @@ class ReactionQueryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-		bookmark = 북마크_링크_메타데이터_저장(profile, "google.com");
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		bookmark = 북마크_링크_메타데이터_동시_저장(profile, "google.com");
 	}
 
 	@Test
 	void 북마크의_리액션별_카운트_조회_성공() {
 		//given
-		final Profile anotherProfile = 사용자_프로필_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+		final Profile anotherProfile = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 		좋아요_저장(profile, bookmark);
 		싫어요_저장(anotherProfile, bookmark);
 

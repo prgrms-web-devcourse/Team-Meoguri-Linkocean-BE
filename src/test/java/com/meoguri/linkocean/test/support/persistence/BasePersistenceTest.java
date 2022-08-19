@@ -7,6 +7,9 @@ import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -34,6 +37,12 @@ import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 public class BasePersistenceTest {
 
 	@Autowired
+	protected EntityManager em;
+
+	@Autowired
+	protected EntityManagerFactory emf;
+
+	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -57,6 +66,10 @@ public class BasePersistenceTest {
 	@Autowired
 	private FavoriteRepository favoriteRepository;
 
+	protected boolean isLoaded(final Object entity) {
+		return emf.getPersistenceUnitUtil().isLoaded(entity);
+	}
+
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
 		return userRepository.save(createUser(email, oAuthType));
 	}
@@ -74,7 +87,7 @@ public class BasePersistenceTest {
 		return 프로필_등록(user, 프로필_저장(username, categories));
 	}
 
-	protected Profile 사용자_프로필_저장_등록(
+	protected Profile 사용자_프로필_동시_저장_등록(
 		final String email,
 		final OAuthType oAuthType,
 		final String username,
@@ -125,14 +138,14 @@ public class BasePersistenceTest {
 		));
 	}
 
-	protected Bookmark 북마크_링크_메타데이터_저장(
+	protected Bookmark 북마크_링크_메타데이터_동시_저장(
 		final Profile writer,
 		final String url
 	) {
-		return 북마크_링크_메타데이터_저장(writer, null, url);
+		return 북마크_링크_메타데이터_동시_저장(writer, null, url);
 	}
 
-	protected Bookmark 북마크_링크_메타데이터_저장(
+	protected Bookmark 북마크_링크_메타데이터_동시_저장(
 		final Profile writer,
 		final Category category,
 		final String url
@@ -140,7 +153,7 @@ public class BasePersistenceTest {
 		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), "title", "memo", ALL, category, url);
 	}
 
-	protected Bookmark 북마크_링크_메타데이터_저장(
+	protected Bookmark 북마크_링크_메타데이터_동시_저장(
 		final Profile writer,
 		final String title,
 		final OpenType openType,

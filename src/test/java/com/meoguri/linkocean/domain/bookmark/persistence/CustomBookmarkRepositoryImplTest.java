@@ -42,17 +42,16 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 	void setUpInternal() {
 		// 사용자 1명 셋업 - 크러쉬
-		profile = 사용자_프로필_저장_등록("crush@gmail.com", NAVER, "crush", IT);
+		profile = 사용자_프로필_동시_저장_등록("crush@gmail.com", NAVER, "crush", IT);
 		profileId = profile.getId();
 
 		// 태그 두개 셋업
 		final Tag tag1 = 태그_저장("tag1");
 		final Tag tag2 = 태그_저장("tag2");
 
-		// 크러쉬가 북마크 1개 저장 - 네이버, IT, 전체 공개, #tag1, #tag2
-		bookmark1 = 북마크_링크_메타데이터_저장(profile, "title1", ALL, IT, "www.naver.com", tag1, tag2);
-		bookmark2 = 북마크_링크_메타데이터_저장(profile, "title2", PARTIAL, HOME, "www.google.com", tag1);
-		bookmark3 = 북마크_링크_메타데이터_저장(profile, "title3", PRIVATE, IT, "www.github.com");
+		bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com", tag1, tag2);
+		bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com", tag1);
+		bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
 
 		좋아요_저장(profile, bookmark1);
 		싫어요_저장(profile, bookmark2);
@@ -190,9 +189,9 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		@Test
 		void 북마크_즐겨찾기_다른사람의_글도_있는경우() {
 			//setup
-			final Profile profile2 = 사용자_프로필_저장_등록("user2@naver.com", NAVER, "user2", IT);
-			final Bookmark bookmark4 = 북마크_링크_메타데이터_저장(profile2, "www.linkocean.com");
-			final Bookmark bookmark5 = 북마크_링크_메타데이터_저장(profile2, "www.artzip.com");
+			final Profile profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
+			final Bookmark bookmark4 = 북마크_링크_메타데이터_동시_저장(profile2, "www.linkocean.com");
+			final Bookmark bookmark5 = 북마크_링크_메타데이터_동시_저장(profile2, "www.artzip.com");
 
 			즐겨찾기_저장(profile, bookmark4);
 			즐겨찾기_저장(profile2, bookmark3);
@@ -431,9 +430,9 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		// bookmark6 private,       bookmark9 private   bookmark12 private
 		@BeforeEach
 		void setUp() {
-			Profile profile1 = 사용자_프로필_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
-			Profile profile2 = 사용자_프로필_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
-			Profile profile3 = 사용자_프로필_저장_등록("user3@gmail.com", GOOGLE, "user3", IT);
+			Profile profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+			Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
+			Profile profile3 = 사용자_프로필_동시_저장_등록("user3@gmail.com", GOOGLE, "user3", IT);
 
 			profileId1 = profile1.getId();
 			팔로우_저장(profile1, profile2);

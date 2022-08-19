@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		// 프로필, 링크 셋업
-		writer = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		writer = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
 		writerId = writer.getId();
 
 		linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
@@ -91,6 +92,10 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 				tuple("bookmark2", List.of("tag2", "tag3")),
 				tuple("bookmark3", List.of("tag3"))
 			);
+
+		assertThat(bookmarks.get(0).getWriter().getUsername()).isEqualTo("haha");
+		assertThat(bookmarks.get(0).getLinkMetadata().getTitle()).isEqualTo("구글");
+
 	}
 
 	@Test
@@ -102,21 +107,23 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		final Optional<Bookmark> oFindBookmark = bookmarkRepository.findByIdFetchAll(savedBookmark.getId());
 
 		//then
-		assertThat(oFindBookmark).isPresent().get().isEqualTo(savedBookmark);
-		assertThat(oFindBookmark.get().getWriter().getUsername()).isEqualTo("haha");
-		assertThat(oFindBookmark.get().getLinkMetadata().getTitle()).isEqualTo("구글");
-		assertThat(oFindBookmark.get().getTagNames()).containsExactly("tag1");
+		assertAll(
+			() -> assertThat(oFindBookmark).isPresent(),
+			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isTrue(),
+			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isTrue(),
+			() -> assertThat(oFindBookmark.get().getTagNames()).contains(tag1.getName())
+		);
 	}
 
 	@Test
 	void 게시글이_존재하는_카테고리이름_반환() {
 		//given
-		북마크_링크_메타데이터_저장(writer, IT, "www.youtube.com");
-		북마크_링크_메타데이터_저장(writer, IT, "www.naver.com");
-		북마크_링크_메타데이터_저장(writer, IT, "www.prgrms.com");
-		북마크_링크_메타데이터_저장(writer, SOCIAL, "www.daum.com");
-		북마크_링크_메타데이터_저장(writer, SOCIAL, "www.hello.com");
-		북마크_링크_메타데이터_저장(writer, SCIENCE, "www.linkocean.com");
+		북마크_링크_메타데이터_동시_저장(writer, IT, "www.youtube.com");
+		북마크_링크_메타데이터_동시_저장(writer, IT, "www.naver.com");
+		북마크_링크_메타데이터_동시_저장(writer, IT, "www.prgrms.com");
+		북마크_링크_메타데이터_동시_저장(writer, SOCIAL, "www.daum.com");
+		북마크_링크_메타데이터_동시_저장(writer, SOCIAL, "www.hello.com");
+		북마크_링크_메타데이터_동시_저장(writer, SCIENCE, "www.linkocean.com");
 
 		//when
 		final List<Category> categories = bookmarkRepository.findCategoryExistsBookmark(writerId);
@@ -128,7 +135,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	@Test
 	void findIdByWriterIdAndUrl_성공() {
 		//given
-		final Bookmark bookmark = 북마크_링크_메타데이터_저장(writer, "www.youtube.com");
+		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(writer, "www.youtube.com");
 
 		//when
 		final Optional<Long> oBookmarkId1 = bookmarkRepository.findIdByWriterIdAndUrl(writerId, "www.youtube.com");
@@ -142,7 +149,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	@Test
 	void 북마크_LikeCount_증가_성공() {
 		//given
-		final Bookmark bookmark = 북마크_링크_메타데이터_저장(writer, "www.youtube.com");
+		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(writer, "www.youtube.com");
 
 		//when
 		bookmarkRepository.addLikeCount(bookmark.getId());
