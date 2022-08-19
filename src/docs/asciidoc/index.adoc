@@ -7,3 +7,4 @@
 :sectlinks:
 
 include::Boomark-API.adoc[]
+include::Category-API.adoc[]

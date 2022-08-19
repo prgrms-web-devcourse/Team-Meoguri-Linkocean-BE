@@ -8,25 +8,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.CategoryController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class CategoryDocsController extends RestDocsTestSupport {
+class CategoryRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(CategoryController.class);
 
 	@Test
-	void 카테고리_전체_조회_Api_성공() throws Exception {
+	void 카테고리_전체_조회_api() throws Exception {
 		//given
 		유저_등록_로그인("hello@gmail.com", GOOGLE);
 
 		//when
-		mockMvc.perform(get(basePath)
-				.contentType(MediaType.APPLICATION_JSON)
-				.header(AUTHORIZATION, token))
+		final ResultActions perform = mockMvc.perform(get(basePath)
+			.contentType(MediaType.APPLICATION_JSON)
+			.header(AUTHORIZATION, token));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -38,5 +40,4 @@ class CategoryDocsController extends RestDocsTestSupport {
 				)
 			);
 	}
-
 }
