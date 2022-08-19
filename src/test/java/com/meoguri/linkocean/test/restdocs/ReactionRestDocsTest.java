@@ -11,11 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.ReactionController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class ReactionDocsController extends RestDocsTestSupport {
+class ReactionRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(ReactionController.class);
 
@@ -29,14 +30,15 @@ class ReactionDocsController extends RestDocsTestSupport {
 	}
 
 	@Test
-	void 리액션_등록_수정_삭제Api() throws Exception {
+	void 리액션_api() throws Exception {
 		//when
-		mockMvc.perform(RestDocumentationRequestBuilders
-				.post(basePath + "/{bookmarkId}/reactions/{reactionType}", bookmarkId, "like")
-				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders
+			.post(basePath + "/{bookmarkId}/reactions/{reactionType}", bookmarkId, "like")
+			.header(AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
