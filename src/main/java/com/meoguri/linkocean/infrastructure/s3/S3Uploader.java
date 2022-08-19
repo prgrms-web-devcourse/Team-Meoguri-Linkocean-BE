@@ -33,7 +33,7 @@ public class S3Uploader {
 	 * 주어진 multipartFile 이 저장된 imageUrl 을 반환한다.
 	 * 주어진 multipartFile 이 null 이라면 null 을 반환한다.
 	 */
-	public String upload(MultipartFile multipartFile, String dirName) {
+	public String upload(final MultipartFile multipartFile, final String dirName) {
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			return null;
 		}
@@ -45,7 +45,7 @@ public class S3Uploader {
 		return uploadInternal(saveFilePath, input, metadata);
 	}
 
-	private String uploadInternal(String saveFilePath, InputStream input, ObjectMetadata metadata) {
+	private String uploadInternal(final String saveFilePath, final InputStream input, final ObjectMetadata metadata) {
 		amazonS3Client.putObject(new PutObjectRequest(bucket, saveFilePath, input, metadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -60,7 +60,7 @@ public class S3Uploader {
 		return String.join("/", dirName, saveFilename);
 	}
 
-	private InputStream getInputStream(MultipartFile multipartFile) {
+	private InputStream getInputStream(final MultipartFile multipartFile) {
 		try {
 			return multipartFile.getInputStream();
 		} catch (IOException e) {
