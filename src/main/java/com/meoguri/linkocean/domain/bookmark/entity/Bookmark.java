@@ -96,6 +96,7 @@ public class Bookmark extends BaseIdEntity {
 		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
 		checkNotNull(openType);
 		checkNotNull(tags);
+		checkNotNull(url);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.writer = writer;
