@@ -21,11 +21,9 @@ import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class BookmarkDocsController extends RestDocsTestSupport {
+class BookmarkRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
-
-	private long profileId;
 
 	@BeforeEach
 	void setUp() throws Exception {
