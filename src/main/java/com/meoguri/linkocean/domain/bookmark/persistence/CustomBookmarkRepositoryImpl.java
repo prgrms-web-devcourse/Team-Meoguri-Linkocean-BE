@@ -2,8 +2,8 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
+import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
@@ -51,9 +51,10 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.join(bookmark.linkMetadata).fetchJoin());
 
 		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark),
-					favorite.profile.id.eq(targetProfileId)));
+			() -> join(profile)
+				.on(bookmark.in(select(bookmark)
+					.from(profile.favoriteBookmarks, bookmark)
+					.where(profile.id.eq(targetProfileId)))));
 
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
@@ -93,8 +94,10 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.join(bookmark.linkMetadata).fetchJoin());
 
 		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark)));
+			() -> join(profile)
+				.on(bookmark.in(select(bookmark)
+					.from(profile.favoriteBookmarks, bookmark)
+					.where(profile.id.eq(currentUserProfileId)))));
 
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
@@ -111,6 +114,21 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				registered()
 			), Bookmark::getTagNames
 		);
+	}
+
+	@Override
+	public List<Bookmark> manyToManyJoinTest(long profileId) {
+
+		return select(bookmark)
+			.from(bookmark)
+			.join(profile)
+			.on(
+				bookmark.in(
+					select(bookmark)
+						.from(profile.favoriteBookmarks, bookmark)
+						.where(profile.id.eq(profileId)))
+			)
+			.fetch();
 	}
 
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */

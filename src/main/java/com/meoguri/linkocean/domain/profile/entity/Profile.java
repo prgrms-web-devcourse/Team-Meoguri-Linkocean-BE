@@ -13,9 +13,13 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.user.entity.User;
 
@@ -57,6 +61,14 @@ public class Profile extends BaseIdEntity {
 	/* 프로필 사진 주소 */
 	@Column(nullable = true, length = 700)
 	private String image;
+
+	@ManyToMany
+	@JoinTable(
+		name = "favorite",
+		joinColumns = @JoinColumn(name = "owner_id"),
+		inverseJoinColumns = @JoinColumn(name = "bookmark_id")
+	)
+	private List<Bookmark> favoriteBookmarks;
 
 	/* 회원 가입시 사용하는 생성자 */
 	public Profile(final String username, final List<Category> favoriteCategories) {

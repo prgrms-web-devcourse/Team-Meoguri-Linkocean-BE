@@ -233,6 +233,23 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			assertThat(bookmarks2.getTotalElements()).isEqualTo(2);
 
 		}
+
+		@Test
+		void name() {
+			//given
+			Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
+			final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile2, "www.excalidraw.com");
+
+			즐겨찾기_저장(profile, bookmark);
+			즐겨찾기_저장(profile2, bookmark1);
+
+			//when
+			final List<Bookmark> bookmarks = bookmarkRepository.manyToManyJoinTest(profileId);
+
+			//the
+			assertThat(bookmarks)
+				.containsExactly(bookmark1, bookmark2, bookmark);
+		}
 	}
 
 	@Nested
@@ -510,5 +527,4 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		}
 
 	}
-
 }
