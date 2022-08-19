@@ -32,6 +32,7 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 		+ "group by r.type")
 	List<Tuple> countReactionGroupInternal(Bookmark bookmark);
 
+	/* 북마크의 리액션 별 카운트 조회 */
 	default Map<ReactionType, Long> countReactionGroup(Bookmark bookmark) {
 		return countReactionGroupInternal(bookmark)
 			.stream()

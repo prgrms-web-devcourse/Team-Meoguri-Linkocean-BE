@@ -29,17 +29,17 @@ import lombok.NoArgsConstructor;
 public class Favorite extends BaseIdEntity {
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	private Bookmark bookmark;
-
-	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "owner_id")
 	private Profile profile;
 
-	public Favorite(final Bookmark bookmark, final Profile profile) {
-		checkNotNull(bookmark);
-		checkNotNull(profile);
+	@ManyToOne(fetch = LAZY, optional = false)
+	private Bookmark bookmark;
 
-		this.bookmark = bookmark;
+	public Favorite(final Profile profile, final Bookmark bookmark) {
+		checkNotNull(profile);
+		checkNotNull(bookmark);
+
 		this.profile = profile;
+		this.bookmark = bookmark;
 	}
 }

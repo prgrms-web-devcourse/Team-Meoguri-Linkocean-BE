@@ -416,7 +416,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 내가_즐겨찾기한_북마크_상세_조회_성공() {
 			//given
-			favoriteRepository.save(new Favorite(bookmark, profile));
+			favoriteRepository.save(new Favorite(profile, bookmark));
 
 			//when
 			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());

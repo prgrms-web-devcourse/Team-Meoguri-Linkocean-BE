@@ -20,7 +20,7 @@ class FindProfileByIdQueryTest extends BasePersistenceTest {
 	@Test
 	void 프로필_아이디로_조회_성공() {
 		//given
-		final Profile profile = 사용자_프로필_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		final Profile profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
 		final long profileId = profile.getId();
 
 		//when

@@ -19,7 +19,7 @@ public class ReactionQuery {
 
 	private final ReactionRepository reactionRepository;
 
-	/* 북마크의 리액션별 카운트 */
+	/* 북마크의 리액션별 카운트 조회 */
 	public Map<ReactionType, Long> getReactionCountMap(Bookmark bookmark) {
 		final Map<ReactionType, Long> reactionCountMap = reactionRepository.countReactionGroup(bookmark);
 

@@ -14,13 +14,14 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
 
-	@Query("select b "
+	@Query("select count(b)>0 "
 		+ "from Bookmark b "
 		+ "where b.writer = :writer "
 		+ "and b.linkMetadata = :linkMetadata "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
+	boolean existsByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
 
+	/* 아이디와 작성자로 조회 */
 	@Query("select b "
 		+ "from Bookmark b "
 		+ "where b.id = :id "
@@ -35,6 +36,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Long> findIdByWriterIdAndUrl(long writerId, String url);
 
+	/* 작성자의 아이디로 태그페치 조회 */
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.bookmarkTags bt "
@@ -43,6 +45,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Bookmark> findByWriterIdFetchTags(long writerId);
 
+	/* 아이디로 전체 페치 조회 */
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.writer "
@@ -65,10 +68,10 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	List<Category> findCategoryExistsBookmark(long writerId);
 
 	@Modifying(clearAutomatically = true)
-	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount + 1 WHERE b.id = :bookmarkId")
-	int addLikeCount(long bookmarkId);
+	@Query("update Bookmark b set b.likeCount = b.likeCount + 1 where b.id = :bookmarkId")
+	void addLikeCount(long bookmarkId);
 
 	@Modifying(clearAutomatically = true)
-	@Query("UPDATE Bookmark b SET b.likeCount = b.likeCount - 1 WHERE b.id = :bookmarkId")
-	int subtractLikeCount(long bookmarkId);
+	@Query("update Bookmark b set b.likeCount = b.likeCount - 1 where b.id = :bookmarkId")
+	void subtractLikeCount(long bookmarkId);
 }

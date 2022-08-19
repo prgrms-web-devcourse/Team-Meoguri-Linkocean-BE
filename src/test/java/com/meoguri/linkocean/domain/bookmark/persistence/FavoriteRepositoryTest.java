@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -10,85 +10,67 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@DataJpaTest
-class FavoriteRepositoryTest {
+class FavoriteRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private FavoriteRepository favoriteRepository;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
-
-	private Bookmark bookmark;
-	private LinkMetadata linkMetadata;
-	private Profile owner;
+	private Profile profile;
+	private long profileId;
 
 	@BeforeEach
 	void setUp() {
-		// 사용자, 프로필, 북마크 셋업
-		final User user = userRepository.save(createUser());
-		owner = profileRepository.save(createProfile(user));
-
-		linkMetadata = linkMetadataRepository.save(createLinkMetadata());
-		bookmark = bookmarkRepository.save(createBookmark(owner, linkMetadata));
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		profileId = profile.getId();
 	}
 
 	@Test
 	void 페이보릿_저장_삭제_성공() {
-		// 저장
-		favoriteRepository.save(new Favorite(bookmark, owner));
-		assertThat(favoriteRepository.findAll()).hasSize(1);
+		//given
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
+		즐겨찾기_저장(profile, naver);
 
-		// 삭제
-		final int deletedCount = favoriteRepository.deleteByProfile_idAndBookmark_id(owner.getId(), bookmark.getId());
+		//when
+		final int deletedCount = favoriteRepository.deleteByProfile_idAndBookmark_id(profileId, naver.getId());
+
+		//then
 		assertThat(deletedCount).isEqualTo(1);
 		assertThat(favoriteRepository.findAll()).isEmpty();
 	}
 
 	@Test
-	void 즐겨찾기_여부_조회() {
+	void existsByProfile_idAndBookmark_성공() {
+		//given
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
+		final Bookmark github = 북마크_링크_메타데이터_동시_저장(profile, "www.github.com");
+		즐겨찾기_저장(profile, naver);
+
 		//when
-		final boolean isFavorite = favoriteRepository.existsByProfile_idAndBookmark(owner.getId(), bookmark);
+		final boolean isFavorite1 = favoriteRepository.existsByProfile_idAndBookmark(profileId, naver);
+		final boolean isFavorite2 = favoriteRepository.existsByProfile_idAndBookmark(profileId, github);
 
 		//then
-		assertThat(isFavorite).isFalse();
+		assertThat(isFavorite1).isTrue();
+		assertThat(isFavorite2).isFalse();
 	}
 
 	@Test
-	void 여러_북마크에_대해_즐겨찾기_PK를_조회() {
+	void 즐겨찾기_중인_북마크의_id_집합_조회_성공() {
 		//given
-		final User user = userRepository.save(createUser("crush@mail.com", GOOGLE));
-		final Profile profile = profileRepository.save(createProfile(user, "crush"));
-		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
-
-		favoriteRepository.save(new Favorite(bookmark, owner));
+		final Bookmark naver = 북마크_링크_메타데이터_동시_저장(profile, "www.naver.com");
+		final Bookmark github = 북마크_링크_메타데이터_동시_저장(profile, "www.github.com");
+		즐겨찾기_저장(profile, naver);
 
 		//when
-		final Set<Long> favoriteBookmarkIds = favoriteRepository.findBookmarkIdByProfileIdAndInBookmarks(owner.getId(),
-			List.of(this.bookmark, bookmark));
+		final Set<Long> favoriteBookmarkIds =
+			favoriteRepository.findBookmarkIdByProfileIdAndInBookmarks(profileId, List.of(naver, github));
 
 		//then
-		assertThat(favoriteBookmarkIds).hasSize(1)
-			.containsExactly(bookmark.getId());
+		assertThat(favoriteBookmarkIds).containsExactly(naver.getId());
 	}
 }
