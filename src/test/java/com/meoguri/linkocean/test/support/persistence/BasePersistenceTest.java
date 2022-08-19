@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
@@ -31,7 +30,6 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
-@Transactional
 @DataJpaTest
 public class BasePersistenceTest {
 
@@ -109,7 +107,7 @@ public class BasePersistenceTest {
 		final OpenType openType,
 		final Category category,
 		final String url,
-		final String... tags
+		final Tag... tags
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
 			linkMetadata,
@@ -118,7 +116,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			Arrays.stream(tags).map(Tag::new).collect(toList())
+			Arrays.stream(tags).collect(toList())
 		));
 	}
 
@@ -126,7 +124,15 @@ public class BasePersistenceTest {
 		final Profile writer,
 		final String url
 	) {
-		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), url);
+		return 북마크_링크_메타데이터_저장(writer, null, url);
+	}
+
+	protected Bookmark 북마크_링크_메타데이터_저장(
+		final Profile writer,
+		final Category category,
+		final String url
+	) {
+		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), "title", "memo", ALL, category, url);
 	}
 
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
