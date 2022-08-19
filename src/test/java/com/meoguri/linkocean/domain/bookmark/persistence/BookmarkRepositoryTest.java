@@ -82,11 +82,11 @@ class BookmarkRepositoryTest {
 		bookmarkRepository.save(bookmark);
 
 		//when
-		final Optional<Bookmark> oBookmark =
-			bookmarkRepository.findByWriterAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
+		final boolean exists =
+			bookmarkRepository.existsByWriterAndLinkMetadata(bookmark.getWriter(), bookmark.getLinkMetadata());
 
 		//then
-		assertThat(oBookmark).isPresent();
+		assertThat(exists).isTrue();
 	}
 
 	@Test

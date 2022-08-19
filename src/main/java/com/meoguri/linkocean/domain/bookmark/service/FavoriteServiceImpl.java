@@ -3,8 +3,6 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +27,14 @@ public class FavoriteServiceImpl implements FavoriteService {
 
 	@Override
 	public void favorite(final long profileId, final long bookmarkId) {
-		final Profile owner = findProfileByIdQuery.findById(profileId);
+		final Profile profile = findProfileByIdQuery.findById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
-		final Optional<Favorite> oFavorite = favoriteRepository.findByProfileAndBookmark(owner, bookmark);
-		checkUniqueConstraintIllegalCommand(oFavorite,
+		final boolean exists = favoriteRepository.existsByProfile_idAndBookmark(profileId, bookmark);
+		checkUniqueConstraintIllegalCommand(exists,
 			format("illegal favorite command of profileId: %d on bookmarkId: %d", profileId, bookmarkId));
 
-		favoriteRepository.save(new Favorite(owner, bookmark));
+		favoriteRepository.save(new Favorite(profile, bookmark));
 	}
 
 	@Override

@@ -14,12 +14,12 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
 
-	@Query("select b "
+	@Query("select count(b)>0 "
 		+ "from Bookmark b "
 		+ "where b.writer = :writer "
 		+ "and b.linkMetadata = :linkMetadata "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
+	boolean existsByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
 
 	@Query("select b "
 		+ "from Bookmark b "

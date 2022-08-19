@@ -72,8 +72,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
-		final Optional<Bookmark> oBookmark = bookmarkRepository.findByWriterAndLinkMetadata(writer, linkMetadata);
-		checkUniqueConstraint(oBookmark, "이미 해당 url 의 북마크를 가지고 있습니다");
+		final boolean exists = bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
+		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
 		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
