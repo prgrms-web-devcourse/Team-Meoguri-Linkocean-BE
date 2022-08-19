@@ -144,10 +144,6 @@ public class Bookmark extends BaseIdEntity {
 		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
 	}
 
-	public void changeLikeCount(long likeCount) {
-		this.likeCount = likeCount;
-	}
-
 	public boolean isOpenTypeAll() {
 		return this.openType.equals(OpenType.ALL);
 	}

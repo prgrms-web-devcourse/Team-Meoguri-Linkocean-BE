@@ -99,6 +99,11 @@ public class BasePersistenceTest {
 		return 북마크_저장(writer, linkMetadata, null, null, ALL, null, url);
 	}
 
+	protected Bookmark 북마크_저장(final Profile writer, final LinkMetadata linkMetadata, final OpenType openType,
+		final String url) {
+		return 북마크_저장(writer, linkMetadata, null, null, openType, null, url);
+	}
+
 	protected Bookmark 북마크_저장(
 		final Profile writer,
 		final LinkMetadata linkMetadata,
@@ -135,8 +140,21 @@ public class BasePersistenceTest {
 		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), "title", "memo", ALL, category, url);
 	}
 
+	protected Bookmark 북마크_링크_메타데이터_저장(
+		final Profile writer,
+		final String title,
+		final OpenType openType,
+		final Category category,
+		final String url,
+		final Tag... tags
+	) {
+		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), title, "memo", openType, category, url,
+			tags);
+	}
+
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
 		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
+		bookmarkRepository.addLikeCount(bookmark.getId());
 	}
 
 	protected void 싫어요_저장(final Profile profile, final Bookmark bookmark) {
