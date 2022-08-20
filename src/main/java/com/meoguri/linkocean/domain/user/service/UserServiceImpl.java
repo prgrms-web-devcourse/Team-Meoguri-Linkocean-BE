@@ -39,12 +39,12 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public void registerIfNotExists(final Email email, final OAuthType oAuthType) {
-		userRepository.findByEmailAndOAuthType(email, oAuthType)
+	public long registerIfNotExists(final Email email, final OAuthType oAuthType) {
+		return userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
 				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
 				return userRepository.save(new User(email, oAuthType));
-			});
+			}).getId();
 	}
 
 	@Transactional

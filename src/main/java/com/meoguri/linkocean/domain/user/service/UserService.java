@@ -10,8 +10,8 @@ public interface UserService {
 	/* 사용자 조회 */
 	GetUserResult getUser(Email email, OAuthType oAuthType);
 
-	/* 없으면 등록 */
-	void registerIfNotExists(Email email, OAuthType oAuthType);
+	/* 사용자 없으면 등록 */
+	long registerIfNotExists(Email email, OAuthType oAuthType);
 
 	/* 프로필 등록 - user 에게 profileId 를 등록한다 */
 	void registerProfile(long userId, Profile profile);
