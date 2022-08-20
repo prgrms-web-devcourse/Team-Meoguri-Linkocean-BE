@@ -72,4 +72,17 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		assertThat(oProfile.get().getFavoriteBookmarkIds()).containsExactlyInAnyOrder(bookmark1.getId(),
 			bookmark3.getId());
 	}
+
+	@Test
+	void findProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
+		//given
+		final Profile profile = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+
+		//when
+		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
+
+		//then
+		assertThat(oProfile).isPresent();
+		assertThat(oProfile.get().getFavoriteBookmarkIds()).isEmpty();
+	}
 }
