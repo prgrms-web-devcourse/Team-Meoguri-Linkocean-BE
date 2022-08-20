@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.domain.profile.entity.FavoriteCategories.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.Collections.*;
 
@@ -12,7 +13,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
@@ -47,14 +48,14 @@ public class ProfileServiceImpl implements ProfileService {
 	public long registerProfile(final RegisterProfileCommand command) {
 		final long userId = command.getUserId();
 		final String username = command.getUsername();
-		final List<Category> categories = command.getCategories();
+		final FavoriteCategories favoriteCategories = new FavoriteCategories(command.getCategories());
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
 		final boolean exists = profileRepository.existsByUsername(username);
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 저장, 유저에 프로필 등록 */
-		final Profile profile = profileRepository.save(new Profile(username, categories));
+		final Profile profile = profileRepository.save(new Profile(username, favoriteCategories));
 		userService.registerProfile(userId, profile);
 
 		log.info("save profile with id :{}, username :{}", profile.getId(), username);
@@ -77,7 +78,7 @@ public class ProfileServiceImpl implements ProfileService {
 			targetProfile.getUsername(),
 			targetProfile.getImage(),
 			targetProfile.getBio(),
-			targetProfile.getFavoriteCategories(),
+			toCategories(targetProfile.getFavoriteCategories()),
 			isFollow,
 			followerCount,
 			followeeCount
@@ -98,7 +99,10 @@ public class ProfileServiceImpl implements ProfileService {
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 업데이트 */
-		profile.update(updateUsername, command.getBio(), command.getImage(), command.getCategories());
+		profile.update(
+			updateUsername, command.getBio(), command.getImage(),
+			new FavoriteCategories(command.getCategories())
+		);
 	}
 
 	@Override

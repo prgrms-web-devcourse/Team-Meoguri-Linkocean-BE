@@ -32,4 +32,8 @@ public class FavoriteCategories {
 
 		this.favoriteCategories = favoriteCategories;
 	}
+
+	public static List<Category> toCategories(final FavoriteCategories favoriteCategories) {
+		return favoriteCategories.favoriteCategories;
+	}
 }

@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.Collections.*;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 
 class ProfileTest {
@@ -30,21 +30,21 @@ class ProfileTest {
 		void 프로필_생성_성공() {
 			//given
 			final String username = "haha";
-			final List<Category> favoriteCategories = List.of(IT, ART);
+			final FavoriteCategories favoriteCategories = new FavoriteCategories(of(IT, ART));
 
 			//when
 			final Profile profile = new Profile(username, favoriteCategories);
 
 			//then
 			assertThat(profile.getUsername()).isEqualTo("haha");
-			assertThat(profile.getFavoriteCategories()).containsExactly(IT, ART);
+			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories())).containsExactly(IT, ART);
 		}
 
 		@ParameterizedTest
 		@NullAndEmptySource
 		void 프로필_생성_실패_사용자_이름이_공백(final String username) {
 			//given
-			final List<Category> favoriteCategories = List.of(IT, ART);
+			final FavoriteCategories favoriteCategories = new FavoriteCategories(of(IT, ART));
 
 			//when then
 			assertThatIllegalArgumentException()
@@ -55,7 +55,7 @@ class ProfileTest {
 		void 프로필_생성_실패_사용자_이름이_너무_김() {
 			//given
 			final String username = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
-			final List<Category> favoriteCategories = List.of(IT, ART);
+			final FavoriteCategories favoriteCategories = new FavoriteCategories(of(IT, ART));
 
 			//then
 			assertThatIllegalArgumentException()
@@ -69,11 +69,11 @@ class ProfileTest {
 		@Test
 		void 프로필_업데이트_성공() {
 			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
+			final Profile profile = new Profile("haha", new FavoriteCategories(of(IT, ART)));
 			final String username = "papa";
 			final String bio = "Hello world!";
 			final String imageUrl = "papa.png";
-			final List<Category> categories = List.of(IT, HOME);
+			final FavoriteCategories categories = new FavoriteCategories(of(IT, HOME));
 
 			//when
 			profile.update(username, bio, imageUrl, categories);
@@ -82,63 +82,52 @@ class ProfileTest {
 			assertThat(profile.getUsername()).isEqualTo(username);
 			assertThat(profile.getBio()).isEqualTo(bio);
 			assertThat(profile.getImage()).isEqualTo(imageUrl);
-			assertThat(profile.getFavoriteCategories()).containsExactlyElementsOf(categories);
+			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories()))
+				.containsExactly(IT, HOME);
 		}
 
 		@ParameterizedTest
 		@NullAndEmptySource
 		void 프로필_업데이트_실패_사용자_이름이_공백인_경우(final String username) {
 			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
+			final Profile profile = new Profile("haha", new FavoriteCategories(of(IT, HOME)));
 
 			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profile.update(username, "bio", "imageUrl", List.of(IT)));
+			assertThatIllegalArgumentException().isThrownBy(
+				() -> profile.update(username, "bio", "imageUrl", new FavoriteCategories(of(IT, HOME))));
 		}
 
 		@Test
 		void 프로필_업데이트_실패_사용자_이름_길이가_너무_김() {
 			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
+			final Profile profile = new Profile("haha", new FavoriteCategories(of(IT, HOME)));
 			final String tooLongUsername = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 
 			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profile.update(tooLongUsername, "bio", "imageUrl", List.of(IT)));
+			assertThatIllegalArgumentException().isThrownBy(
+				() -> profile.update(tooLongUsername, "bio", "imageUrl", new FavoriteCategories(of(IT))));
 		}
 
 		@Test
 		void 프로필_업데이트_실패_프로필_메시지_길이가_너무_김() {
 			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
+			final Profile profile = new Profile("haha", new FavoriteCategories(of(IT, HOME)));
 			final String tooLongBio = RandomString.make(MAX_PROFILE_BIO_LENGTH + 1);
 
 			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profile.update("username", tooLongBio, "imageUrl", List.of(IT)));
+			assertThatIllegalArgumentException().isThrownBy(
+				() -> profile.update("username", tooLongBio, "imageUrl", new FavoriteCategories(of(IT))));
 		}
 
 		@Test
 		void 프로필_업데이트_실패_프로필_사진_주소_길이가_너무_김() {
 			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
+			final Profile profile = new Profile("haha", new FavoriteCategories(of(IT, HOME)));
 			final String tooLongImageUrl = RandomString.make(MAX_PROFILE_IMAGE_URL_LENGTH + 1);
 
 			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profile.update("username", "bio", tooLongImageUrl, List.of(IT)));
-		}
-
-		// TODO - uncomment below after remove all deprecated constructor @ Profile
-		//@Test
-		void 프로필_업데이트_실패_카테고리를_주지_않음() {
-			//given
-			final Profile profile = new Profile("haha", List.of(IT, ART));
-			final List<Category> emptyCategoryList = emptyList();
-
-			//when then
-			assertThatLinkoceanRuntimeException()
-				.isThrownBy(() -> profile.update("username", "bio", "image.png", emptyCategoryList));
+			assertThatIllegalArgumentException().isThrownBy(
+				() -> profile.update("username", "bio", tooLongImageUrl, new FavoriteCategories(of(IT, HOME))));
 		}
 	}
 
@@ -151,7 +140,7 @@ class ProfileTest {
 
 		@BeforeEach
 		void setUp() {
-			profile = new Profile("haha", List.of(IT, ART));
+			profile = new Profile("haha", new FavoriteCategories(of(IT, ART)));
 			final LinkMetadata naver = new LinkMetadata("www.naver.com", "네이버", "naver.png");
 			final LinkMetadata google = new LinkMetadata("www.google.com", "구글", "google.png");
 
@@ -170,7 +159,7 @@ class ProfileTest {
 			//when
 			final boolean isFavorite1 = profile.isFavoriteBookmark(bookmark1);
 			final boolean isFavorite2 = profile.isFavoriteBookmark(bookmark2);
-			final List<Boolean> isFavorites = profile.isFavoriteBookmarks(List.of(bookmark1, bookmark2));
+			final List<Boolean> isFavorites = profile.isFavoriteBookmarks(of(bookmark1, bookmark2));
 
 			//then
 			assertThat(isFavorite1).isTrue();
