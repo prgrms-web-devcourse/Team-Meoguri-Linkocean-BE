@@ -124,6 +124,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		bookmark.remove();
 	}
 
+	@Transactional /* 북마크 조회 기록 저장을 위해 readonly = false */
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 		/* 북마크 조회 */

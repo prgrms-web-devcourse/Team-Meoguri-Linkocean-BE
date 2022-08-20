@@ -19,8 +19,8 @@ public class GetDetailedBookmarkAop {
 
 	private final GetBookmarkRecordRepository repository;
 
-	@Around("execution(* com.meoguri.linkocean.domain.bookmark.service.BookmarkService.getDetailedBookmark())")
-	public Object loggingUserFlow(ProceedingJoinPoint joinPoint) throws Throwable {
+	@Around("execution(* com.meoguri.linkocean.domain.bookmark.service.BookmarkService.getDetailedBookmark(..))")
+	public Object saveGetBookmarkRecord(ProceedingJoinPoint joinPoint) throws Throwable {
 
 		final Object[] args = joinPoint.getArgs();
 

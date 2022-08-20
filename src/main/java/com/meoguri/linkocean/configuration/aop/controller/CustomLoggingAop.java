@@ -26,14 +26,14 @@ public class CustomLoggingAop extends BaseControllerAop {
 		final SecurityUser user = getSecurityUser(joinPoint);
 		final String userString = getUserString(user);
 
-		log.info("[{} request   ] by [ user {}]", methodName, userString);
+		log.info("[{} request ] by [user {}]", methodName, userString);
 		final Object retVal = joinPoint.proceed();
-		log.info("[{} response  ] to [ user {}]", methodName, userString);
+		log.info("[{} response] to [user {}]", methodName, userString);
 
 		return retVal;
 	}
 
 	private String getUserString(final SecurityUser user) {
-		return nonNull(user) ? format(" id : %d profile Id : %d", user.getId(), user.getProfileId()) : ANONYMOUS_USER;
+		return nonNull(user) ? format(" id : %d", user.getId()) : ANONYMOUS_USER;
 	}
 }
