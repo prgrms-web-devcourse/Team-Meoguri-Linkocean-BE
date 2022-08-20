@@ -36,7 +36,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addViewControllers(final ViewControllerRegistry registry) {
-		registry.addViewController("/api/v1/healthCheck").setViewName("health");
+		registry.addRedirectViewController("/api/v1/healthCheck", "/health.html");
+		registry.addRedirectViewController("/api/v1/docs", "/docs/index.html");
 	}
 
 	@Override

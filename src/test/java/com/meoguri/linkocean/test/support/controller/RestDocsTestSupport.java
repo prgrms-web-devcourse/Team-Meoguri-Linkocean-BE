@@ -18,7 +18,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @Disabled
 @Import(RestDocsConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
-public class RestDocsTestSupport extends BaseControllerTest {
+public abstract class RestDocsTestSupport extends BaseControllerTest {
 
 	@Autowired
 	protected RestDocumentationResultHandler restDocs;
@@ -32,4 +32,5 @@ public class RestDocsTestSupport extends BaseControllerTest {
 			.addFilters(new CharacterEncodingFilter("UTF-8", true)) // 한글 깨짐 방지
 			.build();
 	}
+
 }

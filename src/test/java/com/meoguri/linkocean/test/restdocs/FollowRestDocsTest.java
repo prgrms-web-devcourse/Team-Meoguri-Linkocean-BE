@@ -11,11 +11,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.profile.FollowController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
-class FollowDocsController extends RestDocsTestSupport {
+@RestDocs
+class FollowRestDocsTest extends RestDocsTestSupport {
+
 	private final String baseUrl = getBaseUrl(FollowController.class);
 
 	long hahaId;
@@ -33,11 +36,12 @@ class FollowDocsController extends RestDocsTestSupport {
 	@Test
 	void 팔로우_api() throws Exception {
 		//when
-		mockMvc.perform(post(baseUrl + "/follow")
-				.param("followeeId", String.valueOf(hahaId))
-				.header(AUTHORIZATION, token))
+		final ResultActions perform = mockMvc.perform(post(baseUrl + "/follow")
+			.param("followeeId", String.valueOf(hahaId))
+			.header(AUTHORIZATION, token));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
@@ -56,12 +60,13 @@ class FollowDocsController extends RestDocsTestSupport {
 		팔로우(hahaId);
 
 		//when
-		mockMvc.perform(post(baseUrl + "/unfollow")
-				.param("followeeId", String.valueOf(hahaId))
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(post(baseUrl + "/unfollow")
+			.param("followeeId", String.valueOf(hahaId))
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andDo(
 				restDocs.document(
 					requestHeaders(
