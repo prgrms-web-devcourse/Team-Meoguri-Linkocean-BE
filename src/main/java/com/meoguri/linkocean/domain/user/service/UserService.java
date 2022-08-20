@@ -3,8 +3,12 @@ package com.meoguri.linkocean.domain.user.service;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 
 public interface UserService {
+
+	/* 사용자 조회 */
+	GetUserResult getUser(Email email, OAuthType oAuthType);
 
 	/* 없으면 등록 */
 	void registerIfNotExists(Email email, OAuthType oAuthType);
