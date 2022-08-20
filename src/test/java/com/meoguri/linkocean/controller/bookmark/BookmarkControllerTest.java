@@ -62,7 +62,9 @@ class BookmarkControllerTest extends BaseControllerTest {
 		final String updateMemo = "updatedMemo";
 		final String updateCategory = "IT";
 		final String updateOpenType = "all";
-		final List<String> updateTags = List.of("Spring", "React", "LinkOcean");
+
+		// Note - changed due to case-insensitive issue
+		final List<String> updateTags = List.of("spring", "React", "LinkOcean");
 
 		final UpdateBookmarkRequest updateBookmarkRequest = new UpdateBookmarkRequest(updateTitle, updateMemo,
 			updateCategory, updateOpenType, updateTags);
@@ -92,7 +94,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.openType").value(updateOpenType),
 				jsonPath("$.isFavorite").value(false),
 				jsonPath("$.createdAt").exists(),
-				jsonPath("$.tags", hasItems("Spring", "React", "LinkOcean")),
+				jsonPath("$.tags", containsInAnyOrder("spring", "React", "LinkOcean")),
 				jsonPath("$.reactionCount.LIKE").value(0),
 				jsonPath("$.reactionCount.HATE").value(0),
 				jsonPath("$.reaction.LIKE").value(false),

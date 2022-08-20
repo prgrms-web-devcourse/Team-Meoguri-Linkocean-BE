@@ -3,80 +3,45 @@ package com.meoguri.linkocean.domain.profile.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-// TODO - apply BaseServiceTest
-@Transactional
-@SpringBootTest
-class ProfileServiceImplTest {
-
-	@PersistenceContext
-	private EntityManager em;
-
-	@Autowired
-	private UserRepository userRepository;
+class ProfileServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private ProfileService profileService;
-
-	@Autowired
-	private FollowService followService;
-
-	@Autowired
-	private ProfileRepository profileRepository;
 
 	@Nested
 	class 프로필_등록_수정_조회_테스트 {
 
 		private Profile profile;
-
-		private List<Category> categories;
-
-		private User user;
+		private long profileId;
 
 		@BeforeEach
 		void setUp() {
-			user = userRepository.save(createUser());
-
-			profile = createProfile(user);
-
-			categories = List.of(HUMANITIES, POLITICS);
+			profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+			profileId = profile.getId();
 		}
 
 		@Test
 		void 프로필_등록하고_조회_성공() {
-			//given
-			final RegisterProfileCommand command = registerCommandOf(profile, categories);
-			final long profileId = profileService.registerProfile(command);
-
-			em.flush();
-			em.clear();
-
 			//when
 			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
 
@@ -98,22 +63,15 @@ class ProfileServiceImplTest {
 			);
 
 			final List<Category> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly(HUMANITIES, POLITICS);
+			assertThat(favoriteCategories).containsExactly(IT);
 		}
 
 		@Test
 		void 프로필_등록하고_수정하고_조회_성공() {
 			//given
-			final Profile profile = profileRepository.save(new Profile("haha", List.of(IT, HUMANITIES)));
-			final long profileId = profile.getId();
-			user.registerProfile(profile);
-
 			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
 				profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
 			);
-
-			em.flush();
-			em.clear();
 
 			//when
 			profileService.updateProfile(updateCommand);
@@ -129,12 +87,12 @@ class ProfileServiceImplTest {
 		@Test
 		void 사용자_이름_중복_등록_실패() {
 			//given
-			final User user1 = userRepository.save(createUser("haha@gmail.com", GOOGLE));
-			final User user2 = userRepository.save(createUser("papa@gmail.com", GOOGLE));
+			long userId1 = 사용자_저장("user1@gmail.com", GOOGLE).getId();
+			long userId2 = 사용자_저장("user2@gmail.com", GOOGLE).getId();
 
 			final String username = "duplicated";
-			final RegisterProfileCommand command1 = new RegisterProfileCommand(user1.getId(), username, emptyList());
-			final RegisterProfileCommand command2 = new RegisterProfileCommand(user2.getId(), username, emptyList());
+			final RegisterProfileCommand command1 = new RegisterProfileCommand(userId1, username, List.of(IT));
+			final RegisterProfileCommand command2 = new RegisterProfileCommand(userId2, username, List.of(IT));
 
 			profileService.registerProfile(command1);
 
@@ -147,19 +105,19 @@ class ProfileServiceImplTest {
 	@Test
 	void 프로필_상세_조회_성공() {
 		//given
-		final User user1 = userRepository.save(createUser("user1@gamil.com", GOOGLE));
-		final User user2 = userRepository.save(createUser("user2@gamil.com", GOOGLE));
+		final Profile profile1 = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
-		final long profileId1 = profileService.registerProfile(registerCommandOf(createProfile(user1, "user1")));
-		final long profileId2 = profileService.registerProfile(registerCommandOf(createProfile(user2, "user2")));
+		final long profileId1 = profile1.getId();
+		final long profileId2 = profile2.getId();
 
-		followService.follow(profileId1, profileId2);
+		팔로우_저장(profile1, profile2);
 
 		//when
-		GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(user1.getId(), profileId1);
-		GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(user1.getId(), profileId2);
-		GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(user2.getId(), profileId1);
-		GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(user2.getId(), profileId2);
+		GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(profileId1, profileId1);
+		GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(profileId1, profileId2);
+		GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(profileId2, profileId1);
+		GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(profileId2, profileId2);
 
 		//then
 		assertDetailProfileResult(user1ToUser1ProfileResult, 0, 1, false);
@@ -181,32 +139,28 @@ class ProfileServiceImplTest {
 
 	@Nested
 	class 프로필_목록_조회_테스트 {
-		private long user1Id;
-		private long user2Id;
-		private long user3Id;
 
-		private long profile1Id;
-		private long profile2Id;
-		private long profile3Id;
+		private Profile profile1;
+		private Profile profile2;
+		private Profile profile3;
+
+		private long profileId1;
+		private long profileId2;
+		private long profileId3;
+		private Pageable pageable;
 
 		@BeforeEach
 		void setUp() {
 			// set up 3 users
-			final User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
-			final User user2 = userRepository.save(createUser("user2@naver.com", NAVER));
-			final User user3 = userRepository.save(createUser("user3@kakao.com", KAKAO));
+			profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+			profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
+			profile3 = 사용자_프로필_동시_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
 
-			user1Id = user1.getId();
-			user2Id = user2.getId();
-			user3Id = user3.getId();
+			profileId1 = profile1.getId();
+			profileId2 = profile2.getId();
+			profileId3 = profile3.getId();
 
-			final Profile profile1 = new Profile(user1, "user1");
-			final Profile profile2 = new Profile(user2, "user2");
-			final Profile profile3 = new Profile(user3, "user3");
-
-			profile1Id = profileService.registerProfile(registerCommandOf(profile1));
-			profile2Id = profileService.registerProfile(registerCommandOf(profile2));
-			profile3Id = profileService.registerProfile(registerCommandOf(profile3));
+			pageable = createPageable();
 		}
 
 		/**
@@ -217,18 +171,19 @@ class ProfileServiceImplTest {
 		@Test
 		void 팔로워_목록_조회_성공() {
 			//given
-			followService.follow(profile1Id, profile3Id);
-			followService.follow(profile1Id, profile2Id);
-			followService.follow(profile2Id, profile3Id);
-			followService.follow(profile3Id, profile2Id);
+			팔로우_저장(profile1, profile3);
+			팔로우_저장(profile1, profile2);
+			팔로우_저장(profile2, profile3);
+			팔로우_저장(profile3, profile2);
+
+			final ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).follower(true).build();
+			final ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).follower(true).build();
+			final ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).follower(true).build();
 
 			//when
-			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
-				condWhenFindFollowers(profile1Id), createPageable());
-			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
-				condWhenFindFollowers(profile2Id), createPageable());
-			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
-				condWhenFindFollowers(profile3Id), createPageable());
+			final Slice<GetProfilesResult> result1 = profileService.getProfiles(profileId1, cond1, pageable);
+			final Slice<GetProfilesResult> result2 = profileService.getProfiles(profileId2, cond2, pageable);
+			final Slice<GetProfilesResult> result3 = profileService.getProfiles(profileId3, cond3, pageable);
 
 			//then
 			assertThat(result1).isEmpty();
@@ -239,8 +194,8 @@ class ProfileServiceImplTest {
 					GetProfilesResult::getImage,
 					GetProfilesResult::isFollow
 				).containsExactly(
-					tuple(user1Id, "user1", null, false),
-					tuple(user3Id, "user3", null, true)
+					tuple(profileId1, "user1", null, false),
+					tuple(profileId3, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
@@ -249,8 +204,8 @@ class ProfileServiceImplTest {
 					GetProfilesResult::getImage,
 					GetProfilesResult::isFollow
 				).containsExactly(
-					tuple(user1Id, "user1", null, false),
-					tuple(user2Id, "user2", null, true)
+					tuple(profileId1, "user1", null, false),
+					tuple(profileId2, "user2", null, true)
 				);
 		}
 
@@ -262,18 +217,19 @@ class ProfileServiceImplTest {
 		@Test
 		void 팔로이_목록_조회_성공() {
 			//given
-			followService.follow(profile1Id, profile2Id);
-			followService.follow(profile1Id, profile3Id);
-			followService.follow(profile2Id, profile3Id);
-			followService.follow(profile3Id, profile2Id);
+			팔로우_저장(profile1, profile2);
+			팔로우_저장(profile1, profile3);
+			팔로우_저장(profile2, profile3);
+			팔로우_저장(profile3, profile2);
+
+			final ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).followee(true).build();
+			final ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).followee(true).build();
+			final ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).followee(true).build();
 
 			//when
-			final Slice<GetProfilesResult> result1 = profileService.getProfiles(user1Id,
-				condWhenFindFollowees(profile1Id), createPageable());
-			final Slice<GetProfilesResult> result2 = profileService.getProfiles(user2Id,
-				condWhenFindFollowees(profile2Id), createPageable());
-			final Slice<GetProfilesResult> result3 = profileService.getProfiles(user3Id,
-				condWhenFindFollowees(profile3Id), createPageable());
+			final Slice<GetProfilesResult> result1 = profileService.getProfiles(profileId1, cond1, pageable);
+			final Slice<GetProfilesResult> result2 = profileService.getProfiles(profileId2, cond2, pageable);
+			final Slice<GetProfilesResult> result3 = profileService.getProfiles(profileId3, cond3, pageable);
 
 			//then
 			assertThat(result1)
@@ -283,8 +239,8 @@ class ProfileServiceImplTest {
 					GetProfilesResult::getImage,
 					GetProfilesResult::isFollow
 				).containsExactly(
-					tuple(user2Id, "user2", null, true),
-					tuple(user3Id, "user3", null, true)
+					tuple(profileId2, "user2", null, true),
+					tuple(profileId3, "user3", null, true)
 				);
 			assertThat(result2)
 				.extracting(
@@ -293,7 +249,7 @@ class ProfileServiceImplTest {
 					GetProfilesResult::getImage,
 					GetProfilesResult::isFollow
 				).containsExactly(
-					tuple(user3Id, "user3", null, true)
+					tuple(profileId3, "user3", null, true)
 				);
 			assertThat(result3)
 				.extracting(
@@ -302,59 +258,28 @@ class ProfileServiceImplTest {
 					GetProfilesResult::getImage,
 					GetProfilesResult::isFollow
 				).containsExactly(
-					tuple(user2Id, "user2", null, true)
+					tuple(profileId2, "user2", null, true)
 				);
 		}
 
 		@Test
 		void 프로필_목록_조회_이름으로_필터링_성공() {
 			//given
-			followService.follow(profile1Id, profile2Id);
+			팔로우_저장(profile1, profile2);
+			final ProfileFindCond cond = ProfileFindCond.builder().username("user").build();
 
 			//when
-			final Slice<GetProfilesResult> results = profileService.getProfiles(user1Id,
-				condWhenFindUsingUsername("user"), createPageable());
+			final Slice<GetProfilesResult> results = profileService.getProfiles(profileId1, cond, createPageable());
 
 			//then
 			assertThat(results)
 				.extracting(GetProfilesResult::getProfileId, GetProfilesResult::isFollow)
 				.containsExactly(
-					tuple(user1Id, false),
-					tuple(user2Id, true),
-					tuple(user3Id, false)
+					tuple(profileId1, false),
+					tuple(profileId2, true),
+					tuple(profileId3, false)
 				);
 		}
 
-		private ProfileFindCond condWhenFindUsingUsername(final String username) {
-			return ProfileFindCond.builder()
-				.username(username)
-				.build();
-		}
-
-		private ProfileFindCond condWhenFindFollowees(final long profileId) {
-			return ProfileFindCond.builder()
-				.profileId(profileId)
-				.followee(true)
-				.build();
-		}
-
-		private ProfileFindCond condWhenFindFollowers(final long profileId) {
-			return ProfileFindCond.builder()
-				.profileId(profileId)
-				.follower(true)
-				.build();
-		}
-	}
-
-	private static RegisterProfileCommand registerCommandOf(Profile profile) {
-		return registerCommandOf(profile, emptyList());
-	}
-
-	private static RegisterProfileCommand registerCommandOf(Profile profile, List<Category> categories) {
-		return new RegisterProfileCommand(
-			profile.getUser().getId(),
-			profile.getUsername(),
-			categories
-		);
 	}
 }

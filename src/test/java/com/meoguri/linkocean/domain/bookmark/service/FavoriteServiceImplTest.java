@@ -1,107 +1,70 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static java.util.Collections.*;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
-import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-@Transactional
-@SpringBootTest
-class FavoriteServiceImplTest {
+class FavoriteServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private FavoriteService favoriteService;
 
-	@Autowired
-	private UserRepository userRepository;
+	private Profile profile;
+	private long profileId;
 
-	@Autowired
-	private ProfileService profileService;
-
-	@Autowired
-	private BookmarkService bookmarkService;
-
-	@Autowired
-	private LinkMetadataService linkMetadataService;
-
-	long userId;
-	long profileId;
-	long bookmarkId;
+	private Bookmark bookmark;
+	private long bookmarkId;
 
 	@BeforeEach
 	void setUp() {
-		// 사용자, 프로필, 북마크 셋업
-		User user = userRepository.save(createUser());
-		userId = user.getId();
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		profileId = profile.getId();
 
-		profileId = profileService.registerProfile(command(createProfile(user)));
-
-		linkMetadataService.getOrSaveLinkMetadataTitle("https://www.naver.com");
-		bookmarkId = bookmarkService.registerBookmark(command(user, "https://www.naver.com"));
+		bookmark = 북마크_링크_메타데이터_동시_저장(profile, "google.com");
+		bookmarkId = bookmark.getId();
 	}
 
 	@Test
 	void 즐겨찾기_추가() {
-		//given
-		favoriteService.favorite(userId, bookmarkId);
-
 		//when
-		final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(userId, bookmarkId);
+		favoriteService.favorite(profileId, bookmarkId);
 
 		//then
-		assertThat(detailedBookmark.isFavorite()).isTrue();
+		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
+		assertThat(result.isFavorite()).isTrue();
 	}
 
 	@Test
 	void 즐겨찾기_해제() {
-
 		//given
-		favoriteService.favorite(userId, bookmarkId);
+		즐겨찾기_저장(profile, bookmark);
 
 		//when
-		favoriteService.unfavorite(userId, bookmarkId);
-		final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(userId, bookmarkId);
+		favoriteService.unfavorite(profileId, bookmarkId);
 
 		//then
-		assertThat(detailedBookmark.isFavorite()).isFalse();
+		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
+		assertThat(result.isFavorite()).isFalse();
 	}
 
 	@Test
 	void 즐겨찾기_추가_실패_이미_추가된_상태() {
 		//given
-		favoriteService.favorite(userId, bookmarkId);
+		favoriteService.favorite(profileId, bookmarkId);
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> favoriteService.favorite(userId, bookmarkId));
+			.isThrownBy(() -> favoriteService.favorite(profileId, bookmarkId));
 	}
 
-	private RegisterBookmarkCommand command(final User user, final String url) {
-		return new RegisterBookmarkCommand(user.getId(), url, null, null, null, OpenType.ALL, emptyList());
-	}
-
-	private RegisterProfileCommand command(Profile profile) {
-
-		return new RegisterProfileCommand(
-			profile.getUser().getId(),
-			profile.getUsername(),
-			emptyList()
-		);
-	}
 }

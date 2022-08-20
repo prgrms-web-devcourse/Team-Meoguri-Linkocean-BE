@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
@@ -50,11 +49,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
-		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark),
-					favorite.profile.id.eq(targetProfileId)));
-
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
 
@@ -69,6 +63,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				categoryEq(category),
 				writerIdEq(writerId),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
 				availableByOpenType(openType),
 				registered()
 			), Bookmark::getTagNames
@@ -92,10 +87,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
-		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark)));
-
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
 
@@ -106,11 +97,20 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				titleContains(title),
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, currentUserProfileId)),
 				followedBy(isFollow, currentUserProfileId),
 				availableByOpenType(currentUserProfileId),
 				registered()
 			), Bookmark::getTagNames
 		);
+	}
+
+	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
+		return !isFavorite ? null : getJpasqlQuery()
+			.select(bookmarkId)
+			.from(favorite)
+			.where(ownerId.eq(profileId))
+			.fetch();
 	}
 
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */

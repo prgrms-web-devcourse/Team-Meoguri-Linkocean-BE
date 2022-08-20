@@ -69,7 +69,7 @@ class CategoryServiceImplTest {
 		bookmarkRepository.save(createBookmark(profile, link, "제목", HEALTH, "www.jacob.com"));
 
 		//when
-		final List<Category> categories = categoryService.getUsedCategories(user.getId());
+		final List<Category> categories = categoryService.getUsedCategories(profile.getId());
 
 		//then
 		assertThat(categories).contains(IT, SOCIAL, HEALTH);
@@ -81,7 +81,7 @@ class CategoryServiceImplTest {
 		bookmarkRepository.save(createBookmark(profile, link, "제목", null, "www.naver.com"));
 
 		//when
-		final List<Category> categories = categoryService.getUsedCategories(user.getId());
+		final List<Category> categories = categoryService.getUsedCategories(profile.getId());
 
 		//then
 		assertThat(categories).isEmpty();

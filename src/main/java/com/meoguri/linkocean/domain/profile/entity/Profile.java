@@ -6,16 +6,20 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.user.entity.User;
 
@@ -58,6 +62,14 @@ public class Profile extends BaseIdEntity {
 	@Column(nullable = true, length = 700)
 	private String image;
 
+	@ElementCollection
+	@CollectionTable(
+		name = "favorite",
+		joinColumns = @JoinColumn(name = "owner_id")
+	)
+	@Column(name = "bookmark_id")
+	private Set<Long> favoriteBookmarkIds = new HashSet<>();
+
 	/* 회원 가입시 사용하는 생성자 */
 	public Profile(final String username, final List<Category> favoriteCategories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
@@ -81,6 +93,16 @@ public class Profile extends BaseIdEntity {
 		this.bio = bio;
 		this.image = image;
 		this.favoriteCategories = favoriteCategories;
+	}
+
+	public void favorite(final Bookmark bookmark) {
+		checkCondition(!favoriteBookmarkIds.contains(bookmark.getId()), "illegal favorite command");
+		favoriteBookmarkIds.add(bookmark.getId());
+	}
+
+	public void unfavorite(final Bookmark bookmark) {
+		checkCondition(favoriteBookmarkIds.contains(bookmark.getId()), "illegal unfavorite command");
+		favoriteBookmarkIds.remove(bookmark.getId());
 	}
 
 	@Deprecated

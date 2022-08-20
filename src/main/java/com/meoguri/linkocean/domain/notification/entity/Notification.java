@@ -53,7 +53,7 @@ public class Notification implements Serializable {
 
 	/* 다양한 정보를 담기위해 json 타입을 사용한다 */
 	@Type(type = "json")
-	@Column(nullable = false, columnDefinition = "jsonb")
+	@Column(nullable = false, columnDefinition = "json")
 	private Map<String, Object> info = new HashMap<>();
 
 	public Notification(final NotificationType type, final Profile receiver, final Map<String, Object> info) {

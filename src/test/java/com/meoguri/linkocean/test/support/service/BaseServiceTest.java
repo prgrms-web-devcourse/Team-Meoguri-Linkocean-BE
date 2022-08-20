@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.test.support.persistence;
+package com.meoguri.linkocean.test.support.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
@@ -11,8 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
@@ -22,6 +22,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -32,9 +34,21 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest
-public class BasePersistenceTest {
+//TODO - migrate to service logic
+@Transactional
+@SpringBootTest
+public class BaseServiceTest {
+
+	@Autowired
+	private BookmarkService bookmarkService;
+
+	protected GetDetailedBookmarkResult 북마크_상세_조회(final long profileId, final long bookmarkId) {
+		return bookmarkService.getDetailedBookmark(profileId, bookmarkId);
+	}
+
+
+	/* 아래의 코드 들은 BasePersistenceTest 의 복붙이며 제거 대상임
+	   천천히 Service Logic 으로 migration 할 것 */
 
 	@Autowired
 	protected EntityManager em;
@@ -162,7 +176,6 @@ public class BasePersistenceTest {
 			tags);
 	}
 
-	/* em.flush & em.clear occurs */
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
 		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 		bookmarkRepository.addLikeCount(bookmark.getId());
@@ -176,11 +189,4 @@ public class BasePersistenceTest {
 		profile.favorite(bookmark);
 	}
 
-	protected Profile 프로필_조회(final long profileId) {
-		return profileRepository.findById(profileId).orElseThrow();
-	}
-
-	protected Bookmark 북마크_조회(final long bookmarkId) {
-		return bookmarkRepository.findById(bookmarkId).orElseThrow();
-	}
 }

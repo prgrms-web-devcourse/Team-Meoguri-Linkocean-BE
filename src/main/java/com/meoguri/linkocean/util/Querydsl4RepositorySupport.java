@@ -25,10 +25,16 @@ import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.sql.JPASQLQuery;
+import com.querydsl.sql.MySQLTemplates;
+import com.querydsl.sql.RelationalPathBase;
+import com.querydsl.sql.SQLTemplates;
 
 /**
  * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리
@@ -38,27 +44,43 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
-	private final Class<?> domainClass;
-	private Querydsl querydsl;
-	private EntityManager entityManager;
-	private JPAQueryFactory queryFactory;
 
-	public Querydsl4RepositorySupport(Class<?> domainClass) {
+	protected static RelationalPathBase<Object> favorite = new RelationalPathBase<>(Object.class, "f", "linkocean",
+		"favorite");
+	protected static NumberPath<Long> ownerId = Expressions.numberPath(Long.class, favorite, "owner_id");
+
+	protected static NumberPath<Long> bookmarkId = Expressions.numberPath(Long.class, favorite, "bookmark_id");
+
+	private final Class<?> domainClass;
+
+	protected Querydsl querydsl;
+	protected EntityManager entityManager;
+	protected JPAQueryFactory queryFactory;
+
+	private SQLTemplates sqlTemplates;
+
+	public JPASQLQuery<?> getJpasqlQuery() {
+		return new JPASQLQuery<>(entityManager, sqlTemplates);
+	}
+
+	public Querydsl4RepositorySupport(final Class<?> domainClass) {
 		Assert.notNull(domainClass, "Domain class must not be null!");
 		this.domainClass = domainClass;
 	}
 
 	@Autowired
-	public void setEntityManager(EntityManager entityManager) {
+	public void setEntityManager(final EntityManager entityManager) {
 		Assert.notNull(entityManager, "EntityManager must not be null!");
-		JpaEntityInformation<?, ?> entityInformation =
+
+		final JpaEntityInformation<?, ?> entityInformation =
 			JpaEntityInformationSupport.getEntityInformation(domainClass, entityManager);
-		SimpleEntityPathResolver resolver = SimpleEntityPathResolver.INSTANCE;
-		EntityPath<?> path = resolver.createPath(entityInformation.getJavaType());
+		final SimpleEntityPathResolver resolver = SimpleEntityPathResolver.INSTANCE;
+		final EntityPath<?> path = resolver.createPath(entityInformation.getJavaType());
+
 		this.entityManager = entityManager;
-		this.querydsl = new Querydsl(entityManager, new
-			PathBuilder<>(path.getType(), path.getMetadata()));
+		this.querydsl = new Querydsl(entityManager, new PathBuilder<>(path.getType(), path.getMetadata()));
 		this.queryFactory = new JPAQueryFactory(entityManager);
+		this.sqlTemplates = new MySQLTemplates();
 	}
 
 	@PostConstruct
@@ -68,50 +90,37 @@ public abstract class Querydsl4RepositorySupport {
 		Assert.notNull(queryFactory, "QueryFactory must not be null!");
 	}
 
-	protected JPAQueryFactory getQueryFactory() {
-		return queryFactory;
+	protected <T> JPAQuery<T> select(final Expression<T> expr) {
+		return queryFactory.select(expr);
 	}
 
-	protected Querydsl getQuerydsl() {
-		return querydsl;
-	}
-
-	protected EntityManager getEntityManager() {
-		return entityManager;
-
-	}
-
-	protected <T> JPAQuery<T> select(Expression<T> expr) {
-		return getQueryFactory().select(expr);
-	}
-
-	protected <T> JPAQuery<T> selectFrom(EntityPath<T> from) {
-		return getQueryFactory().selectFrom(from);
+	protected <T> JPAQuery<T> selectFrom(final EntityPath<T> from) {
+		return queryFactory.selectFrom(from);
 	}
 
 	protected <T> Page<T> applyPagination(
-		Pageable pageable,
-		JPAQuery<T> jpaContentQuery,
-		Consumer<T> lazyLoader
+		final Pageable pageable,
+		final JPAQuery<T> jpaContentQuery,
+		final Consumer<T> lazyLoader
 	) {
 		return applyPagination(pageable, jpaContentQuery, lazyLoader, jpaContentQuery);
 	}
 
 	protected <T> Page<T> applyPagination(
-		Pageable pageable,
-		JPAQuery<T> jpaContentQuery,
-		Consumer<T> lazyLoader,
-		JPAQuery<T> jpaCountQuery
+		final Pageable pageable,
+		final JPAQuery<T> jpaContentQuery,
+		final Consumer<T> lazyLoader,
+		final JPAQuery<T> jpaCountQuery
 	) {
-		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+		List<T> content = querydsl.applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
 		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
 	}
 
 	/* 무한 스크롤 전용 슬라이싱 */
 	protected <T> Slice<T> applySlicing(
-		Pageable pageable,
-		JPAQuery<T> jpaContentQuery
+		final Pageable pageable,
+		final JPAQuery<T> jpaContentQuery
 	) {
 		final List<T> content = jpaContentQuery
 			.offset(pageable.getOffset())
