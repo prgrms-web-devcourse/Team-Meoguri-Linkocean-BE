@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.util;
 
-import static lombok.AccessLevel.*;
-
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -27,14 +25,15 @@ import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.MySQLTemplates;
-
-import lombok.Getter;
+import com.querydsl.sql.RelationalPathBase;
 
 /**
  * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리
@@ -42,18 +41,23 @@ import lombok.Getter;
  * @author Younghan Kim - 인프런 김영한 - 실전! Querydsl! 강의에서 소개한 코드를 활용 하였습니다
  * @see org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  */
-@Getter(PROTECTED)
 @Repository
 public abstract class Querydsl4RepositorySupport {
 
-	@Getter(NONE)
 	private final Class<?> domainClass;
 
-	private Querydsl querydsl;
-	private EntityManager entityManager;
-	private JPAQueryFactory queryFactory;
+	protected Querydsl querydsl;
+	protected EntityManager entityManager;
+	protected JPAQueryFactory queryFactory;
 
-	private JPASQLQuery<?> jpasqlQuery;
+	protected JPASQLQuery<?> jpasqlQuery;
+
+	protected RelationalPathBase<Object> favorite = new RelationalPathBase<>(Object.class, "f", "linkocean",
+		"favorite");
+
+	protected NumberPath<Long> ownerId = Expressions.numberPath(Long.class, favorite, "owner_id");
+
+	protected NumberPath<Long> bookmarkId = Expressions.numberPath(Long.class, favorite, "bookmark_id");
 
 	public Querydsl4RepositorySupport(Class<?> domainClass) {
 		Assert.notNull(domainClass, "Domain class must not be null!");
@@ -82,11 +86,11 @@ public abstract class Querydsl4RepositorySupport {
 		Assert.notNull(jpasqlQuery, "JPASQLQuery must not be null!");
 	}
 	protected <T> JPAQuery<T> select(Expression<T> expr) {
-		return getQueryFactory().select(expr);
+		return queryFactory.select(expr);
 	}
 
 	protected <T> JPAQuery<T> selectFrom(EntityPath<T> from) {
-		return getQueryFactory().selectFrom(from);
+		return queryFactory.selectFrom(from);
 	}
 
 	protected <T> Page<T> applyPagination(
@@ -103,7 +107,7 @@ public abstract class Querydsl4RepositorySupport {
 		Consumer<T> lazyLoader,
 		JPAQuery<T> jpaCountQuery
 	) {
-		List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
+		List<T> content = querydsl.applyPagination(pageable, jpaContentQuery).fetch();
 		content.forEach(lazyLoader);
 		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
 	}

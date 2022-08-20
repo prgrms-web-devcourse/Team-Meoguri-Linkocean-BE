@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
-import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
@@ -26,6 +25,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.sql.JPASQLQuery;
+import com.querydsl.sql.MySQLTemplates;
 
 @Repository
 public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport implements CustomBookmarkRepository {
@@ -50,12 +51,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
-		joinIf(isFavorite, base,
-			() -> join(profile)
-				.on(bookmark.in(select(bookmark)
-					.from(profile.favoriteBookmarks, bookmark)
-					.where(profile.id.eq(targetProfileId)))));
-
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
 
@@ -70,6 +65,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				categoryEq(category),
 				writerIdEq(writerId),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
 				availableByOpenType(openType),
 				registered()
 			), Bookmark::getTagNames
@@ -93,12 +89,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			() -> join(bookmark.writer).fetchJoin()
 				.join(bookmark.linkMetadata).fetchJoin());
 
-		joinIf(isFavorite, base,
-			() -> join(profile)
-				.on(bookmark.in(select(bookmark)
-					.from(profile.favoriteBookmarks, bookmark)
-					.where(profile.id.eq(currentUserProfileId)))));
-
 		joinIf(tags != null, base,
 			() -> join(bookmark.writer).fetchJoin());
 
@@ -109,6 +99,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				titleContains(title),
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, currentUserProfileId)),
 				followedBy(isFollow, currentUserProfileId),
 				availableByOpenType(currentUserProfileId),
 				registered()
@@ -121,13 +112,15 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 		return select(bookmark)
 			.from(bookmark)
-			.join(profile)
-			.on(
-				bookmark.in(
-					select(bookmark)
-						.from(profile.favoriteBookmarks, bookmark)
-						.where(profile.id.eq(profileId)))
-			)
+			.where(bookmarkIdsIn(getFavoriteBookmarkIds(true, profileId)))
+			.fetch();
+	}
+
+	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
+		return !isFavorite ? null : new JPASQLQuery<Long>(entityManager, new MySQLTemplates())
+			.select(bookmarkId)
+			.from(favorite)
+			.where(ownerId.eq(profileId))
 			.fetch();
 	}
 

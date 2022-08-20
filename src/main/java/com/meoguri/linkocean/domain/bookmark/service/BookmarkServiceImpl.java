@@ -133,10 +133,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
-		final boolean isFavorite = writer.getFavoriteBookmarks()
-			.stream()
-			.map(Bookmark::getId)
-			.anyMatch(id -> id.equals(bookmarkId));
+		final boolean isFavorite = writer.getFavoriteBookmarkIds().contains(bookmarkId);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
@@ -183,8 +180,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 추가 정보 조회 */
 		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
 
-		final Set<Long> currentUserFavoriteBookmarkIdSet =
-			currentUserProfile.getFavoriteBookmarks().stream().map(Bookmark::getId).collect(toSet());
+		final Set<Long> currentUserFavoriteBookmarkIdSet = currentUserProfile.getFavoriteBookmarkIds();
 		final List<Boolean> isFavorites = bookmarks.stream()
 			.map(Bookmark::getId)
 			.map(currentUserFavoriteBookmarkIdSet::contains)
@@ -209,8 +205,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
-		final Set<Long> currentUserFavoriteBookmarkIdSet =
-			currentUserProfile.getFavoriteBookmarks().stream().map(Bookmark::getId).collect(toSet());
+		final Set<Long> currentUserFavoriteBookmarkIdSet = currentUserProfile.getFavoriteBookmarkIds();
+
 		final List<Boolean> isFavorites = bookmarks.stream()
 			.map(Bookmark::getId)
 			.map(currentUserFavoriteBookmarkIdSet::contains)
