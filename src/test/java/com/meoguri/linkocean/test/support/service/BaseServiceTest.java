@@ -19,6 +19,7 @@ import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
@@ -44,6 +45,9 @@ public class BaseServiceTest {
 	private ProfileService profileService;
 
 	@Autowired
+	private LinkMetadataService linkMetadataService;
+
+	@Autowired
 	private BookmarkService bookmarkService;
 
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
@@ -58,6 +62,10 @@ public class BaseServiceTest {
 		return profileService.registerProfile(new RegisterProfileCommand(
 			userId, username, Arrays.stream(categories).collect(toList()))
 		);
+	}
+
+	protected String 링크_제목_얻기(final String url) {
+		return linkMetadataService.obtainTitle(url);
 	}
 
 	protected GetDetailedBookmarkResult 북마크_상세_조회(final long profileId, final long bookmarkId) {

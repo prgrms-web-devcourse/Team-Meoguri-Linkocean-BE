@@ -20,9 +20,9 @@ public class LinkMetadataController {
 
 	/* 링크 메타데이터 얻기 */
 	@PostMapping("/obtain")
-	public Map<String, Object> getOrSaveLinkMetaTitle(
+	public Map<String, Object> obtainTitle(
 		final @RequestBody Map<String, String> request
 	) {
-		return Map.of("title", linkMetadataService.getOrSaveLinkMetadataTitle(request.get("url")));
+		return Map.of("title", linkMetadataService.obtainTitle(request.get("url")));
 	}
 }
