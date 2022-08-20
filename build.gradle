@@ -12,6 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -105,11 +106,11 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-
     // Utility
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.github.maricn:logback-slack-appender:1.6.1'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
@@ -132,8 +133,8 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
     outputs.dir snippetsDir
+    useJUnitPlatform()
 
     finalizedBy 'jacocoTestReport'
 }
@@ -141,12 +142,18 @@ tasks.named('test') {
 asciidoctor {
     dependsOn test
 
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
 
-    sourceDir file('docs/asciidoc')
     sources {
-        include 'BOOKMARK-API.adoc'
+        include("index.adoc")
     }
+
+    baseDirFollowsSourceDir()
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
 }
 
 task copyDocument(type: Copy) {
@@ -156,12 +163,12 @@ task copyDocument(type: Copy) {
     into file('src/main/resources/static/docs')
 }
 
-task copyDev(type: Copy) {
+task copyProperty(type: Copy) {
     from file('./config')
     into file('./src/main/resources')
 }
 
 build {
-    dependsOn copyDev
+    dependsOn copyProperty
     dependsOn copyDocument
 }

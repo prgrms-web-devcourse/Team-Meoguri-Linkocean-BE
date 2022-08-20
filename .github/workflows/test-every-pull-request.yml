@@ -46,7 +46,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build --stacktrace
+          ./gradlew clean build --stacktrace -x jacocoTestReport -x asciidoctor
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1

@@ -10,8 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+import com.meoguri.linkocean.test.restdocs.RestDocs;
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
+@RestDocs
 class CategoryControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(CategoryController.class);

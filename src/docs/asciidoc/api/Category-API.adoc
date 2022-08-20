@@ -1,0 +1,8 @@
+[[Category-API]]
+== 카테고리 API
+
+'''
+
+=== 카테고리 목록 조회
+
+operation::/category-rest-docs-test/카테고리_전체_조회_api/[snippets='http-request,request-headers,http-response,response-fields']
