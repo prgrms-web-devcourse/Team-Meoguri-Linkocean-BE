@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.TestPropertySource;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
@@ -24,6 +25,9 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
+@TestPropertySource(properties = {
+	"logging.level.org.springframework.orm.jpa=DEBUG"}
+)
 class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 	@Autowired
@@ -53,15 +57,21 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com", tag1);
 		bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
 
-		좋아요_저장(profile, bookmark1);
-		싫어요_저장(profile, bookmark2);
-
 		즐겨찾기_저장(profile, bookmark1);
 		즐겨찾기_저장(profile, bookmark2);
+
+		좋아요_저장(profile, bookmark1);
+		싫어요_저장(profile, bookmark3);
 
 		bookmarkId1 = bookmark1.getId();
 		bookmarkId2 = bookmark2.getId();
 		bookmarkId3 = bookmark3.getId();
+
+		// detached -> managed
+		profile = 프로필_조회(profileId);
+		// bookmark1 = 북마크_조회(bookmarkId1);
+		// bookmark2 = 북마크_조회(bookmarkId2);
+		// bookmark3 = 북마크_조회(bookmarkId3);
 	}
 
 	@Nested
@@ -237,18 +247,20 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		@Test
 		void name() {
 			//given
-			Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
+			final Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
 			final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile2, "www.excalidraw.com");
 
 			즐겨찾기_저장(profile, bookmark);
 			즐겨찾기_저장(profile2, bookmark1);
+			즐겨찾기_저장(profile2, bookmark);
 
 			//when
 			final List<Bookmark> bookmarks = bookmarkRepository.manyToManyJoinTest(profileId);
+			final List<Bookmark> bookmarks2 = bookmarkRepository.manyToManyJoinTest(profile2.getId());
 
-			//the
-			assertThat(bookmarks)
-				.containsExactly(bookmark1, bookmark2, bookmark);
+			//then
+			assertThat(bookmarks).containsExactly(bookmark1, bookmark2, bookmark);
+			assertThat(bookmarks2).containsExactly(bookmark1, bookmark);
 		}
 	}
 

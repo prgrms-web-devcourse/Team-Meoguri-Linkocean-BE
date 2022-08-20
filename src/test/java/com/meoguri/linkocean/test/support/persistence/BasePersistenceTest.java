@@ -162,6 +162,7 @@ public class BasePersistenceTest {
 			tags);
 	}
 
+	/* em.flush & em.clear occurs */
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
 		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 		bookmarkRepository.addLikeCount(bookmark.getId());
@@ -173,5 +174,13 @@ public class BasePersistenceTest {
 
 	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
 		profile.favorite(bookmark);
+	}
+
+	protected Profile 프로필_조회(final long profileId) {
+		return profileRepository.findById(profileId).orElseThrow();
+	}
+
+	protected Bookmark 북마크_조회(final long bookmarkId) {
+		return bookmarkRepository.findById(bookmarkId).orElseThrow();
 	}
 }

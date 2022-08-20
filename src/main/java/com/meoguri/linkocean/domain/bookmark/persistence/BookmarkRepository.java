@@ -67,11 +67,11 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(long writerId);
 
-	@Modifying(clearAutomatically = true)
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query("update Bookmark b set b.likeCount = b.likeCount + 1 where b.id = :bookmarkId")
 	void addLikeCount(long bookmarkId);
 
-	@Modifying(clearAutomatically = true)
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query("update Bookmark b set b.likeCount = b.likeCount - 1 where b.id = :bookmarkId")
 	void subtractLikeCount(long bookmarkId);
 }
