@@ -16,6 +16,7 @@ import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
+@RestDocs
 class LoginRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);

@@ -22,6 +22,7 @@ import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
+@RestDocs
 class ProfileRestDocsTest extends RestDocsTestSupport {
 
 	private final String baseUrl = getBaseUrl(ProfileController.class);

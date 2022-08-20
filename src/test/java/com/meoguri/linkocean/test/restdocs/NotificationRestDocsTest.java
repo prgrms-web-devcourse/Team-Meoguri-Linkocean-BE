@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.meoguri.linkocean.controller.notification.NotificationController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
 
+@RestDocs
 class NotificationRestDocsTest extends RestDocsTestSupport {
 
 	private final String baseUrl = getBaseUrl(NotificationController.class);
