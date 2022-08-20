@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -69,8 +70,8 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 
 		//then
 		assertThat(oProfile).isPresent();
-		assertThat(oProfile.get().getFavoriteBookmarkIds()).containsExactlyInAnyOrder(bookmark1.getId(),
-			bookmark3.getId());
+		assertThat(oProfile.get().isFavoriteBookmarks(List.of(bookmark1, bookmark2, bookmark3)))
+			.containsExactly(true, false, true);
 	}
 
 	@Test
@@ -83,6 +84,5 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 
 		//then
 		assertThat(oProfile).isPresent();
-		assertThat(oProfile.get().getFavoriteBookmarkIds()).isEmpty();
 	}
 }

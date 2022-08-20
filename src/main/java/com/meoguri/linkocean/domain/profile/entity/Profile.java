@@ -1,22 +1,19 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.util.stream.Collectors.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
@@ -52,6 +49,9 @@ public class Profile extends BaseIdEntity {
 	@Enumerated(STRING)
 	private List<Category> favoriteCategories = new ArrayList<>();
 
+	@Embedded
+	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
+
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
 
@@ -62,14 +62,6 @@ public class Profile extends BaseIdEntity {
 	/* 프로필 사진 주소 */
 	@Column(nullable = true, length = 700)
 	private String image;
-
-	@ElementCollection
-	@CollectionTable(
-		name = "favorite",
-		joinColumns = @JoinColumn(name = "owner_id")
-	)
-	@Column(name = "bookmark_id")
-	private Set<Long> favoriteBookmarkIds = new HashSet<>();
 
 	/* 회원 가입시 사용하는 생성자 */
 	public Profile(final String username, final List<Category> favoriteCategories) {
@@ -98,14 +90,22 @@ public class Profile extends BaseIdEntity {
 
 	/* 즐겨찾기 추가 */
 	public void favorite(final Bookmark bookmark) {
-		checkCondition(!favoriteBookmarkIds.contains(bookmark.getId()), "illegal favorite command");
-		favoriteBookmarkIds.add(bookmark.getId());
+		favoriteBookmarkIds.favorite(bookmark);
 	}
 
 	/* 즐겨찾기 취소 */
 	public void unfavorite(final Bookmark bookmark) {
-		checkCondition(favoriteBookmarkIds.contains(bookmark.getId()), "illegal unfavorite command");
-		favoriteBookmarkIds.remove(bookmark.getId());
+		favoriteBookmarkIds.unfavorite(bookmark);
+	}
+
+	/* 북마크 즐겨찾기 여부 확인 */
+	public boolean isFavoriteBookmark(final Bookmark bookmark) {
+		return favoriteBookmarkIds.isFavoriteBookmark(bookmark);
+	}
+
+	/* 북마크 목록 즐겨찾기 여부 확인 */
+	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
+		return favoriteBookmarkIds.isFavoriteBookmarks(bookmarks);
 	}
 
 	@Deprecated
@@ -115,18 +115,5 @@ public class Profile extends BaseIdEntity {
 
 		this.user = user;
 		this.username = username;
-	}
-
-	/* 북마크 즐겨찾기 여부 확인 */
-	public boolean isFavoriteBookmark(final Bookmark bookmark) {
-		return favoriteBookmarkIds.contains(bookmark.getId());
-	}
-
-	/* 북마크 목록 즐겨찾기 여부 확인 */
-	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
-		return bookmarks.stream()
-			.map(Bookmark::getId)
-			.map(favoriteBookmarkIds::contains)
-			.collect(toList());
 	}
 }
