@@ -9,9 +9,7 @@ import com.meoguri.linkocean.domain.notification.entity.GetBookmarkRecord;
 import com.meoguri.linkocean.domain.notification.persistence.GetBookmarkRecordRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -29,12 +27,10 @@ public class GetDetailedBookmarkAop {
 
 		final Object retVal = joinPoint.proceed();
 
-		repository.findByProfileIdAndBookmarkId(profileId, bookmarkId)
-			.ifPresentOrElse(
-				GetBookmarkRecord::updateGetAt,
-				() -> repository.save(new GetBookmarkRecord(profileId, bookmarkId))
-			);
+		repository.findByProfileIdAndBookmarkId(profileId, bookmarkId).ifPresentOrElse(
+			GetBookmarkRecord::updateGetAt,
+			() -> repository.save(new GetBookmarkRecord(profileId, bookmarkId))
+		);
 		return retVal;
 	}
-
 }
