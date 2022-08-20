@@ -10,6 +10,7 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -23,14 +24,27 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 
+	@Override
+	public GetUserResult getUser(final Email email, final OAuthType oAuthType) {
+		final User user = userRepository.findByEmailAndOAuthType(email, oAuthType)
+			.orElseThrow(() -> new IllegalArgumentException(format("no such user email : %s", Email.toString(email))));
+
+		return new GetUserResult(
+			user.getId(),
+			user.getProfileId(),
+			user.getEmail(),
+			user.getOauthType()
+		);
+	}
+
 	@Transactional
 	@Override
-	public void saveIfNotExists(final Email email, final OAuthType oAuthType) {
-		userRepository.findByEmailAndOAuthType(email, oAuthType)
+	public long registerIfNotExists(final Email email, final OAuthType oAuthType) {
+		return userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
 				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
 				return userRepository.save(new User(email, oAuthType));
-			});
+			}).getId();
 	}
 
 	@Transactional
