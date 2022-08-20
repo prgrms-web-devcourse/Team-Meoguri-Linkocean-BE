@@ -6,12 +6,12 @@
 :toclevels: 2
 :sectlinks:
 
-include::Boomark-API.adoc[]
-include::Category-API.adoc[]
-include::Favorite-API.adoc[]
-include::Follow-API.adoc[]
-include::LinkMetadata-API.adoc[]
-include::Login-API.adoc[]
-include::Notification-API.adoc[]
-include::Profile_API.adoc[]
-include::Reaction-API.adoc[]
+include::api/Boomark-API.adoc[]
+include::api/Category-API.adoc[]
+include::api/Favorite-API.adoc[]
+include::api/Follow-API.adoc[]
+include::api/LinkMetadata-API.adoc[]
+include::api/Login-API.adoc[]
+include::api/Notification-API.adoc[]
+include::api/Profile_API.adoc[]
+include::api/Reaction-API.adoc[]

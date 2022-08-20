@@ -1,0 +1,32 @@
+[[Profile-API]]
+== 프로필 API
+
+'''
+
+=== 프로필 등록
+
+operation::/profile-rest-docs-test/프로필_등록_api/[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+=== 내 프로필 조회
+
+operation::/profile-rest-docs-test/내_프로필_조회_api/[snippets='http-request,request-headers,http-response,response-fields']
+
+=== 다른 사람 프로필 조회
+
+operation::/profile-rest-docs-test/다른_사람_프로필_조회_api/[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+=== 내 프로필 수정
+
+operation::/profile-rest-docs-test/내_프로필_수정_api/[snippets='http-request,request-headers,request-parameters,request-parts,http-response']
+
+=== 프로필 목록 조회
+
+operation::/profile-rest-docs-test/프로필_목록_조회_api/[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+=== 팔로워 목록 조회
+
+operation::/profile-rest-docs-test/팔로워_목록_조회_api/[snippets='http-request,request-headers,path-parameters,request-parameters,http-response,response-fields']
+
+=== 팔로이 목록 조회
+
+operation::/profile-rest-docs-test/팔로이_목록_조회_api/[snippets='http-request,request-headers,path-parameters,request-parameters,http-response,response-fields']

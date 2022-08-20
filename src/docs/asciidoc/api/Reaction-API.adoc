@@ -1,0 +1,8 @@
+[[Reaction-API]]
+== 리액션 API
+
+'''
+
+=== 리액션
+
+operation::/reaction-rest-docs-test/리액션_api/[snippets='http-request,request-headers,path-parameters,http-response']
