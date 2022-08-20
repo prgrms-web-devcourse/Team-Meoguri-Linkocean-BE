@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,10 @@ import javax.persistence.JoinColumn;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 
+import lombok.NoArgsConstructor;
+
 @Embeddable
+@NoArgsConstructor(access = PACKAGE)
 public class FavoriteBookmarkIds {
 
 	@ElementCollection
