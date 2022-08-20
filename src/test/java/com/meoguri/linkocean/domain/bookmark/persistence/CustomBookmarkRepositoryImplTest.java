@@ -69,9 +69,6 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 		// detached -> managed
 		profile = 프로필_조회(profileId);
-		// bookmark1 = 북마크_조회(bookmarkId1);
-		// bookmark2 = 북마크_조회(bookmarkId2);
-		// bookmark3 = 북마크_조회(bookmarkId3);
 	}
 
 	@Nested
@@ -242,25 +239,6 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.containsExactly(bookmark5.getId(), bookmark3.getId());
 			assertThat(bookmarks2.getTotalElements()).isEqualTo(2);
 
-		}
-
-		@Test
-		void name() {
-			//given
-			final Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
-			final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile2, "www.excalidraw.com");
-
-			즐겨찾기_저장(profile, bookmark);
-			즐겨찾기_저장(profile2, bookmark1);
-			즐겨찾기_저장(profile2, bookmark);
-
-			//when
-			final List<Bookmark> bookmarks = bookmarkRepository.manyToManyJoinTest(profileId);
-			final List<Bookmark> bookmarks2 = bookmarkRepository.manyToManyJoinTest(profile2.getId());
-
-			//then
-			assertThat(bookmarks).containsExactly(bookmark1, bookmark2, bookmark);
-			assertThat(bookmarks2).containsExactly(bookmark1, bookmark);
 		}
 	}
 

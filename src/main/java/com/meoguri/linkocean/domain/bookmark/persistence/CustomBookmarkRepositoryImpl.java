@@ -25,8 +25,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.sql.JPASQLQuery;
-import com.querydsl.sql.MySQLTemplates;
 
 @Repository
 public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport implements CustomBookmarkRepository {
@@ -107,17 +105,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		);
 	}
 
-	@Override
-	public List<Bookmark> manyToManyJoinTest(long profileId) {
-
-		return select(bookmark)
-			.from(bookmark)
-			.where(bookmarkIdsIn(getFavoriteBookmarkIds(true, profileId)))
-			.fetch();
-	}
-
 	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
-		return !isFavorite ? null : new JPASQLQuery<Long>(entityManager, new MySQLTemplates())
+		return !isFavorite ? null : getJpasqlQuery()
 			.select(bookmarkId)
 			.from(favorite)
 			.where(ownerId.eq(profileId))

@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,5 +14,4 @@ public interface CustomBookmarkRepository {
 	/* 피드 북마크 조회 */
 	Page<Bookmark> findBookmarks(BookmarkFindCond findCond, Pageable pageable);
 
-	List<Bookmark> manyToManyJoinTest(long profileId);
 }
