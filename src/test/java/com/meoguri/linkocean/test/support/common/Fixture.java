@@ -15,6 +15,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
@@ -31,7 +32,7 @@ public final class Fixture {
 	}
 
 	public static Profile createProfile(final String username, final Category... categories) {
-		return new Profile(username, Arrays.stream(categories).collect(toList()));
+		return new Profile(username, new FavoriteCategories(Arrays.stream(categories).collect(toList())));
 	}
 
 	@Deprecated

@@ -19,7 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -349,9 +348,6 @@ class BookmarkServiceImplTest {
 				"www.google.com",
 				List.of(tag)
 			));
-
-			em.flush();
-			em.clear();
 		}
 
 		@Test
@@ -414,14 +410,13 @@ class BookmarkServiceImplTest {
 			);
 		}
 
-		@Disabled("favorite 완전 이전 이후 풀기")
 		@Test
 		void 내가_즐겨찾기한_북마크_상세_조회_성공() {
 			//given
-			// favoriteRepository.save(new Favorite(profile, bookmark));
+			profile.favorite(bookmark);
 
 			//when
-			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(profileId, bookmark.getId());
 
 			//then
 			assertThat(result.isFavorite()).isTrue();
@@ -434,7 +429,7 @@ class BookmarkServiceImplTest {
 
 			//when then
 			assertThatLinkoceanRuntimeException()
-				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
+				.isThrownBy(() -> bookmarkService.getDetailedBookmark(profileId, invalidBookmarkId));
 		}
 
 	}

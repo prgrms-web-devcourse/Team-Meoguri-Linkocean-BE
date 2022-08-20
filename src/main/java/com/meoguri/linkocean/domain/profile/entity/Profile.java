@@ -1,26 +1,18 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -45,11 +37,11 @@ public class Profile extends BaseIdEntity {
 	@OneToOne(fetch = LAZY, mappedBy = "profile")
 	private User user;
 
-	@ElementCollection
-	@CollectionTable(name = "favorite_category")
-	@Column(name = "category")
-	@Enumerated(STRING)
-	private List<Category> favoriteCategories = new ArrayList<>();
+	@Embedded
+	private FavoriteCategories favoriteCategories;
+
+	@Embedded
+	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
@@ -62,32 +54,24 @@ public class Profile extends BaseIdEntity {
 	@Column(nullable = true, length = 700)
 	private String image;
 
-	@ElementCollection
-	@CollectionTable(
-		name = "favorite",
-		joinColumns = @JoinColumn(name = "owner_id")
-	)
-	@Column(name = "bookmark_id")
-	private Set<Long> favoriteBookmarkIds = new HashSet<>();
-
 	/* 회원 가입시 사용하는 생성자 */
-	public Profile(final String username, final List<Category> favoriteCategories) {
+	public Profile(final String username, final FavoriteCategories favoriteCategories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
-		// TODO - uncomment below after remove all deprecated constructor below
-		// checkCondition(categories.size() >= 1 && categories.size() <= 12, "category size must be in between 1 & 12");
 
 		this.username = username;
 		this.favoriteCategories = favoriteCategories;
 	}
 
 	/* 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다 */
-	public void update(final String username, final String bio, final String image,
-		final List<Category> favoriteCategories) {
+	public void update(
+		final String username,
+		final String bio,
+		final String image,
+		final FavoriteCategories favoriteCategories
+	) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
 		checkNullableStringLength(image, MAX_PROFILE_IMAGE_URL_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
-		// TODO - uncomment below after remove all deprecated constructor below
-		// checkCondition(categories.size() >= 1 && categories.size() <= 12, "category size must be in between 1 & 12");
 
 		this.username = username;
 		this.bio = bio;
@@ -95,14 +79,24 @@ public class Profile extends BaseIdEntity {
 		this.favoriteCategories = favoriteCategories;
 	}
 
+	/* 즐겨찾기 추가 */
 	public void favorite(final Bookmark bookmark) {
-		checkCondition(!favoriteBookmarkIds.contains(bookmark.getId()), "illegal favorite command");
-		favoriteBookmarkIds.add(bookmark.getId());
+		favoriteBookmarkIds.favorite(bookmark);
 	}
 
+	/* 즐겨찾기 취소 */
 	public void unfavorite(final Bookmark bookmark) {
-		checkCondition(favoriteBookmarkIds.contains(bookmark.getId()), "illegal unfavorite command");
-		favoriteBookmarkIds.remove(bookmark.getId());
+		favoriteBookmarkIds.unfavorite(bookmark);
+	}
+
+	/* 북마크 즐겨찾기 여부 확인 */
+	public boolean isFavoriteBookmark(final Bookmark bookmark) {
+		return favoriteBookmarkIds.isFavoriteBookmark(bookmark);
+	}
+
+	/* 북마크 목록 즐겨찾기 여부 확인 */
+	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
+		return favoriteBookmarkIds.isFavoriteBookmarks(bookmarks);
 	}
 
 	@Deprecated

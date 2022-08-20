@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -130,10 +129,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchAll(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
-		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
-		final boolean isFavorite = writer.getFavoriteBookmarkIds().contains(bookmarkId);
+		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteById(profileId);
+		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
@@ -179,13 +178,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
-
-		final Set<Long> currentUserFavoriteBookmarkIdSet = currentUserProfile.getFavoriteBookmarkIds();
-		final List<Boolean> isFavorites = bookmarks.stream()
-			.map(Bookmark::getId)
-			.map(currentUserFavoriteBookmarkIdSet::contains)
-			.collect(toList());
-
+		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
 
 		/* 결과 반환 */
 		return toResultPage(bookmarkPage, isFavorites, currentUserProfileId, pageable);
@@ -205,13 +198,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(currentUserProfileId);
-		final Set<Long> currentUserFavoriteBookmarkIdSet = currentUserProfile.getFavoriteBookmarkIds();
-
-		final List<Boolean> isFavorites = bookmarks.stream()
-			.map(Bookmark::getId)
-			.map(currentUserFavoriteBookmarkIdSet::contains)
-			.collect(toList());
-
+		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
 		final List<Boolean> isFollows = checkIsFollowQuery.isFollows(currentUserProfileId, writers);
 
 		return toResultPage(bookmarkPage, isFavorites, isFollows, currentUserProfileId, pageable);
