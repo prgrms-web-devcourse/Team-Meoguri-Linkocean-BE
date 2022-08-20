@@ -13,10 +13,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,40 +30,28 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private static final Set<SimpleGrantedAuthority> ROLE_USER = Collections.singleton(
 		new SimpleGrantedAuthority("ROLE_USER"));
 
-	private final UserRepository userRepository;
+	private final UserService userService;
 	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
 
-	public CustomOAuth2UserService(final UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public CustomOAuth2UserService(final UserService userService) {
+		this.userService = userService;
 		this.delegate = new DefaultOAuth2UserService();
 	}
 
-	/**
-	 * delegate 를 통한 loadUser 수행
-	 */
+	/* delegate 를 통한 loadUser */
 	@Override
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-		log.info("CustomOAuth2UserService loadUser start");
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
 		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
 		final SecurityOAuthType securityOAuthType = SecurityOAuthType.valueOf(registrationId.toUpperCase());
-
 		final Map<String, Object> attributes = oAuth2User.getAttributes();
-		final User user = getOrSaveUser(securityOAuthType, attributes);
 
-		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOauthType());
-		return new DefaultOAuth2User(ROLE_USER, attributes, "email");
-	}
-
-	private User getOrSaveUser(final SecurityOAuthType securityOAuthType, final Map<String, Object> attributes) {
 		final Email email = securityOAuthType.parseEmail(attributes);
 		final OAuthType oAuthType = securityOAuthType.getOAuthType();
 
-		return userRepository.findByEmailAndOAuthType(email, oAuthType)
-			.orElseGet(() -> {
-				log.info("new user save with email : {}, oauthType : {}", Email.toString(email), oAuthType);
-				return userRepository.save(new User(email, oAuthType));
-			});
+		userService.registerIfNotExists(email, oAuthType);
+		return new DefaultOAuth2User(ROLE_USER, attributes, "email");
 	}
 }
