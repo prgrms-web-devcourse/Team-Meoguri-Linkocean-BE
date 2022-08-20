@@ -26,31 +26,23 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 
 	@Transactional
 	@Override
-	public String getOrSaveLinkMetadataTitle(final String link) {
-
-		return linkMetadataRepository.findTitleByLink(new Link(link))
-			.orElseGet(() -> {
-				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
-
-				return linkMetadataRepository.save(new LinkMetadata(
-					link,
-					result.getTitle(),
-					result.getImage())
-				).getTitle();
-			});
+	public String obtainTitle(final String link) {
+		return linkMetadataRepository.findTitleByLink(new Link(link)).orElseGet(() -> {
+			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
+			linkMetadataRepository.save(new LinkMetadata(link, result.getTitle(), result.getImage()));
+			return result.getTitle();
+		});
 	}
 
 	@Transactional
 	@Override
 	public Pageable synchronizeDataAndReturnNextPageable(final Pageable pageable) {
-
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
-		slice.getContent()
-			.forEach(linkMetadata -> {
-				final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(
-					Link.toString(linkMetadata.getLink()));
-				linkMetadata.update(result.getTitle(), result.getImage());
-			});
+
+		for (LinkMetadata link : slice) {
+			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(Link.toString(link.getLink()));
+			link.update(result.getTitle(), result.getImage());
+		}
 		return slice.hasNext() ? slice.nextPageable() : null;
 	}
 
