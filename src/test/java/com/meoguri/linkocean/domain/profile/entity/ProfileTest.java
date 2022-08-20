@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.Collections.*;
@@ -9,12 +10,16 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 
 class ProfileTest {
 
@@ -137,4 +142,70 @@ class ProfileTest {
 		}
 	}
 
+	@Nested
+	class 프로필_즐겨찾기 {
+
+		private Profile profile;
+		private Bookmark bookmark1;
+		private Bookmark bookmark2;
+
+		@BeforeEach
+		void setUp() {
+			profile = new Profile("haha", List.of(IT, ART));
+			final LinkMetadata naver = new LinkMetadata("www.naver.com", "네이버", "naver.png");
+			final LinkMetadata google = new LinkMetadata("www.google.com", "구글", "google.png");
+
+			bookmark1 = new Bookmark(profile, naver, "bookmark1", null, ALL, null, "www.naver.com", emptyList());
+			bookmark2 = new Bookmark(profile, google, "bookmark2", null, ALL, null, "www.google.com", emptyList());
+
+			ReflectionTestUtils.setField(bookmark1, "id", 1L);
+			ReflectionTestUtils.setField(bookmark2, "id", 2L);
+		}
+
+		@Test
+		void 프로필_즐겨찾기_추가_성공() {
+			//given
+			profile.favorite(bookmark1);
+
+			//when
+			final boolean isFavorite1 = profile.isFavoriteBookmark(bookmark1);
+			final boolean isFavorite2 = profile.isFavoriteBookmark(bookmark2);
+			final List<Boolean> isFavorites = profile.isFavoriteBookmarks(List.of(bookmark1, bookmark2));
+
+			//then
+			assertThat(isFavorite1).isTrue();
+			assertThat(isFavorite2).isFalse();
+			assertThat(isFavorites).containsExactly(true, false);
+		}
+
+		@Test
+		void 프로필_즐겨찾기_추가_실패() {
+			//given
+			profile.favorite(bookmark1);
+
+			//when then
+			assertThatLinkoceanRuntimeException()
+				.isThrownBy(() -> profile.favorite(bookmark1));
+		}
+
+		@Test
+		void 프로필_즐겨찾기_취소_성공() {
+			//given
+			profile.favorite(bookmark1);
+			assertThat(profile.isFavoriteBookmark(bookmark1)).isTrue();
+
+			//when
+			profile.unfavorite(bookmark1);
+
+			//then
+			assertThat(profile.isFavoriteBookmark(bookmark1)).isFalse();
+		}
+
+		@Test
+		void 프로필_즐겨찾기_취소_실패() {
+			//when then
+			assertThatLinkoceanRuntimeException()
+				.isThrownBy(() -> profile.unfavorite(bookmark1));
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.util.stream.Collectors.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -95,11 +96,13 @@ public class Profile extends BaseIdEntity {
 		this.favoriteCategories = favoriteCategories;
 	}
 
+	/* 즐겨찾기 추가 */
 	public void favorite(final Bookmark bookmark) {
 		checkCondition(!favoriteBookmarkIds.contains(bookmark.getId()), "illegal favorite command");
 		favoriteBookmarkIds.add(bookmark.getId());
 	}
 
+	/* 즐겨찾기 취소 */
 	public void unfavorite(final Bookmark bookmark) {
 		checkCondition(favoriteBookmarkIds.contains(bookmark.getId()), "illegal unfavorite command");
 		favoriteBookmarkIds.remove(bookmark.getId());
@@ -112,5 +115,18 @@ public class Profile extends BaseIdEntity {
 
 		this.user = user;
 		this.username = username;
+	}
+
+	/* 북마크 즐겨찾기 여부 확인 */
+	public boolean isFavoriteBookmark(final Bookmark bookmark) {
+		return favoriteBookmarkIds.contains(bookmark.getId());
+	}
+
+	/* 북마크 목록 즐겨찾기 여부 확인 */
+	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
+		return bookmarks.stream()
+			.map(Bookmark::getId)
+			.map(favoriteBookmarkIds::contains)
+			.collect(toList());
 	}
 }
