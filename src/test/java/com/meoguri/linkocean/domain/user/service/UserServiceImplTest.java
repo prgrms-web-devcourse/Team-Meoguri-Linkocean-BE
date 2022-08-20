@@ -31,7 +31,7 @@ class UserServiceImplTest {
 		final OAuthType oAuthType = OAuthType.GITHUB;
 
 		//when
-		userService.saveIfNotExists(email, oAuthType);
+		userService.registerIfNotExists(email, oAuthType);
 
 		//then
 		final Optional<User> oFindUser = userRepository.findByEmailAndOAuthType(email, oAuthType);

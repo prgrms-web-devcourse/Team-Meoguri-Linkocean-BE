@@ -6,7 +6,9 @@ import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 
 public interface UserService {
 
-	void saveIfNotExists(Email email, OAuthType oAuthType);
+	/* 없으면 등록 */
+	void registerIfNotExists(Email email, OAuthType oAuthType);
 
+	/* 프로필 등록 - user 에게 profileId 를 등록한다 */
 	void registerProfile(long userId, Profile profile);
 }

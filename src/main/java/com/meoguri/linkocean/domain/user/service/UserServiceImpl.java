@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public void saveIfNotExists(final Email email, final OAuthType oAuthType) {
+	public void registerIfNotExists(final Email email, final OAuthType oAuthType) {
 		userRepository.findByEmailAndOAuthType(email, oAuthType)
 			.orElseGet(() -> {
 				log.info("new user save email : {}, oauth type : {}", Email.toString(email), oAuthType);
