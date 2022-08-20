@@ -129,9 +129,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchAll(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
-		final Profile writer = bookmark.getWriter();
 
 		/* 추가 정보 조회 */
+		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteById(profileId);
 		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
