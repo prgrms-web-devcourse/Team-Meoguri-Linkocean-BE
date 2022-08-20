@@ -3,31 +3,21 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-@Import(
-	{FavoriteServiceImpl.class,
-		FindProfileByIdQuery.class,
-		FindBookmarkByIdQuery.class,
-	}
-)
-class FavoriteServiceImplTest extends BasePersistenceTest {
+class FavoriteServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private FavoriteService favoriteService;
-
-	// @Autowired
-	// private BookmarkService bookmarkService;
 
 	private Profile profile;
 	private long profileId;
@@ -50,8 +40,8 @@ class FavoriteServiceImplTest extends BasePersistenceTest {
 		favoriteService.favorite(profileId, bookmarkId);
 
 		//then
-		// final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(profileId, bookmarkId);
-		// assertThat(detailedBookmark.isFavorite()).isTrue();
+		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
+		assertThat(result.isFavorite()).isTrue();
 	}
 
 	@Test
@@ -63,8 +53,8 @@ class FavoriteServiceImplTest extends BasePersistenceTest {
 		favoriteService.unfavorite(profileId, bookmarkId);
 
 		//then
-		// final GetDetailedBookmarkResult detailedBookmark = bookmarkService.getDetailedBookmark(profileId, bookmarkId);
-		// assertThat(detailedBookmark.isFavorite()).isFalse();
+		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
+		assertThat(result.isFavorite()).isFalse();
 	}
 
 	@Test

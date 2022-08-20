@@ -22,6 +22,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
+import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
@@ -36,6 +38,17 @@ import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 @Transactional
 @SpringBootTest
 public class BaseServiceTest {
+
+	@Autowired
+	private BookmarkService bookmarkService;
+
+	protected GetDetailedBookmarkResult 북마크_상세_조회(final long profileId, final long bookmarkId) {
+		return bookmarkService.getDetailedBookmark(profileId, bookmarkId);
+	}
+
+
+	/* 아래의 코드 들은 BasePersistenceTest 의 복붙이며 제거 대상임
+	   천천히 Service Logic 으로 migration 할 것 */
 
 	@Autowired
 	protected EntityManager em;
@@ -175,4 +188,5 @@ public class BaseServiceTest {
 	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
 		profile.favorite(bookmark);
 	}
+
 }
