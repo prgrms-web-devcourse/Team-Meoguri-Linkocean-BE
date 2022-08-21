@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
@@ -29,7 +28,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	private ProfileService profileService;
 
 	@Nested
-	class 프로필_등록_수정_조회_테스트 {
+	class 프로필_등록_수정_조회 {
 
 		private Profile profile;
 		private long profileId;
@@ -41,33 +40,46 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
-		void 프로필_등록하고_조회_성공() {
+		void 프로필_등록_수정_조회_성공_등록_조회_성공() {
 			//when
 			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
 
 			//then
-			assertThat(result).extracting(
-				GetDetailedProfileResult::getProfileId,
-				GetDetailedProfileResult::getUsername,
-				GetDetailedProfileResult::getImage,
-				GetDetailedProfileResult::getBio,
-				GetDetailedProfileResult::getFollowerCount,
-				GetDetailedProfileResult::getFolloweeCount
-			).containsExactly(
-				profileId,
-				profile.getUsername(),
-				profile.getImage(),
-				profile.getBio(),
-				0,
-				0
-			);
-
-			final List<Category> favoriteCategories = result.getFavoriteCategories();
-			assertThat(favoriteCategories).containsExactly(IT);
+			assertThat(result.getProfileId()).isEqualTo(profileId);
+			assertThat(result.getUsername()).isEqualTo("haha");
+			assertThat(result.getImage()).isEqualTo(null);
+			assertThat(result.getBio()).isEqualTo(null);
+			assertThat(result.getFollowerCount()).isEqualTo(0);
+			assertThat(result.getFolloweeCount()).isEqualTo(0);
+			assertThat(result.getFavoriteCategories()).containsExactly(IT);
 		}
 
 		@Test
-		void 프로필_등록하고_수정하고_조회_성공() {
+		void 프로필_등록_수정_조회_성공_조회_팔로워_팔로이_카운트의_관점에서() {
+			//given
+			final Profile profile1 = 사용자_프로필_동시_저장_등록("hoho@gmail.com", GOOGLE, "hoho", IT);
+			final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+
+			final long profileId1 = profile1.getId();
+			final long profileId2 = profile2.getId();
+
+			팔로우_저장(profile1, profile2);
+
+			//when
+			GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(profileId1, profileId1);
+			GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(profileId1, profileId2);
+			GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(profileId2, profileId1);
+			GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(profileId2, profileId2);
+
+			//then
+			assertDetailProfileResult(user1ToUser1ProfileResult, 0, 1, false);
+			assertDetailProfileResult(user1ToUser2ProfileResult, 1, 0, true);
+			assertDetailProfileResult(user2ToUser1ProfileResult, 0, 1, false);
+			assertDetailProfileResult(user2ToUser2ProfileResult, 1, 0, false);
+		}
+
+		@Test
+		void 프로필_등록_수정_조회_성공_등록_수정_조회() {
 			//given
 			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
 				profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
@@ -85,7 +97,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
-		void 사용자_이름_중복_등록_실패() {
+		void 프로필_등록_수정_조회_실패_사용자_이름_중복_등록() {
 			//given
 			long userId1 = 사용자_저장("user1@gmail.com", GOOGLE).getId();
 			long userId2 = 사용자_저장("user2@gmail.com", GOOGLE).getId();
@@ -100,41 +112,17 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			assertThatIllegalArgumentException()
 				.isThrownBy(() -> profileService.registerProfile(command2));
 		}
-	}
 
-	@Test
-	void 프로필_상세_조회_성공() {
-		//given
-		final Profile profile1 = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
-		final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
-
-		final long profileId1 = profile1.getId();
-		final long profileId2 = profile2.getId();
-
-		팔로우_저장(profile1, profile2);
-
-		//when
-		GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(profileId1, profileId1);
-		GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(profileId1, profileId2);
-		GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(profileId2, profileId1);
-		GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(profileId2, profileId2);
-
-		//then
-		assertDetailProfileResult(user1ToUser1ProfileResult, 0, 1, false);
-		assertDetailProfileResult(user1ToUser2ProfileResult, 1, 0, true);
-		assertDetailProfileResult(user2ToUser1ProfileResult, 0, 1, false);
-		assertDetailProfileResult(user2ToUser2ProfileResult, 1, 0, false);
-	}
-
-	private void assertDetailProfileResult(
-		final GetDetailedProfileResult user1ToUser1ProfileResult,
-		final int expectedFollowerCount,
-		final int expectedFolloweeCount,
-		final boolean expectedFollow
-	) {
-		assertThat(user1ToUser1ProfileResult.getFollowerCount()).isEqualTo(expectedFollowerCount);
-		assertThat(user1ToUser1ProfileResult.getFolloweeCount()).isEqualTo(expectedFolloweeCount);
-		assertThat(user1ToUser1ProfileResult.isFollow()).isEqualTo(expectedFollow);
+		private void assertDetailProfileResult(
+			final GetDetailedProfileResult user1ToUser1ProfileResult,
+			final int expectedFollowerCount,
+			final int expectedFolloweeCount,
+			final boolean expectedFollow
+		) {
+			assertThat(user1ToUser1ProfileResult.getFollowerCount()).isEqualTo(expectedFollowerCount);
+			assertThat(user1ToUser1ProfileResult.getFolloweeCount()).isEqualTo(expectedFolloweeCount);
+			assertThat(user1ToUser1ProfileResult.isFollow()).isEqualTo(expectedFollow);
+		}
 	}
 
 	@Nested
@@ -187,26 +175,18 @@ class ProfileServiceImplTest extends BaseServiceTest {
 
 			//then
 			assertThat(result1).isEmpty();
-			assertThat(result2)
-				.extracting(
-					GetProfilesResult::getProfileId,
-					GetProfilesResult::getUsername,
-					GetProfilesResult::getImage,
-					GetProfilesResult::isFollow
-				).containsExactly(
-					tuple(profileId1, "user1", null, false),
-					tuple(profileId3, "user3", null, true)
-				);
-			assertThat(result3)
-				.extracting(
-					GetProfilesResult::getProfileId,
-					GetProfilesResult::getUsername,
-					GetProfilesResult::getImage,
-					GetProfilesResult::isFollow
-				).containsExactly(
-					tuple(profileId1, "user1", null, false),
-					tuple(profileId2, "user2", null, true)
-				);
+
+			assertThat(result2).hasSize(2);
+			assertThat(result2.getContent().get(0).getProfileId()).isEqualTo(profileId1);
+			assertThat(result2.getContent().get(0).isFollow()).isFalse();
+			assertThat(result2.getContent().get(1).getProfileId()).isEqualTo(profileId3);
+			assertThat(result2.getContent().get(1).isFollow()).isTrue();
+
+			assertThat(result3).hasSize(2);
+			assertThat(result3.getContent().get(0).getProfileId()).isEqualTo(profileId1);
+			assertThat(result3.getContent().get(0).isFollow()).isFalse();
+			assertThat(result3.getContent().get(1).getProfileId()).isEqualTo(profileId2);
+			assertThat(result3.getContent().get(1).isFollow()).isTrue();
 		}
 
 		/**
@@ -232,34 +212,19 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			final Slice<GetProfilesResult> result3 = profileService.getProfiles(profileId3, cond3, pageable);
 
 			//then
-			assertThat(result1)
-				.extracting(
-					GetProfilesResult::getProfileId,
-					GetProfilesResult::getUsername,
-					GetProfilesResult::getImage,
-					GetProfilesResult::isFollow
-				).containsExactly(
-					tuple(profileId2, "user2", null, true),
-					tuple(profileId3, "user3", null, true)
-				);
-			assertThat(result2)
-				.extracting(
-					GetProfilesResult::getProfileId,
-					GetProfilesResult::getUsername,
-					GetProfilesResult::getImage,
-					GetProfilesResult::isFollow
-				).containsExactly(
-					tuple(profileId3, "user3", null, true)
-				);
-			assertThat(result3)
-				.extracting(
-					GetProfilesResult::getProfileId,
-					GetProfilesResult::getUsername,
-					GetProfilesResult::getImage,
-					GetProfilesResult::isFollow
-				).containsExactly(
-					tuple(profileId2, "user2", null, true)
-				);
+			assertThat(result1).hasSize(2);
+			assertThat(result1.getContent().get(0).getProfileId()).isEqualTo(profileId2);
+			assertThat(result1.getContent().get(0).isFollow()).isTrue();
+			assertThat(result1.getContent().get(1).getProfileId()).isEqualTo(profileId3);
+			assertThat(result1.getContent().get(1).isFollow()).isTrue();
+
+			assertThat(result2).hasSize(1);
+			assertThat(result2.getContent().get(0).getProfileId()).isEqualTo(profileId3);
+			assertThat(result2.getContent().get(0).isFollow()).isTrue();
+
+			assertThat(result3).hasSize(1);
+			assertThat(result3.getContent().get(0).getProfileId()).isEqualTo(profileId2);
+			assertThat(result3.getContent().get(0).isFollow()).isTrue();
 		}
 
 		@Test
@@ -272,14 +237,13 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			final Slice<GetProfilesResult> results = profileService.getProfiles(profileId1, cond, createPageable());
 
 			//then
-			assertThat(results)
-				.extracting(GetProfilesResult::getProfileId, GetProfilesResult::isFollow)
-				.containsExactly(
-					tuple(profileId1, false),
-					tuple(profileId2, true),
-					tuple(profileId3, false)
-				);
+			assertThat(results).hasSize(3);
+			assertThat(results.getContent().get(0).getProfileId()).isEqualTo(profileId1);
+			assertThat(results.getContent().get(0).isFollow()).isFalse();
+			assertThat(results.getContent().get(1).getProfileId()).isEqualTo(profileId2);
+			assertThat(results.getContent().get(1).isFollow()).isTrue();
+			assertThat(results.getContent().get(2).getProfileId()).isEqualTo(profileId3);
+			assertThat(results.getContent().get(2).isFollow()).isFalse();
 		}
-
 	}
 }
