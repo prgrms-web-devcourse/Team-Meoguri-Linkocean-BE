@@ -24,6 +24,7 @@ import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.service.FollowService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.User;
@@ -45,6 +46,9 @@ public class BaseServiceTest {
 	private ProfileService profileService;
 
 	@Autowired
+	private FollowService followService;
+
+	@Autowired
 	private LinkMetadataService linkMetadataService;
 
 	@Autowired
@@ -62,6 +66,19 @@ public class BaseServiceTest {
 		return profileService.registerProfile(new RegisterProfileCommand(
 			userId, username, Arrays.stream(categories).collect(toList()))
 		);
+	}
+
+	protected long 사용자_프로필_동시_등록(
+		final String email,
+		final OAuthType oAuthType,
+		final String username,
+		final Category... categories
+	) {
+		return 프로필_등록(사용자_없으면_등록(email, oAuthType), username, categories);
+	}
+
+	protected void 팔로우(final long followerId, final long followeeId) {
+		followService.follow(followerId, followeeId);
 	}
 
 	protected String 링크_제목_얻기(final String url) {

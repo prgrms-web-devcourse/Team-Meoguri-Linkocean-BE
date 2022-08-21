@@ -128,10 +128,6 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	@Nested
 	class 프로필_목록_조회_테스트 {
 
-		private Profile profile1;
-		private Profile profile2;
-		private Profile profile3;
-
 		private long profileId1;
 		private long profileId2;
 		private long profileId3;
@@ -140,13 +136,9 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@BeforeEach
 		void setUp() {
 			// set up 3 users
-			profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
-			profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
-			profile3 = 사용자_프로필_동시_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
-
-			profileId1 = profile1.getId();
-			profileId2 = profile2.getId();
-			profileId3 = profile3.getId();
+			profileId1 = 사용자_프로필_동시_등록("user1@gmail.com", GOOGLE, "user1", IT);
+			profileId2 = 사용자_프로필_동시_등록("user2@naver.com", NAVER, "user2", IT);
+			profileId3 = 사용자_프로필_동시_등록("user3@kakao.com", KAKAO, "user3", IT);
 
 			pageable = createPageable();
 		}
@@ -159,10 +151,10 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@Test
 		void 팔로워_목록_조회_성공() {
 			//given
-			팔로우_저장(profile1, profile3);
-			팔로우_저장(profile1, profile2);
-			팔로우_저장(profile2, profile3);
-			팔로우_저장(profile3, profile2);
+			팔로우(profileId1, profileId3);
+			팔로우(profileId1, profileId2);
+			팔로우(profileId2, profileId3);
+			팔로우(profileId3, profileId2);
 
 			final ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).follower(true).build();
 			final ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).follower(true).build();
@@ -197,10 +189,10 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@Test
 		void 팔로이_목록_조회_성공() {
 			//given
-			팔로우_저장(profile1, profile2);
-			팔로우_저장(profile1, profile3);
-			팔로우_저장(profile2, profile3);
-			팔로우_저장(profile3, profile2);
+			팔로우(profileId1, profileId2);
+			팔로우(profileId1, profileId3);
+			팔로우(profileId2, profileId3);
+			팔로우(profileId3, profileId2);
 
 			final ProfileFindCond cond1 = ProfileFindCond.builder().profileId(profileId1).followee(true).build();
 			final ProfileFindCond cond2 = ProfileFindCond.builder().profileId(profileId2).followee(true).build();
@@ -230,7 +222,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@Test
 		void 프로필_목록_조회_이름으로_필터링_성공() {
 			//given
-			팔로우_저장(profile1, profile2);
+			팔로우(profileId1, profileId2);
 			final ProfileFindCond cond = ProfileFindCond.builder().username("user").build();
 
 			//when
