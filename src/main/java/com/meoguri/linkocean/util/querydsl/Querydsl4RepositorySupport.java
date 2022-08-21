@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.util;
+package com.meoguri.linkocean.util.querydsl;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,15 +25,12 @@ import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.MySQLTemplates;
-import com.querydsl.sql.RelationalPathBase;
 import com.querydsl.sql.SQLTemplates;
 
 /**
@@ -44,12 +41,6 @@ import com.querydsl.sql.SQLTemplates;
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
-
-	protected static RelationalPathBase<Object> favorite = new RelationalPathBase<>(Object.class, "f", "linkocean",
-		"favorite");
-	protected static NumberPath<Long> ownerId = Expressions.numberPath(Long.class, favorite, "owner_id");
-
-	protected static NumberPath<Long> bookmarkId = Expressions.numberPath(Long.class, favorite, "bookmark_id");
 
 	private final Class<?> domainClass;
 

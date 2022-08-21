@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
-import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
+import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.ArrayList;
@@ -20,7 +20,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
+import com.meoguri.linkocean.util.querydsl.CustomPath;
+import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -107,9 +108,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
 		return !isFavorite ? null : getJpasqlQuery()
-			.select(bookmarkId)
-			.from(favorite)
-			.where(ownerId.eq(profileId))
+			.select(CustomPath.bookmarkId)
+			.from(CustomPath.favorite)
+			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
 
