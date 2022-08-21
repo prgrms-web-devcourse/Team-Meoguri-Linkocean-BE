@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,9 +78,15 @@ public class BaseServiceTest {
 	}
 
 	protected long 북마크_등록(final long writerId, final String url, final String... tags) {
+		return 북마크_등록(writerId, url, null, tags);
+	}
+
+	protected long 북마크_등록(final long writerId, final String url, final Category category, final String... tags) {
 		final String title = linkMetadataService.obtainTitle(url);
+		final List<String> tagList = Arrays.stream(tags).collect(toList());
+
 		return bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(writerId, url, title, null, null, ALL, Arrays.stream(tags).collect(toList()))
+			new RegisterBookmarkCommand(writerId, url, title, null, category, ALL, tagList)
 		);
 	}
 
