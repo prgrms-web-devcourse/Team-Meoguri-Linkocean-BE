@@ -81,6 +81,9 @@ public abstract class Querydsl4RepositorySupport {
 		Assert.notNull(queryFactory, "QueryFactory must not be null!");
 	}
 
+	/* 동적 쿼리에 대한 페이징 적용
+	- group by, having 등의 문제가 될 수 있는 쿼리를 사용하지 않기 때문에 JPAQuery.fetchCount 사용 */
+	@SuppressWarnings("deprecation")
 	protected <T> Page<T> applyPagination(
 		final Pageable pageable,
 		JPAQuery<T> contentQuery,
@@ -144,7 +147,10 @@ public abstract class Querydsl4RepositorySupport {
 		return new JoinInfoBuilder.JoinIf(expression, joinInfoBuilder);
 	}
 
-	/* 동적 join 을 지원하기 위한 유틸리티 메서드 */
+	/* 동적 join 을 지원하기 위한 유틸리티 메서드
+	- 각 JoinInfo 에 제네릭을 적용하니 외부에서 타입 추론이 제대로 되지 않아
+	  SubQueryExpression 를 QueryBase 로 처리하는 문제가 생겨 로 타입을 사용 */
+	@SuppressWarnings("unchecked")
 	public static <T> JPAQuery<T> joinIf(
 		final boolean expression,
 		JPAQuery<T> base,
