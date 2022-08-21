@@ -1,100 +1,67 @@
 package com.meoguri.linkocean.domain.profile.service;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-@Transactional
-@SpringBootTest
-class FollowServiceImplTest {
+class FollowServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private FollowService followService;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileService profileService;
-
-	private long user1Id;
-	private long user2Id;
-
-	private long user1ProfileId;
-	private long user2ProfileId;
+	private long profileId1;
+	private long profileId2;
 
 	@BeforeEach
 	void setUp() {
-		user1Id = userRepository.save(createUser("haha@gmail.com", GOOGLE)).getId();
-		user2Id = userRepository.save(createUser("papa@gmail.com", GOOGLE)).getId();
-
-		final RegisterProfileCommand command1 = new RegisterProfileCommand(user1Id, "haha", emptyList());
-		final RegisterProfileCommand command2 = new RegisterProfileCommand(user2Id, "papa", emptyList());
-
-		user1ProfileId = profileService.registerProfile(command1);
-		user2ProfileId = profileService.registerProfile(command2);
+		profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		profileId2 = 사용자_프로필_동시_등록("papa@gmail.com", GOOGLE, "papa", IT);
 	}
 
 	@Test
 	void 팔로우_성공() {
-		//given
-		final long profileId = user1ProfileId;
-		final long targetProfileId = user2ProfileId;
-
 		//when
-		followService.follow(profileId, targetProfileId);
+		followService.follow(profileId1, profileId2);
 
 		//then
-		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(1);
-		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(1);
+		assertThat(프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(1);
+		assertThat(프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(1);
 	}
 
 	@Test
 	void 팔로우_두번_요청_실패() {
 		//given
-		final long profileId = user1ProfileId;
-		final long targetProfileId = user2ProfileId;
-		followService.follow(profileId, targetProfileId);
+		팔로우(profileId1, profileId2);
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> followService.follow(profileId, targetProfileId));
+			.isThrownBy(() -> 팔로우(profileId1, profileId2));
 	}
 
 	@Test
 	void 언팔로우_성공() {
 		//given
-		final long profileId = user1ProfileId;
-		final long targetProfileId = user2ProfileId;
-		followService.follow(profileId, targetProfileId);
+		팔로우(profileId1, profileId2);
 
 		//when
-		followService.unfollow(profileId, targetProfileId);
+		followService.unfollow(profileId1, profileId2);
 
 		//then
-		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(0);
-		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(0);
+		assertThat(프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(0);
+		assertThat(프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(0);
 	}
 
 	@Test
 	void 팔로우_한적이_없으면_언팔로우_실패() {
-		//given
-		final long profileId = user1ProfileId;
-		final long targetProfileId = user2ProfileId;
-
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> followService.unfollow(profileId, targetProfileId));
+			.isThrownBy(() -> followService.unfollow(profileId1, profileId2));
 	}
 }

@@ -24,6 +24,7 @@ import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.service.FollowService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
@@ -138,5 +139,9 @@ public class BaseServiceTest {
 
 	protected void 북마크_공유(final long senderId, final long receiverId, final long bookmarkId) {
 		notificationService.shareNotification(new ShareNotificationCommand(senderId, receiverId, bookmarkId));
+	}
+
+	protected GetDetailedProfileResult 프로필_상세_조회(final long currentUserProfileId) {
+		return profileService.getByProfileId(currentUserProfileId, currentUserProfileId);
 	}
 }
