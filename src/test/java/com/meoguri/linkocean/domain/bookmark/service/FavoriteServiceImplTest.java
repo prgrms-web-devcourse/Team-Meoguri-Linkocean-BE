@@ -23,7 +23,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 	@BeforeEach
 	void setUp() {
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-		bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
+		bookmarkId = 북마크_등록(profileId, "www.google.com");
 	}
 
 	@Test
