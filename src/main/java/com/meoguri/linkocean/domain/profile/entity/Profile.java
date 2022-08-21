@@ -43,6 +43,9 @@ public class Profile extends BaseIdEntity {
 	@Embedded
 	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
 
+	@Embedded
+	private Reactions reactions = new Reactions();
+
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
 

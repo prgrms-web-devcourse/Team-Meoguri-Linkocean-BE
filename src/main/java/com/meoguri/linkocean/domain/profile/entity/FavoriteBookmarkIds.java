@@ -19,7 +19,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import lombok.NoArgsConstructor;
 
 @Embeddable
-@NoArgsConstructor(access = PACKAGE)
+@NoArgsConstructor(access = PROTECTED)
 public class FavoriteBookmarkIds {
 
 	@ElementCollection
