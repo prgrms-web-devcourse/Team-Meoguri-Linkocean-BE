@@ -44,22 +44,21 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final String title = findCond.getTitle();
 		final OpenType openType = findCond.getOpenType();
 
-		JPAQuery<Bookmark> base = selectFrom(bookmark);
-
-		joinIf(category != null, base,
-			() -> join(bookmark.writer).fetchJoin()
-				.join(bookmark.linkMetadata).fetchJoin());
-
-		joinIf(tags != null, base,
-			() -> join(bookmark.writer).fetchJoin());
-
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
 
 		/* 즐겨찾기 요청이라면 작성자 id 기준 필터링이 없다 */
 		final Long writerId = toBoolean(isFavorite) ? null : targetProfileId;
 		return applyPagination(
 			convertBookmarkSort(pageable),
-			base.where(
+			selectFrom(bookmark),
+			joinIfs(
+				joinIf(category != null,
+					() -> join(bookmark.writer).fetchJoin()
+						.join(bookmark.linkMetadata).fetchJoin()),
+				joinIf(tags != null,
+					() -> join(bookmark.writer).fetchJoin())
+			),
+			where(
 				titleContains(title),
 				categoryEq(category),
 				writerIdEq(writerId),
@@ -67,7 +66,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
 				availableByOpenType(openType),
 				registered()
-			), Bookmark::getTagNames
+			),
+			Bookmark::getTagNames
 		);
 	}
 
@@ -102,7 +102,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				followedBy(isFollow, currentUserProfileId),
 				availableByOpenType(currentUserProfileId),
 				registered()
-			), Bookmark::getTagNames
+			), Bookmark::getTagNames,
+			base
 		);
 	}
 

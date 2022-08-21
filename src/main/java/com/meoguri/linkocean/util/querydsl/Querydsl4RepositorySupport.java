@@ -1,5 +1,8 @@
 package com.meoguri.linkocean.util.querydsl;
 
+import static java.util.stream.Collectors.*;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -26,7 +29,6 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
@@ -89,26 +91,8 @@ public abstract class Querydsl4RepositorySupport {
 		return queryFactory.selectFrom(from);
 	}
 
-	protected <T> Page<T> applyPagination(
-		final Pageable pageable,
-		final JPAQuery<T> jpaContentQuery,
-		final Consumer<T> lazyLoader
-	) {
-		return applyPagination(pageable, jpaContentQuery, lazyLoader, jpaContentQuery);
-	}
-
-	protected <T> Page<T> applyPagination(
-		final Pageable pageable,
-		final JPAQuery<T> jpaContentQuery,
-		final Consumer<T> lazyLoader,
-		final JPAQuery<T> jpaCountQuery
-	) {
-		List<T> content = querydsl.applyPagination(pageable, jpaContentQuery).fetch();
-		content.forEach(lazyLoader);
-		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
-	}
-
 	/* 무한 스크롤 전용 슬라이싱 */
+
 	protected <T> Slice<T> applySlicing(
 		final Pageable pageable,
 		final JPAQuery<T> jpaContentQuery
@@ -126,8 +110,8 @@ public abstract class Querydsl4RepositorySupport {
 
 		return new SliceImpl<>(content, pageable, hasNext);
 	}
-
 	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+
 	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
 		try {
 			return new BooleanBuilder(cond.get());
@@ -135,11 +119,11 @@ public abstract class Querydsl4RepositorySupport {
 			return new BooleanBuilder();
 		}
 	}
-
 	/* 동적 join 을 지원하기 위한 유틸리티 메서드 */
-	protected static <T> JPQLQuery<T> joinIf(
+
+	public static <T> JPAQuery<T> joinIf(
 		final boolean expression,
-		JPQLQuery<T> base,
+		JPAQuery<T> base,
 		final Supplier<JoinInfoBuilder> joinInfoBuilder
 	) {
 		if (expression) {
@@ -172,5 +156,55 @@ public abstract class Querydsl4RepositorySupport {
 		return base;
 	}
 
+	protected JoinInfoBuilder.JoinIf joinIf(
+		final boolean expression,
+		final Supplier<JoinInfoBuilder> joinInfoBuilder
+	) {
+		return new JoinInfoBuilder.JoinIf(expression, joinInfoBuilder);
+	}
+
+	protected <T> Page<T> applyPagination(
+		final Pageable pageable,
+		final JPAQuery<T> jpaContentQuery,
+		final Consumer<T> lazyLoader,
+		final JPAQuery<T> jpaCountQuery
+	) {
+		List<T> content = querydsl.applyPagination(pageable, jpaContentQuery).fetch();
+		content.forEach(lazyLoader);
+		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
+	}
+
+	protected <T> Page<T> applyPagination(
+		final Pageable pageable,
+		JPAQuery<T> contentQuery,
+		final List<JoinInfoBuilder.JoinIf> joinIfs,
+		final List<Predicate> where,
+		final Consumer<T> lazyLoader
+	) {
+		final JPAQuery<T> countQuery = contentQuery.clone(entityManager);
+		final Predicate[] whereArray = where.toArray(new Predicate[0]);
+
+		/* content query 에 join 과 where 적용 */
+		for (JoinInfoBuilder.JoinIf joinIf : joinIfs) {
+			contentQuery = joinIf.apply(contentQuery);
+		}
+		contentQuery = contentQuery.where(whereArray);
+
+		/* 페이징 적용 후 레이지 로딩 하여 content 완성 */
+		List<T> content = querydsl.applyPagination(pageable, contentQuery).fetch();
+		content.forEach(lazyLoader);
+
+		/* content query 에는 where 만 적용 */
+		countQuery.where(whereArray);
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+	}
+
+	public List<JoinInfoBuilder.JoinIf> joinIfs(JoinInfoBuilder.JoinIf... joinIfs) {
+		return Arrays.stream(joinIfs).collect(toList());
+	}
+
+	protected List<Predicate> where(Predicate... where) {
+		return Arrays.stream(where).collect(toList());
+	}
 }
 
