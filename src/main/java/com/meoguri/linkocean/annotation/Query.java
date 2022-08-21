@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 영속성 계층에서 리포지토리를 사용하여 단순한 조회로직을 담당하는 컴포넌트를 'Query' 라고 지정한다.
- *
- * Query 는 클래스에 적용한다.
+ * - Query 는 클래스에 적용한다.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
