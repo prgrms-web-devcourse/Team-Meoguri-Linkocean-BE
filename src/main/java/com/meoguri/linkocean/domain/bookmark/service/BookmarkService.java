@@ -40,5 +40,5 @@ public interface BookmarkService {
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
 
 	/* 좋아요 숫자 업데이트 */
-	void updateLikeCount(long bookmarkId, boolean isAlreadyReacted, ReactionType existedType, ReactionType requestType);
+	void updateLikeCount(long bookmarkId, ReactionType existedType, ReactionType requestType);
 }

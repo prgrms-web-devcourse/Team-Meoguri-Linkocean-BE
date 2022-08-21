@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -109,5 +110,10 @@ public class Profile extends BaseIdEntity {
 
 		this.user = user;
 		this.username = username;
+	}
+
+	/* 리액션 요청 */
+	public ReactionType requestReaction(final Bookmark bookmark, final ReactionType requestType) {
+		return reactions.requestReaction(bookmark, requestType);
 	}
 }
