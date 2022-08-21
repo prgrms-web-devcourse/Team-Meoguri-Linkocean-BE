@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
 import com.meoguri.linkocean.domain.bookmark.service.ReactionService;
@@ -83,16 +84,34 @@ public class BaseServiceTest {
 		favoriteService.favorite(profileId, bookmarkId);
 	}
 
+	protected long 북마크_등록(final long writerId, final String url, final OpenType openType) {
+		return 북마크_등록(writerId, url, null, null, null, openType);
+	}
+
 	protected long 북마크_등록(final long writerId, final String url, final String... tags) {
 		return 북마크_등록(writerId, url, null, tags);
 	}
 
 	protected long 북마크_등록(final long writerId, final String url, final Category category, final String... tags) {
 		final String title = linkMetadataService.obtainTitle(url);
+
+		return 북마크_등록(writerId, url, title, null, category, ALL, tags);
+	}
+
+	protected long 북마크_등록(
+		final long writerId,
+		final String url,
+		final String title,
+		final String memo,
+		final Category category,
+		final OpenType openType,
+		final String... tags
+	) {
+		linkMetadataService.obtainTitle(url);
 		final List<String> tagList = Arrays.stream(tags).collect(toList());
 
 		return bookmarkService.registerBookmark(
-			new RegisterBookmarkCommand(writerId, url, title, null, category, ALL, tagList)
+			new RegisterBookmarkCommand(writerId, url, title, memo, category, openType, tagList)
 		);
 	}
 
