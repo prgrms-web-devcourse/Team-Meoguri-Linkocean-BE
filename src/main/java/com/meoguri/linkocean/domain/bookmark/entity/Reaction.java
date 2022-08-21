@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
  * - 리액션 타입은 LIKE/HATE 둘 중 하나이다.
  * - 사용자는 북마크의 리액션을 변경할 수 있다.
  */
+@Deprecated
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity

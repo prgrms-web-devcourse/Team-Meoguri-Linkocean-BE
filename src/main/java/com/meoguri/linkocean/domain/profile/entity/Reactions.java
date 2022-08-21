@@ -10,6 +10,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
+import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
@@ -23,7 +24,8 @@ public class Reactions {
 	@ElementCollection
 	@CollectionTable(
 		name = "reaction",
-		joinColumns = @JoinColumn(name = "profile_id")
+		joinColumns = @JoinColumn(name = "profile_id"),
+		uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "bookmark_id"})
 	)
 	private Set<Reaction> reactions = new HashSet<>();
 

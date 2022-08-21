@@ -528,8 +528,8 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile1, "www.google.com");
 
-		좋아요_저장(profile2, bookmark);
 		싫어요_저장(profile1, bookmark);
+		좋아요_저장(profile2, bookmark);
 
 		//when
 		final Map<ReactionType, Long> group = bookmarkRepository.countReactionGroup(bookmark.getId());
