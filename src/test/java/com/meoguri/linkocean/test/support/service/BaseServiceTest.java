@@ -2,6 +2,7 @@ package com.meoguri.linkocean.test.support.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -10,15 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
+import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -47,6 +44,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private FollowService followService;
+
+	@Autowired
+	private FavoriteService favoriteService;
 
 	@Autowired
 	private LinkMetadataService linkMetadataService;
@@ -81,6 +81,17 @@ public class BaseServiceTest {
 		followService.follow(followerId, followeeId);
 	}
 
+	protected void 즐겨찾기(final long profileId, final long bookmarkId) {
+		favoriteService.favorite(profileId, bookmarkId);
+	}
+
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url) {
+		final String title = linkMetadataService.obtainTitle(url);
+		return bookmarkService.registerBookmark(
+			new RegisterBookmarkCommand(writerId, url, title, null, null, ALL, emptyList())
+		);
+	}
+
 	protected String 링크_제목_얻기(final String url) {
 		return linkMetadataService.obtainTitle(url);
 	}
@@ -99,12 +110,6 @@ public class BaseServiceTest {
 
 	@Autowired
 	private FollowRepository followRepository;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
 
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
 		return userRepository.save(createUser(email, oAuthType));
@@ -134,50 +139,6 @@ public class BaseServiceTest {
 
 	protected void 팔로우_저장(final Profile follower, final Profile followee) {
 		followRepository.save(new Follow(follower, followee));
-	}
-
-	protected LinkMetadata 링크_메타데이터_저장(final String link, final String title, final String image) {
-		return linkMetadataRepository.save(new LinkMetadata(link, title, image));
-	}
-
-	protected Bookmark 북마크_저장(
-		final Profile writer,
-		final LinkMetadata linkMetadata,
-		final String title,
-		final String memo,
-		final OpenType openType,
-		final Category category,
-		final String url,
-		final Tag... tags
-	) {
-		return bookmarkRepository.save(new Bookmark(writer,
-			linkMetadata,
-			title,
-			memo,
-			openType,
-			category,
-			url,
-			Arrays.stream(tags).collect(toList())
-		));
-	}
-
-	protected Bookmark 북마크_링크_메타데이터_동시_저장(
-		final Profile writer,
-		final String url
-	) {
-		return 북마크_링크_메타데이터_동시_저장(writer, null, url);
-	}
-
-	protected Bookmark 북마크_링크_메타데이터_동시_저장(
-		final Profile writer,
-		final Category category,
-		final String url
-	) {
-		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), "title", "memo", ALL, category, url);
-	}
-
-	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
-		profile.favorite(bookmark);
 	}
 
 }

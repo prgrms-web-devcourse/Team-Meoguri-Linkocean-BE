@@ -9,9 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class FavoriteServiceImplTest extends BaseServiceTest {
@@ -19,19 +17,13 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 	@Autowired
 	private FavoriteService favoriteService;
 
-	private Profile profile;
 	private long profileId;
-
-	private Bookmark bookmark;
 	private long bookmarkId;
 
 	@BeforeEach
 	void setUp() {
-		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-		profileId = profile.getId();
-
-		bookmark = 북마크_링크_메타데이터_동시_저장(profile, "google.com");
-		bookmarkId = bookmark.getId();
+		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
 	}
 
 	@Test
@@ -47,7 +39,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 	@Test
 	void 즐겨찾기_해제() {
 		//given
-		즐겨찾기_저장(profile, bookmark);
+		즐겨찾기(profileId, bookmarkId);
 
 		//when
 		favoriteService.unfavorite(profileId, bookmarkId);
@@ -60,11 +52,10 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 	@Test
 	void 즐겨찾기_추가_실패_이미_추가된_상태() {
 		//given
-		favoriteService.favorite(profileId, bookmarkId);
+		즐겨찾기(profileId, bookmarkId);
 
 		//when then
 		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> favoriteService.favorite(profileId, bookmarkId));
 	}
-
 }
