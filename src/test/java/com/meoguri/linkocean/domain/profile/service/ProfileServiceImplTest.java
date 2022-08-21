@@ -165,15 +165,15 @@ class ProfileServiceImplTest extends BaseServiceTest {
 
 			assertThat(result2).hasSize(2);
 			assertThat(result2.getContent().get(0).getProfileId()).isEqualTo(profileId1);
-			assertThat(result2.getContent().get(0).isFollow()).isFalse();
+			assertThat(result2.getContent().get(0).isFollow()).isEqualTo(false);
 			assertThat(result2.getContent().get(1).getProfileId()).isEqualTo(profileId3);
-			assertThat(result2.getContent().get(1).isFollow()).isTrue();
+			assertThat(result2.getContent().get(1).isFollow()).isEqualTo(true);
 
 			assertThat(result3).hasSize(2);
 			assertThat(result3.getContent().get(0).getProfileId()).isEqualTo(profileId1);
-			assertThat(result3.getContent().get(0).isFollow()).isFalse();
+			assertThat(result3.getContent().get(0).isFollow()).isEqualTo(false);
 			assertThat(result3.getContent().get(1).getProfileId()).isEqualTo(profileId2);
-			assertThat(result3.getContent().get(1).isFollow()).isTrue();
+			assertThat(result3.getContent().get(1).isFollow()).isEqualTo(true);
 		}
 
 		/**
@@ -201,17 +201,17 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			//then
 			assertThat(result1).hasSize(2);
 			assertThat(result1.getContent().get(0).getProfileId()).isEqualTo(profileId2);
-			assertThat(result1.getContent().get(0).isFollow()).isTrue();
+			assertThat(result1.getContent().get(0).isFollow()).isEqualTo(true);
 			assertThat(result1.getContent().get(1).getProfileId()).isEqualTo(profileId3);
-			assertThat(result1.getContent().get(1).isFollow()).isTrue();
+			assertThat(result1.getContent().get(1).isFollow()).isEqualTo(true);
 
 			assertThat(result2).hasSize(1);
 			assertThat(result2.getContent().get(0).getProfileId()).isEqualTo(profileId3);
-			assertThat(result2.getContent().get(0).isFollow()).isTrue();
+			assertThat(result2.getContent().get(0).isFollow()).isEqualTo(true);
 
 			assertThat(result3).hasSize(1);
 			assertThat(result3.getContent().get(0).getProfileId()).isEqualTo(profileId2);
-			assertThat(result3.getContent().get(0).isFollow()).isTrue();
+			assertThat(result3.getContent().get(0).isFollow()).isEqualTo(true);
 		}
 
 		@Test
@@ -226,11 +226,11 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			//then
 			assertThat(results).hasSize(3);
 			assertThat(results.getContent().get(0).getProfileId()).isEqualTo(profileId1);
-			assertThat(results.getContent().get(0).isFollow()).isFalse();
+			assertThat(results.getContent().get(0).isFollow()).isEqualTo(false);
 			assertThat(results.getContent().get(1).getProfileId()).isEqualTo(profileId2);
-			assertThat(results.getContent().get(1).isFollow()).isTrue();
+			assertThat(results.getContent().get(1).isFollow()).isEqualTo(true);
 			assertThat(results.getContent().get(2).getProfileId()).isEqualTo(profileId3);
-			assertThat(results.getContent().get(2).isFollow()).isFalse();
+			assertThat(results.getContent().get(2).isFollow()).isEqualTo(false);
 		}
 	}
 }

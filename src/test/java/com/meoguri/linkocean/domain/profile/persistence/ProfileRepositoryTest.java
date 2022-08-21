@@ -31,8 +31,8 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		final boolean exists2 = profileRepository.existsByUsername("unsavedUsername");
 
 		//then
-		assertThat(exists1).isTrue();
-		assertThat(exists2).isFalse();
+		assertThat(exists1).isEqualTo(true);
+		assertThat(exists2).isEqualTo(false);
 	}
 
 	@Test
@@ -48,10 +48,10 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		final boolean exists4 = profileRepository.existsByUsernameExceptMe("user2", profileId2);
 
 		//then
-		assertThat(exists1).isFalse();
-		assertThat(exists2).isTrue();
-		assertThat(exists3).isTrue();
-		assertThat(exists4).isFalse();
+		assertThat(exists1).isEqualTo(false);
+		assertThat(exists2).isEqualTo(true);
+		assertThat(exists3).isEqualTo(true);
+		assertThat(exists4).isEqualTo(false);
 	}
 
 	@Test

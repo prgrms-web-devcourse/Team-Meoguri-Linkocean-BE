@@ -58,7 +58,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 			bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
 
 		//then
-		assertThat(exists).isTrue();
+		assertThat(exists).isEqualTo(true);
 	}
 
 	@Test
@@ -109,8 +109,8 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(oFindBookmark).isPresent(),
-			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isTrue(),
-			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isTrue(),
+			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isEqualTo(true),
+			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isEqualTo(true),
 			() -> assertThat(oFindBookmark.get().getTagNames()).contains(tag1.getName())
 		);
 	}
@@ -156,6 +156,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 		//then
 		final Optional<Bookmark> oFoundBookmark = bookmarkRepository.findById(bookmark.getId());
-		assertThat(oFoundBookmark.get().getLikeCount()).isOne();
+		assertThat(oFoundBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 }

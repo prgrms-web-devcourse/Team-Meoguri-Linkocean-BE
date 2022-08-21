@@ -56,7 +56,7 @@ class ReactionQueryTest extends BasePersistenceTest {
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
 
 		//then
-		assertThat(reactionMap.get(LIKE)).isTrue();
-		assertThat(reactionMap.get(HATE)).isFalse();
+		assertThat(reactionMap.get(LIKE)).isEqualTo(true);
+		assertThat(reactionMap.get(HATE)).isEqualTo(false);
 	}
 }

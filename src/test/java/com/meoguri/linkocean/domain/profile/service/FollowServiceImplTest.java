@@ -83,8 +83,8 @@ class FollowServiceImplTest {
 		followService.unfollow(profileId, targetProfileId);
 
 		//then
-		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isZero();
-		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isZero();
+		assertThat(profileService.getByProfileId(user1ProfileId, user1ProfileId).getFolloweeCount()).isEqualTo(0);
+		assertThat(profileService.getByProfileId(user2ProfileId, user2ProfileId).getFollowerCount()).isEqualTo(0);
 	}
 
 	@Test

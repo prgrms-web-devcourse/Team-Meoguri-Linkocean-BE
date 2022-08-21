@@ -33,7 +33,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		//then
 		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
-		assertThat(result.isFavorite()).isTrue();
+		assertThat(result.isFavorite()).isEqualTo(true);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		//then
 		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId);
-		assertThat(result.isFavorite()).isFalse();
+		assertThat(result.isFavorite()).isEqualTo(false);
 	}
 
 	@Test

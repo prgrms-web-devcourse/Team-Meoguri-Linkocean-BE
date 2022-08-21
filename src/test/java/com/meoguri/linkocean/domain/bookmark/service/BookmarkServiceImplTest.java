@@ -378,11 +378,11 @@ class BookmarkServiceImplTest {
 			assertThat(result.getTags())
 				.contains("tag1");
 
-			assertThat(result.getReactionCount().get(LIKE)).isZero();
-			assertThat(result.getReactionCount().get(HATE)).isZero();
+			assertThat(result.getReactionCount().get(LIKE)).isEqualTo(0);
+			assertThat(result.getReactionCount().get(HATE)).isEqualTo(0);
 
-			assertThat(result.getReaction().get(LIKE)).isFalse();
-			assertThat(result.getReaction().get(HATE)).isFalse();
+			assertThat(result.getReaction().get(LIKE)).isEqualTo(false);
+			assertThat(result.getReaction().get(HATE)).isEqualTo(false);
 
 			assertThat(result.getProfile())
 				.extracting(
@@ -419,7 +419,7 @@ class BookmarkServiceImplTest {
 			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(profileId, bookmark.getId());
 
 			//then
-			assertThat(result.isFavorite()).isTrue();
+			assertThat(result.isFavorite()).isEqualTo(true);
 		}
 
 		@Test

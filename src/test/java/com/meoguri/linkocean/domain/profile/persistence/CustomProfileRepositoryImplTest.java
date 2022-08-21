@@ -147,7 +147,7 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(profiles).containsExactly(profile1, profile2, profile3),
-			() -> assertThat(profiles.hasNext()).isFalse()
+			() -> assertThat(profiles.hasNext()).isEqualTo(false)
 		);
 	}
 
@@ -165,7 +165,7 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(profiles.getSize()).isEqualTo(pageableWithSize2.getPageSize()),
-			() -> assertThat(profiles.hasNext()).isTrue()
+			() -> assertThat(profiles.hasNext()).isEqualTo(true)
 		);
 	}
 

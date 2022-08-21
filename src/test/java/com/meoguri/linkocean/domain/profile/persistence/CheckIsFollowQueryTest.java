@@ -46,8 +46,8 @@ class CheckIsFollowQueryTest extends BasePersistenceTest {
 		final boolean follow2 = query.isFollow(followeeId, follower);
 
 		//then
-		assertThat(follow1).isTrue();
-		assertThat(follow2).isFalse();
+		assertThat(follow1).isEqualTo(true);
+		assertThat(follow2).isEqualTo(false);
 	}
 
 	@Test

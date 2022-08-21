@@ -44,8 +44,8 @@ class FollowRepositoryTest extends BasePersistenceTest {
 		final boolean follow2 = followRepository.existsByFollower_idAndFollowee(profileId2, profile1);
 
 		//then
-		assertThat(follow1).isTrue();
-		assertThat(follow2).isFalse();
+		assertThat(follow1).isEqualTo(true);
+		assertThat(follow2).isEqualTo(false);
 	}
 
 	@Test
