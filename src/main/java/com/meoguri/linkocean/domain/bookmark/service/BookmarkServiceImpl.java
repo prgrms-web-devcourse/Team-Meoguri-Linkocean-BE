@@ -135,7 +135,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
-		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
+		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
 
 		/* 결과 반환 */

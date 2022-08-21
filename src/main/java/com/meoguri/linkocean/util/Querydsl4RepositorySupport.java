@@ -20,11 +20,13 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -44,6 +46,14 @@ import com.querydsl.sql.SQLTemplates;
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
+
+	protected static RelationalPathBase<Object> reaction = new RelationalPathBase<>(Object.class, "r", "linkocean",
+		"reaction");
+	protected static NumberPath<Long> r_profileId = Expressions.numberPath(Long.class, reaction, "profile_id");
+
+	protected static NumberPath<Long> r_bookmarkId = Expressions.numberPath(Long.class, reaction, "bookmark_id");
+
+	protected static EnumPath<ReactionType> r_type = Expressions.enumPath(ReactionType.class, reaction, "type");
 
 	protected static RelationalPathBase<Object> favorite = new RelationalPathBase<>(Object.class, "f", "linkocean",
 		"favorite");
