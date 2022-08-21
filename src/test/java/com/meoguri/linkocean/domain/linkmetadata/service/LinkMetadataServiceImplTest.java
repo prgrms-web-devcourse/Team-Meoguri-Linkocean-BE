@@ -35,7 +35,7 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	}
 
 	@Test
-	void 링크_제목_얻기_성공_1트() {
+	void 링크_제목_얻기_성공_첫번째_조회() {
 		//given
 		final String link = "https://www.naver.com";
 
@@ -47,7 +47,7 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	}
 
 	@Test
-	void 링크_제목_얻기_성공_2트() {
+	void 링크_제목_얻기_성공_두번째_조회() {
 		//given
 		final String url = "https://www.naver.com";
 		링크_제목_얻기(url);
@@ -60,7 +60,7 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	}
 
 	@Test
-	void 링크_제목_얻기_실패_유효하지_않은_url() {
+	void 링크_제목_얻기_성공_유효하지_않은_url() {
 		//given
 		final String invalidUrl = "https://www.invalid.com";
 		given(jsoupLinkMetadataService.search(invalidUrl))
@@ -79,25 +79,21 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 		final int batchSize = 3;
 		final Pageable firstPageable = PageRequest.of(0, batchSize);
 
-		//0트 - when
-
 		final String originalTitle1 = 링크_제목_얻기("www.naver1.com");
 		final String originalTitle2 = 링크_제목_얻기("www.naver2.com");
 		final String originalTitle3 = 링크_제목_얻기("www.naver3.com");
 		final String originalTitle4 = 링크_제목_얻기("www.naver4.com");
 		final String originalTitle5 = 링크_제목_얻기("www.naver5.com");
 
-		//0트 - then
 		assertThat(List.of(originalTitle1, originalTitle2, originalTitle3, originalTitle4, originalTitle5))
 			.containsExactly(DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE);
 
-		//n트 - given
 		네이버_링크_메타데이터_업데이트됨();
 
-		//1트 - when
+		//when 첫번째 synchronizeDataAndReturnNextPageable
 		final Pageable secondPageable = linkMetadataService.synchronizeDataAndReturnNextPageable(firstPageable);
 
-		//1트 - then
+		//then
 		final String updated1Title1 = 링크_제목_얻기("www.naver1.com");
 		final String updated1Title2 = 링크_제목_얻기("www.naver2.com");
 		final String updated1Title3 = 링크_제목_얻기("www.naver3.com");
@@ -106,10 +102,10 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 		assertThat(List.of(updated1Title1, updated1Title2, updated1Title3, updated1Title4, updated1Title5))
 			.containsExactly("네이버짱", "네이버짱", "네이버짱", DEFAULT_TITLE, DEFAULT_TITLE);
 
-		//2트 - when
+		//when 두번째 synchronizeDataAndReturnNextPageable
 		final Pageable lastPageable = linkMetadataService.synchronizeDataAndReturnNextPageable(secondPageable);
 
-		//2트 - then
+		//then
 		final String updated2Title1 = 링크_제목_얻기("www.naver1.com");
 		final String updated2Title2 = 링크_제목_얻기("www.naver2.com");
 		final String updated2Title3 = 링크_제목_얻기("www.naver3.com");

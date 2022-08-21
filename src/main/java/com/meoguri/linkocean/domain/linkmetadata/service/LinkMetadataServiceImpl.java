@@ -26,10 +26,10 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 
 	@Transactional
 	@Override
-	public String obtainTitle(final String link) {
-		return linkMetadataRepository.findTitleByLink(new Link(link)).orElseGet(() -> {
-			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(link);
-			linkMetadataRepository.save(new LinkMetadata(link, result.getTitle(), result.getImage()));
+	public String obtainTitle(final String url) {
+		return linkMetadataRepository.findTitleByLink(new Link(url)).orElseGet(() -> {
+			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(url);
+			linkMetadataRepository.save(new LinkMetadata(url, result.getTitle(), result.getImage()));
 			return result.getTitle();
 		});
 	}
