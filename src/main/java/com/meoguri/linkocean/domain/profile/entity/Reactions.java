@@ -39,16 +39,14 @@ public class Reactions {
 		final Optional<Reaction> oReaction = reactions.stream().filter(r -> r.isOf(bookmark)).findAny();
 		ReactionType existedReactionType = oReaction.isEmpty() ? null : oReaction.get().getType();
 
-		/* 북마크에 리액션을 가지고 있지 않으면 추가 */
 		if (existedReactionType == null) {
+			/* 북마크에 리액션을 가지고 있지 않으면 추가 */
 			reactions.add(new Reaction(bookmark, requestType));
-		}
-		/* 북마크에 리액션을 가지고 있으며 같은 타입의 리액션을 하는 경우 취소 */
-		else if (existedReactionType.equals(requestType)) {
+		} else if (existedReactionType.equals(requestType)) {
+			/* 북마크에 리액션을 가지고 있으며 같은 타입의 리액션을 하는 경우 취소 */
 			reactions.remove(oReaction.get());
-		}
-		/* 북마크에 리액션을 가지고 있으며 다른 타입의 리액션을 하는 경우 변경*/
-		else {
+		} else {
+			/* 북마크에 리액션을 가지고 있으며 다른 타입의 리액션을 하는 경우 변경*/
 			oReaction.get().updateType(requestType);
 		}
 
