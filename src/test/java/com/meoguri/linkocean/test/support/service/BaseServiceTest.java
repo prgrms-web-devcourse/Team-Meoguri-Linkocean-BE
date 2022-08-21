@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.test.support.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
+import com.meoguri.linkocean.domain.bookmark.service.ReactionService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.profile.service.FollowService;
@@ -39,6 +42,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private FavoriteService favoriteService;
+
+	@Autowired
+	private ReactionService reactionService;
 
 	@Autowired
 	private LinkMetadataService linkMetadataService;
@@ -98,4 +104,11 @@ public class BaseServiceTest {
 		return bookmarkService.getDetailedBookmark(profileId, bookmarkId);
 	}
 
+	protected void 좋아요_요청(final long profileId, final long bookmarkId) {
+		reactionService.requestReaction(new ReactionCommand(profileId, bookmarkId, LIKE));
+	}
+
+	protected void 싫어요_요청(final long profileId, final long bookmarkId) {
+		reactionService.requestReaction(new ReactionCommand(profileId, bookmarkId, HATE));
+	}
 }
