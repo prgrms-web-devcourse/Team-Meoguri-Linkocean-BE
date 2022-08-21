@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
@@ -27,16 +26,15 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	@Autowired
 	private ProfileService profileService;
 
+
 	@Nested
 	class 프로필_등록_수정_조회 {
 
-		private Profile profile;
 		private long profileId;
 
 		@BeforeEach
 		void setUp() {
-			profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
-			profileId = profile.getId();
+			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 		}
 
 		@Test
@@ -57,13 +55,10 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@Test
 		void 프로필_등록_수정_조회_성공_조회_팔로워_팔로이_카운트의_관점에서() {
 			//given
-			final Profile profile1 = 사용자_프로필_동시_저장_등록("hoho@gmail.com", GOOGLE, "hoho", IT);
-			final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+			final long profileId1 = 사용자_프로필_동시_등록("hoho@gmail.com", GOOGLE, "hoho", IT);
+			final long profileId2 = 사용자_프로필_동시_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
-			final long profileId1 = profile1.getId();
-			final long profileId2 = profile2.getId();
-
-			팔로우_저장(profile1, profile2);
+			팔로우(profileId1, profileId2);
 
 			//when
 			GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(profileId1, profileId1);
@@ -99,8 +94,8 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		@Test
 		void 프로필_등록_수정_조회_실패_사용자_이름_중복_등록() {
 			//given
-			long userId1 = 사용자_저장("user1@gmail.com", GOOGLE).getId();
-			long userId2 = 사용자_저장("user2@gmail.com", GOOGLE).getId();
+			long userId1 = 사용자_없으면_등록("user1@gmail.com", GOOGLE);
+			long userId2 = 사용자_없으면_등록("user2@gmail.com", GOOGLE);
 
 			final String username = "duplicated";
 			final RegisterProfileCommand command1 = new RegisterProfileCommand(userId1, username, List.of(IT));
