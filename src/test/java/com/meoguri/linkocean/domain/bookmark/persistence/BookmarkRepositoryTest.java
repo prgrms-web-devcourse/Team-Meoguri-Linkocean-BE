@@ -37,7 +37,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		// 프로필, 링크 셋업
-		writer = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		writer = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT);
 		writerId = writer.getId();
 
 		linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");

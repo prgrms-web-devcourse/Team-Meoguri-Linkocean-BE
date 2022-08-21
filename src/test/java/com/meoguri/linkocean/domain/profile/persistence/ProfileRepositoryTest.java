@@ -24,7 +24,7 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 	void 사용자_이름_중복_확인_성공() {
 		//given
 		final String savedUsername = "haha";
-		사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, savedUsername, IT, ART);
+		사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, savedUsername, IT, ART);
 
 		//when
 		final boolean exists1 = profileRepository.existsByUsername(savedUsername);
@@ -38,8 +38,8 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 	@Test
 	void existsByUsernameExceptMe_성공() {
 		//given
-		long profileId1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT).getId();
-		long profileId2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT).getId();
+		long profileId1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT).getId();
+		long profileId2 = 사용자_프로필_동시_저장("user2@gmail.com", GOOGLE, "user2", IT).getId();
 
 		//when
 		final boolean exists1 = profileRepository.existsByUsernameExceptMe("user1", profileId1);
@@ -57,7 +57,7 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 	@Test
 	void findProfileFetchFavoriteIdsById_성공() {
 		//given
-		final Profile profile = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 		final Bookmark bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com");
 		final Bookmark bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com");
 		final Bookmark bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
@@ -77,7 +77,7 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 	@Test
 	void findProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
 		//given
-		final Profile profile = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 
 		//when
 		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
