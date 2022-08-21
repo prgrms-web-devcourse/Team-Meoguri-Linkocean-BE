@@ -411,6 +411,26 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.containsExactly(bookmark3, bookmark2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
+
+		/* 카운트 쿼리 최적화 확인 */
+		@Test
+		void 북마크_조회_성공_카테고리_페이징() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.targetProfileId(profileId)
+				.category(IT)
+				.build();
+			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent()).containsExactly(bookmark3, bookmark1);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
 	}
 
 	@Nested
