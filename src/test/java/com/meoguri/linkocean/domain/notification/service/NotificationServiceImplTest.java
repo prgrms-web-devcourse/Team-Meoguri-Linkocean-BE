@@ -15,44 +15,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.notification.entity.Notification;
-import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
-import com.meoguri.linkocean.domain.profile.entity.Follow;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 @Transactional
 @SpringBootTest
-class NotificationServiceImplTest {
+class NotificationServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private NotificationService notificationService;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
-
-	@Autowired
-	private FollowRepository followRepository;
-
-	private Profile senderProfile;
-	private Profile receiver1Profile;
-	private Profile receiver2Profile;
 	private long senderProfileId;
 	private long receiver1ProfileId;
 	private long receiver2ProfileId;
@@ -60,44 +32,29 @@ class NotificationServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		// 사용자, 프로필, 링크 메타 데이터 셋업
-		User sender = userRepository.save(createUser("sender@gmail.com", GOOGLE));
-		User receiver1 = userRepository.save(createUser("receiver1@gmail.com", GOOGLE));
-		User receiver2 = userRepository.save(createUser("receiver2@gmail.com", GOOGLE));
+		senderProfileId = 사용자_프로필_동시_등록("sender@gamil.com", GOOGLE, "sender", IT);
+		receiver1ProfileId = 사용자_프로필_동시_등록("receiver1@gamil.com", GOOGLE, "receiver1", IT);
+		receiver2ProfileId = 사용자_프로필_동시_등록("receiver2@gamil.com", GOOGLE, "receiver2", IT);
 
-		senderProfile = profileRepository.save(new Profile(sender, "sender"));
-		receiver1Profile = profileRepository.save(new Profile(receiver1, "receiver1"));
-		receiver2Profile = profileRepository.save(new Profile(receiver2, "receiver2"));
+		bookmarkId = 북마크_등록(senderProfileId, "www.google.com");
 
-		senderProfileId = senderProfile.getId();
-		receiver1ProfileId = receiver1Profile.getId();
-		receiver2ProfileId = receiver2Profile.getId();
-
-		final LinkMetadata linkMetadata = linkMetadataRepository.save(createLinkMetadata());
-
-		final Bookmark bookmark = createBookmark(senderProfile, linkMetadata, "title", IT, "www.naver.com");
-		bookmarkId = bookmarkRepository.save(bookmark).getId();
-
-		followRepository.save(new Follow(receiver1Profile, senderProfile));
-		followRepository.save(new Follow(receiver2Profile, senderProfile));
+		팔로우(receiver1ProfileId, senderProfileId);
+		팔로우(receiver2ProfileId, senderProfileId);
 	}
 
 	@Test
 	void 북마크_공유_조회_성공() {
 		//given
-		final ShareNotificationCommand command =
-			new ShareNotificationCommand(senderProfileId, receiver1ProfileId, bookmarkId);
-		notificationService.shareNotification(command);
+		북마크_공유(senderProfileId, receiver1ProfileId, bookmarkId);
 
 		//when
 		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);
-		final Notification notification = result.getContent().get(0);
-		assertThat(notification.getType()).isEqualTo(SHARE);
-		assertThat(notification.getReceiver().getId()).isEqualTo(receiver1Profile.getId());
-		assertThat(notification.getInfo()).containsAllEntriesOf(Map.of(
+		assertThat(result.getContent().get(0).getType()).isEqualTo(SHARE);
+		assertThat(result.getContent().get(0).getReceiver().getId()).isEqualTo(receiver1ProfileId);
+		assertThat(result.getContent().get(0).getInfo()).containsAllEntriesOf(Map.of(
 			"bookmark", Map.of(
 				"id", bookmarkId,
 				"title", "title",
@@ -113,23 +70,17 @@ class NotificationServiceImplTest {
 	@Test
 	void 북마크_공유_조회_성공_자기_알림만_조회() {
 		//given
-		final ShareNotificationCommand command1 =
-			new ShareNotificationCommand(senderProfileId, receiver1ProfileId, bookmarkId);
-		notificationService.shareNotification(command1);
-
-		final ShareNotificationCommand command2 =
-			new ShareNotificationCommand(senderProfileId, receiver2ProfileId, bookmarkId);
-		notificationService.shareNotification(command2);
+		북마크_공유(senderProfileId, receiver1ProfileId, bookmarkId);
+		북마크_공유(senderProfileId, receiver2ProfileId, bookmarkId);
 
 		//when
 		final Slice<Notification> result = notificationService.getNotifications(createPageable(), receiver1ProfileId);
 
 		//then
 		assertThat(result).hasSize(1);
-		final Notification notification = result.getContent().get(0);
-		assertThat(notification.getType()).isEqualTo(SHARE);
-		assertThat(notification.getReceiver().getId()).isEqualTo(receiver1Profile.getId());
-		assertThat(notification.getInfo()).containsAllEntriesOf(Map.of(
+		assertThat(result.getContent().get(0).getType()).isEqualTo(SHARE);
+		assertThat(result.getContent().get(0).getReceiver().getId()).isEqualTo(receiver1ProfileId);
+		assertThat(result.getContent().get(0).getInfo()).containsAllEntriesOf(Map.of(
 			"bookmark", Map.of(
 				"id", bookmarkId,
 				"title", "title",

@@ -20,6 +20,8 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
+import com.meoguri.linkocean.domain.notification.service.NotificationService;
+import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.service.FollowService;
 import com.meoguri.linkocean.domain.profile.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
@@ -52,6 +54,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private BookmarkService bookmarkService;
+
+	@Autowired
+	private NotificationService notificationService;
 
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);
@@ -129,5 +134,9 @@ public class BaseServiceTest {
 
 	protected void 싫어요_요청(final long profileId, final long bookmarkId) {
 		reactionService.requestReaction(new ReactionCommand(profileId, bookmarkId, HATE));
+	}
+
+	protected void 북마크_공유(final long senderId, final long receiverId, final long bookmarkId) {
+		notificationService.shareNotification(new ShareNotificationCommand(senderId, receiverId, bookmarkId));
 	}
 }
