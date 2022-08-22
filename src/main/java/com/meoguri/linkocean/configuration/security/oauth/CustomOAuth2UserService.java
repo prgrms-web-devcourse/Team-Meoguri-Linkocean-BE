@@ -27,8 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-	private static final Set<SimpleGrantedAuthority> ROLE_USER = Collections.singleton(
-		new SimpleGrantedAuthority("ROLE_USER"));
+	private static final Set<SimpleGrantedAuthority> ROLE_USER =
+		Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
 	private final UserService userService;
 	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;

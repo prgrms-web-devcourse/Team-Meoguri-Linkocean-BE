@@ -48,5 +48,4 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.exposedHeaders("*")
 			.allowedHeaders("*");
 	}
-
 }
