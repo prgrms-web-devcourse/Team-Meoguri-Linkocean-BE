@@ -29,8 +29,8 @@ class CheckIsFollowQueryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		this.follower = 사용자_프로필_동시_저장_등록("follower@gmail.com", GOOGLE, "follower", IT);
-		this.followee = 사용자_프로필_동시_저장_등록("followee@gmail.com", GOOGLE, "followee", IT);
+		this.follower = 사용자_프로필_동시_저장("follower@gmail.com", GOOGLE, "follower", IT);
+		this.followee = 사용자_프로필_동시_저장("followee@gmail.com", GOOGLE, "followee", IT);
 
 		followerId = follower.getId();
 		followeeId = followee.getId();
@@ -46,8 +46,8 @@ class CheckIsFollowQueryTest extends BasePersistenceTest {
 		final boolean follow2 = query.isFollow(followeeId, follower);
 
 		//then
-		assertThat(follow1).isTrue();
-		assertThat(follow2).isFalse();
+		assertThat(follow1).isEqualTo(true);
+		assertThat(follow2).isEqualTo(false);
 	}
 
 	@Test

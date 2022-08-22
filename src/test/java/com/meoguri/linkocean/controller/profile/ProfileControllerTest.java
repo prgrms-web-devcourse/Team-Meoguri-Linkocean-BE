@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
@@ -139,10 +138,10 @@ class ProfileControllerTest extends BaseControllerTest {
 	void 프로필_상세_조회_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("user1@gmail.com", GOOGLE);
-		final long user1ProfileId = 프로필_등록("user1", emptyList());
+		final long user1ProfileId = 프로필_등록("user1", List.of("IT"));
 
 		유저_등록_로그인("user2@gmail.com", GOOGLE);
-		final long user2ProfileId = 프로필_등록("user2", emptyList());
+		final long user2ProfileId = 프로필_등록("user2", List.of("IT"));
 
 		로그인("user1@gmail.com", GOOGLE);
 		팔로우(user2ProfileId);

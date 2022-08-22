@@ -162,8 +162,8 @@ class ProfileTest {
 			final List<Boolean> isFavorites = profile.isFavoriteBookmarks(of(bookmark1, bookmark2));
 
 			//then
-			assertThat(isFavorite1).isTrue();
-			assertThat(isFavorite2).isFalse();
+			assertThat(isFavorite1).isEqualTo(true);
+			assertThat(isFavorite2).isEqualTo(false);
 			assertThat(isFavorites).containsExactly(true, false);
 		}
 
@@ -181,13 +181,13 @@ class ProfileTest {
 		void 프로필_즐겨찾기_취소_성공() {
 			//given
 			profile.favorite(bookmark1);
-			assertThat(profile.isFavoriteBookmark(bookmark1)).isTrue();
+			assertThat(profile.isFavoriteBookmark(bookmark1)).isEqualTo(true);
 
 			//when
 			profile.unfavorite(bookmark1);
 
 			//then
-			assertThat(profile.isFavoriteBookmark(bookmark1)).isFalse();
+			assertThat(profile.isFavoriteBookmark(bookmark1)).isEqualTo(false);
 		}
 
 		@Test

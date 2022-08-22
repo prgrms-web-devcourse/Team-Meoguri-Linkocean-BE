@@ -1,14 +1,20 @@
-package com.meoguri.linkocean.util;
+package com.meoguri.linkocean.util.querydsl;
+
+import static com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.querydsl.core.types.CollectionExpression;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.MapExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQuery;
+
+import lombok.AllArgsConstructor;
 
 /**
  * 동적 Join 을 제공하기 위한 클래스
@@ -17,8 +23,7 @@ import com.querydsl.core.types.Predicate;
 public class JoinInfoBuilder {
 
 	// join 목록
-	List<Join> joinList = new ArrayList<>();
-
+	final List<Join> joinList = new ArrayList<>();
 
 	private static JoinInfoBuilder builder() {
 		return new JoinInfoBuilder();
@@ -99,4 +104,13 @@ public class JoinInfoBuilder {
 		return this;
 	}
 
+	@AllArgsConstructor
+	public static class JoinIf {
+		final boolean expression;
+		final Supplier<JoinInfoBuilder> joinInfo;
+
+		<T> JPAQuery<T> apply(final JPAQuery<T> query) {
+			return expression ? joinIf(true, query, joinInfo) : query;
+		}
+	}
 }

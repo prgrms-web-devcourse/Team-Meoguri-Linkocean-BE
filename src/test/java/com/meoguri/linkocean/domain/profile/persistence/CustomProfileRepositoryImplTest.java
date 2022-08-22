@@ -37,9 +37,9 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		//set up 3 users
-		profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
-		profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
-		profile3 = 사용자_프로필_동시_저장_등록("user3@kakao.com", KAKAO, "user3", IT);
+		profile1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
+		profile2 = 사용자_프로필_동시_저장("user2@naver.com", NAVER, "user2", IT);
+		profile3 = 사용자_프로필_동시_저장("user3@kakao.com", KAKAO, "user3", IT);
 
 		profileId1 = profile1.getId();
 		profileId2 = profile2.getId();
@@ -147,7 +147,7 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(profiles).containsExactly(profile1, profile2, profile3),
-			() -> assertThat(profiles.hasNext()).isFalse()
+			() -> assertThat(profiles.hasNext()).isEqualTo(false)
 		);
 	}
 
@@ -165,7 +165,7 @@ class CustomProfileRepositoryImplTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(profiles.getSize()).isEqualTo(pageableWithSize2.getPageSize()),
-			() -> assertThat(profiles.hasNext()).isTrue()
+			() -> assertThat(profiles.hasNext()).isEqualTo(true)
 		);
 	}
 
