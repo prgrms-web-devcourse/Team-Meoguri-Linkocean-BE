@@ -39,10 +39,11 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 	public Pageable synchronizeDataAndReturnNextPageable(final Pageable pageable) {
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
 
-		for (LinkMetadata link : slice) {
+		slice.forEach(link -> {
 			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(Link.toString(link.getLink()));
 			link.update(result.getTitle(), result.getImage());
-		}
+		});
+
 		return slice.hasNext() ? slice.nextPageable() : null;
 	}
 

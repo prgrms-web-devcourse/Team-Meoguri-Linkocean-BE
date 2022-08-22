@@ -17,13 +17,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
-	@Modifying(clearAutomatically = true)
-	@Query("delete "
-		+ "from Reaction r "
-		+ "where r.profile.id = :profileId "
-		+ "and r.bookmark.id = :bookmarkId")
-	void deleteByProfile_idAndBookmark_id(long profileId, long bookmarkId);
-
 	Optional<Reaction> findByProfile_idAndBookmark(long profileId, Bookmark bookmark);
 
 	@Query("select r.type as type, count(r) as cnt "

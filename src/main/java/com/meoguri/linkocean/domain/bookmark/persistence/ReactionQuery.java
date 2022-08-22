@@ -19,17 +19,6 @@ public class ReactionQuery {
 
 	private final ReactionRepository reactionRepository;
 
-	/* 북마크의 리액션별 카운트 조회 */
-	public Map<ReactionType, Long> getReactionCountMap(Bookmark bookmark) {
-		final Map<ReactionType, Long> reactionCountMap = reactionRepository.countReactionGroup(bookmark);
-
-		Arrays.stream(ReactionType.values())
-			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
-			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
-
-		return reactionCountMap;
-	}
-
 	/* profile 의 bookmark 에 대한 리액션 여부 */
 	public Map<ReactionType, Boolean> getReactionMap(final long profileId, final Bookmark bookmark) {
 		final Optional<Reaction> oReaction = reactionRepository.findByProfile_idAndBookmark(profileId, bookmark);

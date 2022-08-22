@@ -2,11 +2,13 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
@@ -532,5 +535,23 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
 		}
 
+	}
+
+	@Test
+	void 북마크의_리액션_별_카운트_조회_성공() {
+		//given
+		final Profile profile1 = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT);
+		final Profile profile2 = 사용자_프로필_동시_저장("papa@gmail.com", GOOGLE, "papa", IT);
+		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile1, "www.google.com");
+
+		싫어요_저장(profile1, bookmark);
+		좋아요_저장(profile2, bookmark);
+
+		//when
+		final Map<ReactionType, Long> group = bookmarkRepository.countReactionGroup(bookmark.getId());
+
+		//then
+		assertThat(group.getOrDefault(LIKE, 0L)).isEqualTo(1);
+		assertThat(group.getOrDefault(HATE, 0L)).isEqualTo(1);
 	}
 }

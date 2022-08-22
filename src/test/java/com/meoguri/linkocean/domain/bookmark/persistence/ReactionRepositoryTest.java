@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Map;
@@ -38,28 +37,6 @@ class ReactionRepositoryTest extends BasePersistenceTest {
 		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
 		bookmark = 북마크_저장(profile, linkMetadata, "www.google.com");
 		bookmarkId = bookmark.getId();
-	}
-
-	@Test
-	void deleteByProfile_idAndBookmark_id_성공() {
-		//given
-		final Reaction reaction = reactionRepository.save(new Reaction(profile, bookmark, LIKE));
-
-		//when
-		reactionRepository.deleteByProfile_idAndBookmark_id(profileId, bookmarkId);
-
-		//then
-		assertThat(reactionRepository.findById(reaction.getId())).isEmpty();
-	}
-
-	@Test
-	void 리액션_저장_실패_중복_요청() {
-		//given
-		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
-
-		//when then
-		assertThatDataIntegrityViolationException()
-			.isThrownBy(() -> reactionRepository.save(new Reaction(profile, bookmark, HATE)));
 	}
 
 	@Test
