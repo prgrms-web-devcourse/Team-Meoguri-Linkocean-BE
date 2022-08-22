@@ -1,0 +1,17 @@
+= Linkocean API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+include::api/Boomark-API.adoc[]
+include::api/Category-API.adoc[]
+include::api/Favorite-API.adoc[]
+include::api/Follow-API.adoc[]
+include::api/LinkMetadata-API.adoc[]
+include::api/Login-API.adoc[]
+include::api/Notification-API.adoc[]
+include::api/Profile_API.adoc[]
+include::api/Reaction-API.adoc[]

@@ -9,11 +9,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomProfileRepository {
 
-	@Query("select p "
-		+ "from Profile p "
-		+ "where p.user.id = :userId")
-	Optional<Profile> findByUserId(long userId);
-
+	/* 사용자 이름 중복 확인 */
 	boolean existsByUsername(String username);
 
 	@Query("select count(p) > 0 "
@@ -21,5 +17,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 		+ "where p.username = :updateUsername "
 		+ "and not p.id = :profileId")
 	boolean existsByUsernameExceptMe(String updateUsername, long profileId);
+
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.favoriteBookmarkIds "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFavoriteIdsById(long profileId);
 }
 

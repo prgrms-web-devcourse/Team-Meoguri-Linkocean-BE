@@ -1,54 +1,47 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import static java.util.List.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@DataJpaTest
-class FollowRepositoryTest {
+class FollowRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private FollowRepository followRepository;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
 	private Profile profile1;
 	private Profile profile2;
 
+	private long profileId1;
+	private long profileId2;
+
 	@BeforeEach
 	void setUp() {
-		User user1 = userRepository.save(new User("haha@gmail.com", "GOOGLE"));
-		User user2 = userRepository.save(new User("papa@gmail.com", "GOOGLE"));
+		profile1 = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
 
-		profile1 = profileRepository.save(new Profile(user1, "haha"));
-		profile2 = profileRepository.save(new Profile(user2, "papa"));
+		profileId1 = profile1.getId();
+		profileId2 = profile2.getId();
 	}
 
 	@Test
 	void 팔로우_여부_조회_성공() {
 		//given
-		Profile follower = profile1;
-		Profile followee = profile2;
-		followRepository.save(new Follow(follower, followee));
+		팔로우_저장(profile1, profile2);
 
-		final boolean follow1 = followRepository.existsByFollower_idAndFollowee(follower.getId(), followee);
-		final boolean follow2 = followRepository.existsByFollower_idAndFollowee(followee.getId(), follower);
+		//when
+		final boolean follow1 = followRepository.existsByFollower_idAndFollowee(profileId1, profile2);
+		final boolean follow2 = followRepository.existsByFollower_idAndFollowee(profileId2, profile1);
 
 		//then
 		assertThat(follow1).isTrue();
@@ -56,34 +49,16 @@ class FollowRepositoryTest {
 	}
 
 	@Test
-	void 팔로워_팔로이_조합으로_조회_성공() {
-		//given
-		Profile follower = profile1;
-		Profile followee = profile2;
-		followRepository.save(new Follow(follower, followee));
-
-		//when
-		final Optional<Follow> oFollow = followRepository.findByProfiles(follower, followee);
-
-		//then
-		assertThat(oFollow).isPresent().get()
-			.extracting(Follow::getFollower, Follow::getFollowee)
-			.containsExactly(follower, followee);
-	}
-
-	@Test
 	void 팔로워_팔로이_카운트_성공() {
 		//given
-		Profile follower = profile1;
-		Profile followee = profile2;
-		followRepository.save(new Follow(follower, followee));
+		팔로우_저장(profile1, profile2);
 
 		//when
-		int countProfile1Follower = followRepository.countFollowerByProfile(follower);
-		int countProfile1Followee = followRepository.countFolloweeByProfile(follower);
+		int countProfile1Follower = followRepository.countFollowerByProfile(profile1);
+		int countProfile1Followee = followRepository.countFolloweeByProfile(profile1);
 
-		int countProfile2Follower = followRepository.countFollowerByProfile(followee);
-		int countProfile2Followee = followRepository.countFolloweeByProfile(followee);
+		int countProfile2Follower = followRepository.countFollowerByProfile(profile2);
+		int countProfile2Followee = followRepository.countFolloweeByProfile(profile2);
 
 		//then
 		assertThat(countProfile1Follower).isEqualTo(0);
@@ -96,18 +71,14 @@ class FollowRepositoryTest {
 	@Test
 	void 팔로이_아이디_집합_조회_성공() {
 		//given
-		Profile follower = profile1;
-		Profile followee = profile2;
-		followRepository.save(new Follow(follower, followee));
+		팔로우_저장(profile1, profile2);
 
 		//when
-		final Set<Long> followeeIdsOfUser1 =
-			followRepository.findFolloweeIdsFollowedBy(profile1.getId(), of(profile1, profile2));
-		final Set<Long> followeeIdsOfUser2 =
-			followRepository.findFolloweeIdsFollowedBy(profile2.getId(), of(profile1, profile2));
+		final Set<Long> followeeIds1 = followRepository.findFolloweeIdsFollowedBy(profileId1, of(profile1, profile2));
+		final Set<Long> followeeIds2 = followRepository.findFolloweeIdsFollowedBy(profileId2, of(profile1, profile2));
 
 		//then
-		assertThat(followeeIdsOfUser1).containsExactly(profile2.getId());
-		assertThat(followeeIdsOfUser2).isEmpty();
+		assertThat(followeeIds1).containsExactly(profileId2);
+		assertThat(followeeIds2).isEmpty();
 	}
 }

@@ -2,9 +2,9 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QFavorite.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
-import static com.meoguri.linkocean.util.JoinInfoBuilder.Initializer.*;
+import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
+import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,11 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.util.Querydsl4RepositorySupport;
+import com.meoguri.linkocean.util.querydsl.CustomPath;
+import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.impl.JPAQuery;
 
 @Repository
 public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport implements CustomBookmarkRepository {
@@ -33,83 +33,94 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		super(Bookmark.class);
 	}
 
-	/* 작성자의 id 로 북마크 페이징 조회 */
+	/* 대상의 프로필 id 로 북마크 페이징 조회 */
 	@Override
 	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
+		/* cond 풀기 */
 		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
-		final boolean isFavorite = findCond.isFavorite();
+		final boolean isFavorite = toBoolean(findCond.getFavorite());
 		final List<String> tags = findCond.getTags();
 		final String title = findCond.getTitle();
 		final OpenType openType = findCond.getOpenType();
 
-		JPAQuery<Bookmark> base = selectFrom(bookmark);
-
-		joinIf(category != null, base,
-			() -> join(bookmark.profile).fetchJoin()
-				.join(bookmark.linkMetadata).fetchJoin());
-
-		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark),
-					favorite.owner.id.eq(targetProfileId)));
-
-		joinIf(tags != null, base,
-			() -> join(bookmark.profile).fetchJoin());
-
+		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
-
 		/* 즐겨찾기 요청이라면 작성자 id 기준 필터링이 없다 */
-		final Long writerId = isFavorite ? null : targetProfileId;
+		final Long writerId = toBoolean(isFavorite) ? null : targetProfileId;
+
+		/* 페이지 쿼리 */
 		return applyPagination(
 			convertBookmarkSort(pageable),
-			base.where(
+			selectFrom(bookmark),
+			joinIfs(
+				joinIf(category != null,
+					() -> join(bookmark.writer).fetchJoin()
+						.join(bookmark.linkMetadata).fetchJoin()),
+				joinIf(tags != null,
+					() -> join(bookmark.writer).fetchJoin())
+			),
+			where(
 				titleContains(title),
 				categoryEq(category),
-				profileIdEq(writerId),
+				writerIdEq(writerId),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
 				availableByOpenType(openType),
 				registered()
-			), Bookmark::getTagNames
+			),
+			Bookmark::getTagNames
 		);
 	}
 
 	/* 피드 북마크 조회 */
 	@Override
 	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
+		/* cond 풀기 */
 		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Category category = findCond.getCategory();
 		final String title = findCond.getTitle();
-		final boolean isFavorite = findCond.isFavorite();
-		final boolean isFollow = findCond.isFollow();
+		final boolean isFavorite = toBoolean(findCond.getFavorite());
+		final boolean isFollow = toBoolean(findCond.getFollow());
 		final List<String> tags = findCond.getTags();
 
-		JPAQuery<Bookmark> base = selectFrom(bookmark)
-			.join(bookmark.profile).fetchJoin();
-
-		joinIf(category != null, base,
-			() -> join(bookmark.profile).fetchJoin()
-				.join(bookmark.linkMetadata).fetchJoin());
-
-		joinIf(isFavorite, base,
-			() -> join(favorite)
-				.on(favorite.bookmark.eq(bookmark)));
-
-		joinIf(tags != null, base,
-			() -> join(bookmark.profile).fetchJoin());
-
+		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
 		final List<Long> bookmarkIds = getBookmarkIds(tags);
+		/* 즐겨찾기는 엔티티가 아니라 join 이 아닌 별도 쿼리를 통해 북마크 아이디를 셋업 */
+		final List<Long> favoriteBookmarkIds = getFavoriteBookmarkIds(isFavorite, currentUserProfileId);
+
+		/* 페이지 쿼리 */
 		return applyPagination(
 			convertBookmarkSort(pageable),
-			base.where(
+			selectFrom(bookmark),
+			joinIfs(
+				joinIf(category != null,
+					() -> join(bookmark.writer).fetchJoin()
+						.join(bookmark.linkMetadata).fetchJoin()),
+
+				joinIf(tags != null,
+					() -> join(bookmark.writer).fetchJoin())
+			),
+			where(
 				titleContains(title),
 				categoryEq(category),
 				bookmarkIdsIn(bookmarkIds),
+				bookmarkIdsIn(favoriteBookmarkIds),
 				followedBy(isFollow, currentUserProfileId),
 				availableByOpenType(currentUserProfileId),
 				registered()
-			), Bookmark::getTagNames
+			),
+			Bookmark::getTagNames
 		);
+
+	}
+
+	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
+		return !isFavorite ? null : getJpasqlQuery()
+			.select(CustomPath.bookmarkId)
+			.from(CustomPath.favorite)
+			.where(CustomPath.profileId.eq(profileId))
+			.fetch();
 	}
 
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
@@ -130,8 +141,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.category.eq(category));
 	}
 
-	private BooleanBuilder profileIdEq(final Long profileId) {
-		return nullSafeBuilder(() -> bookmark.profile.id.eq(profileId));
+	private BooleanBuilder writerIdEq(final Long writerId) {
+		return nullSafeBuilder(() -> bookmark.writer.id.eq(writerId));
 	}
 
 	private BooleanBuilder bookmarkIdsIn(final List<Long> bookmarkIds) {
@@ -143,7 +154,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private BooleanBuilder followedBy(long currentUserProfileId) {
-		return nullSafeBuilder(() -> bookmark.profile.in(
+		return nullSafeBuilder(() -> bookmark.writer.in(
 			select(follow.followee)
 				.from(follow)
 				.where(follow.follower.id.eq(currentUserProfileId))
@@ -167,7 +178,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() ->
 			bookmark.openType.eq(OpenType.ALL)
 				.or(bookmark.openType.eq(OpenType.PARTIAL).and(followedBy(currentUserProfileId)))
-				.or(bookmark.profile.id.eq(currentUserProfileId))
+				.or(bookmark.writer.id.eq(currentUserProfileId))
 		);
 	}
 
@@ -185,19 +196,27 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private List<OrderSpecifier<?>> toBookmarkOrderSpecifiers(Pageable pageable) {
-		final Order direction = Order.DESC;
 		final List<OrderSpecifier<?>> result = new ArrayList<>();
 
 		for (Sort.Order order : pageable.getSort()) {
-			switch (order.getProperty()) {
-				case "like":
-					result.add(new OrderSpecifier<>(direction, bookmark.likeCount));
-					break;
-				case "upload":
-					result.add(new OrderSpecifier<>(direction, bookmark.createdAt));
-					break;
+			final String property = order.getProperty();
+			if ("like".equals(property)) {
+				/* 좋아요 숫자 내림 차순 정렬 */
+				result.add(new OrderSpecifier<>(Order.DESC, bookmark.likeCount));
+			} else if ("upload".equals(property)) {
+				/* 생성일시 내림 차순 정렬 */
+				result.add(new OrderSpecifier<>(Order.DESC, bookmark.createdAt));
 			}
 		}
+
+		/* 생성일시 내림 차순 정렬이 적용되지 않았다면 적용 */
+		final boolean containsCreatedAtOrderSpecifier = result.stream()
+			.map(OrderSpecifier::getTarget)
+			.anyMatch(t -> t.equals(bookmark.createdAt));
+		if (!containsCreatedAtOrderSpecifier) {
+			result.add(new OrderSpecifier<>(Order.DESC, bookmark.createdAt));
+		}
+
 		return result;
 	}
 }

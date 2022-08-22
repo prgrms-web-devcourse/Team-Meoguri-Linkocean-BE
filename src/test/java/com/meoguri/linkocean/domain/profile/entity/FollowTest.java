@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
-import static com.meoguri.linkocean.common.Assertions.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 
 import org.junit.jupiter.api.Test;
 

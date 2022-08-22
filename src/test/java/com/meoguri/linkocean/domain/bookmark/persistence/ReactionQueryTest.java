@@ -1,94 +1,62 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(ReactionQuery.class)
-@DataJpaTest
-class ReactionQueryTest {
+class ReactionQueryTest extends BasePersistenceTest {
 
 	@Autowired
 	private ReactionQuery reactionQuery;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private BookmarkRepository bookmarkRepository;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
-
-	@Autowired
-	private ReactionRepository reactionRepository;
 
 	private Profile profile;
 	private Bookmark bookmark;
 
 	@BeforeEach
 	void setUp() {
-		profile = profileRepository.save(new Profile(userRepository.save(createUser()), "haha"));
-		bookmark = bookmarkRepository.save(new Bookmark(
-			profile,
-			linkMetadataRepository.save(createLinkMetadata()),
-			"title",
-			"memo",
-			OpenType.ALL,
-			Category.HEALTH,
-			"www.google.com",
-			Collections.emptyList()
-		));
+		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		bookmark = 북마크_링크_메타데이터_동시_저장(profile, "google.com");
 	}
 
 	@Test
-	void 리액션_별_카운트를_조회할_수_있다() {
+	void 북마크의_리액션별_카운트_조회_성공() {
 		//given
-		final User user1 = userRepository.save(createUser("test@gmail.com", "GOOGLE"));
-		final Profile profile1 = profileRepository.save(createProfile(user1, "test"));
-
-		reactionRepository.save(new Reaction(profile, bookmark, Reaction.ReactionType.LIKE.name()));
-		reactionRepository.save(new Reaction(profile1, bookmark, Reaction.ReactionType.HATE.name()));
+		final Profile anotherProfile = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+		좋아요_저장(profile, bookmark);
+		싫어요_저장(anotherProfile, bookmark);
 
 		//when
-		final Map<Reaction.ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
+		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
 
 		//then
-		assertThat(reactionCountMap.get(Reaction.ReactionType.LIKE)).isEqualTo(1);
-		assertThat(reactionCountMap.get(Reaction.ReactionType.HATE)).isEqualTo(1);
+		assertThat(reactionCountMap.get(LIKE)).isEqualTo(1);
+		assertThat(reactionCountMap.get(HATE)).isEqualTo(1);
 	}
 
 	@Test
 	void 리액션_여부_맵을_조회할_수_있다() {
 		//given
-		reactionRepository.save(new Reaction(profile, bookmark, Reaction.ReactionType.LIKE.name()));
+		좋아요_저장(profile, bookmark);
 
 		//when
-		final Map<Reaction.ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
+		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
 
 		//then
-		assertThat(reactionMap.get(Reaction.ReactionType.LIKE)).isTrue();
-		assertThat(reactionMap.get(Reaction.ReactionType.HATE)).isFalse();
+		assertThat(reactionMap.get(LIKE)).isTrue();
+		assertThat(reactionMap.get(HATE)).isFalse();
 	}
 }

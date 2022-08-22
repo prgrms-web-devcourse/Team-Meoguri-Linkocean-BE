@@ -20,6 +20,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
@@ -52,7 +53,7 @@ public class Notification implements Serializable {
 
 	/* 다양한 정보를 담기위해 json 타입을 사용한다 */
 	@Type(type = "json")
-	@Column(nullable = false, columnDefinition = "jsonb")
+	@Column(nullable = false, columnDefinition = "json")
 	private Map<String, Object> info = new HashMap<>();
 
 	public Notification(final NotificationType type, final Profile receiver, final Map<String, Object> info) {

@@ -1,0 +1,8 @@
+[[LinkMetadata-API]]
+== 링크 메타데이터 API
+
+'''
+
+=== 링크 메타데이터 제목 조회
+
+operation::/link-metadata-rest-docs-test/링크_메타데이터_제목_조회_api/[snippets='http-request,request-headers,request-fields,http-response,response-fields']

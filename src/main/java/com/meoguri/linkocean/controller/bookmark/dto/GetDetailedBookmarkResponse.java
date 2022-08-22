@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.ProfileResult;
 
@@ -32,8 +32,8 @@ public final class GetDetailedBookmarkResponse {
 	private Boolean isFavorite;
 	private LocalDateTime createdAt;
 	private List<String> tags;
-	private Map<Reaction.ReactionType, Long> reactionCount;
-	private Map<Reaction.ReactionType, Boolean> reaction;
+	private Map<ReactionType, Long> reactionCount;
+	private Map<ReactionType, Boolean> reaction;
 	private GetBookmarkProfileResponse profile;
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {

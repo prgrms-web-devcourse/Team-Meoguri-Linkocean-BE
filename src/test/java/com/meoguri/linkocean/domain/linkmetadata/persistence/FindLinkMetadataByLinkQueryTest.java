@@ -1,44 +1,38 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
-import static com.meoguri.linkocean.common.Assertions.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(FindLinkMetadataByUrlQuery.class)
-@DataJpaTest
-class FindLinkMetadataByLinkQueryTest {
+class FindLinkMetadataByLinkQueryTest extends BasePersistenceTest {
 
 	@Autowired
-	private FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
+	private FindLinkMetadataByUrlQuery query;
 
 	@Test
 	void url_이용해_link_metadata_조회_성공() {
 		//given
-		final LinkMetadata linkMetadata = linkMetadataRepository.save(createLinkMetadata());
+		final String saveLink = "naver.com";
+		final LinkMetadata savedLinkMetadata = 링크_메타데이터_저장(saveLink, "네이버", "naver.png");
 
 		//when
-		final LinkMetadata findLinkMetadata =
-			findLinkMetadataByUrlQuery.findByUrl(Link.toString(linkMetadata.getLink()));
+		final LinkMetadata foundLinkMetadata = query.findByUrl("naver.com");
 
 		//then
-		assertThat(findLinkMetadata).isEqualTo(linkMetadata);
+		assertThat(foundLinkMetadata).isEqualTo(savedLinkMetadata);
 	}
 
 	@Test
 	void 존재하지_않는_url_조회() {
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> findLinkMetadataByUrlQuery.findByUrl("invalid.com"));
+			.isThrownBy(() -> query.findByUrl("invalid.com"));
 	}
 }

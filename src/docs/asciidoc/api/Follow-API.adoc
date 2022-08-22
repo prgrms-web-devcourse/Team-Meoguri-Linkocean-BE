@@ -1,0 +1,12 @@
+[[Follow-API]]
+== 팔로우 API
+
+'''
+
+=== 팔로우
+
+operation::/follow-rest-docs-test/팔로우_api/[snippets='http-request,request-headers,request-parameters,http-response']
+
+=== 언팔로우
+
+operation::/follow-rest-docs-test/언팔로우_api/[snippets='http-request,request-headers,request-parameters,http-response']

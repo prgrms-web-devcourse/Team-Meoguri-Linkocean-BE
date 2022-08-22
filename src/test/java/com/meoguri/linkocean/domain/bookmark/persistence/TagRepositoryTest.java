@@ -1,32 +1,30 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@DataJpaTest
-class TagRepositoryTest {
+class TagRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private TagRepository tagRepository;
 
+	/* Note - mysql varchar case-insensitive */
 	@Test
-	void 이름으로_태그_조회_하기() {
+	void 이름으로_조회_성공() {
 		//given
-		final Tag tag = createTag();
-		final Tag savedTag = tagRepository.save(tag);
+		final Tag savedTag = 태그_저장("tag태그");
 
 		//when
-		final Optional<Tag> retrievedTag = tagRepository.findByName(tag.getName());
+		final Optional<Tag> oFoundTag = tagRepository.findByName("TAG태그");
 
 		//then
-		assertThat(retrievedTag.get()).isEqualTo(savedTag);
+		assertThat(oFoundTag).isPresent().get().isEqualTo(savedTag);
 	}
 }

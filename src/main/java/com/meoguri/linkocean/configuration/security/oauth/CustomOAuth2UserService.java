@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.configuration.security.oauth;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -11,10 +13,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,43 +27,31 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-	private final UserRepository userRepository;
+	private static final Set<SimpleGrantedAuthority> ROLE_USER = Collections.singleton(
+		new SimpleGrantedAuthority("ROLE_USER"));
+
+	private final UserService userService;
 	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
 
-	public CustomOAuth2UserService(final UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public CustomOAuth2UserService(final UserService userService) {
+		this.userService = userService;
 		this.delegate = new DefaultOAuth2UserService();
 	}
 
-	/**
-	 * delegate 를 통한 loadUser 수행
-	 */
+	/* delegate 를 통한 loadUser */
 	@Override
 	public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-		log.info("CustomOAuth2UserService loadUser start");
 		final OAuth2User oAuth2User = delegate.loadUser(userRequest);
+
 		final String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-		final OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
-		final User user = userOf(attributes);
+		final SecurityOAuthType securityOAuthType = SecurityOAuthType.valueOf(registrationId.toUpperCase());
+		final Map<String, Object> attributes = oAuth2User.getAttributes();
 
-		log.info("loadUser with email : {} oauthType : {}", Email.toString(user.getEmail()), user.getOauthType());
-		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-			attributes.getAttributes(),
-			"email"
-		);
-	}
+		final Email email = securityOAuthType.parseEmail(attributes);
+		final OAuthType oAuthType = securityOAuthType.getOAuthType();
 
-	private User userOf(final OAuthAttributes attributes) {
-		return userRepository.findByEmailAndOAuthType(
-				new Email(attributes.getEmail()), OAuthType.of(attributes.getOAuthType()))
-			.orElseGet(() -> {
-				final User user = userRepository.save(attributes.toEntity());
-
-				log.info("new user save with email : {}, oauthType : {}",
-					Email.toString(user.getEmail()), user.getOauthType());
-				return user;
-			});
+		userService.registerIfNotExists(email, oAuthType);
+		return new DefaultOAuth2User(ROLE_USER, attributes, "email");
 	}
 }

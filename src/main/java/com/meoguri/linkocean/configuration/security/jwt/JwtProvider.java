@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import io.jsonwebtoken.Claims;
@@ -22,7 +24,7 @@ public class JwtProvider {
 
 	private final JwtProperties jwtProperties;
 
-	public String generate(final String email, final String oauthType) {
+	public String generate(final Email email, final OAuthType oauthType) {
 		final Date now = new Date();
 		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
 
@@ -30,8 +32,8 @@ public class JwtProvider {
 			.setSubject("LinkOcean API Token")
 			.setIssuer("Meoguri")
 			.setIssuedAt(now)
-			.setId(email)
-			.setAudience(oauthType)
+			.setId(Email.toString(email))
+			.setAudience(oauthType.name())
 			.setExpiration(expiration)
 			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
 			.compact();

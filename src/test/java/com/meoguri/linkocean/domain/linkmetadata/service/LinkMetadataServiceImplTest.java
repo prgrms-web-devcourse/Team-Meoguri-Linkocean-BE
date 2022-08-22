@@ -4,110 +4,126 @@ import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataServic
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
+import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-@Transactional
-@SpringBootTest
-class LinkMetadataServiceImplTest {
+class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private LinkMetadataService linkMetadataService;
-
-	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
 
 	@MockBean
 	private JsoupLinkMetadataService jsoupLinkMetadataService;
 
 	@BeforeEach
 	void setUp() {
-		when(jsoupLinkMetadataService.search("https://www.naver.com"))
-			.thenReturn(new SearchLinkMetadataResult("네이버", "naver.png"));
+		given(jsoupLinkMetadataService.search(anyString()))
+			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
+
+		given(jsoupLinkMetadataService.search("https://www.naver.com"))
+			.willReturn(new SearchLinkMetadataResult("네이버", "naver.png"));
 	}
 
 	@Test
-	void db에_있는_url_링크메타데이터_타이틀_조회_성공() {
+	void 링크_제목_얻기_성공_첫번째_조회() {
 		//given
 		final String link = "https://www.naver.com";
-		linkMetadataRepository.save(new LinkMetadata(link, "네이버", "naver.png"));
 
 		//when
-		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(link);
+		final String title = linkMetadataService.obtainTitle(link);
 
 		//then
 		assertThat(title).isEqualTo("네이버");
 	}
 
 	@Test
-	void 새로_저장된_url_링크메타데이터_타이틀_조회_성공() {
+	void 링크_제목_얻기_성공_두번째_조회() {
 		//given
-		final String link = "https://www.naver.com";
+		final String url = "https://www.naver.com";
+		링크_제목_얻기(url);
 
 		//when
-		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(link);
+		final String title = linkMetadataService.obtainTitle(url);
 
 		//then
 		assertThat(title).isEqualTo("네이버");
-		assertThat(linkMetadataRepository.count()).isEqualTo(1L);
 	}
 
 	@Test
-	void 유효하지_않은_url_링크메타데이터_조회() {
+	void 링크_제목_얻기_성공_유효하지_않은_url() {
 		//given
-		final String invalidLink = "https://www.invalid.com";
-		given(jsoupLinkMetadataService.search(invalidLink))
+		final String invalidUrl = "https://www.invalid.com";
+		given(jsoupLinkMetadataService.search(invalidUrl))
 			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
 		//when
-		final String title = linkMetadataService.getOrSaveLinkMetadataTitle(invalidLink);
+		final String title = linkMetadataService.obtainTitle(invalidUrl);
 
 		// then
 		assertThat(title).isEqualTo(DEFAULT_TITLE);
 	}
 
 	@Test
-	void 전체_업데이트_성공() {
+	void synchronizeDataAndReturnNextPageable_성공() {
 		//given
-		List<LinkMetadata> linkMetadataList = new ArrayList<>();
-		for (int i = 0; i < 5; ++i) {
-			linkMetadataList.add(new LinkMetadata(
-				String.format("www.naver%d.com", i),
-				String.format("title%d", i),
-				String.format("image%d", i)
-				)
-			);
-		}
-
-		linkMetadataRepository.saveAllAndFlush(linkMetadataList);
-
-		final String newTitle = "newTitle";
-		final String newImage = "newImage";
-		given(jsoupLinkMetadataService.search(anyString()))
-			.willReturn(new SearchLinkMetadataResult(newTitle, newImage));
-
-		//when
 		final int batchSize = 3;
-		linkMetadataService.synchronizeDataAndReturnNextPageable(PageRequest.of(0, batchSize));
+		final Pageable firstPageable = PageRequest.of(0, batchSize);
+
+		final String originalTitle1 = 링크_제목_얻기("www.naver1.com");
+		final String originalTitle2 = 링크_제목_얻기("www.naver2.com");
+		final String originalTitle3 = 링크_제목_얻기("www.naver3.com");
+		final String originalTitle4 = 링크_제목_얻기("www.naver4.com");
+		final String originalTitle5 = 링크_제목_얻기("www.naver5.com");
+
+		assertThat(List.of(originalTitle1, originalTitle2, originalTitle3, originalTitle4, originalTitle5))
+			.containsExactly(DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE, DEFAULT_TITLE);
+
+		네이버_링크_메타데이터_업데이트됨();
+
+		//when 첫번째 synchronizeDataAndReturnNextPageable
+		final Pageable secondPageable = linkMetadataService.synchronizeDataAndReturnNextPageable(firstPageable);
 
 		//then
-		final List<LinkMetadata> linkMetaDatas = linkMetadataRepository.findAll();
-		assertThat(linkMetaDatas)
-			.filteredOn("title", newTitle)
-			.filteredOn("image", newImage)
-			.hasSize(batchSize);
+		final String updated1Title1 = 링크_제목_얻기("www.naver1.com");
+		final String updated1Title2 = 링크_제목_얻기("www.naver2.com");
+		final String updated1Title3 = 링크_제목_얻기("www.naver3.com");
+		final String updated1Title4 = 링크_제목_얻기("www.naver4.com");
+		final String updated1Title5 = 링크_제목_얻기("www.naver5.com");
+		assertThat(List.of(updated1Title1, updated1Title2, updated1Title3, updated1Title4, updated1Title5))
+			.containsExactly("네이버짱", "네이버짱", "네이버짱", DEFAULT_TITLE, DEFAULT_TITLE);
+
+		//when 두번째 synchronizeDataAndReturnNextPageable
+		final Pageable lastPageable = linkMetadataService.synchronizeDataAndReturnNextPageable(secondPageable);
+
+		//then
+		final String updated2Title1 = 링크_제목_얻기("www.naver1.com");
+		final String updated2Title2 = 링크_제목_얻기("www.naver2.com");
+		final String updated2Title3 = 링크_제목_얻기("www.naver3.com");
+		final String updated2Title4 = 링크_제목_얻기("www.naver4.com");
+		final String updated2Title5 = 링크_제목_얻기("www.naver5.com");
+		assertThat(List.of(updated2Title1, updated2Title2, updated2Title3, updated2Title4, updated2Title5))
+			.containsExactly("네이버짱", "네이버짱", "네이버짱", "네이버짱", "네이버짱");
+
+		assertThat(lastPageable).isNull();
+	}
+
+	private void 네이버_링크_메타데이터_업데이트됨() {
+		final SearchLinkMetadataResult updatedResult = new SearchLinkMetadataResult("네이버짱", "naver-zzang.png");
+
+		given(jsoupLinkMetadataService.search("www.naver1.com")).willReturn(updatedResult);
+		given(jsoupLinkMetadataService.search("www.naver2.com")).willReturn(updatedResult);
+		given(jsoupLinkMetadataService.search("www.naver3.com")).willReturn(updatedResult);
+		given(jsoupLinkMetadataService.search("www.naver4.com")).willReturn(updatedResult);
+		given(jsoupLinkMetadataService.search("www.naver5.com")).willReturn(updatedResult);
 	}
 }

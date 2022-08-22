@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.support.BaseControllerTest;
+import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class BookmarkControllerTest extends BaseControllerTest {
 
@@ -25,7 +26,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("hani@gmail.com", "GOOGLE");
+		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		profileId = 프로필_등록("hani", List.of("정치", "인문", "사회"));
 	}
 
@@ -61,7 +62,9 @@ class BookmarkControllerTest extends BaseControllerTest {
 		final String updateMemo = "updatedMemo";
 		final String updateCategory = "IT";
 		final String updateOpenType = "all";
-		final List<String> updateTags = List.of("Spring", "React", "LinkOcean");
+
+		// Note - changed due to case-insensitive issue
+		final List<String> updateTags = List.of("spring", "React", "LinkOcean");
 
 		final UpdateBookmarkRequest updateBookmarkRequest = new UpdateBookmarkRequest(updateTitle, updateMemo,
 			updateCategory, updateOpenType, updateTags);
@@ -91,7 +94,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.openType").value(updateOpenType),
 				jsonPath("$.isFavorite").value(false),
 				jsonPath("$.createdAt").exists(),
-				jsonPath("$.tags", hasItems("Spring", "React", "LinkOcean")),
+				jsonPath("$.tags", containsInAnyOrder("spring", "React", "LinkOcean")),
 				jsonPath("$.reactionCount.LIKE").value(0),
 				jsonPath("$.reactionCount.HATE").value(0),
 				jsonPath("$.reaction.LIKE").value(false),
@@ -292,10 +295,10 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@BeforeEach
 		void setUp() throws Exception {
 
-			유저_등록_로그인("crush@gmail.com", "GOOGLE");
+			유저_등록_로그인("crush@gmail.com", GOOGLE);
 			프로필_등록("crush", List.of("IT"));
 
-			유저_등록_로그인("otherUser@gmail.com", "GOOGLE");
+			유저_등록_로그인("otherUser@gmail.com", GOOGLE);
 			otherProfileId = 프로필_등록("user1", List.of("IT"));
 
 			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
@@ -303,7 +306,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
 			bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
 
-			로그인("crush@gmail.com", "GOOGLE");
+			로그인("crush@gmail.com", GOOGLE);
 		}
 
 		@Test
@@ -346,10 +349,10 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@Test
 		void 모르는_유저_북마크_목록_조회_즐겨찾기_필터링() throws Exception {
 			//given
-			로그인("otherUser@gmail.com", "GOOGLE");
+			로그인("otherUser@gmail.com", GOOGLE);
 			북마크_즐겨찾기(bookmarkId1);
 
-			로그인("crush@gmail.com", "GOOGLE");
+			로그인("crush@gmail.com", GOOGLE);
 
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
@@ -379,17 +382,19 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_태그로_필터링() throws Exception {
+		void 모르는_유저_북마크_목록_조회_태그_두개로_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
-					.param("tags", "머구리")
+					.param("tags", "머구리", "공부")
 					.header(AUTHORIZATION, token)
 					.accept(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(1),
+					jsonPath("$.totalCount").value(2),
 					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[0].tags[0]").value("머구리"));
+					jsonPath("$.bookmarks[1].id").value(bookmarkId1)
+					// 다른 사용자의 private bookmark 는 조회할 수 없음
+				);
 		}
 
 		@Test
@@ -445,21 +450,21 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 		@BeforeEach
 		void setUp() throws Exception {
-			유저_등록_로그인("user3@gmail.com", "GOOGLE");
+			유저_등록_로그인("user3@gmail.com", GOOGLE);
 			프로필_등록("user3", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 			bookmarkId10 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-			유저_등록_로그인("user2@gmail.com", "GOOGLE");
+			유저_등록_로그인("user2@gmail.com", GOOGLE);
 			final long profileId2 = 프로필_등록("user2", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
 			bookmarkId8 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
 			bookmarkId7 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
-			유저_등록_로그인("user1@gmail.com", "GOOGLE");
+			유저_등록_로그인("user1@gmail.com", GOOGLE);
 			프로필_등록("user1", List.of("IT"));
 
 			bookmarkId6 = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
@@ -508,7 +513,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 		@Test
 		void 피드_북마크_조회_즐겨찾기_후_조회_성공() throws Exception {
-			로그인("user2@gmail.com", "GOOGLE");
+			로그인("user2@gmail.com", GOOGLE);
 			북마크_즐겨찾기(bookmarkId10);
 
 			//when

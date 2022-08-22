@@ -8,6 +8,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

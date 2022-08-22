@@ -1,11 +1,12 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.common.Assertions.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.Reaction.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,12 +28,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Favorite;
 import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.FavoriteRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
@@ -41,15 +40,15 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
-import com.meoguri.linkocean.domain.linkmetadata.entity.Link;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @SpringBootTest
 @Transactional
@@ -75,9 +74,6 @@ class BookmarkServiceImplTest {
 
 	@Autowired
 	private ReactionRepository reactionRepository;
-
-	@Autowired
-	private FavoriteRepository favoriteRepository;
 
 	@Autowired
 	private FollowRepository followRepository;
@@ -113,7 +109,7 @@ class BookmarkServiceImplTest {
 		void 북마크_등록_성공() {
 			//given
 			final RegisterBookmarkCommand command =
-				new RegisterBookmarkCommand(userId, url, "title", "memo", IT, ALL, List.of("tag1", "tag2"));
+				new RegisterBookmarkCommand(profileId, url, "title", "memo", IT, ALL, List.of("tag1", "tag2"));
 
 			//when
 			final long savedBookmarkId = bookmarkService.registerBookmark(command);
@@ -125,7 +121,7 @@ class BookmarkServiceImplTest {
 			final Optional<Bookmark> oBookmark = bookmarkRepository.findById(savedBookmarkId);
 			assertThat(oBookmark).isPresent().get()
 				.extracting(
-					Bookmark::getProfile,
+					Bookmark::getWriter,
 					Bookmark::getLinkMetadata,
 					Bookmark::getTitle,
 					Bookmark::getMemo,
@@ -157,7 +153,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 중복_url_북마크_생성_요청에_따라_실패() {
 			//given
-			final RegisterBookmarkCommand command = command(userId, url);
+			final RegisterBookmarkCommand command = command(profileId, url);
 			bookmarkService.registerBookmark(command);
 
 			//when then
@@ -171,18 +167,23 @@ class BookmarkServiceImplTest {
 	class 북마크_업데이트_테스트 {
 
 		private Bookmark bookmark;
+		private long bookmarkId;
 
 		@BeforeEach
 		void setUp() {
-			bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
+			final Tag springTag = tagRepository.save(new Tag("spring"));
+			final Tag kakaoTag = tagRepository.save(new Tag("kakao"));
+			bookmark = bookmarkRepository.save(
+				createBookmark(profile, linkMetadata, "title", IT, "www.google.com", List.of(springTag, kakaoTag)));
+			bookmarkId = bookmark.getId();
 		}
 
 		@Test
 		void 북마크_업데이트_성공() {
 			//given
 			final UpdateBookmarkCommand command = new UpdateBookmarkCommand(
-				userId,
-				bookmark.getId(),
+				profileId,
+				bookmarkId,
 				"updatedTitle",
 				"updatedMemo",
 				HUMANITIES,
@@ -256,7 +257,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_업데이트_실패_다른_사용자의_북마크_조회() {
 			//given
-			final User anotherUser = createUser("crush@mail.com", "NAVER");
+			final User anotherUser = createUser("crush@mail.com", NAVER);
 			userRepository.save(anotherUser);
 
 			final Profile anotherProfile = createProfile(anotherUser, "crush");
@@ -292,7 +293,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_삭제_성공() {
 			//given, when
-			bookmarkService.removeBookmark(userId, bookmark.getId());
+			bookmarkService.removeBookmark(profileId, bookmark.getId());
 
 			//then
 			em.flush();
@@ -315,7 +316,7 @@ class BookmarkServiceImplTest {
 		@Test
 		void 북마크_삭제_실패_다른_사용자의_북마크_삭제_시도() {
 			//given
-			final User anotherUser = createUser("hani@mail.com", "NAVER");
+			final User anotherUser = createUser("hani@mail.com", NAVER);
 			userRepository.save(anotherUser);
 
 			final Profile anotherProfile = createProfile(anotherUser, "crush");
@@ -347,9 +348,6 @@ class BookmarkServiceImplTest {
 				"www.google.com",
 				List.of(tag)
 			));
-
-			em.flush();
-			em.clear();
 		}
 
 		@Test
@@ -398,10 +396,10 @@ class BookmarkServiceImplTest {
 		@Test
 		void 내가_좋아요_누른_북마크_상세_조회_성공() {
 			//given
-			reactionRepository.save(new Reaction(profile, bookmark, "like"));
+			reactionRepository.save(new Reaction(profile, bookmark, LIKE));
 
 			//when
-			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(profileId, bookmark.getId());
 
 			//then
 			assertAll(
@@ -415,10 +413,10 @@ class BookmarkServiceImplTest {
 		@Test
 		void 내가_즐겨찾기한_북마크_상세_조회_성공() {
 			//given
-			favoriteRepository.save(new Favorite(bookmark, profile));
+			profile.favorite(bookmark);
 
 			//when
-			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(userId, bookmark.getId());
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(profileId, bookmark.getId());
 
 			//then
 			assertThat(result.isFavorite()).isTrue();
@@ -431,7 +429,7 @@ class BookmarkServiceImplTest {
 
 			//when then
 			assertThatLinkoceanRuntimeException()
-				.isThrownBy(() -> bookmarkService.getDetailedBookmark(userId, invalidBookmarkId));
+				.isThrownBy(() -> bookmarkService.getDetailedBookmark(profileId, invalidBookmarkId));
 		}
 
 	}
@@ -455,7 +453,7 @@ class BookmarkServiceImplTest {
 
 		@BeforeEach
 		void setUp() {
-			User user2 = userRepository.save(new User("crush@gmail.com", "GOOGLE"));
+			User user2 = userRepository.save(createUser("crush@gmail.com", GOOGLE));
 
 			profile2 = profileRepository.save(new Profile(user2, "crush"));
 			profileId2 = profile2.getId();
@@ -505,7 +503,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(userId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -526,7 +524,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -544,7 +542,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId2)
 				.targetProfileId(profileId2)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -569,7 +567,7 @@ class BookmarkServiceImplTest {
 				.targetProfileId(profileId2)
 				.title("1")
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
@@ -611,12 +609,12 @@ class BookmarkServiceImplTest {
 		void setUp() {
 			linkMetadataRepository.deleteAll();
 			reactionRepository.deleteAll();
-			favoriteRepository.deleteAll();
+			// favoriteRepository.deleteAll();
 			bookmarkRepository.deleteAll(); // clean data by crush @ above setUp method
 
-			final User user1 = userRepository.save(new User("user1@gmail.com", "GOOGLE"));
-			final User user2 = userRepository.save(new User("user2@gmail.com", "GOOGLE"));
-			final User user3 = userRepository.save(new User("user3@gmail.com", "GOOGLE"));
+			final User user1 = userRepository.save(createUser("user1@gmail.com", GOOGLE));
+			final User user2 = userRepository.save(createUser("user2@gmail.com", GOOGLE));
+			final User user3 = userRepository.save(createUser("user3@gmail.com", GOOGLE));
 
 			final Profile profile1 = profileRepository.save(new Profile(user1, "user1"));
 			final Profile profile2 = profileRepository.save(new Profile(user2, "user2"));
@@ -655,7 +653,7 @@ class BookmarkServiceImplTest {
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.currentUserProfileId(profileId1)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -697,7 +695,7 @@ class BookmarkServiceImplTest {
 				.currentUserProfileId(profileId1)
 				.follow(true)
 				.build();
-			final Pageable pageable = defaultPageableSortByUpload();
+			final Pageable pageable = createPageable("upload");
 
 			//when
 			final Page<GetFeedBookmarksResult> bookmarkPage = bookmarkService.getFeedBookmarks(findCond, pageable);
@@ -727,11 +725,17 @@ class BookmarkServiceImplTest {
 		final Bookmark bookmark = bookmarkRepository.save(createBookmark(profile, linkMetadata));
 
 		//when
-		final Optional<Long> duplicated = bookmarkService.getBookmarkIdIfExist(userId, bookmark.getUrl());
-		final Optional<Long> notDuplicated = bookmarkService.getBookmarkIdIfExist(userId, "https://www.does.not.exist");
+		final Optional<Long> duplicated = bookmarkService.getBookmarkIdIfExist(profileId, bookmark.getUrl());
+		final Optional<Long> notDuplicated = bookmarkService.getBookmarkIdIfExist(profileId,
+			"https://www.does.not.exist");
 
 		//then
 		assertThat(duplicated).isPresent().get().isEqualTo(bookmark.getId());
 		assertThat(notDuplicated).isEmpty();
+	}
+
+	@Test
+	void 북마크_좋아요_숫자_업데이트() {
+
 	}
 }

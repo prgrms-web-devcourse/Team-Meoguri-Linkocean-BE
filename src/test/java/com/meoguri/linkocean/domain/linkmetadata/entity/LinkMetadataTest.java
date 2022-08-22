@@ -1,9 +1,11 @@
 package com.meoguri.linkocean.domain.linkmetadata.entity;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 
 class LinkMetadataTest {
 

@@ -1,61 +1,34 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@DataJpaTest
-class ProfileRepositoryTest {
-
-	@Autowired
-	private UserRepository userRepository;
+class ProfileRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	private User user;
-
-	@BeforeEach
-	void setUp() {
-		user = userRepository.save(createUser());
-	}
-
 	@Test
-	void 사용자_아이디로_프로필_조회_성공() {
+	void 사용자_이름_중복_확인_성공() {
 		//given
-		final Profile profile = new Profile(user, "haha");
-		profileRepository.save(profile);
-		user.registerProfile(profile);
+		final String savedUsername = "haha";
+		사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, savedUsername, IT, ART);
 
 		//when
-		final Optional<Profile> foundProfile = profileRepository.findByUserId(user.getId());
-
-		//then
-		assertThat(foundProfile).isPresent();
-		assertThat(foundProfile.get()).isEqualTo(profile);
-	}
-
-	@Test
-	void 사용자_이름_중복_확인() {
-		//given
-		final Profile profile = new Profile(user, "haha");
-		profileRepository.save(profile);
-
-		//when
-		final boolean exists1 = profileRepository.existsByUsername("haha");
-		final boolean exists2 = profileRepository.existsByUsername("papa");
+		final boolean exists1 = profileRepository.existsByUsername(savedUsername);
+		final boolean exists2 = profileRepository.existsByUsername("unsavedUsername");
 
 		//then
 		assertThat(exists1).isTrue();
@@ -63,33 +36,53 @@ class ProfileRepositoryTest {
 	}
 
 	@Test
-	void 사용자_이름_변경_남이름을_먹으려_하면_실패() {
+	void existsByUsernameExceptMe_성공() {
 		//given
-		User user1 = new User("user1@gmail.com", "GOOGLE");
-		User user2 = new User("user2@gmail.com", "GOOGLE");
-
-		user1 = userRepository.save(user1);
-		user2 = userRepository.save(user2);
-
-		Profile profile1 = new Profile("user1", List.of(Category.IT));
-		Profile profile2 = new Profile("user2", List.of(Category.IT));
-
-		profile1 = profileRepository.save(profile1);
-		profile2 = profileRepository.save(profile2);
-
-		user1.registerProfile(profile1);
-		user2.registerProfile(profile2);
+		long profileId1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT).getId();
+		long profileId2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT).getId();
 
 		//when
-		final boolean exists1 = profileRepository.existsByUsernameExceptMe("user1", profile1.getId());
-		final boolean exists2 = profileRepository.existsByUsernameExceptMe("user2", profile1.getId());
-		final boolean exists3 = profileRepository.existsByUsernameExceptMe("user1", profile2.getId());
-		final boolean exists4 = profileRepository.existsByUsernameExceptMe("user2", profile2.getId());
+		final boolean exists1 = profileRepository.existsByUsernameExceptMe("user1", profileId1);
+		final boolean exists2 = profileRepository.existsByUsernameExceptMe("user2", profileId1);
+		final boolean exists3 = profileRepository.existsByUsernameExceptMe("user1", profileId2);
+		final boolean exists4 = profileRepository.existsByUsernameExceptMe("user2", profileId2);
 
 		//then
 		assertThat(exists1).isFalse();
 		assertThat(exists2).isTrue();
 		assertThat(exists3).isTrue();
 		assertThat(exists4).isFalse();
+	}
+
+	@Test
+	void findProfileFetchFavoriteIdsById_성공() {
+		//given
+		final Profile profile = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+		final Bookmark bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com");
+		final Bookmark bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com");
+		final Bookmark bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
+
+		즐겨찾기_저장(profile, bookmark1);
+		즐겨찾기_저장(profile, bookmark3);
+
+		//when
+		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
+
+		//then
+		assertThat(oProfile).isPresent();
+		assertThat(oProfile.get().isFavoriteBookmarks(List.of(bookmark1, bookmark2, bookmark3)))
+			.containsExactly(true, false, true);
+	}
+
+	@Test
+	void findProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
+		//given
+		final Profile profile = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
+
+		//when
+		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
+
+		//then
+		assertThat(oProfile).isPresent();
 	}
 }

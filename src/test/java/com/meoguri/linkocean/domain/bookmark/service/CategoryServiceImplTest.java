@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.util.Fixture.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataReposit
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.repository.UserRepository;
+import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 
 @SpringBootTest
 @Transactional
@@ -69,7 +69,7 @@ class CategoryServiceImplTest {
 		bookmarkRepository.save(createBookmark(profile, link, "제목", HEALTH, "www.jacob.com"));
 
 		//when
-		final List<Category> categories = categoryService.getUsedCategories(user.getId());
+		final List<Category> categories = categoryService.getUsedCategories(profile.getId());
 
 		//then
 		assertThat(categories).contains(IT, SOCIAL, HEALTH);
@@ -81,7 +81,7 @@ class CategoryServiceImplTest {
 		bookmarkRepository.save(createBookmark(profile, link, "제목", null, "www.naver.com"));
 
 		//when
-		final List<Category> categories = categoryService.getUsedCategories(user.getId());
+		final List<Category> categories = categoryService.getUsedCategories(profile.getId());
 
 		//then
 		assertThat(categories).isEmpty();

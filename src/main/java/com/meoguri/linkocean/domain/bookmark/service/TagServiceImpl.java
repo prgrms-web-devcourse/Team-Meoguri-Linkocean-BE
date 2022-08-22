@@ -40,7 +40,7 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public List<GetProfileTagsResult> getTags(final long profileId) {
 		/* 북마크 목록 조회 */
-		final List<Bookmark> bookmarks = bookmarkRepository.findByProfileIdFetchTags(profileId);
+		final List<Bookmark> bookmarks = bookmarkRepository.findByWriterIdFetchTags(profileId);
 
 		/* 태그별 북마크 카운트 맵 생성 */
 		final Map<String, Integer> tagCountMap = getTagCountMap(bookmarks);

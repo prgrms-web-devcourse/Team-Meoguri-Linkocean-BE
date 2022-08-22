@@ -13,4 +13,5 @@ public interface CustomBookmarkRepository {
 
 	/* 피드 북마크 조회 */
 	Page<Bookmark> findBookmarks(BookmarkFindCond findCond, Pageable pageable);
+
 }

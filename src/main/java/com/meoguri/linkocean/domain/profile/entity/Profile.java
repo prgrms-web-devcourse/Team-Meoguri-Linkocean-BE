@@ -1,21 +1,18 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.util.stream.Collectors.*;
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.user.entity.User;
 
 import lombok.Getter;
@@ -40,10 +37,11 @@ public class Profile extends BaseIdEntity {
 	@OneToOne(fetch = LAZY, mappedBy = "profile")
 	private User user;
 
-	/* FavoriteCategory 의 생명주기는 Profile 엔티티가 관리 */
-	@Getter(NONE)
-	@OneToMany(mappedBy = "profile", cascade = ALL, orphanRemoval = true)
-	private List<FavoriteCategory> favoriteCategories = new ArrayList<>();
+	@Embedded
+	private FavoriteCategories favoriteCategories;
+
+	@Embedded
+	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
@@ -57,15 +55,20 @@ public class Profile extends BaseIdEntity {
 	private String image;
 
 	/* 회원 가입시 사용하는 생성자 */
-	public Profile(final String username, final List<Category> categories) {
+	public Profile(final String username, final FavoriteCategories favoriteCategories) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 
 		this.username = username;
-		updateFavoriteCategories(categories);
+		this.favoriteCategories = favoriteCategories;
 	}
 
 	/* 사용자는 이름, 자기소개, 프로필 이미지를 변경할 수 있다 */
-	public void update(final String username, final String bio, final String image) {
+	public void update(
+		final String username,
+		final String bio,
+		final String image,
+		final FavoriteCategories favoriteCategories
+	) {
 		checkNotNullStringLength(username, MAX_PROFILE_USERNAME_LENGTH, "사용자 이름이 옳바르지 않습니다");
 		checkNullableStringLength(bio, MAX_PROFILE_BIO_LENGTH, "프로필 메시지가 옳바르지 않습니다");
 		checkNullableStringLength(image, MAX_PROFILE_IMAGE_URL_LENGTH, "프로필 사진 주소가 옳바르지 않습니다");
@@ -73,26 +76,27 @@ public class Profile extends BaseIdEntity {
 		this.username = username;
 		this.bio = bio;
 		this.image = image;
+		this.favoriteCategories = favoriteCategories;
 	}
 
-	/* 선호카테고리 목록 조회 */
-	public List<Category> getMyFavoriteCategories() {
-		return this.favoriteCategories.stream()
-			.map(FavoriteCategory::getCategory)
-			.collect(toList());
+	/* 즐겨찾기 추가 */
+	public void favorite(final Bookmark bookmark) {
+		favoriteBookmarkIds.favorite(bookmark);
 	}
 
-	/* 선호 카테고리 목록 업데이트 */
-	public void updateFavoriteCategories(final List<Category> categories) {
-		/* 기존 목록 중 업데이트 목록에 없다면 삭제 */
-		favoriteCategories.removeIf(fc -> !categories.contains(fc.getCategory()));
+	/* 즐겨찾기 취소 */
+	public void unfavorite(final Bookmark bookmark) {
+		favoriteBookmarkIds.unfavorite(bookmark);
+	}
 
-		/* 업데이트 목록 중 기존 목록에 포함되지 않았으면 추가 */
-		categories.stream()
-			.filter(c -> !favoriteCategories.stream()
-				.map(FavoriteCategory::getCategory)
-				.collect(toList()).contains(c))
-			.forEach(c -> favoriteCategories.add(new FavoriteCategory(this, c)));
+	/* 북마크 즐겨찾기 여부 확인 */
+	public boolean isFavoriteBookmark(final Bookmark bookmark) {
+		return favoriteBookmarkIds.isFavoriteBookmark(bookmark);
+	}
+
+	/* 북마크 목록 즐겨찾기 여부 확인 */
+	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
+		return favoriteBookmarkIds.isFavoriteBookmarks(bookmarks);
 	}
 
 	@Deprecated

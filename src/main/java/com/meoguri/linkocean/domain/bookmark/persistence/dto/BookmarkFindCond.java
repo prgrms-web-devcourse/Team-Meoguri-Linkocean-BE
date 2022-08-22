@@ -30,15 +30,15 @@ public final class BookmarkFindCond {
 	/* 카테고리 필터링 조회인 경우 카테고리 아니라면 null */
 	private final Category category;
 
-	/* 즐겨찾기 필터링 조회인 경우 true 아니라면 false */
-	private final boolean favorite;
+	/* 즐겨찾기 필터링 조회인 경우 true 아니라면 null */
+	private final Boolean favorite;
 
 	/* 태그 필터링 조회인 경우 태그 목록 아니라면 null */
 	private final List<String> tags;
 
 	/* 현재 사용자가 팔로우 하는 사용자대상 북마크의 필터링 여부
-	   피드 북마크 조회에 대해서만 참이 될 수 있다 */
-	private final boolean follow;
+	   피드 북마크 조회에 대해서만 참이 될 수 있다 아니라면 null*/
+	private final Boolean follow;
 
 	/* 제목 검색 조건 - contains 로 판별한다 */
 	private final String title;
