@@ -111,12 +111,15 @@ public class ProfileServiceImpl implements ProfileService {
 		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
+		final Profile currentProfile = findProfileByIdQuery.findProfileFetchFollows(currentProfileId);
+
 		/* 프로필 목록 가져 오기 */
 		final Slice<Profile> profilesSlice = profileRepository.findProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
-		final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
+		// final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
+		final List<Boolean> isFollows = currentProfile.checkIsFollows(profiles);
 
 		/* 결과 반환 */
 		return toResultSlice(profiles, isFollows, pageable, profilesSlice.hasNext());
