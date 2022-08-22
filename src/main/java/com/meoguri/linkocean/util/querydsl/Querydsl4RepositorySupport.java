@@ -1,5 +1,8 @@
-package com.meoguri.linkocean.util;
+package com.meoguri.linkocean.util.querydsl;
 
+import static java.util.stream.Collectors.*;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -20,46 +23,24 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.EnumPath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.MySQLTemplates;
-import com.querydsl.sql.RelationalPathBase;
 import com.querydsl.sql.SQLTemplates;
 
 /**
  * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리
- *
- * @author Younghan Kim - 인프런 김영한 - 실전! Querydsl! 강의에서 소개한 코드를 활용 하였습니다
  * @see org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
-
-	protected static RelationalPathBase<Object> reaction = new RelationalPathBase<>(Object.class, "r", "linkocean",
-		"reaction");
-	protected static NumberPath<Long> r_profileId = Expressions.numberPath(Long.class, reaction, "profile_id");
-
-	protected static NumberPath<Long> r_bookmarkId = Expressions.numberPath(Long.class, reaction, "bookmark_id");
-
-	protected static EnumPath<ReactionType> r_type = Expressions.enumPath(ReactionType.class, reaction, "type");
-
-	protected static RelationalPathBase<Object> favorite = new RelationalPathBase<>(Object.class, "f", "linkocean",
-		"favorite");
-	protected static NumberPath<Long> ownerId = Expressions.numberPath(Long.class, favorite, "owner_id");
-
-	protected static NumberPath<Long> bookmarkId = Expressions.numberPath(Long.class, favorite, "bookmark_id");
 
 	private final Class<?> domainClass;
 
@@ -100,31 +81,32 @@ public abstract class Querydsl4RepositorySupport {
 		Assert.notNull(queryFactory, "QueryFactory must not be null!");
 	}
 
-	protected <T> JPAQuery<T> select(final Expression<T> expr) {
-		return queryFactory.select(expr);
-	}
-
-	protected <T> JPAQuery<T> selectFrom(final EntityPath<T> from) {
-		return queryFactory.selectFrom(from);
-	}
-
+	/* 동적 쿼리에 대한 페이징 적용
+	- group by, having 등의 문제가 될 수 있는 쿼리를 사용하지 않기 때문에 JPAQuery.fetchCount 사용 */
+	@SuppressWarnings("deprecation")
 	protected <T> Page<T> applyPagination(
 		final Pageable pageable,
-		final JPAQuery<T> jpaContentQuery,
+		JPAQuery<T> contentQuery,
+		final List<JoinInfoBuilder.JoinIf> joinIfs,
+		final List<Predicate> where,
 		final Consumer<T> lazyLoader
 	) {
-		return applyPagination(pageable, jpaContentQuery, lazyLoader, jpaContentQuery);
-	}
+		final JPAQuery<T> countQuery = contentQuery.clone(entityManager);
+		final Predicate[] whereArray = where.toArray(new Predicate[0]);
 
-	protected <T> Page<T> applyPagination(
-		final Pageable pageable,
-		final JPAQuery<T> jpaContentQuery,
-		final Consumer<T> lazyLoader,
-		final JPAQuery<T> jpaCountQuery
-	) {
-		List<T> content = querydsl.applyPagination(pageable, jpaContentQuery).fetch();
+		/* content query 에 join 과 where 적용 */
+		for (JoinInfoBuilder.JoinIf joinIf : joinIfs) {
+			contentQuery = joinIf.apply(contentQuery);
+		}
+		contentQuery = contentQuery.where(whereArray);
+
+		/* 페이징 적용 후 레이지 로딩 하여 content 완성 */
+		List<T> content = querydsl.applyPagination(pageable, contentQuery).fetch();
 		content.forEach(lazyLoader);
-		return PageableExecutionUtils.getPage(content, pageable, jpaCountQuery::fetchCount);
+
+		/* content query 에는 where 만 적용 */
+		countQuery.where(whereArray);
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
 	}
 
 	/* 무한 스크롤 전용 슬라이싱 */
@@ -146,19 +128,32 @@ public abstract class Querydsl4RepositorySupport {
 		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
-	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
-	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
-		try {
-			return new BooleanBuilder(cond.get());
-		} catch (IllegalArgumentException | NullPointerException e) {
-			return new BooleanBuilder();
-		}
+	protected <T> JPAQuery<T> select(final Expression<T> expr) {
+		return queryFactory.select(expr);
 	}
 
-	/* 동적 join 을 지원하기 위한 유틸리티 메서드 */
-	protected static <T> JPQLQuery<T> joinIf(
+	protected <T> JPAQuery<T> selectFrom(final EntityPath<T> from) {
+		return queryFactory.selectFrom(from);
+	}
+
+	public List<JoinInfoBuilder.JoinIf> joinIfs(JoinInfoBuilder.JoinIf... joinIfs) {
+		return Arrays.stream(joinIfs).collect(toList());
+	}
+
+	protected JoinInfoBuilder.JoinIf joinIf(
 		final boolean expression,
-		JPQLQuery<T> base,
+		final Supplier<JoinInfoBuilder> joinInfoBuilder
+	) {
+		return new JoinInfoBuilder.JoinIf(expression, joinInfoBuilder);
+	}
+
+	/* 동적 join 을 지원하기 위한 유틸리티 메서드
+	- 각 JoinInfo 에 제네릭을 적용하니 외부에서 타입 추론이 제대로 되지 않아
+	  SubQueryExpression 를 QueryBase 로 처리하는 문제가 생겨 로 타입을 사용 */
+	@SuppressWarnings("unchecked")
+	public static <T> JPAQuery<T> joinIf(
+		final boolean expression,
+		JPAQuery<T> base,
 		final Supplier<JoinInfoBuilder> joinInfoBuilder
 	) {
 		if (expression) {
@@ -189,6 +184,19 @@ public abstract class Querydsl4RepositorySupport {
 			}
 		}
 		return base;
+	}
+
+	protected List<Predicate> where(Predicate... where) {
+		return Arrays.stream(where).collect(toList());
+	}
+
+	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
+		try {
+			return new BooleanBuilder(cond.get());
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return new BooleanBuilder();
+		}
 	}
 
 }

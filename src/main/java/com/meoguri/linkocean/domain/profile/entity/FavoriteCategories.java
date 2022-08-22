@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
+import static java.lang.String.*;
 import static javax.persistence.EnumType.*;
 import static lombok.AccessLevel.*;
 
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class FavoriteCategories {
 
+	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.values().length;
 	@ElementCollection
 	@CollectionTable(name = "favorite_category")
 	@Column(name = "category")
@@ -27,8 +30,8 @@ public class FavoriteCategories {
 	private List<Category> favoriteCategories = new ArrayList<>();
 
 	public FavoriteCategories(final List<Category> favoriteCategories) {
-		// TODO - uncomment below after remove all deprecated constructor below
-		// checkCondition(categories.size() >= 1 && categories.size() <= 12, "category size must be in between 1 & 12");
+		checkCondition(favoriteCategories.size() >= 1 && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
+			format("category size must be in between 1 & %d", MAX_FAVORITE_CATEGORIES_SIZE));
 
 		this.favoriteCategories = favoriteCategories;
 	}

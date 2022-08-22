@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.TestPropertySource;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
@@ -28,9 +27,6 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@TestPropertySource(properties = {
-	"logging.level.org.springframework.orm.jpa=DEBUG"}
-)
 class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 	@Autowired
@@ -49,7 +45,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 	void setUpInternal() {
 		// 사용자 1명 셋업 - 크러쉬
-		profile = 사용자_프로필_동시_저장_등록("crush@gmail.com", NAVER, "crush", IT);
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
 		profileId = profile.getId();
 
 		// 태그 두개 셋업
@@ -199,7 +195,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		@Test
 		void 북마크_즐겨찾기_다른사람의_글도_있는경우() {
 			//setup
-			final Profile profile2 = 사용자_프로필_동시_저장_등록("user2@naver.com", NAVER, "user2", IT);
+			final Profile profile2 = 사용자_프로필_동시_저장("user2@naver.com", NAVER, "user2", IT);
 			final Bookmark bookmark4 = 북마크_링크_메타데이터_동시_저장(profile2, "www.linkocean.com");
 			final Bookmark bookmark5 = 북마크_링크_메타데이터_동시_저장(profile2, "www.artzip.com");
 
@@ -418,6 +414,26 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.containsExactly(bookmark3, bookmark2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(3);
 		}
+
+		/* 카운트 쿼리 최적화 확인 */
+		@Test
+		void 북마크_조회_성공_카테고리_페이징() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId)
+				.targetProfileId(profileId)
+				.category(IT)
+				.build();
+			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
+
+			//when
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent()).containsExactly(bookmark3, bookmark1);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+		}
 	}
 
 	@Nested
@@ -440,9 +456,9 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		// bookmark6 private,       bookmark9 private   bookmark12 private
 		@BeforeEach
 		void setUp() {
-			Profile profile1 = 사용자_프로필_동시_저장_등록("user1@gmail.com", GOOGLE, "user1", IT);
-			Profile profile2 = 사용자_프로필_동시_저장_등록("user2@gmail.com", GOOGLE, "user2", IT);
-			Profile profile3 = 사용자_프로필_동시_저장_등록("user3@gmail.com", GOOGLE, "user3", IT);
+			Profile profile1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
+			Profile profile2 = 사용자_프로필_동시_저장("user2@gmail.com", GOOGLE, "user2", IT);
+			Profile profile3 = 사용자_프로필_동시_저장("user3@gmail.com", GOOGLE, "user3", IT);
 
 			profileId1 = profile1.getId();
 			팔로우_저장(profile1, profile2);
@@ -524,8 +540,8 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 	@Test
 	void 북마크의_리액션_별_카운트_조회_성공() {
 		//given
-		final Profile profile1 = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
-		final Profile profile2 = 사용자_프로필_동시_저장_등록("papa@gmail.com", GOOGLE, "papa", IT);
+		final Profile profile1 = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT);
+		final Profile profile2 = 사용자_프로필_동시_저장("papa@gmail.com", GOOGLE, "papa", IT);
 		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile1, "www.google.com");
 
 		싫어요_저장(profile1, bookmark);

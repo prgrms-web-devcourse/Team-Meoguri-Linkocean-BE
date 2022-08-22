@@ -28,7 +28,7 @@ class ReactionQueryTest extends BasePersistenceTest {
 
 	@BeforeEach
 	void setUp() {
-		profile = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+		profile = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT, ART);
 		bookmark = 북마크_링크_메타데이터_동시_저장(profile, "google.com");
 	}
 
@@ -41,7 +41,7 @@ class ReactionQueryTest extends BasePersistenceTest {
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profile.getId(), bookmark);
 
 		//then
-		assertThat(reactionMap.get(LIKE)).isTrue();
-		assertThat(reactionMap.get(HATE)).isFalse();
+		assertThat(reactionMap.get(LIKE)).isEqualTo(true);
+		assertThat(reactionMap.get(HATE)).isEqualTo(false);
 	}
 }

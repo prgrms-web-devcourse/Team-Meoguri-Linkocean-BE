@@ -75,6 +75,7 @@ public class ProfileController {
 		final @AuthenticationPrincipal SecurityUser user,
 		final @PathVariable long profileId
 	) {
+		// TODO - 얘 혼자 응답을 말아주는 로직이 컨트롤러에 위치하고 있음 서비스로 옮기던가 나중에 영속성에서 DTO 로 퍼올릴때 수정 할 것
 		final GetDetailedProfileResult profile = profileService.getByProfileId(user.getProfileId(), profileId);
 		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
 		final List<Category> categories = categoryService.getUsedCategories(profileId);
