@@ -29,5 +29,15 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 		+ "left join fetch p.reactions "
 		+ "where p.id = :profileId")
 	Optional<Profile> findProfileFetchReactionById(long profileId);
+
+	/* Note - favorite 과 reaction 모두 set 으로 관리되기 때문에
+	MultipleBagFetchException 발생하지 않음 but Query 는 세번 발생
+	1. 프로필 조회, 2. 즐겨찾기 조회, 3. 리액션 조회*/
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.favoriteBookmarkIds "
+		+ "left join fetch p.reactions "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFavoriteAndReactionById(long profileId);
 }
 

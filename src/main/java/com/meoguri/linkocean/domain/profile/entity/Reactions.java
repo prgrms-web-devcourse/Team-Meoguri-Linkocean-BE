@@ -1,8 +1,11 @@
 package com.meoguri.linkocean.domain.profile.entity;
 
+import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,5 +54,17 @@ public class Reactions {
 		}
 
 		return existedReactionType;
+	}
+
+	/* profile 의 bookmark 에 대한 리액션 여부 */
+	public Map<ReactionType, Boolean> checkReaction(final Bookmark bookmark) {
+		final Optional<Reaction> oReaction = reactions.stream().filter(r -> r.isOf(bookmark)).findAny();
+
+		return Arrays.stream(ReactionType.values())
+			.collect(toMap(
+				reactionType -> reactionType,
+				reactionType -> oReaction.map(reaction -> reaction.getType().equals(reactionType))
+					.orElse(false)
+			));
 	}
 }
