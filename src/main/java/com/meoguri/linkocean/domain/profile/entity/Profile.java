@@ -3,11 +3,14 @@ package com.meoguri.linkocean.domain.profile.entity;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
@@ -36,6 +39,9 @@ public class Profile extends BaseIdEntity {
 
 	@Embedded
 	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
+
+	@ManyToMany
+	private Set<Follow2> follows = new HashSet<>();
 
 	@Embedded
 	private Reactions reactions = new Reactions();
@@ -74,6 +80,16 @@ public class Profile extends BaseIdEntity {
 		this.bio = bio;
 		this.image = image;
 		this.favoriteCategories = favoriteCategories;
+	}
+
+	/* 팔로우 추가 */
+	public void follow(final Profile profile) {
+		this.follows.add(new Follow2(this, profile));
+	}
+
+	/* 팔로우 중인지 확인 */
+	public boolean checkIsFollow(final Profile profile) {
+		return this.follows.stream().anyMatch(f -> f.isFolloweeOf(profile));
 	}
 
 	/* 즐겨찾기 추가 */
