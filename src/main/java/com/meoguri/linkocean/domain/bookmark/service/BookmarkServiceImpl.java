@@ -22,7 +22,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -53,7 +52,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final CheckIsFollowQuery checkIsFollowQuery;
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
-	private final ReactionQuery reactionQuery;
 
 	/**
 	 * 북마크 등록
@@ -131,12 +129,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 추가 정보 조회 */
-		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteById(profileId);
+		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteAndReactionById(profileId);
 		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
 		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
-		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
+		final Map<ReactionType, Boolean> reactionMap = writer.checkReaction(bookmark);
 
 		/* 결과 반환 */
 		return new GetDetailedBookmarkResult(
