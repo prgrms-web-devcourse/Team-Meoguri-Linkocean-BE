@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "follow")
+@EqualsAndHashCode(of = "id")
 public class Follow {
 
 	/* 복합 키 id */
@@ -36,6 +38,7 @@ public class Follow {
 	@Getter
 	@Embeddable
 	@NoArgsConstructor(access = PROTECTED)
+	@EqualsAndHashCode
 	static class FollowId implements Serializable {
 
 		@ManyToOne(optional = false)

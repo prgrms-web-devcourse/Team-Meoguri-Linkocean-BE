@@ -45,7 +45,7 @@ public class Profile extends BaseIdEntity {
 	@Embedded
 	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
 
-	@OneToMany(cascade = ALL, mappedBy = "id.follower")
+	@OneToMany(cascade = ALL, orphanRemoval = true, mappedBy = "id.follower")
 	private Set<Follow> follows = new HashSet<>();
 
 	@Embedded
@@ -98,9 +98,9 @@ public class Profile extends BaseIdEntity {
 	/* 언팔로우 */
 	public void unfollow(final Profile target) {
 		checkCondition(checkIsFollow(target),
-			format("illegal follow command of profileId: %d on targetProfileId: %d", this.getId(), target.getId()));
+			format("illegal unfollow command of profileId: %d on targetProfileId: %d", this.getId(), target.getId()));
 
-		this.follows.add(new Follow(this, target));
+		this.follows.remove(new Follow(this, target));
 	}
 
 	/* 프로필 팔로우 중인지 확인 */
