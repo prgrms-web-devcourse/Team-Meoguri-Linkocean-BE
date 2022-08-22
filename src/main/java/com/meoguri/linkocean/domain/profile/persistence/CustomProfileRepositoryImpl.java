@@ -53,12 +53,12 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 		return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,
-				select(follow.followId.follower)
+				select(follow.id.follower)
 					.from(follow),
-				() -> join(follow.followId.follower, profile)
-					.on(follow.followId.follower.id.eq(profile.id))
+				() -> join(follow.id.follower, profile)
+					.on(follow.id.follower.id.eq(profile.id))
 			).where(
-				follow.followId.followee.id.eq(profileId),
+				follow.id.followee.id.eq(profileId),
 				usernameContains(username)
 			))
 		);
@@ -75,12 +75,12 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 		return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,
-				select(follow.followId.followee)
+				select(follow.id.followee)
 					.from(follow),
-				() -> join(follow.followId.followee, profile)
-					.on(follow.followId.followee.id.eq(profile.id))
+				() -> join(follow.id.followee, profile)
+					.on(follow.id.followee.id.eq(profile.id))
 			).where(
-				follow.followId.follower.id.eq(profileId),
+				follow.id.follower.id.eq(profileId),
 				usernameContains(username)
 			))
 		);

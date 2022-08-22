@@ -23,14 +23,14 @@ public class Follow {
 
 	/* 복합 키 id */
 	@EmbeddedId
-	private FollowId followId;
+	private FollowId id;
 
 	public Follow(final Profile follower, final Profile followee) {
-		this.followId = new FollowId(follower, followee);
+		this.id = new FollowId(follower, followee);
 	}
 
 	public boolean isFolloweeOf(final Profile profile) {
-		return followId.getFollowee().equals(profile);
+		return id.getFollowee().equals(profile);
 	}
 
 	@Getter

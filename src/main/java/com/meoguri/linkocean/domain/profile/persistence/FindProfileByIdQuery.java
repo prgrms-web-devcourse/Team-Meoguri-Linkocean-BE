@@ -33,4 +33,9 @@ public class FindProfileByIdQuery {
 		return profileRepository.findProfileFetchFollows(profileId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
 	}
+
+	public Profile findProfileFetchFavoriteAndFollowsById(long profileId) {
+		return profileRepository.findProfileFetchFavoriteAndFollowsById(profileId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
+	}
 }
