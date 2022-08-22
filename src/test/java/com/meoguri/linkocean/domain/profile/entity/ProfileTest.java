@@ -37,7 +37,8 @@ class ProfileTest {
 
 			//then
 			assertThat(profile.getUsername()).isEqualTo("haha");
-			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories())).containsExactly(IT, ART);
+			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories()))
+				.containsExactlyInAnyOrder(IT, ART);
 		}
 
 		@ParameterizedTest
@@ -83,7 +84,7 @@ class ProfileTest {
 			assertThat(profile.getBio()).isEqualTo(bio);
 			assertThat(profile.getImage()).isEqualTo(imageUrl);
 			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories()))
-				.containsExactly(IT, HOME);
+				.containsExactlyInAnyOrder(IT, HOME);
 		}
 
 		@ParameterizedTest
