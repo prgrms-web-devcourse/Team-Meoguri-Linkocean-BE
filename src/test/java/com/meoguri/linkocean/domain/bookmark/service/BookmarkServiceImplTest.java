@@ -61,7 +61,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			assertThat(result.getMemo()).isEqualTo("memo");
 			assertThat(result.getCategory()).isEqualTo(IT);
 			assertThat(result.getOpenType()).isEqualTo(ALL);
-			assertThat(result.getTags()).containsExactly("tag1", "tag2");
+			assertThat(result.getTags()).containsExactlyInAnyOrder("tag1", "tag2");
 
 			assertThat(result.getReactionCount()).containsAllEntriesOf(Map.of(LIKE, 0L, HATE, 0L));
 			assertThat(result.getReaction()).containsAllEntriesOf(Map.of(LIKE, false, HATE, false));
@@ -129,7 +129,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			assertThat(result.getMemo()).isEqualTo("updatedMemo");
 			assertThat(result.getCategory()).isEqualTo(HUMANITIES);
 			assertThat(result.getOpenType()).isEqualTo(PRIVATE);
-			assertThat(result.getTags()).containsExactly("tag1", "tag2");
+			assertThat(result.getTags()).containsExactlyInAnyOrder("tag1", "tag2");
 		}
 
 		@Test
