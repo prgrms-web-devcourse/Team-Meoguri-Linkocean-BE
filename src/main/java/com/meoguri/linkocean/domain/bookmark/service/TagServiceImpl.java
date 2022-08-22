@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
@@ -29,12 +30,12 @@ public class TagServiceImpl implements TagService {
 
 	@Transactional
 	@Override
-	public List<Tag> getOrSaveTags(final List<String> tagNames) {
-		return tagNames.stream()
+	public Tags getOrSaveTags(final List<String> tagNames) {
+		return new Tags(tagNames.stream()
 			.map(tagName ->
 				tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)))
 			)
-			.collect(toList());
+			.collect(toList()));
 	}
 
 	@Override
