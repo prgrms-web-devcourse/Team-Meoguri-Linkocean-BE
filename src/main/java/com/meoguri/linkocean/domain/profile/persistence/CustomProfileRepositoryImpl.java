@@ -1,8 +1,6 @@
 package com.meoguri.linkocean.domain.profile.persistence;
 
-import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
-import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
 
 import javax.persistence.EntityManager;
 
@@ -49,8 +47,9 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 		if (!isFollower) {
 			return new BooleanBuilder();
 		}
+		return new BooleanBuilder();
 
-		return nullSafeBuilder(() -> profile.in(
+		/*return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,
 				select(follow.follower)
@@ -61,7 +60,7 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 				follow.followee.id.eq(profileId),
 				usernameContains(username)
 			))
-		);
+		);*/
 	}
 
 	private BooleanBuilder followeeOfUsername(
@@ -72,8 +71,8 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 		if (!isFollowee) {
 			return new BooleanBuilder();
 		}
-
-		return nullSafeBuilder(() -> profile.in(
+		return new BooleanBuilder();
+		/*return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,
 				select(follow.followee)
@@ -84,7 +83,7 @@ public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport impl
 				follow.follower.id.eq(profileId),
 				usernameContains(username)
 			))
-		);
+		);*/
 	}
 
 	private BooleanBuilder usernameContains(final String username) {

@@ -29,5 +29,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 		+ "left join fetch p.reactions "
 		+ "where p.id = :profileId")
 	Optional<Profile> findProfileFetchReactionById(long profileId);
+
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.follows "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFollows(long profileId);
 }
 
