@@ -135,7 +135,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = checkIsFollowQuery.isFollow(profileId, writer);
 
-		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
+		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
 		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
 
 		/* 결과 반환 */
@@ -321,12 +321,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public void updateLikeCount(
 		final long bookmarkId,
-		final boolean isAlreadyReacted,
 		final ReactionType existedType,
 		final ReactionType requestType
 	) {
 		if (requestType.equals(LIKE)) {
-			if (isAlreadyReacted && existedType.equals(LIKE)) {
+			if (existedType == LIKE) {
 				/* like 를 두번 요청하여 취소 */
 				bookmarkRepository.subtractLikeCount(bookmarkId);
 			} else {
@@ -334,7 +333,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				bookmarkRepository.addLikeCount(bookmarkId);
 			}
 		} else if (requestType.equals(HATE)) {
-			if (isAlreadyReacted && existedType.equals(LIKE)) {
+			if (existedType == LIKE) {
 				/* like -> hate 변경 */
 				bookmarkRepository.subtractLikeCount(bookmarkId);
 			}

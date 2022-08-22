@@ -15,12 +15,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -59,9 +57,6 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
-
-	@Autowired
-	private ReactionRepository reactionRepository;
 
 	protected boolean isLoaded(final Object entity) {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
@@ -155,14 +150,14 @@ public class BasePersistenceTest {
 			tags);
 	}
 
-	/* em.flush & em.clear occurs */
+	/* 주의 ! em.flush & em.clear occurs */
 	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
-		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
+		profile.requestReaction(bookmark, LIKE);
 		bookmarkRepository.addLikeCount(bookmark.getId());
 	}
 
 	protected void 싫어요_저장(final Profile profile, final Bookmark bookmark) {
-		reactionRepository.save(new Reaction(profile, bookmark, HATE));
+		profile.requestReaction(bookmark, HATE);
 	}
 
 	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {

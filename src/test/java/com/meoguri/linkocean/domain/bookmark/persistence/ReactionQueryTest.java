@@ -33,21 +33,6 @@ class ReactionQueryTest extends BasePersistenceTest {
 	}
 
 	@Test
-	void 북마크의_리액션별_카운트_조회_성공() {
-		//given
-		final Profile anotherProfile = 사용자_프로필_동시_저장("papa@gmail.com", GOOGLE, "papa", IT);
-		좋아요_저장(profile, bookmark);
-		싫어요_저장(anotherProfile, bookmark);
-
-		//when
-		final Map<ReactionType, Long> reactionCountMap = reactionQuery.getReactionCountMap(bookmark);
-
-		//then
-		assertThat(reactionCountMap.get(LIKE)).isEqualTo(1);
-		assertThat(reactionCountMap.get(HATE)).isEqualTo(1);
-	}
-
-	@Test
 	void 리액션_여부_맵을_조회할_수_있다() {
 		//given
 		좋아요_저장(profile, bookmark);

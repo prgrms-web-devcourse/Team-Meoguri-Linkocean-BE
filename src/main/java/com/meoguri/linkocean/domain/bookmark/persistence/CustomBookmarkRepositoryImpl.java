@@ -3,11 +3,16 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
+import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
 import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
+import static com.querydsl.sql.SQLExpressions.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +24,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.util.querydsl.CustomPath;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
@@ -117,8 +123,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
 		return !isFavorite ? null : getJpasqlQuery()
-			.select(CustomPath.bookmarkId)
-			.from(CustomPath.favorite)
+			.select(bookmarkId)
+			.from(favorite)
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
@@ -218,5 +224,27 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		}
 
 		return result;
+	}
+
+	@Override
+	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
+		/* 리액션 카운트 맵 조회 */
+		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
+			.select(r_type, count())
+			.from(reaction)
+			.where(r_bookmarkId.eq(bookmarkId))
+			.groupBy(r_type)
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> (tuple.get(r_type)),
+				tuple -> (tuple.get(count())))
+			);
+
+		/* 없는 리액션에 대해서 0 채워 주기 */
+		Arrays.stream(ReactionType.values())
+			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
+			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
+
+		return reactionCountMap;
 	}
 }

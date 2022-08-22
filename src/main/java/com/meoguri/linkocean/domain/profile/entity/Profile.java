@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,9 @@ public class Profile extends BaseIdEntity {
 
 	@Embedded
 	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
+
+	@Embedded
+	private Reactions reactions = new Reactions();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
@@ -92,4 +96,8 @@ public class Profile extends BaseIdEntity {
 		return favoriteBookmarkIds.isFavoriteBookmarks(bookmarks);
 	}
 
+	/* 리액션 요청 */
+	public ReactionType requestReaction(final Bookmark bookmark, final ReactionType requestType) {
+		return reactions.requestReaction(bookmark, requestType);
+	}
 }
