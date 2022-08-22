@@ -38,7 +38,7 @@ public class Profile extends BaseIdEntity {
 	private User user;
 
 	@Embedded
-	private FavoriteCategories favoriteCategories;
+	private FavoriteCategories favoriteCategories = new FavoriteCategories();
 
 	@Embedded
 	private FavoriteBookmarkIds favoriteBookmarkIds = new FavoriteBookmarkIds();
