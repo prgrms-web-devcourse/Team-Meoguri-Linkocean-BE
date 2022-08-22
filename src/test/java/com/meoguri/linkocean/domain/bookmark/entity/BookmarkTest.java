@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
@@ -30,7 +31,7 @@ class BookmarkTest {
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
 		final OpenType openType = OpenType.ALL;
-		final Category category = Category.IT;
+		final Category category = IT;
 		final String url = "www.naver.com";
 
 		//when
@@ -61,7 +62,7 @@ class BookmarkTest {
 		//when then
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata(),
-				tooLongTitle, "memo", OpenType.ALL, Category.IT, "www.google.com", emptyList()));
+				tooLongTitle, "memo", OpenType.ALL, IT, "www.google.com", emptyList()));
 	}
 
 	@Test
@@ -77,7 +78,7 @@ class BookmarkTest {
 			"title",
 			"memo",
 			OpenType.ALL,
-			Category.IT,
+			IT,
 			"www.naver.com",
 			List.of(tag1, tag2)
 		);
@@ -106,7 +107,7 @@ class BookmarkTest {
 				"title",
 				"memo",
 				OpenType.ALL,
-				Category.IT,
+				IT,
 				"www.google.com",
 				tooManyTags
 			));

@@ -11,7 +11,7 @@ class BookmarkTagTest {
 	void 북마크_태그_생성_성공() {
 		//given
 		final Bookmark bookmark = createBookmark();
-		final Tag tag = createTag();
+		final Tag tag = new Tag("tag");
 
 		//when
 		final BookmarkTag bookmarkTag = new BookmarkTag(bookmark, tag);

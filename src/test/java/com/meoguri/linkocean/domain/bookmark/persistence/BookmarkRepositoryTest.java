@@ -37,7 +37,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	@BeforeEach
 	void setUp() {
 		// 프로필, 링크 셋업
-		writer = 사용자_프로필_동시_저장_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		writer = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT);
 		writerId = writer.getId();
 
 		linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
@@ -58,7 +58,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 			bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
 
 		//then
-		assertThat(exists).isTrue();
+		assertThat(exists).isEqualTo(true);
 	}
 
 	@Test
@@ -109,8 +109,8 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		//then
 		assertAll(
 			() -> assertThat(oFindBookmark).isPresent(),
-			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isTrue(),
-			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isTrue(),
+			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isEqualTo(true),
+			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isEqualTo(true),
 			() -> assertThat(oFindBookmark.get().getTagNames()).contains(tag1.getName())
 		);
 	}
@@ -156,6 +156,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 		//then
 		final Optional<Bookmark> oFoundBookmark = bookmarkRepository.findById(bookmark.getId());
-		assertThat(oFoundBookmark.get().getLikeCount()).isOne();
+		assertThat(oFoundBookmark.get().getLikeCount()).isEqualTo(1);
 	}
 }

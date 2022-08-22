@@ -75,22 +75,15 @@ public class BasePersistenceTest {
 		return profileRepository.save(createProfile(username, categories));
 	}
 
-	protected Profile 프로필_등록(final User user, final Profile profile) {
-		user.registerProfile(profile);
-		return profile;
-	}
-
-	protected Profile 프로필_저장_등록(final User user, final String username, final Category... categories) {
-		return 프로필_등록(user, 프로필_저장(username, categories));
-	}
-
-	protected Profile 사용자_프로필_동시_저장_등록(
+	protected Profile 사용자_프로필_동시_저장(
 		final String email,
 		final OAuthType oAuthType,
 		final String username,
 		final Category... categories
 	) {
-		return 프로필_저장_등록(사용자_저장(email, oAuthType), username, categories);
+		final Profile profile = 프로필_저장(username, categories);
+		사용자_저장(email, oAuthType).registerProfile(profile);
+		return profile;
 	}
 
 	protected void 팔로우_저장(final Profile follower, final Profile followee) {
@@ -180,7 +173,4 @@ public class BasePersistenceTest {
 		return profileRepository.findById(profileId).orElseThrow();
 	}
 
-	protected Bookmark 북마크_조회(final long bookmarkId) {
-		return bookmarkRepository.findById(bookmarkId).orElseThrow();
-	}
 }
