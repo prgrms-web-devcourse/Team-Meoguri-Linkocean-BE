@@ -2,12 +2,15 @@ package com.meoguri.linkocean.domain.user.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
@@ -17,6 +20,9 @@ class UserServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private ProfileRepository profileRepository;
 
 	@Test
 	void 사용자_조회_성공() {
@@ -62,5 +68,9 @@ class UserServiceImplTest extends BaseServiceTest {
 		//then
 		final GetUserResult result = 사용자_조회("crush@github.com", GITHUB);
 		assertThat(result.getProfileId()).isEqualTo(profile.getId());
+	}
+
+	private Profile 프로필_저장(final String username, final Category... categories) {
+		return profileRepository.save(createProfile(username, categories));
 	}
 }

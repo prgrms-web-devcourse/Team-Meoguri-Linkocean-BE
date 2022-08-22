@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CustomLoggingAop {
 
-	private static final String NO_USER = "No User";
+	private static final String ANONYMOUS_USER = "anonymous";
 
 	/* 컨트롤러의 모든 메서드에 적용 */
 	@Pointcut("execution(* com.meoguri.linkocean.controller..*.*(..))")
@@ -54,6 +54,6 @@ public class CustomLoggingAop {
 				user = (SecurityUser)arg;
 			}
 		}
-		return nonNull(user) ? user.toString() : NO_USER;
+		return nonNull(user) ? user.toString() : ANONYMOUS_USER;
 	}
 }

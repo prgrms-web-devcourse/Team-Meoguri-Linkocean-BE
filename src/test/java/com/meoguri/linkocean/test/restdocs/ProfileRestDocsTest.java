@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.test.restdocs;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static java.util.Collections.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
@@ -101,10 +100,10 @@ class ProfileRestDocsTest extends RestDocsTestSupport {
 	void 다른_사람_프로필_조회_api() throws Exception {
 		//given
 		유저_등록_로그인("user1@gmail.com", GOOGLE);
-		프로필_등록("user1", emptyList());
+		프로필_등록("user1", List.of("IT"));
 
 		유저_등록_로그인("user2@gmail.com", GOOGLE);
-		final long user2ProfileId = 프로필_등록("user2", emptyList());
+		final long user2ProfileId = 프로필_등록("user2", List.of("IT"));
 		북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("스프링", "Spring Boot"), "all");
 
 		로그인("user1@gmail.com", GOOGLE);
