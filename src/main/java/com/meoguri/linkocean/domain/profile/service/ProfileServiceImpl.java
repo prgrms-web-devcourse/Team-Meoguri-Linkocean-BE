@@ -114,7 +114,6 @@ public class ProfileServiceImpl implements ProfileService {
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
-		// final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
 		final List<Boolean> isFollows = currentProfile.checkIsFollows(profiles);
 
 		/* 결과 반환 */
