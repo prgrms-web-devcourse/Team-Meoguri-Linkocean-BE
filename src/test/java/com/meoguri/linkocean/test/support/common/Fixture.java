@@ -1,7 +1,6 @@
 package com.meoguri.linkocean.test.support.common;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -11,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -30,13 +31,17 @@ public final class Fixture {
 		return createProfile("haha", IT);
 	}
 
+	public static Tags createTags(final String... tags) {
+		return new Tags(Arrays.stream(tags).map(Tag::new).collect(toList()));
+	}
+
 	public static Profile createProfile(final String username, final Category... categories) {
 		return new Profile(username, new FavoriteCategories(Arrays.stream(categories).collect(toList())));
 	}
 
 	public static Bookmark createBookmark() {
 		return new Bookmark(createProfile(), createLinkMetadata(), "title", "dream company", OpenType.ALL, null,
-			"google.com", emptyList());
+			"google.com", createTags());
 	}
 
 	public static LinkMetadata createLinkMetadata() {

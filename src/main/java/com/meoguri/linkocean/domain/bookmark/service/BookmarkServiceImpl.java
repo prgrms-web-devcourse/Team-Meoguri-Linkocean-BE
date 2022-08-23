@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
@@ -72,7 +72,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
+		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
@@ -97,7 +97,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
+		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* update 진행 */
 		bookmark.update(

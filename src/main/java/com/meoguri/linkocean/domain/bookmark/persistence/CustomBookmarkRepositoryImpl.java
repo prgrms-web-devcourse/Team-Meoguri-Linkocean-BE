@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.QTag.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
 import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
@@ -131,12 +131,13 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 	private List<Long> getBookmarkIds(final List<String> tags) {
-		return tags != null ? select(bookmarkTag.bookmark.id)
+		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
-			.from(bookmarkTag)
-			.join(bookmarkTag.tag)
-			.where(bookmarkTag.tag.name.in(tags))
+			.from(bookmark_tag)
+			.join(tag)
+			.where(tag.name.in(tags))
 			.fetch() : null;
+
 	}
 
 	private BooleanBuilder titleContains(final String title) {
