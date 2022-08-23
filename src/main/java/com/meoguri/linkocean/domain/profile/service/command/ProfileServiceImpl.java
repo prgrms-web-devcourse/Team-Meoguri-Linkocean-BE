@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.command.CheckIsFollowQuery;
+import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.command.FollowRepository;
+import com.meoguri.linkocean.domain.profile.persistence.command.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfilesResult;
 import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;

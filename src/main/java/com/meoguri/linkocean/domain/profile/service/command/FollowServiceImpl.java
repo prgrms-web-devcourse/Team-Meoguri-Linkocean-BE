@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
+import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.command.FollowRepository;
 
 import lombok.RequiredArgsConstructor;
 

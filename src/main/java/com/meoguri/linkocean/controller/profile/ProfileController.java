@@ -29,7 +29,7 @@ import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.TagService;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfileTagsResult;

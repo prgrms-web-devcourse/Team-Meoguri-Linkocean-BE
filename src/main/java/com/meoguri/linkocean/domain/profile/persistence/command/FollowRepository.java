@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.command;
 
 import java.util.List;
 import java.util.Set;

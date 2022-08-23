@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfilesResult;

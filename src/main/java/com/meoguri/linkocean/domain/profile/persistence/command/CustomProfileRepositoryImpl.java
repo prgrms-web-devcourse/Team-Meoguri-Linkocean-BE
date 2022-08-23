@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.command;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
