@@ -8,6 +8,7 @@ import static lombok.AccessLevel.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -152,5 +153,10 @@ public class Profile extends BaseIdEntity {
 		} else {
 			return OpenType.ALL;
 		}
+	}
+
+	/* 리액션 확인 */
+	public Map<ReactionType, Boolean> checkReaction(final Bookmark bookmark) {
+		return reactions.checkReaction(bookmark);
 	}
 }

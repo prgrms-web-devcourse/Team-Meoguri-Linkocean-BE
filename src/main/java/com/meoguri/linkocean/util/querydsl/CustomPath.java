@@ -35,4 +35,14 @@ public final class CustomPath {
 	/* r.type */
 	public static EnumPath<ReactionType> r_type = Expressions.enumPath(ReactionType.class, reaction, "type");
 
+	/* bookmark_tag bt */
+	public static RelationalPathBase<Object> bookmark_tag = new RelationalPathBase<>(Object.class, "bt", "linkocean",
+		"bookmark_tag");
+
+	/* bt.bookmark_id */
+	public static NumberPath<Long> bt_bookmarkId = Expressions.numberPath(Long.class, bookmark_tag, "bookmark_id");
+
+	/* bt.tag_id */
+	public static NumberPath<Long> bt_tagId = Expressions.numberPath(Long.class, bookmark_tag, "tag_id");
+
 }

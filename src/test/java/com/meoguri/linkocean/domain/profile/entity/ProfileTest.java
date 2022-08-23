@@ -4,7 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
-import static java.util.Collections.*;
+import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
@@ -37,7 +37,8 @@ class ProfileTest {
 
 			//then
 			assertThat(profile.getUsername()).isEqualTo("haha");
-			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories())).containsExactly(IT, ART);
+			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories()))
+				.containsExactlyInAnyOrder(IT, ART);
 		}
 
 		@ParameterizedTest
@@ -83,7 +84,7 @@ class ProfileTest {
 			assertThat(profile.getBio()).isEqualTo(bio);
 			assertThat(profile.getImage()).isEqualTo(imageUrl);
 			assertThat(FavoriteCategories.toCategories(profile.getFavoriteCategories()))
-				.containsExactly(IT, HOME);
+				.containsExactlyInAnyOrder(IT, HOME);
 		}
 
 		@ParameterizedTest
@@ -144,8 +145,8 @@ class ProfileTest {
 			final LinkMetadata naver = new LinkMetadata("www.naver.com", "네이버", "naver.png");
 			final LinkMetadata google = new LinkMetadata("www.google.com", "구글", "google.png");
 
-			bookmark1 = new Bookmark(profile, naver, "bookmark1", null, ALL, null, "www.naver.com", emptyList());
-			bookmark2 = new Bookmark(profile, google, "bookmark2", null, ALL, null, "www.google.com", emptyList());
+			bookmark1 = new Bookmark(profile, naver, "bookmark1", null, ALL, null, "www.naver.com", createTags());
+			bookmark2 = new Bookmark(profile, google, "bookmark2", null, ALL, null, "www.google.com", createTags());
 
 			ReflectionTestUtils.setField(bookmark1, "id", 1L);
 			ReflectionTestUtils.setField(bookmark2, "id", 2L);

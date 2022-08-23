@@ -6,7 +6,9 @@ import static javax.persistence.EnumType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -27,16 +29,16 @@ public class FavoriteCategories {
 	@CollectionTable(name = "favorite_category")
 	@Column(name = "category")
 	@Enumerated(STRING)
-	private List<Category> favoriteCategories = new ArrayList<>();
+	private Set<Category> favoriteCategories = new HashSet<>();
 
 	public FavoriteCategories(final List<Category> favoriteCategories) {
 		checkCondition(favoriteCategories.size() >= 1 && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
 			format("category size must be in between 1 & %d", MAX_FAVORITE_CATEGORIES_SIZE));
 
-		this.favoriteCategories = favoriteCategories;
+		this.favoriteCategories = new HashSet<>(favoriteCategories);
 	}
 
 	public static List<Category> toCategories(final FavoriteCategories favoriteCategories) {
-		return favoriteCategories.favoriteCategories;
+		return new ArrayList<>(favoriteCategories.favoriteCategories);
 	}
 }

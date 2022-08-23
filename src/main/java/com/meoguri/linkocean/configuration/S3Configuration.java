@@ -31,8 +31,6 @@ public class S3Configuration {
 
 	@Bean
 	public S3Uploader s3Uploader(AmazonS3Client amazonS3Client) {
-
 		return new S3Uploader(amazonS3Client, s3Properties.getBucket());
 	}
-
 }

@@ -18,10 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.ReactionQuery;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
@@ -50,7 +49,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
-	private final ReactionQuery reactionQuery;
 
 	/**
 	 * 북마크 등록
@@ -71,7 +69,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
+		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
@@ -96,7 +94,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
-		final List<Tag> tags = tagService.getOrSaveTags(command.getTagNames());
+		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
 
 		/* update 진행 */
 		bookmark.update(
@@ -129,12 +127,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 추가 정보 조회 */
-		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteById(profileId);
+		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteAndReactionById(profileId);
 		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
 		final boolean isFollow = profile.checkIsFollow(writer);
 
 		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
-		final Map<ReactionType, Boolean> reactionMap = reactionQuery.getReactionMap(profileId, bookmark);
+		final Map<ReactionType, Boolean> reactionMap = writer.checkReaction(bookmark);
 
 		/* 결과 반환 */
 		return new GetDetailedBookmarkResult(

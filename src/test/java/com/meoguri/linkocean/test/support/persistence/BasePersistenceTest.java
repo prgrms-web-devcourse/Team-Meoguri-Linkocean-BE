@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
@@ -114,7 +115,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			Arrays.stream(tags).collect(toList())
+			new Tags(Arrays.stream(tags).collect(toList()))
 		));
 	}
 
