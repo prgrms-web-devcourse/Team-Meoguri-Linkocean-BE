@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
-public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomProfileRepository {
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
 	/* 사용자 이름 중복 확인 */
 	boolean existsByUsername(String username);
