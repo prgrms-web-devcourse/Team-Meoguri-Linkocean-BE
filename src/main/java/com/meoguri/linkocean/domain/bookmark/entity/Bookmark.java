@@ -25,6 +25,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.tag.entity.Tags;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +53,7 @@ public class Bookmark extends BaseIdEntity {
 	private LinkMetadata linkMetadata;
 
 	@Embedded
-	private Tags tags = new Tags();
+	private Tags tags;
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
 	private String title;

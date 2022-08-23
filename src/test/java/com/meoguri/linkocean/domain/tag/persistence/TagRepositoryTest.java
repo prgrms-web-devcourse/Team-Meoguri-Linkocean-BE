@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.persistence;
+package com.meoguri.linkocean.domain.tag.persistence;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class TagRepositoryTest extends BasePersistenceTest {

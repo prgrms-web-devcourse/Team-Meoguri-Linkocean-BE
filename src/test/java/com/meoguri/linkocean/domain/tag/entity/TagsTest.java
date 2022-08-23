@@ -1,6 +1,6 @@
-package com.meoguri.linkocean.domain.bookmark.entity;
+package com.meoguri.linkocean.domain.tag.entity;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.Tags.*;
+import static com.meoguri.linkocean.domain.tag.entity.Tags.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 
 import java.util.ArrayList;

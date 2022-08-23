@@ -1,8 +1,8 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QTag.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
+import static com.meoguri.linkocean.domain.tag.entity.QTag.*;
 import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
 import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
 import static com.querydsl.sql.SQLExpressions.*;

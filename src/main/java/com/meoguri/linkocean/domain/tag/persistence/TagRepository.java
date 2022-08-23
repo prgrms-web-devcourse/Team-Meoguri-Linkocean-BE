@@ -1,10 +1,10 @@
-package com.meoguri.linkocean.domain.bookmark.persistence;
+package com.meoguri.linkocean.domain.tag.persistence;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
