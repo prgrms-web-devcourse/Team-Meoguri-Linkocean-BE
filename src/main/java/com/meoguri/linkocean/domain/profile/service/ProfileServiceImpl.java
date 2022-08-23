@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.profile.service;
 
 import static com.meoguri.linkocean.domain.profile.entity.FavoriteCategories.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static java.util.Collections.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
@@ -38,10 +35,8 @@ public class ProfileServiceImpl implements ProfileService {
 	private final UserService userService;
 
 	private final ProfileRepository profileRepository;
-	private final FollowRepository followRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
-	private final CheckIsFollowQuery checkIsFollowQuery;
 
 	@Transactional
 	@Override
@@ -65,20 +60,21 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
 		/* 프로필 조회 */
-		final Profile targetProfile = findProfileByIdQuery.findById(targetProfileId);
+		final Profile profile = findProfileByIdQuery.findProfileFetchFollows(currentProfileId);
+		final Profile target = findProfileByIdQuery.findById(targetProfileId);
 
 		/* 추가 정보 조회 */
-		final boolean isFollow = checkIsFollowQuery.isFollow(currentProfileId, targetProfile);
-		final int followerCount = followRepository.countFollowerByProfile(targetProfile);
-		final int followeeCount = followRepository.countFolloweeByProfile(targetProfile);
+		final boolean isFollow = profile.checkIsFollow(target);
+		final int followerCount = profileRepository.getFollowerCount(target);
+		final int followeeCount = profileRepository.getFolloweeCount(target);
 
 		/* 결과 반환 */
 		return new GetDetailedProfileResult(
-			targetProfile.getId(),
-			targetProfile.getUsername(),
-			targetProfile.getImage(),
-			targetProfile.getBio(),
-			toCategories(targetProfile.getFavoriteCategories()),
+			target.getId(),
+			target.getUsername(),
+			target.getImage(),
+			target.getBio(),
+			toCategories(target.getFavoriteCategories()),
 			isFollow,
 			followerCount,
 			followeeCount
@@ -111,30 +107,17 @@ public class ProfileServiceImpl implements ProfileService {
 		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
+		final Profile currentProfile = findProfileByIdQuery.findProfileFetchFollows(currentProfileId);
+
 		/* 프로필 목록 가져 오기 */
 		final Slice<Profile> profilesSlice = profileRepository.findProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
-		final List<Boolean> isFollows = getIsFollow(currentProfileId, profiles, findCond);
+		final List<Boolean> isFollows = currentProfile.checkIsFollows(profiles);
 
 		/* 결과 반환 */
 		return toResultSlice(profiles, isFollows, pageable, profilesSlice.hasNext());
-	}
-
-	private List<Boolean> getIsFollow(
-		final long currentProfileId,
-		final List<Profile> profiles,
-		final ProfileFindCond findCond
-	) {
-		if (isMyFollowees(currentProfileId, findCond.getProfileId(), findCond.isFollowee())) {
-			return new ArrayList<>((nCopies(profiles.size(), true)));
-		}
-		return checkIsFollowQuery.isFollows(currentProfileId, profiles);
-	}
-
-	private boolean isMyFollowees(final long currentProfileId, final Long profileId, final boolean followee) {
-		return followee && currentProfileId == profileId; /* 순서 중요!! 순서 바뀌면 NPE 가능성 존재 */
 	}
 
 	private Slice<GetProfilesResult> toResultSlice(

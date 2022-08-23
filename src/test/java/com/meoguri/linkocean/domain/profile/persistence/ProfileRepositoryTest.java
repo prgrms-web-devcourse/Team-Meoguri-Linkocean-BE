@@ -7,6 +7,7 @@ import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -86,6 +87,28 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 
 		//then
 		assertThat(oProfile).isPresent();
+	}
+
+	@Test
+	void findProfileFetchFollows_성공() {
+		//given
+		final Profile follower = 사용자_프로필_동시_저장("follower@gmail.com", GOOGLE, "follower", IT);
+		final Profile profile1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
+		final Profile profile2 = 사용자_프로필_동시_저장("user2@gmail.com", GOOGLE, "user2", IT);
+		final Profile profile3 = 사용자_프로필_동시_저장("user3@gmail.com", GOOGLE, "user3", IT);
+		final Profile profile4 = 사용자_프로필_동시_저장("user4@gmail.com", GOOGLE, "user4", IT);
+
+		팔로우_저장(follower, profile1);
+		팔로우_저장(follower, profile2);
+		팔로우_저장(follower, profile3);
+
+		//when
+		final Optional<Profile> oProfile = profileRepository.findProfileFetchFollows(follower.getId());
+
+		//then
+		assertThat(oProfile).isPresent();
+		assertThat(oProfile.get().checkIsFollows(List.of(profile1, profile2, profile3, profile4)))
+			.containsExactly(true, true, true, false);
 	}
 
 	@Test
