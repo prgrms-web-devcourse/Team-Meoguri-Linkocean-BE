@@ -24,8 +24,9 @@ import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.service.command.FollowService;
 import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.query.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
@@ -40,6 +41,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private ProfileService profileService;
+
+	@Autowired
+	private ProfileQueryService profileQueryService;
 
 	@Autowired
 	private FollowService followService;
@@ -141,7 +145,7 @@ public class BaseServiceTest {
 		notificationService.shareNotification(new ShareNotificationCommand(senderId, receiverId, bookmarkId));
 	}
 
-	protected GetDetailedProfileResult 프로필_상세_조회(final long currentUserProfileId) {
-		return profileService.getByProfileId(currentUserProfileId, currentUserProfileId);
+	protected GetDetailedProfileResult 내_프로필_상세_조회(final long currentUserProfileId) {
+		return profileQueryService.getByProfileId(currentUserProfileId, currentUserProfileId);
 	}
 }

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service.command.dto;
+package com.meoguri.linkocean.domain.profile.service.query.dto;
 
 import java.util.List;
 

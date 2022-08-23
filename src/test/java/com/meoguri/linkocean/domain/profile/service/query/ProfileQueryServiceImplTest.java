@@ -1,11 +1,9 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.service.query;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -15,22 +13,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfilesResult;
-import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.command.dto.UpdateProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-class ProfileServiceImplTest extends BaseServiceTest {
+class ProfileQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
-	private ProfileService profileService;
-
+	ProfileQueryService profileQueryService;
 
 	@Nested
-	class 프로필_등록_수정_조회 {
-
+	class 프로필_단건_조회 {
 		private long profileId;
 
 		@BeforeEach
@@ -39,9 +32,9 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
-		void 프로필_등록_수정_조회_성공_등록_조회_성공() {
+		void 프로필_단건_조회_조회_성공() {
 			//when
-			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
+			final GetDetailedProfileResult result = profileQueryService.getByProfileId(profileId, profileId);
 
 			//then
 			assertThat(result.getProfileId()).isEqualTo(profileId);
@@ -54,7 +47,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
-		void 프로필_등록_수정_조회_성공_조회_팔로워_팔로이_카운트의_관점에서() {
+		void 프로필_단건_조회_조회_성공_팔로워_팔로이_카운트_관점에서() {
 			//given
 			final long profileId1 = 사용자_프로필_동시_등록("hoho@gmail.com", GOOGLE, "hoho", IT);
 			final long profileId2 = 사용자_프로필_동시_등록("papa@gmail.com", GOOGLE, "papa", IT);
@@ -62,51 +55,20 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			팔로우(profileId1, profileId2);
 
 			//when
-			GetDetailedProfileResult user1ToUser1ProfileResult = profileService.getByProfileId(profileId1, profileId1);
-			GetDetailedProfileResult user1ToUser2ProfileResult = profileService.getByProfileId(profileId1, profileId2);
-			GetDetailedProfileResult user2ToUser1ProfileResult = profileService.getByProfileId(profileId2, profileId1);
-			GetDetailedProfileResult user2ToUser2ProfileResult = profileService.getByProfileId(profileId2, profileId2);
+			GetDetailedProfileResult user1ToUser1ProfileResult = profileQueryService.getByProfileId(profileId1,
+				profileId1);
+			GetDetailedProfileResult user1ToUser2ProfileResult = profileQueryService.getByProfileId(profileId1,
+				profileId2);
+			GetDetailedProfileResult user2ToUser1ProfileResult = profileQueryService.getByProfileId(profileId2,
+				profileId1);
+			GetDetailedProfileResult user2ToUser2ProfileResult = profileQueryService.getByProfileId(profileId2,
+				profileId2);
 
 			//then
 			assertDetailProfileResult(user1ToUser1ProfileResult, 0, 1, false);
 			assertDetailProfileResult(user1ToUser2ProfileResult, 1, 0, true);
 			assertDetailProfileResult(user2ToUser1ProfileResult, 0, 1, false);
 			assertDetailProfileResult(user2ToUser2ProfileResult, 1, 0, false);
-		}
-
-		@Test
-		void 프로필_등록_수정_조회_성공_등록_수정_조회() {
-			//given
-			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
-				profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
-			);
-
-			//when
-			profileService.updateProfile(updateCommand);
-
-			//then
-			final GetDetailedProfileResult result = profileService.getByProfileId(profileId, profileId);
-			assertThat(result.getUsername()).isEqualTo("papa");
-			assertThat(result.getImage()).isEqualTo("updated image url");
-			assertThat(result.getBio()).isEqualTo("updated bio");
-			assertThat(result.getFavoriteCategories()).containsExactly(HUMANITIES, SCIENCE);
-		}
-
-		@Test
-		void 프로필_등록_수정_조회_실패_사용자_이름_중복_등록() {
-			//given
-			long userId1 = 사용자_없으면_등록("user1@gmail.com", GOOGLE);
-			long userId2 = 사용자_없으면_등록("user2@gmail.com", GOOGLE);
-
-			final String username = "duplicated";
-			final RegisterProfileCommand command1 = new RegisterProfileCommand(userId1, username, List.of(IT));
-			final RegisterProfileCommand command2 = new RegisterProfileCommand(userId2, username, List.of(IT));
-
-			profileService.registerProfile(command1);
-
-			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profileService.registerProfile(command2));
 		}
 
 		private void assertDetailProfileResult(
@@ -122,7 +84,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	}
 
 	@Nested
-	class 프로필_목록_조회_테스트 {
+	class 프로필_목록_조회 {
 
 		private long profileId1;
 		private long profileId2;
@@ -145,7 +107,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		 * user3 -> profile2 팔로우
 		 */
 		@Test
-		void 팔로워_목록_조회_성공() {
+		void 프로필_목록_조회_팔로워_목록_조회_성공() {
 			//given
 			팔로우(profileId1, profileId3);
 			팔로우(profileId1, profileId2);
@@ -157,9 +119,9 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			final ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).follower(true).build();
 
 			//when
-			final Slice<GetProfilesResult> result1 = profileService.getProfiles(profileId1, cond1, pageable);
-			final Slice<GetProfilesResult> result2 = profileService.getProfiles(profileId2, cond2, pageable);
-			final Slice<GetProfilesResult> result3 = profileService.getProfiles(profileId3, cond3, pageable);
+			final Slice<GetProfilesResult> result1 = profileQueryService.getProfiles(profileId1, cond1, pageable);
+			final Slice<GetProfilesResult> result2 = profileQueryService.getProfiles(profileId2, cond2, pageable);
+			final Slice<GetProfilesResult> result3 = profileQueryService.getProfiles(profileId3, cond3, pageable);
 
 			//then
 			assertThat(result1).isEmpty();
@@ -183,7 +145,7 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		 * user3 -> profile2 팔로우
 		 */
 		@Test
-		void 팔로이_목록_조회_성공() {
+		void 프로필_목록_조회_팔로이_목록_조회_성공() {
 			//given
 			팔로우(profileId1, profileId2);
 			팔로우(profileId1, profileId3);
@@ -195,9 +157,9 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			final ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).followee(true).build();
 
 			//when
-			final Slice<GetProfilesResult> result1 = profileService.getProfiles(profileId1, cond1, pageable);
-			final Slice<GetProfilesResult> result2 = profileService.getProfiles(profileId2, cond2, pageable);
-			final Slice<GetProfilesResult> result3 = profileService.getProfiles(profileId3, cond3, pageable);
+			final Slice<GetProfilesResult> result1 = profileQueryService.getProfiles(profileId1, cond1, pageable);
+			final Slice<GetProfilesResult> result2 = profileQueryService.getProfiles(profileId2, cond2, pageable);
+			final Slice<GetProfilesResult> result3 = profileQueryService.getProfiles(profileId3, cond3, pageable);
 
 			//then
 			assertThat(result1).hasSize(2);
@@ -222,7 +184,8 @@ class ProfileServiceImplTest extends BaseServiceTest {
 			final ProfileFindCond cond = ProfileFindCond.builder().username("user").build();
 
 			//when
-			final Slice<GetProfilesResult> results = profileService.getProfiles(profileId1, cond, createPageable());
+			final Slice<GetProfilesResult> results = profileQueryService.getProfiles(profileId1, cond,
+				createPageable());
 
 			//then
 			assertThat(results).hasSize(3);
