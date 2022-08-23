@@ -16,8 +16,8 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.command.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.command.FollowRepository;
-import com.meoguri.linkocean.domain.profile.persistence.command.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.query.ProfileQueryRepository;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
 
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ProfileQueryServiceImpl implements ProfileQueryService {
 
-	private final ProfileRepository profileRepository;
+	private final ProfileQueryRepository profileQueryRepository;
 	private final FollowRepository followRepository;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
@@ -64,7 +64,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final Pageable pageable
 	) {
 		/* 프로필 목록 가져 오기 */
-		final Slice<Profile> profilesSlice = profileRepository.findProfiles(findCond, pageable);
+		final Slice<Profile> profilesSlice = profileQueryRepository.findProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
