@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
@@ -30,7 +31,9 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.test.support.common.P6spyLogMessageFormatConfiguration;
 
+@Import(P6spyLogMessageFormatConfiguration.class)
 @Transactional
 @SpringBootTest
 public class BaseServiceTest {
