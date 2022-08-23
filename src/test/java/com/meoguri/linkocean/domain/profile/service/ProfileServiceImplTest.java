@@ -15,10 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfilesResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.command.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class ProfileServiceImplTest extends BaseServiceTest {

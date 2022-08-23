@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfileTagsResult;
 
 public interface TagService {
 

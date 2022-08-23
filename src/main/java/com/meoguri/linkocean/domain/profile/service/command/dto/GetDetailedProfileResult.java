@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service.dto;
+package com.meoguri.linkocean.domain.profile.service.command.dto;
 
 import java.util.List;
 
@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public final class UpdateProfileCommand {
+public final class GetDetailedProfileResult {
 
 	private final long profileId;
 	private final String username;
 	private final String image;
 	private final String bio;
-	private final List<Category> categories;
+	private final List<Category> favoriteCategories;
+	private final boolean isFollow;
+	private final int followerCount;
+	private final int followeeCount;
 }

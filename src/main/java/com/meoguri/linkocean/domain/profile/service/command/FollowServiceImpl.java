@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.service.command;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.meoguri.linkocean.domain.profile.service.command.FollowService;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class FollowServiceImplTest extends BaseServiceTest {

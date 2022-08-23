@@ -22,10 +22,10 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
-import com.meoguri.linkocean.domain.profile.service.FollowService;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.command.FollowService;
+import com.meoguri.linkocean.domain.profile.service.command.ProfileService;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;

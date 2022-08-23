@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.service.command;
 
 import static com.meoguri.linkocean.domain.profile.entity.FavoriteCategories.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
@@ -20,10 +20,10 @@ import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
-import com.meoguri.linkocean.domain.profile.service.dto.UpdateProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.GetProfilesResult;
+import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.service.command.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
