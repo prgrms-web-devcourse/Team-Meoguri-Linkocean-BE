@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -99,5 +100,10 @@ public class Profile extends BaseIdEntity {
 	/* 리액션 요청 */
 	public ReactionType requestReaction(final Bookmark bookmark, final ReactionType requestType) {
 		return reactions.requestReaction(bookmark, requestType);
+	}
+
+	/* 리액션 확인 */
+	public Map<ReactionType, Boolean> checkReaction(final Bookmark bookmark) {
+		return reactions.checkReaction(bookmark);
 	}
 }
