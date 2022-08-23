@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,49 +20,58 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	@Autowired
 	private ProfileService profileService;
 
-	@Nested
-	class 프로필_등록_수정 {
+	private long profileId;
 
-		private long profileId;
+	@BeforeEach
+	void setUp() {
+		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+	}
 
-		@BeforeEach
-		void setUp() {
-			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-		}
+	@Test
+	void 프로필_등록_성공() {
+		//given
+		long userId1 = 사용자_없으면_등록("user1@gmail.com", GOOGLE);
+		final RegisterProfileCommand command = new RegisterProfileCommand(userId1, "crush", List.of(IT));
 
-		@Test
-		void 프로필_등록_수정_등록_실패_사용자_이름_중복() {
-			//given
-			long userId1 = 사용자_없으면_등록("user1@gmail.com", GOOGLE);
-			long userId2 = 사용자_없으면_등록("user2@gmail.com", GOOGLE);
+		//when
+		final long profileId = profileService.registerProfile(command);
 
-			final String username = "duplicated";
-			final RegisterProfileCommand command1 = new RegisterProfileCommand(userId1, username, List.of(IT));
-			final RegisterProfileCommand command2 = new RegisterProfileCommand(userId2, username, List.of(IT));
+		//then
+		assertThat(내_프로필_상세_조회(profileId)).isNotNull();
+	}
 
-			profileService.registerProfile(command1);
+	@Test
+	void 프로필_등록_실패_사용자_이름_중복() {
+		//given
+		long userId1 = 사용자_없으면_등록("user1@gmail.com", GOOGLE);
+		long userId2 = 사용자_없으면_등록("user2@gmail.com", GOOGLE);
 
-			//when then
-			assertThatIllegalArgumentException()
-				.isThrownBy(() -> profileService.registerProfile(command2));
-		}
+		final String username = "duplicated";
+		final RegisterProfileCommand command1 = new RegisterProfileCommand(userId1, username, List.of(IT));
+		final RegisterProfileCommand command2 = new RegisterProfileCommand(userId2, username, List.of(IT));
 
-		@Test
-		void 프로필_등록_수정_업데이트_성공() {
-			//given
-			final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
-				profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
-			);
+		profileService.registerProfile(command1);
 
-			//when
-			profileService.updateProfile(updateCommand);
+		//when then
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> profileService.registerProfile(command2));
+	}
 
-			//then
-			final GetDetailedProfileResult result = 내_프로필_상세_조회(profileId);
-			assertThat(result.getUsername()).isEqualTo("papa");
-			assertThat(result.getImage()).isEqualTo("updated image url");
-			assertThat(result.getBio()).isEqualTo("updated bio");
-			assertThat(result.getFavoriteCategories()).containsExactly(HUMANITIES, SCIENCE);
-		}
+	@Test
+	void 프로필_업데이트_성공() {
+		//given
+		final UpdateProfileCommand updateCommand = new UpdateProfileCommand(
+			profileId, "papa", "updated image url", "updated bio", List.of(HUMANITIES, SCIENCE)
+		);
+
+		//when
+		profileService.updateProfile(updateCommand);
+
+		//then
+		final GetDetailedProfileResult result = 내_프로필_상세_조회(profileId);
+		assertThat(result.getUsername()).isEqualTo("papa");
+		assertThat(result.getImage()).isEqualTo("updated image url");
+		assertThat(result.getBio()).isEqualTo("updated bio");
+		assertThat(result.getFavoriteCategories()).containsExactly(HUMANITIES, SCIENCE);
 	}
 }
