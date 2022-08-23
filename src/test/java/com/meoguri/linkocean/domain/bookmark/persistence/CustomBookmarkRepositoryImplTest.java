@@ -59,15 +59,12 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark1);
 		즐겨찾기_저장(profile, bookmark2);
 
-		좋아요_저장(profile, bookmark1);
-		싫어요_저장(profile, bookmark3);
+		profile = 좋아요_저장(profile, bookmark1);
+		profile = 싫어요_저장(profile, bookmark3);
 
 		bookmarkId1 = bookmark1.getId();
 		bookmarkId2 = bookmark2.getId();
 		bookmarkId3 = bookmark3.getId();
-
-		// detached -> managed
-		profile = 프로필_조회(profileId);
 	}
 
 	@Nested

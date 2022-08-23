@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.lang.String.*;
@@ -302,24 +301,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Transactional
 	@Override
-	public void updateLikeCount(
-		final long bookmarkId,
-		final ReactionType existedType,
-		final ReactionType requestType
-	) {
-		if (requestType.equals(LIKE)) {
-			if (existedType == LIKE) {
-				/* like 를 두번 요청하여 취소 */
-				bookmarkRepository.subtractLikeCount(bookmarkId);
-			} else {
-				/* like 등록 혹은 hate -> like 변경 */
-				bookmarkRepository.addLikeCount(bookmarkId);
-			}
-		} else if (requestType.equals(HATE)) {
-			if (existedType == LIKE) {
-				/* like -> hate 변경 */
-				bookmarkRepository.subtractLikeCount(bookmarkId);
-			}
-		}
+	public void updateLikeCount(final long bookmarkId, final ReactionType existedType, final ReactionType requestType) {
+		bookmarkRepository.updateLikeCount(bookmarkId, existedType, requestType);
 	}
 }

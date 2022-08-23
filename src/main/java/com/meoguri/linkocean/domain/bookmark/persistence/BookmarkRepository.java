@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
@@ -61,6 +64,23 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(long writerId);
+
+	default void updateLikeCount(long bookmarkId, ReactionType existedType, ReactionType requestType) {
+		if (requestType.equals(LIKE)) {
+			if (existedType == LIKE) {
+				/* like 를 두번 요청하여 취소 */
+				subtractLikeCount(bookmarkId);
+			} else {
+				/* like 등록 혹은 hate -> like 변경 */
+				addLikeCount(bookmarkId);
+			}
+		} else if (requestType.equals(HATE)) {
+			if (existedType == LIKE) {
+				/* like -> hate 변경 */
+				subtractLikeCount(bookmarkId);
+			}
+		}
+	}
 
 	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query("update Bookmark b set b.likeCount = b.likeCount + 1 where b.id = :bookmarkId")
