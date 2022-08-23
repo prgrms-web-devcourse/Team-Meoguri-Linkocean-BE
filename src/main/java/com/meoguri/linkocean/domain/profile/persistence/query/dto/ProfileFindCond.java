@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence.command.dto;
+package com.meoguri.linkocean.domain.profile.persistence.query.dto;
 
 import lombok.Builder;
 import lombok.Getter;

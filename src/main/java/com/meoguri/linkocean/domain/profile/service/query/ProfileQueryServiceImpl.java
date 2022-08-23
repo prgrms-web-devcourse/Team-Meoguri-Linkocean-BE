@@ -16,8 +16,8 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.persistence.command.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.persistence.command.FollowRepository;
-import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.persistence.query.ProfileQueryRepository;
+import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
 

@@ -5,7 +5,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.command.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
 
 public interface ProfileQueryRepository extends Repository<Profile, Long> {
 
