@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.profile.service.query;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-class CategoryServiceImplTest extends BaseServiceTest {
+class CategoryQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
-	private CategoryService categoryService;
+	private CategoryQueryService categoryQueryService;
 
 	private long profileId;
 
@@ -37,7 +37,7 @@ class CategoryServiceImplTest extends BaseServiceTest {
 		북마크_등록(profileId, "www.jacob.com", HEALTH);
 
 		//when
-		final List<Category> categories = categoryService.getUsedCategories(profileId);
+		final List<Category> categories = categoryQueryService.getUsedCategories(profileId);
 
 		//then
 		assertThat(categories).contains(IT, SOCIAL, HEALTH);

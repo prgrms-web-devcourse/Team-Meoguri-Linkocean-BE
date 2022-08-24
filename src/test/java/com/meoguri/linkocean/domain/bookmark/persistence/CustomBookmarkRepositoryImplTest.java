@@ -20,11 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
@@ -59,15 +59,27 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark1);
 		즐겨찾기_저장(profile, bookmark2);
 
-		좋아요_저장(profile, bookmark1);
-		싫어요_저장(profile, bookmark3);
+		profile = 좋아요_저장(profile, bookmark1);
+		profile = 싫어요_저장(profile, bookmark3);
 
 		bookmarkId1 = bookmark1.getId();
 		bookmarkId2 = bookmark2.getId();
 		bookmarkId3 = bookmark3.getId();
+	}
 
-		// detached -> managed
-		profile = 프로필_조회(profileId);
+	@Test
+	void existsByWriterAndLinkMetadata_성공() {
+		//given
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
+		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
+		북마크_저장(profile, linkMetadata, "www.google.com");
+
+		//when
+		final boolean exists =
+			bookmarkRepository.existsByWriterAndLinkMetadata(profile, linkMetadata);
+
+		//then
+		assertThat(exists).isEqualTo(true);
 	}
 
 	@Nested

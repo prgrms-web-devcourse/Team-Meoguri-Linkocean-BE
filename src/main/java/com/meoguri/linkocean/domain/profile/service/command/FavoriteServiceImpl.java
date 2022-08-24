@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.profile.service.command;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

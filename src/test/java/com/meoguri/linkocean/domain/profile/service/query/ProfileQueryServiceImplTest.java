@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.service.query;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.query.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;

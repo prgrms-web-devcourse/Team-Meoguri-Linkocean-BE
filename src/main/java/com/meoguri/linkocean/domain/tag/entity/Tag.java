@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.entity;
+package com.meoguri.linkocean.domain.tag.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;

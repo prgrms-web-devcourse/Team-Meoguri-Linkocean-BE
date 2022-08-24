@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.bookmark.service;
+package com.meoguri.linkocean.domain.tag.service;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
-import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
+import com.meoguri.linkocean.domain.tag.entity.Tags;
+import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 
 import lombok.RequiredArgsConstructor;
 

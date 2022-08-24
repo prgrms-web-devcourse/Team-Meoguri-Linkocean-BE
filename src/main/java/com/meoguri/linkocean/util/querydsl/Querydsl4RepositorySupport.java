@@ -136,6 +136,10 @@ public abstract class Querydsl4RepositorySupport {
 		return queryFactory.selectFrom(from);
 	}
 
+	protected JPAQuery<Integer> selectOne() {
+		return queryFactory.selectOne();
+	}
+
 	public List<JoinInfoBuilder.JoinIf> joinIfs(JoinInfoBuilder.JoinIf... joinIfs) {
 		return Arrays.stream(joinIfs).collect(toList());
 	}
