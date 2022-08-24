@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence.query;
+package com.meoguri.linkocean.domain.profile.query.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.persistence.ProfileQueryRepository;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.test.support.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;

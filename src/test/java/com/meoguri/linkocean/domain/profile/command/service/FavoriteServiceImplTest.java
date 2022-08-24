@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service.command;
+package com.meoguri.linkocean.domain.profile.command.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.profile.command.service.FavoriteService;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class FavoriteServiceImplTest extends BaseServiceTest {

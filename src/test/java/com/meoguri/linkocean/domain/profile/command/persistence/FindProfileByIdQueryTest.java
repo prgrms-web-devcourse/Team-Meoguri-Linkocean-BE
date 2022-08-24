@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence.command;
+package com.meoguri.linkocean.domain.profile.command.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(FindProfileByIdQuery.class)
