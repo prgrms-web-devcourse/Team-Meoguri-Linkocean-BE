@@ -28,4 +28,19 @@ public class FindProfileByIdQuery {
 		return profileRepository.findProfileFetchReactionById(profileId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
 	}
+
+	public Profile findProfileFetchFollows(long profileId) {
+		return profileRepository.findProfileFetchFollows(profileId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
+	}
+
+	public Profile findProfileFetchFavoriteAndFollowsById(long profileId) {
+		return profileRepository.findProfileFetchFavoriteAndFollowsById(profileId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
+	}
+
+	public Profile findProfileFetchFavoriteAndReactionById(long profileId) {
+		return profileRepository.findProfileFetchFavoriteAndReactionById(profileId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
+	}
 }

@@ -16,7 +16,6 @@ import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
 import com.meoguri.linkocean.domain.notification.persistence.NotificationRepository;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.command.CheckIsFollowQuery;
 import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,6 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
-	private final CheckIsFollowQuery checkIsFollowQuery;
 
 	/**
 	 * 북마크 공유 알림 생성
@@ -41,14 +39,14 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void shareNotification(final ShareNotificationCommand command) {
 		/* 수신자 조회 */
-		final Profile receiver = findProfileByIdQuery.findById(command.getReceiverProfileId());
+		final Profile receiver = findProfileByIdQuery.findProfileFetchFollows(command.getReceiverProfileId());
 
 		/* 추가 정보 조회 */
 		final Profile sender = findProfileByIdQuery.findById(command.getSenderProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
 		/* 비즈니스 로직 검사 */
-		final boolean isSenderFollowedByReceiver = checkIsFollowQuery.isFollow(receiver.getId(), sender);
+		final boolean isSenderFollowedByReceiver = receiver.checkIsFollow(sender);
 		final boolean isOpenTypeAll = bookmark.isOpenTypeAll();
 		checkCondition(isSenderFollowedByReceiver && isOpenTypeAll, "illegal share command");
 

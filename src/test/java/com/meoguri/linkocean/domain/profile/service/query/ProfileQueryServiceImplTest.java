@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service.query;
+package com.meoguri.linkocean.domain.profile.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.service.query.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
@@ -20,7 +21,7 @@ import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 class ProfileQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
-	ProfileQueryService profileQueryService;
+	private ProfileQueryService profileQueryService;
 
 	@Nested
 	class 프로필_단건_조회 {

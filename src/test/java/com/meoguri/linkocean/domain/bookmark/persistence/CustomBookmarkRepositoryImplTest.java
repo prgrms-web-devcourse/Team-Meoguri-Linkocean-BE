@@ -262,13 +262,14 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getTagNames)
-				.containsExactly(
-					tuple(bookmarkId2, List.of("tag1")),
-					tuple(bookmarkId1, List.of("tag1", "tag2"))
-				);
+			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId2);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1");
+
+			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(1).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
 		}
 
 		@Test
@@ -284,13 +285,14 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getTagNames)
-				.containsExactly(
-					tuple(bookmarkId1, List.of("tag1", "tag2")),
-					tuple(bookmarkId2, List.of("tag1"))
-				);
+			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
+
+			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId2);
+			assertThat(bookmarkPage.getContent().get(1).getTagNames()).containsExactlyInAnyOrder("tag1");
 		}
 
 		@Test
@@ -307,10 +309,12 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(1)
-				.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
-				.containsExactly(tuple(bookmarkId1, List.of("tag1", "tag2"), "title1"));
+			assertThat(bookmarkPage).hasSize(1);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
+			assertThat(bookmarkPage.getContent().get(0).getTitle()).isEqualTo("title1");
 		}
 	}
 

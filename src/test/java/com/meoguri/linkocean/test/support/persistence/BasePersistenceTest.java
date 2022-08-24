@@ -16,15 +16,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.Tag;
+import com.meoguri.linkocean.domain.bookmark.entity.Tags;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.profile.entity.Follow;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.command.FollowRepository;
 import com.meoguri.linkocean.domain.profile.persistence.command.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
@@ -45,9 +44,6 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
-
-	@Autowired
-	private FollowRepository followRepository;
 
 	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
@@ -82,7 +78,7 @@ public class BasePersistenceTest {
 	}
 
 	protected void 팔로우_저장(final Profile follower, final Profile followee) {
-		followRepository.save(new Follow(follower, followee));
+		follower.follow(followee);
 	}
 
 	protected LinkMetadata 링크_메타데이터_저장(final String link, final String title, final String image) {
@@ -119,7 +115,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			Arrays.stream(tags).collect(toList())
+			new Tags(Arrays.stream(tags).collect(toList()))
 		));
 	}
 

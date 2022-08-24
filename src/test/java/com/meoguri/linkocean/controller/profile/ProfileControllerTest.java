@@ -189,7 +189,7 @@ class ProfileControllerTest extends BaseControllerTest {
 
 		//then
 		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
-		assertThat(myProfile.getFavoriteCategories()).containsExactly("자기계발", "과학");
+		assertThat(myProfile.getFavoriteCategories()).containsExactlyInAnyOrder("자기계발", "과학");
 		assertThat(myProfile.getBio()).isEqualTo(bio);
 		assertThat(myProfile.getImageUrl()).isNotNull();
 	}

@@ -72,6 +72,6 @@ class ProfileServiceImplTest extends BaseServiceTest {
 		assertThat(result.getUsername()).isEqualTo("papa");
 		assertThat(result.getImage()).isEqualTo("updated image url");
 		assertThat(result.getBio()).isEqualTo("updated bio");
-		assertThat(result.getFavoriteCategories()).containsExactly(HUMANITIES, SCIENCE);
+		assertThat(result.getFavoriteCategories()).containsExactlyInAnyOrder(HUMANITIES, SCIENCE);
 	}
 }
