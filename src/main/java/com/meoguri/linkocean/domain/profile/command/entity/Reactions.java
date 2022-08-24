@@ -16,7 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.NoArgsConstructor;
 
@@ -32,12 +32,7 @@ public class Reactions {
 	)
 	private Set<Reaction> reactions = new HashSet<>();
 
-	/**
-	 * 리액션 요청
-	 * @param bookmark
-	 * @param requestType
-	 * @return 기존에 가지고 있던 리액션 타입 없었다면 null 반환
-	 */
+	/* 리액션 요청 - 기존에 가지고 있던 리액션 타입 없었다면 null 반환 */
 	public ReactionType requestReaction(final Bookmark bookmark, final ReactionType requestType) {
 		final Optional<Reaction> oReaction = reactions.stream().filter(r -> r.isOf(bookmark)).findAny();
 		ReactionType existedReactionType = oReaction.isEmpty() ? null : oReaction.get().getType();

@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.test.support.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.stream.Collectors.*;
 
@@ -18,11 +18,11 @@ import org.springframework.context.annotation.Import;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.entity.Tags;

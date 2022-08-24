@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.service.ReactionService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.RequiredArgsConstructor;
 

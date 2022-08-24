@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
