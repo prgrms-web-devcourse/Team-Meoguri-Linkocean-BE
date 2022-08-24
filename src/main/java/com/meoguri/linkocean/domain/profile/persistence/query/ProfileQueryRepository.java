@@ -1,12 +1,13 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.query;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
 
-public interface CustomProfileRepository {
+public interface ProfileQueryRepository extends Repository<Profile, Long> {
 
 	/* 사용자 이름 중복 확인 - 프로필 등록시 사용 */
 	boolean existsByUsername(String username);

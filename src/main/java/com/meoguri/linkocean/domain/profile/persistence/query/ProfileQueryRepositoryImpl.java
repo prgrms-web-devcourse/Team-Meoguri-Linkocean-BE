@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.query;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
@@ -11,14 +11,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
 @Repository
-public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport implements CustomProfileRepository {
+public class ProfileQueryRepositoryImpl extends Querydsl4RepositorySupport implements ProfileQueryRepository {
 
-	public CustomProfileRepositoryImpl(final EntityManager em) {
+	public ProfileQueryRepositoryImpl(final EntityManager em) {
 		super(Profile.class);
 	}
 

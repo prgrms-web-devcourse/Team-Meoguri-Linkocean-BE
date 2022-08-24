@@ -30,7 +30,7 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByU
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
 import com.meoguri.linkocean.domain.tag.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;

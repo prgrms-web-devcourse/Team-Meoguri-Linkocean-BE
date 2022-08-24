@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.command;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;

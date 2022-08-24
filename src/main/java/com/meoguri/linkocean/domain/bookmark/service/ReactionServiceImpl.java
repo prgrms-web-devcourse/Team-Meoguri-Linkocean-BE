@@ -8,7 +8,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.persistence.command.FindProfileByIdQuery;
 
 import lombok.RequiredArgsConstructor;
 

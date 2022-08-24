@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.command;
 
 import static java.lang.String.*;
 
@@ -31,11 +31,6 @@ public class FindProfileByIdQuery {
 
 	public Profile findProfileFetchFollows(long profileId) {
 		return profileRepository.findProfileFetchFollows(profileId)
-			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
-	}
-
-	public Profile findProfileFetchFavoriteAndFollowsById(long profileId) {
-		return profileRepository.findProfileFetchFavoriteAndFollowsById(profileId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
 	}
 

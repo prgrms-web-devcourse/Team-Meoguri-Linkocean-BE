@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.command;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
-public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomProfileRepository {
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
 	@Query("select p "
 		+ "from Profile p "
@@ -26,16 +26,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 		+ "left join fetch p.follows "
 		+ "where p.id = :profileId")
 	Optional<Profile> findProfileFetchFollows(long profileId);
-
-	/* Note - favorite 과 follows 모두 set 으로 관리되기 때문에
-	MultipleBagFetchException 발생하지 않음 but Query 는 세번 발생
-	1. 프로필 조회, 2. 즐겨찾기 조회, 3. 팔로우 조회*/
-	@Query("select p "
-		+ "from Profile p "
-		+ "left join fetch p.favoriteBookmarkIds "
-		+ "left join fetch p.follows  "
-		+ "where p.id = :profileId")
-	Optional<Profile> findProfileFetchFavoriteAndFollowsById(long profileId);
 
 	/* Note - favorite 과 reaction 모두 set 으로 관리되기 때문에
 	MultipleBagFetchException 발생하지 않음 but Query 는 세번 발생

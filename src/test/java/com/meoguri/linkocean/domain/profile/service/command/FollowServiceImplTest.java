@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.service;
+package com.meoguri.linkocean.domain.profile.service.command;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
@@ -31,8 +31,8 @@ class FollowServiceImplTest extends BaseServiceTest {
 		followService.follow(profileId1, profileId2);
 
 		//then
-		assertThat(프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(1);
-		assertThat(프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(1);
+		assertThat(내_프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(1);
+		assertThat(내_프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(1);
 	}
 
 	@Test
@@ -54,8 +54,8 @@ class FollowServiceImplTest extends BaseServiceTest {
 		followService.unfollow(profileId1, profileId2);
 
 		//then
-		assertThat(프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(0);
-		assertThat(프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(0);
+		assertThat(내_프로필_상세_조회(profileId1).getFolloweeCount()).isEqualTo(0);
+		assertThat(내_프로필_상세_조회(profileId2).getFollowerCount()).isEqualTo(0);
 	}
 
 	@Test
