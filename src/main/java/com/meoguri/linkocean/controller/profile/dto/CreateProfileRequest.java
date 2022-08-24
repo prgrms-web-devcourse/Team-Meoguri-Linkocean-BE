@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.*;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.profile.service.command.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
