@@ -7,7 +7,7 @@ import org.springframework.data.repository.Repository;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 
-public interface ProfileQueryRepository extends Repository<Profile, Long> {
+public interface ProfileDao extends Repository<Profile, Long> {
 
 	/* 사용자 이름 중복 확인 - 프로필 등록시 사용 */
 	boolean existsByUsername(String username);

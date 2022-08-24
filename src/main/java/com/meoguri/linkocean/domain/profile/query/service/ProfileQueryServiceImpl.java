@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
-import com.meoguri.linkocean.domain.profile.query.persistence.ProfileQueryRepository;
+import com.meoguri.linkocean.domain.profile.query.persistence.ProfileDao;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ProfileQueryServiceImpl implements ProfileQueryService {
 
-	private final ProfileQueryRepository profileQueryRepository;
+	private final ProfileDao profileDao;
 
 	private final ProfileRepository profileRepository;
 
@@ -65,7 +65,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final Profile currentProfile = findProfileByIdQuery.findProfileFetchFollows(currentProfileId);
 
 		/* 프로필 목록 가져 오기 */
-		final Slice<Profile> profilesSlice = profileQueryRepository.findProfiles(findCond, pageable);
+		final Slice<Profile> profilesSlice = profileDao.findProfiles(findCond, pageable);
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */

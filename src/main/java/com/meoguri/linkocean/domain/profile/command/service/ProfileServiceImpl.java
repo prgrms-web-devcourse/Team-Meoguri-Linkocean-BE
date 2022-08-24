@@ -11,7 +11,7 @@ import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQ
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
-import com.meoguri.linkocean.domain.profile.query.persistence.ProfileQueryRepository;
+import com.meoguri.linkocean.domain.profile.query.persistence.ProfileDao;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private final UserService userService;
 
 	private final ProfileRepository profileRepository;
-	private final ProfileQueryRepository profileQueryRepository;
+	private final ProfileDao profileDao;
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
 
@@ -38,7 +38,7 @@ public class ProfileServiceImpl implements ProfileService {
 		final FavoriteCategories favoriteCategories = new FavoriteCategories(command.getCategories());
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
-		final boolean exists = profileQueryRepository.existsByUsername(username);
+		final boolean exists = profileDao.existsByUsername(username);
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 저장, 유저에 프로필 등록 */
@@ -59,7 +59,7 @@ public class ProfileServiceImpl implements ProfileService {
 		final Profile profile = findProfileByIdQuery.findById(profileId);
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
-		final boolean exists = profileQueryRepository.existsByUsernameExceptMe(updateUsername, profileId);
+		final boolean exists = profileDao.existsByUsernameExceptMe(updateUsername, profileId);
 		checkUniqueConstraint(exists, "이미 사용중인 이름입니다.");
 
 		/* 프로필 업데이트 */

@@ -20,10 +20,10 @@ import com.meoguri.linkocean.test.support.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 @Import(CustomP6spySqlFormat.class)
-class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
+class ProfileDaoImplTest extends BasePersistenceTest {
 
 	@Autowired
-	private ProfileQueryRepository profileQueryRepository;
+	private ProfileDao profileDao;
 
 	private Profile profile1;
 	private Profile profile2;
@@ -54,8 +54,8 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 		final String unsavedUsername = "unsavedUsername";
 
 		//when
-		final boolean exists1 = profileQueryRepository.existsByUsername(savedUsername);
-		final boolean exists2 = profileQueryRepository.existsByUsername(unsavedUsername);
+		final boolean exists1 = profileDao.existsByUsername(savedUsername);
+		final boolean exists2 = profileDao.existsByUsername(unsavedUsername);
 
 		//then
 		assertThat(exists1).isEqualTo(true);
@@ -65,10 +65,10 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 	@Test
 	void existsByUsernameExceptMe_성공() {
 		//when
-		final boolean exists1 = profileQueryRepository.existsByUsernameExceptMe("user1", profileId1);
-		final boolean exists2 = profileQueryRepository.existsByUsernameExceptMe("user2", profileId1);
-		final boolean exists3 = profileQueryRepository.existsByUsernameExceptMe("user1", profileId2);
-		final boolean exists4 = profileQueryRepository.existsByUsernameExceptMe("user2", profileId2);
+		final boolean exists1 = profileDao.existsByUsernameExceptMe("user1", profileId1);
+		final boolean exists2 = profileDao.existsByUsernameExceptMe("user2", profileId1);
+		final boolean exists3 = profileDao.existsByUsernameExceptMe("user1", profileId2);
+		final boolean exists4 = profileDao.existsByUsernameExceptMe("user2", profileId2);
 
 		//then
 		assertThat(exists1).isEqualTo(false);
@@ -90,9 +90,9 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 		ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).follower(true).build();
 
 		//when
-		final Slice<Profile> followerSlice1 = profileQueryRepository.findProfiles(cond1, pageable);
-		final Slice<Profile> followerSlice2 = profileQueryRepository.findProfiles(cond2, pageable);
-		final Slice<Profile> followerSlice3 = profileQueryRepository.findProfiles(cond3, pageable);
+		final Slice<Profile> followerSlice1 = profileDao.findProfiles(cond1, pageable);
+		final Slice<Profile> followerSlice2 = profileDao.findProfiles(cond2, pageable);
+		final Slice<Profile> followerSlice3 = profileDao.findProfiles(cond3, pageable);
 
 		//then
 		assertThat(followerSlice1).containsExactly(profile2);
@@ -114,7 +114,7 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 			.build();
 
 		//when
-		final Slice<Profile> followerSlice = profileQueryRepository.findProfiles(cond, pageable);
+		final Slice<Profile> followerSlice = profileDao.findProfiles(cond, pageable);
 
 		//then
 		assertThat(followerSlice).containsExactly(profile1);
@@ -133,9 +133,9 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 		ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).followee(true).build();
 
 		//when
-		final Slice<Profile> followeeSlice1 = profileQueryRepository.findProfiles(cond1, pageable);
-		final Slice<Profile> followeeSlice2 = profileQueryRepository.findProfiles(cond2, pageable);
-		final Slice<Profile> followeeSlice3 = profileQueryRepository.findProfiles(cond3, pageable);
+		final Slice<Profile> followeeSlice1 = profileDao.findProfiles(cond1, pageable);
+		final Slice<Profile> followeeSlice2 = profileDao.findProfiles(cond2, pageable);
+		final Slice<Profile> followeeSlice3 = profileDao.findProfiles(cond3, pageable);
 
 		//then
 		assertThat(followeeSlice1).containsExactly(profile2);
@@ -157,7 +157,7 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 			.build();
 
 		//when
-		final Slice<Profile> followerSlice = profileQueryRepository.findProfiles(cond, pageable);
+		final Slice<Profile> followerSlice = profileDao.findProfiles(cond, pageable);
 
 		//then
 		assertThat(followerSlice).containsExactly(profile3);
@@ -171,7 +171,7 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 			.build();
 
 		//when
-		final Slice<Profile> profiles = profileQueryRepository.findProfiles(cond, pageable);
+		final Slice<Profile> profiles = profileDao.findProfiles(cond, pageable);
 
 		//then
 		assertAll(
@@ -189,7 +189,7 @@ class ProfileQueryRepositoryImplTest extends BasePersistenceTest {
 		final PageRequest pageableWithSize2 = PageRequest.of(0, 2);
 
 		//when
-		final Slice<Profile> profiles = profileQueryRepository.findProfiles(cond, pageableWithSize2);
+		final Slice<Profile> profiles = profileDao.findProfiles(cond, pageableWithSize2);
 
 		//then
 		assertAll(
