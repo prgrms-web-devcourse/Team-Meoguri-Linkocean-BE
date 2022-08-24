@@ -26,6 +26,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.util.querydsl.CustomPath;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
@@ -37,6 +39,17 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	public CustomBookmarkRepositoryImpl() {
 		super(Bookmark.class);
+	}
+
+	@Override
+	public boolean existsByWriterAndLinkMetadata(final Profile writer, final LinkMetadata linkMetadata) {
+		return selectOne()
+			.from(bookmark)
+			.where(
+				writerIdEq(writer.getId()),
+				linMetadataEq(linkMetadata),
+				registered()
+			).fetchFirst() != null;
 	}
 
 	/* 대상의 프로필 id 로 북마크 페이징 조회 */
@@ -142,6 +155,10 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private BooleanBuilder titleContains(final String title) {
 		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(title));
+	}
+
+	private BooleanBuilder linMetadataEq(final LinkMetadata linkMetadata) {
+		return nullSafeBuilder(() -> bookmark.linkMetadata.eq(linkMetadata));
 	}
 
 	private BooleanBuilder categoryEq(final Category category) {

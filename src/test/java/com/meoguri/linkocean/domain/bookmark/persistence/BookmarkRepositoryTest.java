@@ -54,19 +54,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	}
 
 	@Test
-	void existsByWriterAndLinkMetadata_성공() {
-		//given
-		북마크_저장(writer, linkMetadata, "www.google.com");
-
-		//when
-		final boolean exists =
-			bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
-
-		//then
-		assertThat(exists).isEqualTo(true);
-	}
-
-	@Test
 	void 아이디와_작성자로_조회_성공() {
 		//given
 		final Bookmark savedBookmark = 북마크_저장(writer, linkMetadata, "www.google.com");

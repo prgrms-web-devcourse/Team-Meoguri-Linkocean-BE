@@ -67,6 +67,21 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		bookmarkId3 = bookmark3.getId();
 	}
 
+	@Test
+	void existsByWriterAndLinkMetadata_성공() {
+		//given
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
+		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
+		북마크_저장(profile, linkMetadata, "www.google.com");
+
+		//when
+		final boolean exists =
+			bookmarkRepository.existsByWriterAndLinkMetadata(profile, linkMetadata);
+
+		//then
+		assertThat(exists).isEqualTo(true);
+	}
+
 	@Nested
 	class 북마크_카테고리로_조회 {
 

@@ -12,17 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
-
-	@Query("select count(b)>0 "
-		+ "from Bookmark b "
-		+ "where b.writer = :writer "
-		+ "and b.linkMetadata = :linkMetadata "
-		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	boolean existsByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
 
 	/* 아이디와 작성자로 조회 */
 	@Query("select b "
