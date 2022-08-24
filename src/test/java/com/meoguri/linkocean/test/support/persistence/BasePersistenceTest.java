@@ -30,7 +30,7 @@ import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
-import com.meoguri.linkocean.test.support.common.P6spyLogMessageFormatConfiguration;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @Import(P6spyLogMessageFormatConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
