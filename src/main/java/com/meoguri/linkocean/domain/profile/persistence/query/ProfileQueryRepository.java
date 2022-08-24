@@ -1,12 +1,13 @@
-package com.meoguri.linkocean.domain.profile.persistence;
+package com.meoguri.linkocean.domain.profile.persistence.query;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
 
-public interface CustomProfileRepository {
+public interface ProfileQueryRepository extends Repository<Profile, Long> {
 
 	/**
 	 * 다양한 조건으로 프로필 목록 조회

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.domain.profile.service.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class TagServiceImplTest extends BaseServiceTest {

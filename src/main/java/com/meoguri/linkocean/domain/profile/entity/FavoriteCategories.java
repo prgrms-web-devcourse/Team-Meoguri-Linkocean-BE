@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 public class FavoriteCategories {
 
 	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.values().length;
+
 	@ElementCollection
 	@CollectionTable(name = "favorite_category")
 	@Column(name = "category")
