@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.profile.query.service.CategoryQueryService;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class CategoryQueryServiceImplTest extends BaseServiceTest {

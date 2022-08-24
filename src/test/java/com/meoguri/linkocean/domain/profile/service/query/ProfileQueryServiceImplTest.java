@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.domain.profile.persistence.query.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.service.query.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfilesResult;
+import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
+import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class ProfileQueryServiceImplTest extends BaseServiceTest {

@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.tag.service;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.profile.service.query.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
 
 public interface TagService {

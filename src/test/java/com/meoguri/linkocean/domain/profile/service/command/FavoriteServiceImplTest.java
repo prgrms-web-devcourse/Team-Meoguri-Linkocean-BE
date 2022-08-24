@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.domain.profile.command.service.FavoriteService;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
 class FavoriteServiceImplTest extends BaseServiceTest {

@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.List.of;
@@ -20,6 +20,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
 class ProfileTest {
 
