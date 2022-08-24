@@ -23,24 +23,6 @@ public class ProfileDaoImpl extends Querydsl4RepositorySupport implements Profil
 	}
 
 	@Override
-	public boolean existsByUsername(final String username) {
-		return selectOne()
-			.from(profile)
-			.where(profile.username.eq(username))
-			.fetchOne() != null;
-	}
-
-	@Override
-	public boolean existsByUsernameExceptMe(final String updateUsername, final long profileId) {
-		return selectOne()
-			.from(profile)
-			.where(
-				profile.username.eq(updateUsername),
-				profile.id.ne(profileId)
-			).fetchOne() != null;
-	}
-
-	@Override
 	public Slice<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
 
 		final Long currentProfileId = findCond.getProfileId();

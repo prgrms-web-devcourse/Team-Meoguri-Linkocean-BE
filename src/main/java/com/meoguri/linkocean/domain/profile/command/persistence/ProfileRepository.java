@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
-public interface ProfileRepository extends JpaRepository<Profile, Long> {
+public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomProfileRepository {
 
 	@Query("select p "
 		+ "from Profile p "

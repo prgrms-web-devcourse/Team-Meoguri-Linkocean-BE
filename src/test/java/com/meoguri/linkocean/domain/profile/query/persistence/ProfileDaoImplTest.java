@@ -48,35 +48,6 @@ class ProfileDaoImplTest extends BasePersistenceTest {
 		pageable = createPageable();
 	}
 
-	@Test
-	void 사용자_이름_중복_확인_성공() {
-		final String savedUsername = "user1";
-		final String unsavedUsername = "unsavedUsername";
-
-		//when
-		final boolean exists1 = profileDao.existsByUsername(savedUsername);
-		final boolean exists2 = profileDao.existsByUsername(unsavedUsername);
-
-		//then
-		assertThat(exists1).isEqualTo(true);
-		assertThat(exists2).isEqualTo(false);
-	}
-
-	@Test
-	void existsByUsernameExceptMe_성공() {
-		//when
-		final boolean exists1 = profileDao.existsByUsernameExceptMe("user1", profileId1);
-		final boolean exists2 = profileDao.existsByUsernameExceptMe("user2", profileId1);
-		final boolean exists3 = profileDao.existsByUsernameExceptMe("user1", profileId2);
-		final boolean exists4 = profileDao.existsByUsernameExceptMe("user2", profileId2);
-
-		//then
-		assertThat(exists1).isEqualTo(false);
-		assertThat(exists2).isEqualTo(true);
-		assertThat(exists3).isEqualTo(true);
-		assertThat(exists4).isEqualTo(false);
-	}
-
 	/* profile 1 <-> profile 2 -> profile 3 */
 	@Test
 	void 팔로워_목록_조회_성공_이름_지정_X() {
