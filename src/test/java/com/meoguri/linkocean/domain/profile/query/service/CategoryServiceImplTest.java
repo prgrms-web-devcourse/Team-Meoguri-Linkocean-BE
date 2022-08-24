@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
 
-class CategoryQueryServiceImplTest extends BaseServiceTest {
+class CategoryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
-	private CategoryQueryService categoryQueryService;
+	private CategoryService categoryService;
 
 	private long profileId;
 
@@ -37,7 +38,7 @@ class CategoryQueryServiceImplTest extends BaseServiceTest {
 		북마크_등록(profileId, "www.jacob.com", HEALTH);
 
 		//when
-		final List<Category> categories = categoryQueryService.getUsedCategories(profileId);
+		final List<Category> categories = categoryService.getUsedCategories(profileId);
 
 		//then
 		assertThat(categories).contains(IT, SOCIAL, HEALTH);

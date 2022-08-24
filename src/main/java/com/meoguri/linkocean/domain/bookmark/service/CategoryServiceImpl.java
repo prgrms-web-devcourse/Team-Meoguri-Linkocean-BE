@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.query.service;
+package com.meoguri.linkocean.domain.bookmark.service;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CategoryQueryServiceImpl implements CategoryQueryService {
+public class CategoryServiceImpl implements CategoryService {
 
 	private final BookmarkRepository bookmarkRepository;
 

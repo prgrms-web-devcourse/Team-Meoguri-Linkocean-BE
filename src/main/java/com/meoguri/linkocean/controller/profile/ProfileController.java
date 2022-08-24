@@ -27,9 +27,9 @@ import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
 import com.meoguri.linkocean.controller.profile.dto.UpdateProfileRequest;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.profile.command.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.domain.profile.query.service.CategoryQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
@@ -50,7 +50,7 @@ public class ProfileController {
 
 	private final ProfileService profileService;
 	private final ProfileQueryService profileQueryService;
-	private final CategoryQueryService categoryQueryService;
+	private final CategoryService categoryService;
 	private final TagService tagService;
 
 	private final S3Uploader s3Uploader;
@@ -81,7 +81,7 @@ public class ProfileController {
 		// TODO - 얘 혼자 응답을 말아주는 로직이 컨트롤러에 위치하고 있음 서비스로 옮기던가 나중에 영속성에서 DTO 로 퍼올릴때 수정 할 것
 		final GetDetailedProfileResult profile = profileQueryService.getByProfileId(user.getProfileId(), profileId);
 		final List<GetProfileTagsResult> tags = tagService.getTags(profileId);
-		final List<Category> categories = categoryQueryService.getUsedCategories(profileId);
+		final List<Category> categories = categoryService.getUsedCategories(profileId);
 
 		return GetDetailedProfileResponse.of(profile, tags, categories);
 	}
