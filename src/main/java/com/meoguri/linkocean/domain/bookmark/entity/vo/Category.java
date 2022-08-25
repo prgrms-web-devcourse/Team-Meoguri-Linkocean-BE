@@ -37,6 +37,7 @@ public enum Category {
 		return Arrays.stream(Category.values()).map(Category::getKorName).collect(toList());
 	}
 
+	//질문 getKorName, toStringKor의 역할이 동일한데 하나는 없애도 괜찮지 않을까요?
 	public String getKorName() {
 		return this.korName;
 	}
@@ -52,4 +53,7 @@ public enum Category {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such category : %s", arg)));
 	}
 
+	public static int totalCount() {
+		return Category.values().length;
+	}
 }

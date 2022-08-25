@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class FavoriteCategories {
 
-	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.values().length;
+	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.totalCount();
 
 	@ElementCollection
 	@CollectionTable(name = "favorite_category")
@@ -33,7 +33,7 @@ public class FavoriteCategories {
 	private Set<Category> favoriteCategories = new HashSet<>();
 
 	public FavoriteCategories(final List<Category> favoriteCategories) {
-		checkCondition(favoriteCategories.size() >= 1 && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
+		checkCondition(1 <= favoriteCategories.size() && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
 			format("category size must be in between 1 & %d", MAX_FAVORITE_CATEGORIES_SIZE));
 
 		this.favoriteCategories = new HashSet<>(favoriteCategories);
