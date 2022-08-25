@@ -19,8 +19,8 @@ import javax.persistence.OneToMany;
 import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

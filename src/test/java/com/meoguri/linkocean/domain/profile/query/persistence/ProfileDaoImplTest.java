@@ -9,17 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.test.support.common.CustomP6spySqlFormat;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
-@Import(CustomP6spySqlFormat.class)
 class ProfileDaoImplTest extends BasePersistenceTest {
 
 	@Autowired

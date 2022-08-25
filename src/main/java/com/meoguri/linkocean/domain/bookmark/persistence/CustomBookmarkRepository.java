@@ -6,10 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 public interface CustomBookmarkRepository {
 

@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.test.support.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
-import com.meoguri.linkocean.test.support.common.P6spyLogMessageFormatConfiguration;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @Import(P6spyLogMessageFormatConfiguration.class)
 @Transactional
@@ -71,7 +71,7 @@ public class BaseServiceTest {
 
 	@PersistenceContext
 	protected EntityManager em;
-	
+
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);
 	}
