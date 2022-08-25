@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.util.querydsl;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
