@@ -7,6 +7,9 @@ import static java.util.stream.Collectors.*;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -66,6 +69,9 @@ public class BaseServiceTest {
 	@Autowired
 	private NotificationService notificationService;
 
+	@PersistenceContext
+	protected EntityManager em;
+	
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);
 	}
