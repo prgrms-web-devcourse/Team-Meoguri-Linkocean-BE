@@ -49,7 +49,7 @@ public class Reactions {
 			/* 북마크에 리액션을 가지고 있으며 같은 타입의 리액션을 하는 경우 취소 */
 			reactions.remove(oReaction.get());
 		} else {
-			/* 북마크에 리액션을 가지고 있으며 다른 타입의 리액션을 하는 경우 변경*/
+			/* 북마크에 리액션을 가지고 있으며 다른 타입의 리액션을 하는 경우 변경 */
 			oReaction.get().updateType(requestType);
 		}
 

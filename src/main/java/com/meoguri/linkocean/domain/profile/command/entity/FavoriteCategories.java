@@ -20,6 +20,10 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자의 선호 카테고리 목록
+ * - 사용자는 최소 1개의 선호 카테고리를 갖고 있다.
+ */
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class FavoriteCategories {
