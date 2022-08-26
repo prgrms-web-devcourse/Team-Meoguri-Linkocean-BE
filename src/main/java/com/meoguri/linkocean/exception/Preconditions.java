@@ -33,12 +33,6 @@ public final class Preconditions {
 		}
 	}
 
-	public static void checkUniqueConstraintIllegalCommand(final boolean exists, final String errorMessage) {
-		if (exists) {
-			throw new LinkoceanRuntimeException(errorMessage);
-		}
-	}
-
 	public static void checkState(final boolean expression, final String errorMessage) {
 		if (!expression) {
 			throw new IllegalStateException(errorMessage);

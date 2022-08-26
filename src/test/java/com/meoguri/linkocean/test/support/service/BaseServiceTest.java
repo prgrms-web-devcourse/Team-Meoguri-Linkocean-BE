@@ -1,20 +1,23 @@
 package com.meoguri.linkocean.test.support.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
-import com.meoguri.linkocean.domain.bookmark.service.FavoriteService;
 import com.meoguri.linkocean.domain.bookmark.service.ReactionService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
@@ -22,15 +25,19 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
-import com.meoguri.linkocean.domain.profile.service.FollowService;
-import com.meoguri.linkocean.domain.profile.service.ProfileService;
-import com.meoguri.linkocean.domain.profile.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.service.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.command.service.FavoriteService;
+import com.meoguri.linkocean.domain.profile.command.service.FollowService;
+import com.meoguri.linkocean.domain.profile.command.service.ProfileService;
+import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
+import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
+@Import(P6spyLogMessageFormatConfiguration.class)
 @Transactional
 @SpringBootTest
 public class BaseServiceTest {
@@ -40,6 +47,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private ProfileService profileService;
+
+	@Autowired
+	private ProfileQueryService profileQueryService;
 
 	@Autowired
 	private FollowService followService;
@@ -58,6 +68,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private NotificationService notificationService;
+
+	@PersistenceContext
+	protected EntityManager em;
 
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);
@@ -141,7 +154,7 @@ public class BaseServiceTest {
 		notificationService.shareNotification(new ShareNotificationCommand(senderId, receiverId, bookmarkId));
 	}
 
-	protected GetDetailedProfileResult 프로필_상세_조회(final long currentUserProfileId) {
-		return profileService.getByProfileId(currentUserProfileId, currentUserProfileId);
+	protected GetDetailedProfileResult 내_프로필_상세_조회(final long currentUserProfileId) {
+		return profileQueryService.getByProfileId(currentUserProfileId, currentUserProfileId);
 	}
 }

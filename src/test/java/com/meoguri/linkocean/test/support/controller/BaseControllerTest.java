@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,13 +39,16 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
-import com.meoguri.linkocean.test.support.common.P6spyLogMessageFormatConfiguration;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest
 @Import(P6spyLogMessageFormatConfiguration.class)
 public class BaseControllerTest {
+
+	@Autowired
+	protected EntityManager em;
 
 	@Autowired
 	protected MockMvc mockMvc;

@@ -2,22 +2,27 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class BookmarkRepositoryTest extends BasePersistenceTest {
@@ -46,19 +51,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		tag1 = 태그_저장("tag1");
 		tag2 = 태그_저장("tag2");
 		tag3 = 태그_저장("tag3");
-	}
-
-	@Test
-	void existsByWriterAndLinkMetadata_성공() {
-		//given
-		북마크_저장(writer, linkMetadata, "www.google.com");
-
-		//when
-		final boolean exists =
-			bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
-
-		//then
-		assertThat(exists).isEqualTo(true);
 	}
 
 	@Test
@@ -146,16 +138,32 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		assertThat(oBookmarkId2).isEmpty();
 	}
 
-	@Test
-	void 북마크_LikeCount_증가_성공() {
+	@ParameterizedTest
+	@CsvSource(value = {
+		"www.youtube.com,     null,  LIKE, 1, 0",
+		"www.haha.com,        LIKE,  LIKE, 0, 0",
+		"www.naver.com, 	  HATE,  LIKE, 1, 0",
+		"www.prgrms.com,      null,  HATE, 0, 1",
+		"www.linkocean.com,   LIKE,  HATE, 0, 1",
+		"www.columbia.com,    HATE,  HATE, 0, 0",
+	}, nullValues = "null")
+	void 북마크_LikeCount_업데이트_성공(
+		final String url,
+		final ReactionType existedType,
+		final ReactionType requestType,
+		final long expectedLikeCount,
+		final long expectedHateCount
+	) {
 		//given
-		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(writer, "www.youtube.com");
+		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(writer, url);
+		writer = 리액션_요청(writer, bookmark, existedType);
+		writer.requestReaction(bookmark, requestType);
 
 		//when
-		bookmarkRepository.addLikeCount(bookmark.getId());
+		bookmarkRepository.updateLikeCount(bookmark.getId(), existedType, requestType);
 
 		//then
-		final Optional<Bookmark> oFoundBookmark = bookmarkRepository.findById(bookmark.getId());
-		assertThat(oFoundBookmark.get().getLikeCount()).isEqualTo(1);
+		assertThat(bookmarkRepository.countReactionGroup(bookmark.getId()))
+			.containsAllEntriesOf(Map.of(LIKE, expectedLikeCount, HATE, expectedHateCount));
 	}
 }

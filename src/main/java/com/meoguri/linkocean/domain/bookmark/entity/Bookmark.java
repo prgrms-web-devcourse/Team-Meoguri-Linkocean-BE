@@ -2,23 +2,20 @@ package com.meoguri.linkocean.domain.bookmark.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.time.LocalDateTime.*;
-import static java.util.stream.Collectors.*;
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 
@@ -27,7 +24,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.tag.entity.Tags;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +44,6 @@ import lombok.NoArgsConstructor;
 public class Bookmark extends BaseIdEntity {
 
 	public static final int MAX_BOOKMARK_TITLE_LENGTH = 50;
-	public static final int MAX_TAGS_COUNT = 5;
 
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "profile_id")
@@ -55,10 +52,8 @@ public class Bookmark extends BaseIdEntity {
 	@ManyToOne(fetch = LAZY, optional = false)
 	private LinkMetadata linkMetadata;
 
-	/* BookmarkTag 의 생명주기는 Bookmark 엔티티가 관리 */
-	@Getter(NONE)
-	@OneToMany(mappedBy = "bookmark", cascade = ALL, orphanRemoval = true)
-	private List<BookmarkTag> bookmarkTags = new ArrayList<>();
+	@Embedded
+	private Tags tags;
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
 	private String title;
@@ -93,7 +88,7 @@ public class Bookmark extends BaseIdEntity {
 
 	/* 북마크 등록시 사용하는 생성자 */
 	public Bookmark(final Profile writer, final LinkMetadata linkMetadata, final String title, final String memo,
-		final OpenType openType, final Category category, final String url, final List<Tag> tags) {
+		final OpenType openType, final Category category, final String url, final Tags tags) {
 		checkNotNull(openType);
 		checkNotNull(tags);
 		checkNotNull(url);
@@ -110,12 +105,12 @@ public class Bookmark extends BaseIdEntity {
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
-		updateBookmarkTags(tags);
+		this.tags = tags;
 	}
 
 	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
-		final List<Tag> tags) {
+		final Tags tags) {
 		checkNotNull(openType);
 		checkNotNull(tags);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
@@ -125,14 +120,7 @@ public class Bookmark extends BaseIdEntity {
 		this.category = category;
 		this.openType = openType;
 		this.updatedAt = now();
-		updateBookmarkTags(tags);
-	}
-
-	private void updateBookmarkTags(List<Tag> tags) {
-		checkCondition(tags.size() <= MAX_TAGS_COUNT, "태그는 %d개 이하여야 합니다", MAX_TAGS_COUNT);
-
-		bookmarkTags.clear();
-		tags.forEach(tag -> bookmarkTags.add(new BookmarkTag(this, tag)));
+		this.tags = tags;
 	}
 
 	public void remove() {
@@ -141,7 +129,7 @@ public class Bookmark extends BaseIdEntity {
 	}
 
 	public List<String> getTagNames() {
-		return bookmarkTags.stream().map(BookmarkTag::getTagName).collect(toList());
+		return tags.getTagNames();
 	}
 
 	public boolean isOpenTypeAll() {

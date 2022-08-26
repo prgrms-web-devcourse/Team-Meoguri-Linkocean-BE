@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.ProfileResult;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.test.support.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.stream.Collectors.*;
 
@@ -13,25 +13,26 @@ import javax.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Reaction;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.ReactionRepository;
-import com.meoguri.linkocean.domain.bookmark.persistence.TagRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.profile.entity.Follow;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.persistence.FollowRepository;
-import com.meoguri.linkocean.domain.profile.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
+import com.meoguri.linkocean.domain.tag.entity.Tags;
+import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
+@Import(P6spyLogMessageFormatConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 public class BasePersistenceTest {
@@ -49,9 +50,6 @@ public class BasePersistenceTest {
 	private ProfileRepository profileRepository;
 
 	@Autowired
-	private FollowRepository followRepository;
-
-	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
 
 	@Autowired
@@ -59,9 +57,6 @@ public class BasePersistenceTest {
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
-
-	@Autowired
-	private ReactionRepository reactionRepository;
 
 	protected boolean isLoaded(final Object entity) {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
@@ -87,7 +82,7 @@ public class BasePersistenceTest {
 	}
 
 	protected void 팔로우_저장(final Profile follower, final Profile followee) {
-		followRepository.save(new Follow(follower, followee));
+		follower.follow(followee);
 	}
 
 	protected LinkMetadata 링크_메타데이터_저장(final String link, final String title, final String image) {
@@ -124,7 +119,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			Arrays.stream(tags).collect(toList())
+			new Tags(Arrays.stream(tags).collect(toList()))
 		));
 	}
 
@@ -155,21 +150,36 @@ public class BasePersistenceTest {
 			tags);
 	}
 
-	/* em.flush & em.clear occurs */
-	protected void 좋아요_저장(final Profile profile, final Bookmark bookmark) {
-		reactionRepository.save(new Reaction(profile, bookmark, LIKE));
-		bookmarkRepository.addLikeCount(bookmark.getId());
+	/* 주의 ! em.flush & em.clear occurs */
+	protected Profile 좋아요_저장(final Profile profile, final Bookmark bookmark) {
+		profile.requestReaction(bookmark, LIKE);
+		bookmarkRepository.updateLikeCount(bookmark.getId(), null, LIKE);
+		return 프로필_load(profile.getId());
 	}
 
-	protected void 싫어요_저장(final Profile profile, final Bookmark bookmark) {
-		reactionRepository.save(new Reaction(profile, bookmark, HATE));
+	/* 주의 ! em.flush & em.clear occurs */
+	protected Profile 싫어요_저장(final Profile profile, final Bookmark bookmark) {
+		profile.requestReaction(bookmark, HATE);
+		bookmarkRepository.updateLikeCount(bookmark.getId(), null, HATE);
+		return 프로필_load(profile.getId());
+	}
+
+	/* 주의 ! em.flush & em.clear occurs */
+	protected Profile 리액션_요청(final Profile profile, final Bookmark bookmark, final ReactionType requestType) {
+		if (requestType != null) {
+			profile.requestReaction(bookmark, requestType);
+			bookmarkRepository.updateLikeCount(bookmark.getId(), null, requestType);
+			return 프로필_load(profile.getId());
+		} else {
+			return profile;
+		}
 	}
 
 	protected void 즐겨찾기_저장(final Profile profile, final Bookmark bookmark) {
 		profile.favorite(bookmark);
 	}
 
-	protected Profile 프로필_조회(final long profileId) {
+	private Profile 프로필_load(final long profileId) {
 		return profileRepository.findById(profileId).orElseThrow();
 	}
 

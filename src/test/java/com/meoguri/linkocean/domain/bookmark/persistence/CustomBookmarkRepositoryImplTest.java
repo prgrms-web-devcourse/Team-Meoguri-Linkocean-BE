@@ -2,11 +2,13 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -18,10 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.Tag;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
@@ -56,15 +59,27 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark1);
 		즐겨찾기_저장(profile, bookmark2);
 
-		좋아요_저장(profile, bookmark1);
-		싫어요_저장(profile, bookmark3);
+		profile = 좋아요_저장(profile, bookmark1);
+		profile = 싫어요_저장(profile, bookmark3);
 
 		bookmarkId1 = bookmark1.getId();
 		bookmarkId2 = bookmark2.getId();
 		bookmarkId3 = bookmark3.getId();
+	}
 
-		// detached -> managed
-		profile = 프로필_조회(profileId);
+	@Test
+	void existsByWriterAndLinkMetadata_성공() {
+		//given
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
+		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
+		북마크_저장(profile, linkMetadata, "www.google.com");
+
+		//when
+		final boolean exists =
+			bookmarkRepository.existsByWriterAndLinkMetadata(profile, linkMetadata);
+
+		//then
+		assertThat(exists).isEqualTo(true);
 	}
 
 	@Nested
@@ -259,13 +274,14 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getTagNames)
-				.containsExactly(
-					tuple(bookmarkId2, List.of("tag1")),
-					tuple(bookmarkId1, List.of("tag1", "tag2"))
-				);
+			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId2);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1");
+
+			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(1).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
 		}
 
 		@Test
@@ -281,13 +297,14 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(2)
-				.extracting(Bookmark::getId, Bookmark::getTagNames)
-				.containsExactly(
-					tuple(bookmarkId1, List.of("tag1", "tag2")),
-					tuple(bookmarkId2, List.of("tag1"))
-				);
+			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(2);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
+
+			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId2);
+			assertThat(bookmarkPage.getContent().get(1).getTagNames()).containsExactlyInAnyOrder("tag1");
 		}
 
 		@Test
@@ -304,10 +321,12 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(1)
-				.extracting(Bookmark::getId, Bookmark::getTagNames, Bookmark::getTitle)
-				.containsExactly(tuple(bookmarkId1, List.of("tag1", "tag2"), "title1"));
+			assertThat(bookmarkPage).hasSize(1);
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(1);
+
+			assertThat(bookmarkPage.getContent().get(0).getId()).isEqualTo(bookmarkId1);
+			assertThat(bookmarkPage.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("tag1", "tag2");
+			assertThat(bookmarkPage.getContent().get(0).getTitle()).isEqualTo("title1");
 		}
 	}
 
@@ -532,5 +551,23 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
 		}
 
+	}
+
+	@Test
+	void 북마크의_리액션_별_카운트_조회_성공() {
+		//given
+		final Profile profile1 = 사용자_프로필_동시_저장("haha@gmail.com", GOOGLE, "haha", IT);
+		final Profile profile2 = 사용자_프로필_동시_저장("papa@gmail.com", GOOGLE, "papa", IT);
+		final Bookmark bookmark = 북마크_링크_메타데이터_동시_저장(profile1, "www.google.com");
+
+		싫어요_저장(profile1, bookmark);
+		좋아요_저장(profile2, bookmark);
+
+		//when
+		final Map<ReactionType, Long> group = bookmarkRepository.countReactionGroup(bookmark.getId());
+
+		//then
+		assertThat(group.getOrDefault(LIKE, 0L)).isEqualTo(1);
+		assertThat(group.getOrDefault(HATE, 0L)).isEqualTo(1);
 	}
 }

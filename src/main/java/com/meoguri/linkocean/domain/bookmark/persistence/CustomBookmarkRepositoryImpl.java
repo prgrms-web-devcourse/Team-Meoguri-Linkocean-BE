@@ -1,13 +1,18 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.QBookmarkTag.*;
-import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.QFollow.*;
+import static com.meoguri.linkocean.domain.tag.entity.QTag.*;
+import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
 import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
+import static com.querydsl.sql.SQLExpressions.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +25,9 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.util.querydsl.CustomPath;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
@@ -31,6 +39,17 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	public CustomBookmarkRepositoryImpl() {
 		super(Bookmark.class);
+	}
+
+	@Override
+	public boolean existsByWriterAndLinkMetadata(final Profile writer, final LinkMetadata linkMetadata) {
+		return selectOne()
+			.from(bookmark)
+			.where(
+				writerIdEq(writer.getId()),
+				linMetadataEq(linkMetadata),
+				registered()
+			).fetchFirst() != null;
 	}
 
 	/* 대상의 프로필 id 로 북마크 페이징 조회 */
@@ -117,24 +136,29 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
 		return !isFavorite ? null : getJpasqlQuery()
-			.select(CustomPath.bookmarkId)
-			.from(CustomPath.favorite)
+			.select(bookmarkId)
+			.from(favorite)
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
 
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 	private List<Long> getBookmarkIds(final List<String> tags) {
-		return tags != null ? select(bookmarkTag.bookmark.id)
+		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
-			.from(bookmarkTag)
-			.join(bookmarkTag.tag)
-			.where(bookmarkTag.tag.name.in(tags))
+			.from(bookmark_tag)
+			.join(tag)
+			.where(tag.name.in(tags))
 			.fetch() : null;
+
 	}
 
 	private BooleanBuilder titleContains(final String title) {
 		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(title));
+	}
+
+	private BooleanBuilder linMetadataEq(final LinkMetadata linkMetadata) {
+		return nullSafeBuilder(() -> bookmark.linkMetadata.eq(linkMetadata));
 	}
 
 	private BooleanBuilder categoryEq(final Category category) {
@@ -155,9 +179,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	private BooleanBuilder followedBy(long currentUserProfileId) {
 		return nullSafeBuilder(() -> bookmark.writer.in(
-			select(follow.followee)
+			select(follow.id.followee)
 				.from(follow)
-				.where(follow.follower.id.eq(currentUserProfileId))
+				.where(follow.id.follower.id.eq(currentUserProfileId))
 		));
 	}
 
@@ -218,5 +242,27 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		}
 
 		return result;
+	}
+
+	@Override
+	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
+		/* 리액션 카운트 맵 조회 */
+		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
+			.select(r_type, count())
+			.from(reaction)
+			.where(r_bookmarkId.eq(bookmarkId))
+			.groupBy(r_type)
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> (tuple.get(r_type)),
+				tuple -> (tuple.get(count())))
+			);
+
+		/* 없는 리액션에 대해서 0 채워 주기 */
+		Arrays.stream(ReactionType.values())
+			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
+			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
+
+		return reactionCountMap;
 	}
 }

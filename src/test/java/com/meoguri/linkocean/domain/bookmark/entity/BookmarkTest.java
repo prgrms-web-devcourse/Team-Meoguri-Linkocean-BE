@@ -1,10 +1,9 @@
 package com.meoguri.linkocean.domain.bookmark.entity;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
-import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
+import static com.meoguri.linkocean.domain.profile.command.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -13,11 +12,14 @@ import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.tag.entity.Tag;
+import com.meoguri.linkocean.domain.tag.entity.Tags;
 
 class BookmarkTest {
 
@@ -30,13 +32,13 @@ class BookmarkTest {
 		//given
 		final Profile profile = createProfile();
 		final LinkMetadata linkMetadata = createLinkMetadata();
-		final OpenType openType = OpenType.ALL;
+		final OpenType openType = ALL;
 		final Category category = IT;
 		final String url = "www.naver.com";
 
 		//when
 		final Bookmark bookmark =
-			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, emptyList());
+			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, createTags());
 
 		//then
 		assertThat(bookmark).isNotNull()
@@ -55,62 +57,14 @@ class BookmarkTest {
 	}
 
 	@Test
-	void 제목의_길이가_조건에_따른_북마크_생성_실패() {
+	void 북마크_생성_실패_제목이_너무_김() {
 		//given
 		final String tooLongTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 
 		//when then
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata(),
-				tooLongTitle, "memo", OpenType.ALL, IT, "www.google.com", emptyList()));
-	}
-
-	@Test
-	void 북마크_생성_태그_테스트() {
-		//given
-		final Tag tag1 = new Tag("tag1");
-		final Tag tag2 = new Tag("tag2");
-
-		// when
-		final Bookmark bookmark = new Bookmark(
-			createProfile(),
-			createLinkMetadata(),
-			"title",
-			"memo",
-			OpenType.ALL,
-			IT,
-			"www.naver.com",
-			List.of(tag1, tag2)
-		);
-
-		//then
-		assertThat(bookmark.getTagNames()).hasSize(2).containsExactly("tag1", "tag2");
-	}
-
-	@Test
-	void 북마크_태그_추가_실패_태그_개수_한도_초과() {
-		//given
-		List<Tag> tooManyTags = List.of(
-			new Tag("tag1"),
-			new Tag("tag2"),
-			new Tag("tag3"),
-			new Tag("tag4"),
-			new Tag("tag5"),
-			new Tag("tag6")
-		);
-
-		//when then
-		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> new Bookmark(
-				createProfile(),
-				createLinkMetadata(),
-				"title",
-				"memo",
-				OpenType.ALL,
-				IT,
-				"www.google.com",
-				tooManyTags
-			));
+				tooLongTitle, "memo", ALL, IT, "www.google.com", createTags()));
 	}
 
 	@Test
@@ -119,9 +73,16 @@ class BookmarkTest {
 		final Bookmark bookmark = createBookmark();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
-		final Category category = Category.HUMANITIES;
-		final OpenType openType = OpenType.PRIVATE;
-		final List<Tag> tags = List.of(new Tag("tag1"), new Tag("tag2"));
+		final Category category = HUMANITIES;
+		final OpenType openType = PRIVATE;
+
+		final Tag tag1 = new Tag("tag1");
+		final Tag tag2 = new Tag("tag2");
+
+		ReflectionTestUtils.setField(tag1, "id", 1L);
+		ReflectionTestUtils.setField(tag2, "id", 2L);
+
+		final Tags tags = new Tags(List.of(tag1, tag2));
 
 		//when
 		bookmark.update(updatedTitle, updatedMemo, category, openType, tags);
@@ -135,34 +96,17 @@ class BookmarkTest {
 				Bookmark::getOpenType
 			).containsExactly(updatedTitle, updatedMemo, category, openType);
 		assertThat(bookmark.getTagNames())
-			.containsExactly(tags.get(0).getName(), tags.get(1).getName());
+			.containsExactly("tag1", "tag2");
 	}
 
 	@Test
-	void 제목의_길이가_조건에_따른_북마크_업데이트_실패() {
+	void 북마크_업데이트_실패_제목이_너무_김() {
 		//given
-		final String invalidTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
+		final String tooLongTitle = RandomString.make(MAX_PROFILE_USERNAME_LENGTH + 1);
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> createBookmark()
-				.update(invalidTitle, "updatedMemo", Category.HUMANITIES, OpenType.PRIVATE, emptyList()));
+			.isThrownBy(() -> createBookmark().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE, createTags()));
 	}
 
-	@Test
-	void 북마크_업데이트_실패_태그_개수_초과() {
-		//given
-		final List<Tag> tooManyTags = List.of(
-			new Tag("tag1"),
-			new Tag("tag2"),
-			new Tag("tag3"),
-			new Tag("tag4"),
-			new Tag("tag5"),
-			new Tag("tag6"));
-
-		//when then
-		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> createBookmark()
-				.update("updatedTitle", "updatedMemo", Category.HUMANITIES, OpenType.PRIVATE, tooManyTags));
-	}
 }

@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.profile.dto;
 
-import com.meoguri.linkocean.domain.profile.service.dto.GetProfilesResult;
+import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
