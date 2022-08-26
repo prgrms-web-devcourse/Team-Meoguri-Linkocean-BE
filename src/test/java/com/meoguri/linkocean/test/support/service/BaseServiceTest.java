@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,9 +43,6 @@ import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatCon
 public class BaseServiceTest {
 
 	@Autowired
-	protected EntityManager em;
-
-	@Autowired
 	private UserService userService;
 
 	@Autowired
@@ -70,6 +68,9 @@ public class BaseServiceTest {
 
 	@Autowired
 	private NotificationService notificationService;
+
+	@PersistenceContext
+	protected EntityManager em;
 
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);

@@ -18,6 +18,9 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자가 즐겨찾기한 북마크 아이디 목록
+ */
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class FavoriteBookmarkIds {

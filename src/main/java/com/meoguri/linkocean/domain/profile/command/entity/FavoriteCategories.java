@@ -20,11 +20,15 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * 사용자의 선호 카테고리 목록
+ * - 사용자는 최소 1개의 선호 카테고리를 갖고 있다.
+ */
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class FavoriteCategories {
 
-	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.values().length;
+	private static final int MAX_FAVORITE_CATEGORIES_SIZE = Category.totalCount();
 
 	@ElementCollection
 	@CollectionTable(name = "favorite_category")
@@ -33,7 +37,7 @@ public class FavoriteCategories {
 	private Set<Category> favoriteCategories = new HashSet<>();
 
 	public FavoriteCategories(final List<Category> favoriteCategories) {
-		checkCondition(favoriteCategories.size() >= 1 && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
+		checkCondition(1 <= favoriteCategories.size() && favoriteCategories.size() <= MAX_FAVORITE_CATEGORIES_SIZE,
 			format("category size must be in between 1 & %d", MAX_FAVORITE_CATEGORIES_SIZE));
 
 		this.favoriteCategories = new HashSet<>(favoriteCategories);

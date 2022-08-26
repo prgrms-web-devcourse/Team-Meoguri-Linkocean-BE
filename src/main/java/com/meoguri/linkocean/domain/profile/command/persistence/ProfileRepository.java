@@ -11,7 +11,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
 
 	@Query("select p "
 		+ "from Profile p "
-		+ "left join fetch p.favoriteBookmarkIds "
+		+ "left join fetch p.favoriteBookmarkIds.favoriteBookmarkIds "
 		+ "where p.id = :profileId")
 	Optional<Profile> findProfileFetchFavoriteIdsById(long profileId);
 
