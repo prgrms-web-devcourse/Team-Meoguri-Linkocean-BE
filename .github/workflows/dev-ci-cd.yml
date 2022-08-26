@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.DEV_EC2_PASSWORD }}
           port: 22
           script: |
-            sudo docker remove -f $(docker ps -qa)
+            sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/linkocean_dev
             sudo docker run -d -p 8080:8080 --name linkocean-spring ${{ secrets.DOCKER_REPO }}/linkocean_dev
             docker image prune -f
