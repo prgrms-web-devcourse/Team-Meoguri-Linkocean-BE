@@ -44,6 +44,7 @@ spy.log
 
 ### 설정 파일
 /src/main/resources/*.yml
+/src/main/resources/*.p12
 
 ### Rest Docs
 /src/main/resources/static/docs/
