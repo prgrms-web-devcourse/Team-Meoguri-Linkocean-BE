@@ -42,7 +42,9 @@ jobs:
 
       ## gradle build
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build
 
       ## docker build & push to dockerhub
       - name: Docker build & push to dockerhub
