@@ -168,7 +168,10 @@ task copyProperty(type: Copy) {
     into file('./src/main/resources')
 }
 
-build {
+processResources {
     dependsOn copyProperty
+}
+
+build {
     dependsOn copyDocument
 }
