@@ -32,53 +32,6 @@ jacoco {
     toolVersion = '0.8.7'
 }
 
-jacocoTestReport {
-    reports {
-        html.enabled(true)
-        xml.enabled(false)
-        csv.enabled(false)
-    }
-
-    finalizedBy 'jacocoTestCoverageVerification'
-
-    dependsOn test
-
-    def Qdomains = []
-    for (qPattern in "QA".."QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
-        Qdomains.add("com/meoguri/**/" + qPattern + "*.*")
-    }
-
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    "com/meoguri/**/dto/*.*",
-                    "com/meoguri/**/util/*.*",
-                    "com/meoguri/**/exception/*.*",
-                    "com/meoguri/**/*Properties.*",
-            ] + Qdomains)
-        }))
-    }
-}
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            enabled = false
-            element = 'BUNDLE'
-
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.80
-            }
-
-            excludes = []
-        }
-    }
-
-    finalizedBy 'asciidoctor'
-}
-
 repositories {
     mavenCentral()
 }
@@ -132,11 +85,67 @@ dependencies {
     testImplementation 'io.findify:s3mock_2.12:0.2.6'
 }
 
+task copyProperty(type: Copy) {
+    from file('./config')
+    into file('./src/main/resources')
+}
+
+processResources {
+    dependsOn copyProperty
+}
+
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
 
     finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled(true)
+        xml.enabled(false)
+        csv.enabled(false)
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+
+    dependsOn test
+
+    def Qdomains = []
+    for (qPattern in "QA".."QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
+        Qdomains.add("com/meoguri/**/" + qPattern + "*.*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/meoguri/**/dto/*.*",
+                    "com/meoguri/**/util/*.*",
+                    "com/meoguri/**/exception/*.*",
+                    "com/meoguri/**/*Properties.*",
+            ] + Qdomains)
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = false
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = []
+        }
+    }
+
+    finalizedBy 'asciidoctor'
 }
 
 asciidoctor {
@@ -156,20 +165,18 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
+bootJar {
+    dependsOn asciidoctor
+    from ('${asciidoctor.outputDir}') {
+        into 'static/docs'
+    }
+}
+
 task copyDocument(type: Copy) {
     dependsOn asciidoctor
 
     from file('build/docs/asciidoc/')
     into file('src/main/resources/static/docs')
-}
-
-task copyProperty(type: Copy) {
-    from file('./config')
-    into file('./src/main/resources')
-}
-
-processResources {
-    dependsOn copyProperty
 }
 
 build {
