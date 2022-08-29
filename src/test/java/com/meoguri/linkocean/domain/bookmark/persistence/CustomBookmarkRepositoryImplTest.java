@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
-import static com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -546,16 +545,12 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
 
 			//when
-			pretty(() -> {
-					final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
-					//then
-					assertThat(bookmarkPage).hasSize(2);
-					assertThat(bookmarkPage.getContent())
-						.containsExactly(bookmark4, bookmark5);
-					assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
-				}
-				, em);
+			//then
+			assertThat(bookmarkPage).hasSize(2);
+			assertThat(bookmarkPage.getContent()).containsExactly(bookmark4, bookmark5);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
 		}
 
 	}
