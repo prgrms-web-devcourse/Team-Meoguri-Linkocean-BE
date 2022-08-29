@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Fixture.*;
+import static com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -100,7 +101,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -122,7 +123,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("like");
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -145,7 +146,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(1)
@@ -175,7 +176,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -195,7 +196,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("like");
 
 			// when
-			final Page<Bookmark> bookmarks = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarks).hasSize(2)
@@ -225,7 +226,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.build();
 
 			//when
-			final Page<Bookmark> bookmarks1 = bookmarkRepository.findByTargetProfileId(findCond1, pageable);
+			final Page<Bookmark> bookmarks1 = bookmarkRepository.findBookmarks(findCond1, pageable);
 
 			//then
 			assertThat(bookmarks1).hasSize(3)
@@ -242,7 +243,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.build();
 
 			//when
-			final Page<Bookmark> bookmarks2 = bookmarkRepository.findByTargetProfileId(findCond2, pageable);
+			final Page<Bookmark> bookmarks2 = bookmarkRepository.findBookmarks(findCond2, pageable);
 
 			//then
 			assertThat(bookmarks2).hasSize(2)
@@ -271,7 +272,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -294,7 +295,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("like");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -318,7 +319,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1);
@@ -347,7 +348,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -366,7 +367,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2)
@@ -384,7 +385,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("like");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(3)
@@ -403,7 +404,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(1)
@@ -422,7 +423,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -443,7 +444,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -542,13 +543,16 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = PageRequest.of(0, 2, Sort.by("upload"));
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			pretty(() -> {
+					final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
-			//then
-			assertThat(bookmarkPage).hasSize(2);
-			assertThat(bookmarkPage.getContent())
-				.containsExactly(bookmark4, bookmark5);
-			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+					//then
+					assertThat(bookmarkPage).hasSize(2);
+					assertThat(bookmarkPage.getContent())
+						.containsExactly(bookmark4, bookmark5);
+					assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+				}
+				, em);
 		}
 
 	}

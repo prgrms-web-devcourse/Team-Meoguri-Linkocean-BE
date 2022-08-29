@@ -54,13 +54,15 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 
 	/* 대상의 프로필 id 로 북마크 페이징 조회 */
 	@Override
-	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
+	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
 		/* cond 풀기 */
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
 		final boolean isFavorite = toBoolean(findCond.getFavorite());
 		final List<String> tags = findCond.getTags();
 		final String title = findCond.getTitle();
+		final boolean isFollow = toBoolean(findCond.getFollow());
 		final OpenType openType = findCond.getOpenType();
 
 		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
@@ -69,6 +71,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final Long writerId = toBoolean(isFavorite) ? null : targetProfileId;
 
 		/* 페이지 쿼리 */
+		final boolean isTargetQuery = targetProfileId != null;
+		final boolean isFeedQuery = targetProfileId == null;
+
 		return applyPagination(
 			convertBookmarkSort(pageable),
 			selectFrom(bookmark),
@@ -80,69 +85,60 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					() -> join(bookmark.writer).fetchJoin())
 			),
 			where(
-				titleContains(title),
-				categoryEq(category),
-				writerIdEq(writerId),
-				bookmarkIdsIn(bookmarkIds),
-				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
-				availableByOpenType(openType),
-				registered()
+				always(
+					titleContains(title),
+					categoryEq(category),
+					bookmarkIdsIn(bookmarkIds),
+					registered()
+				),
+				whereIf(
+					isTargetQuery,
+					() -> bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
+					() -> availableByOpenType(openType),
+					() -> writerIdEq(writerId)
+				),
+				whereIf(
+					isFeedQuery,
+					() -> bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, currentUserProfileId)),
+					() -> availableByOpenType(currentUserProfileId),
+					() -> followedBy(isFollow, currentUserProfileId)
+				)
 			),
 			Bookmark::getTagNames
 		);
 	}
 
-	/* 피드 북마크 조회 */
 	@Override
-	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
-		/* cond 풀기 */
-		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-		final Category category = findCond.getCategory();
-		final String title = findCond.getTitle();
-		final boolean isFavorite = toBoolean(findCond.getFavorite());
-		final boolean isFollow = toBoolean(findCond.getFollow());
-		final List<String> tags = findCond.getTags();
+	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
+		/* 리액션 카운트 맵 조회 */
+		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
+			.select(r_type, count())
+			.from(reaction)
+			.where(r_bookmarkId.eq(bookmarkId))
+			.groupBy(r_type)
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> (tuple.get(r_type)),
+				tuple -> (tuple.get(count())))
+			);
 
-		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
-		final List<Long> bookmarkIds = getBookmarkIds(tags);
-		/* 즐겨찾기는 엔티티가 아니라 join 이 아닌 별도 쿼리를 통해 북마크 아이디를 셋업 */
-		final List<Long> favoriteBookmarkIds = getFavoriteBookmarkIds(isFavorite, currentUserProfileId);
+		/* 없는 리액션에 대해서 0 채워 주기 */
+		Arrays.stream(ReactionType.values())
+			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
+			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
 
-		/* 페이지 쿼리 */
-		return applyPagination(
-			convertBookmarkSort(pageable),
-			selectFrom(bookmark),
-			joinIfs(
-				joinIf(category != null,
-					() -> join(bookmark.writer).fetchJoin()
-						.join(bookmark.linkMetadata).fetchJoin()),
-
-				joinIf(tags != null,
-					() -> join(bookmark.writer).fetchJoin())
-			),
-			where(
-				titleContains(title),
-				categoryEq(category),
-				bookmarkIdsIn(bookmarkIds),
-				bookmarkIdsIn(favoriteBookmarkIds),
-				followedBy(isFollow, currentUserProfileId),
-				availableByOpenType(currentUserProfileId),
-				registered()
-			),
-			Bookmark::getTagNames
-		);
-
+		return reactionCountMap;
 	}
 
-	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
+	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final Long profileId) {
 		return !isFavorite ? null : getJpasqlQuery()
 			.select(bookmarkId)
 			.from(favorite)
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
-
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
+
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
@@ -184,8 +180,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(follow.id.follower.id.eq(currentUserProfileId))
 		));
 	}
-
 	// 작성자 id 대상 북마크 조회에서 사용
+
 	private BooleanBuilder availableByOpenType(final OpenType openType) {
 		// PRIVATE 이상을 조회 하는 요청이므로 필터링이 필요 없음
 		if (openType == OpenType.PRIVATE) {
@@ -195,9 +191,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		// 주어진 openType 이하의 모든 openType 을 조회 할 필요가 있음
 		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
 	}
-
 	// 피드 조회에서 사용
 	// 전체 공개 북마크, 팔로우 중인 사용자의 일부 공개 북마크, 자신의 북마크 (private 포함) 에 접근 가능하다
+
 	private BooleanBuilder availableByOpenType(long currentUserProfileId) {
 		return nullSafeBuilder(() ->
 			bookmark.openType.eq(OpenType.ALL)
@@ -209,8 +205,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	private BooleanBuilder registered() {
 		return nullSafeBuilder(() -> bookmark.status.eq(BookmarkStatus.REGISTERED));
 	}
-
 	// Spring Pageable -> QueryDsl Pageable
+
 	private Pageable convertBookmarkSort(Pageable pageable) {
 		return QPageRequest.of(
 			pageable.getPageNumber(),
@@ -242,27 +238,5 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		}
 
 		return result;
-	}
-
-	@Override
-	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
-		/* 리액션 카운트 맵 조회 */
-		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
-			.select(r_type, count())
-			.from(reaction)
-			.where(r_bookmarkId.eq(bookmarkId))
-			.groupBy(r_type)
-			.stream()
-			.collect(Collectors.toMap(
-				tuple -> (tuple.get(r_type)),
-				tuple -> (tuple.get(count())))
-			);
-
-		/* 없는 리액션에 대해서 0 채워 주기 */
-		Arrays.stream(ReactionType.values())
-			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
-			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
-
-		return reactionCountMap;
 	}
 }

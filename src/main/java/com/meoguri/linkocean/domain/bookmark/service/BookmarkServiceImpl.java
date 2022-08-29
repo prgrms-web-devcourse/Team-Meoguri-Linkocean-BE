@@ -170,7 +170,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		findCond.setOpenType(profile.getAvailableBookmarkOpenType(target));
 
 		/* 북마크 조회 */
-		final Page<Bookmark> bookmarkPage = bookmarkRepository.findByTargetProfileId(findCond, pageable);
+		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
 		/* 추가 정보 조회 */

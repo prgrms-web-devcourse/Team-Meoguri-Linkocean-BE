@@ -1,7 +1,9 @@
 package com.meoguri.linkocean.util.querydsl;
 
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -190,11 +192,23 @@ public abstract class Querydsl4RepositorySupport {
 		return base;
 	}
 
-	protected List<Predicate> where(Predicate... where) {
+	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+	@SafeVarargs
+	protected final List<Predicate> where(final List<Predicate> always, final List<Predicate>... whereIfs) {
+		final List<Predicate> wheres = new ArrayList<>(always);
+		Arrays.stream(whereIfs).forEachOrdered(wheres::addAll);
+		return wheres;
+	}
+
+	protected static List<Predicate> always(final Predicate... where) {
 		return Arrays.stream(where).collect(toList());
 	}
 
-	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+	@SafeVarargs
+	protected static List<Predicate> whereIf(final boolean expression, final Supplier<Predicate>... where) {
+		return expression ? Arrays.stream(where).map(Supplier::get).collect(toList()) : emptyList();
+	}
+
 	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
 		try {
 			return new BooleanBuilder(cond.get());
