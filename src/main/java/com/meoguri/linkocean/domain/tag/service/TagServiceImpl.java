@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,11 @@ public class TagServiceImpl implements TagService {
 				tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)))
 			)
 			.collect(toList()));
+	}
+
+	@Override
+	public List<Set<String>> getTagsList(final List<Set<Long>> tagIds) {
+		return tagRepository.getTagsList(tagIds);
 	}
 
 	@Override
@@ -69,4 +75,5 @@ public class TagServiceImpl implements TagService {
 			.map(entry -> new GetProfileTagsResult(entry.getKey(), entry.getValue()))
 			.collect(toList());
 	}
+
 }

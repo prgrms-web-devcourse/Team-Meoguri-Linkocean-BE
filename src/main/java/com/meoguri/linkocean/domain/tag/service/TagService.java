@@ -1,12 +1,12 @@
 package com.meoguri.linkocean.domain.tag.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
 
 public interface TagService {
-
 
 	/* 태그 목록 조회 */
 	List<GetProfileTagsResult> getTags(long profileId);
@@ -18,4 +18,6 @@ public interface TagService {
 	 * 2. tag 이름이 존재하지 않다면 태그를 만들고 db 에 저장한다.
 	 */
 	Tags getOrSaveTags(List<String> tagNames);
+
+	List<Set<String>> getTagsList(List<Set<Long>> tagIds);
 }
