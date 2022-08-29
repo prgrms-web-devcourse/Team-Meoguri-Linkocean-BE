@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.bookmark.entity;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.Profile.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -20,8 +19,9 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
 
-class BookmarkTest {
+class BookmarkTest extends BaseEntityTest {
 
 	@ParameterizedTest
 	@CsvSource(
