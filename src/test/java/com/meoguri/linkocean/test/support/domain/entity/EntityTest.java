@@ -10,5 +10,5 @@ import org.junit.jupiter.api.Tag;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Tag("entity")
-public @interface EntityTag {
+public @interface EntityTest {
 }
