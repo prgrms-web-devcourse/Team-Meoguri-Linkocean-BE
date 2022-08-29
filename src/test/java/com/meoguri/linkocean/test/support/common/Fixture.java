@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
@@ -31,8 +31,8 @@ public final class Fixture {
 		return createProfile("haha", IT);
 	}
 
-	public static Tags createTags(final String... tags) {
-		return new Tags(Arrays.stream(tags).map(Tag::new).collect(toList()));
+	public static TagIds createTags(final String... tags) {
+		return new TagIds(Arrays.stream(tags).map(Tag::new).collect(toList()));
 	}
 
 	public static Profile createProfile(final String username, final Category... categories) {

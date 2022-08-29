@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
@@ -31,17 +30,21 @@ public class TagServiceImpl implements TagService {
 
 	@Transactional
 	@Override
-	public Tags getOrSaveTags(final List<String> tagNames) {
-		return new Tags(tagNames.stream()
-			.map(tagName ->
-				tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName)))
-			)
-			.collect(toList()));
+	public List<Long> getOrSaveTags(final List<String> tagNames) {
+		return tagNames.stream()
+			.map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> tagRepository.save(new Tag(tagName))))
+			.map(Tag::getId)
+			.collect(toList());
 	}
 
 	@Override
-	public List<Set<String>> getTagsList(final List<Set<Long>> tagIds) {
-		return tagRepository.getTagsList(tagIds);
+	public Set<String> getTags(final Set<Long> tagIds) {
+		return tagRepository.getTags(tagIds);
+	}
+
+	@Override
+	public List<Set<String>> getTagsList(final List<Set<Long>> tagIdsList) {
+		return tagRepository.getTagsList(tagIdsList);
 	}
 
 	@Override

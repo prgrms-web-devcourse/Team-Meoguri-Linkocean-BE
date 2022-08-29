@@ -16,7 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
@@ -82,7 +82,7 @@ class BookmarkTest {
 		ReflectionTestUtils.setField(tag1, "id", 1L);
 		ReflectionTestUtils.setField(tag2, "id", 2L);
 
-		final Tags tags = new Tags(List.of(tag1, tag2));
+		final TagIds tags = new TagIds(List.of(tag1, tag2));
 
 		//when
 		bookmark.update(updatedTitle, updatedMemo, category, openType, tags);

@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
@@ -27,5 +27,5 @@ public final class GetBookmarksResult {
 	private final long likeCount;
 	private final String image;
 	private final boolean isWriter;
-	private final List<String> tags;
+	private final Set<String> tags;
 }

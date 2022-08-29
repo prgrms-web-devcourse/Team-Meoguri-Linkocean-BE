@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Import;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -119,7 +119,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			new Tags(Arrays.stream(tags).collect(toList()))
+			new TagIds(Arrays.stream(tags).collect(toList()))
 		));
 	}
 

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -69,7 +70,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
-		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
+		final TagIds tagIds = new TagIds(tagService.getOrSaveTags(command.getTagNames()));
 
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
@@ -80,7 +81,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			command.getOpenType(),
 			command.getCategory(),
 			command.getUrl(),
-			tags
+			tagIds
 		)).getId();
 	}
 
@@ -94,7 +95,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 태그 조회/저장 */
-		final Tags tags = tagService.getOrSaveTags(command.getTagNames());
+		final TagIds tagIds = new TagIds(tagService.getOrSaveTags(command.getTagNames()));
 
 		/* update 진행 */
 		bookmark.update(
@@ -102,7 +103,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			command.getMemo(),
 			command.getCategory(),
 			command.getOpenType(),
-			tags
+			tagIds
 		);
 	}
 
@@ -133,6 +134,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
 		final Map<ReactionType, Boolean> reactionMap = writer.checkReaction(bookmark);
+		final Set<String> tags = tagService.getTags(bookmark.getTagIds());
 
 		/* 결과 반환 */
 		return new GetDetailedBookmarkResult(
@@ -145,7 +147,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			bookmark.getOpenType(),
 			bookmark.getCreatedAt(),
 			isFavorite,
-			bookmark.getTagNames(),
+			tags,
 			reactionCountMap,
 			reactionMap,
 			new ProfileResult(
@@ -229,6 +231,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	) {
 		final List<GetBookmarksResult> bookmarkResults = new ArrayList<>();
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
+		final List<Set<String>> tagsList =
+			tagService.getTagsList(bookmarks.stream().map(Bookmark::getTagIds).collect(toList()));
 
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
@@ -245,7 +249,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				bookmark.getLikeCount(),
 				bookmark.getLinkMetadata().getImage(),
 				writer.getId().equals(currentUserProfileId),
-				bookmark.getTagNames()
+				tagsList.get(i)
 			));
 		}
 		final long totalCount = bookmarkPage.getTotalElements();
@@ -269,6 +273,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	) {
 		final List<GetFeedBookmarksResult> bookmarkResults = new ArrayList<>();
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
+		final List<Set<String>> tagsList =
+			tagService.getTagsList(bookmarks.stream().map(Bookmark::getTagIds).collect(toList()));
 
 		int size = bookmarks.size();
 		for (int i = 0; i < size; ++i) {
@@ -285,7 +291,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				bookmark.getLikeCount(),
 				isFavorites.get(i),
 				writer.getId().equals(currentUserProfileId),
-				bookmark.getTagNames(),
+				tagsList.get(i),
 				new GetFeedBookmarksResult.ProfileResult(
 					writer.getId(),
 					writer.getUsername(),

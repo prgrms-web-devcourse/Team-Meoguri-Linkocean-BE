@@ -7,7 +7,7 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -23,7 +23,7 @@ import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
@@ -53,7 +53,7 @@ public class Bookmark extends BaseIdEntity {
 	private LinkMetadata linkMetadata;
 
 	@Embedded
-	private Tags tags;
+	private TagIds tagIds;
 
 	@Column(nullable = true, length = MAX_BOOKMARK_TITLE_LENGTH)
 	private String title;
@@ -88,9 +88,9 @@ public class Bookmark extends BaseIdEntity {
 
 	/* 북마크 등록시 사용하는 생성자 */
 	public Bookmark(final Profile writer, final LinkMetadata linkMetadata, final String title, final String memo,
-		final OpenType openType, final Category category, final String url, final Tags tags) {
+		final OpenType openType, final Category category, final String url, final TagIds tagIds) {
 		checkNotNull(openType);
-		checkNotNull(tags);
+		checkNotNull(tagIds);
 		checkNotNull(url);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
@@ -105,14 +105,14 @@ public class Bookmark extends BaseIdEntity {
 		this.likeCount = 0;
 		this.createdAt = now();
 		this.updatedAt = now();
-		this.tags = tags;
+		this.tagIds = tagIds;
 	}
 
 	/* 북마크 제목, 메모, 카테고리, 공개 범위, 북마크 테그를 변경할 수 있다. */
 	public void update(final String title, final String memo, final Category category, final OpenType openType,
-		final Tags tags) {
+		final TagIds tagIds) {
 		checkNotNull(openType);
-		checkNotNull(tags);
+		checkNotNull(tagIds);
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.title = title;
@@ -120,7 +120,7 @@ public class Bookmark extends BaseIdEntity {
 		this.category = category;
 		this.openType = openType;
 		this.updatedAt = now();
-		this.tags = tags;
+		this.tagIds = tagIds;
 	}
 
 	public void remove() {
@@ -128,11 +128,11 @@ public class Bookmark extends BaseIdEntity {
 		this.updatedAt = now();
 	}
 
-	public List<String> getTagNames() {
-		return tags.getTagNames();
-	}
-
 	public boolean isOpenTypeAll() {
 		return this.openType.equals(OpenType.ALL);
+	}
+
+	public Set<Long> getTagIds() {
+		return tagIds.getValues();
 	}
 }

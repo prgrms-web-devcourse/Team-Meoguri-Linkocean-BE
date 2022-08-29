@@ -22,13 +22,13 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 	@Query("select t.id, t.name "
 		+ "from Tag t "
 		+ "where t.id in :tagIds ")
-	Set<Tuple> getTagsListInternal(Set<Long> tagIds);
+	Set<Tuple> getTagsInternal(Set<Long> tagIds);
 
 	/* 태그 집합 목록 조회 */
 	default List<Set<String>> getTagsList(List<Set<Long>> tagIdsList) {
 
 		final Set<Long> allTagIds = tagIdsList.stream().flatMap(Collection::stream).collect(toSet());
-		final Set<Tuple> tupleSet = getTagsListInternal(allTagIds);
+		final Set<Tuple> tupleSet = getTagsInternal(allTagIds);
 
 		final Map<Long, String> tagMap = tupleSet.stream().collect(toMap(
 			tuple -> (Long)tuple.get(0),
@@ -38,5 +38,9 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 		return tagIdsList.stream().map(
 			tagIds -> tagIds.stream().map(tagMap::get).collect(toSet())
 		).collect(toList());
+	}
+
+	default Set<String> getTags(Set<Long> tagIds) {
+		return getTagsInternal(tagIds).stream().map(tuple -> (String)tuple.get(1)).collect(toSet());
 	}
 }

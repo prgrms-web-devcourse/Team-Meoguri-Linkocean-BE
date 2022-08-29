@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.Tags.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 
-class TagsTest {
+class TagIdsTest {
 
 	@Test
 	void 북마크_업데이트_실패_태그_개수_초과() {
@@ -22,6 +22,6 @@ class TagsTest {
 
 		//when then
 		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> new Tags(tooManyTags));
+			.isThrownBy(() -> new TagIds(tooManyTags));
 	}
 }
