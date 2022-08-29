@@ -14,6 +14,7 @@ import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
 
+@org.junit.jupiter.api.Tag("entity")
 public class BaseEntityTest {
 
 	protected static Profile createProfile() {

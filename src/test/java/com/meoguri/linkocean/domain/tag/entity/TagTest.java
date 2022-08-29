@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import net.bytebuddy.utility.RandomString;
 
-class TagTest {
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
+
+class TagTest extends BaseEntityTest {
 
 	@Test
 	void 태그_생성_성공() {
