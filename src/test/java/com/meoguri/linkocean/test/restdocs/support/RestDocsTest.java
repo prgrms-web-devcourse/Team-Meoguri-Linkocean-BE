@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.test.support.controller;
+package com.meoguri.linkocean.test.restdocs.support;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

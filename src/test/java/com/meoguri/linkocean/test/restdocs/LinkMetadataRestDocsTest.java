@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
 class LinkMetadataRestDocsTest extends RestDocsTestSupport {
 

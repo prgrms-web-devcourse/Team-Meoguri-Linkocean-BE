@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
 class ProfileRestDocsTest extends RestDocsTestSupport {
 

@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.CategoryController;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
 class CategoryRestDocsTest extends RestDocsTestSupport {
 

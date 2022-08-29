@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.notification.NotificationController;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
 class NotificationRestDocsTest extends RestDocsTestSupport {
 
