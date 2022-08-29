@@ -11,12 +11,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
@@ -38,12 +35,9 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
-import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
-@Import(P6spyLogMessageFormatConfiguration.class)
-@Transactional
-@SpringBootTest
-public class BaseServiceTest {
+@ServiceTest
+public abstract class BaseServiceTest {
 
 	@Autowired
 	private UserService userService;

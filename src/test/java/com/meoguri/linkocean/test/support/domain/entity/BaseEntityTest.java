@@ -14,8 +14,8 @@ import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
 
-@org.junit.jupiter.api.Tag("entity")
-public class BaseEntityTest {
+@EntityTag
+public abstract class BaseEntityTest {
 
 	protected static Profile createProfile() {
 		return new Profile("haha", new FavoriteCategories(Arrays.stream(new Category[] {IT}).collect(toList())));
