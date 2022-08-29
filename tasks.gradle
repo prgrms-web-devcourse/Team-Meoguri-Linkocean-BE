@@ -1,0 +1,25 @@
+/* layer test tasks */
+tasks.register("entityTest", Test) {
+    useJUnitPlatform { includeTags "entity" }
+    configure { group = 'layer test' }
+}
+
+tasks.register("persistenceTest", Test) {
+    useJUnitPlatform { includeTags "persistence" }
+    configure { group = 'layer test' }
+}
+
+tasks.register("serviceTest", Test) {
+    useJUnitPlatform { includeTags "service" }
+    configure { group = 'layer test' }
+}
+
+tasks.register("controllerTest", Test) {
+    useJUnitPlatform { includeTags "controller" }
+    configure { group = 'layer test' }
+}
+
+tasks.register("restdocsTest", Test) {
+    useJUnitPlatform { includeTags "restdocs" }
+    configure { group = 'layer test' }
+}

@@ -18,6 +18,8 @@ configurations {
     }
 }
 
+apply from: 'tasks.gradle'
+
 ext {
     snippetsDir = file('build/generated-snippets')
 }
@@ -167,7 +169,7 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
-    from ('build/docs/asciidoc/') {
+    from('build/docs/asciidoc/') {
         into 'static/docs'
     }
 }
