@@ -30,20 +30,12 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Long> findIdByWriterIdAndUrl(long writerId, String url);
 
-	/* 작성자의 아이디로 태그페치 조회 */
-	@Query("select distinct b "
-		+ "from Bookmark b "
-		+ "join fetch b.tags t "
-		+ "where b.writer.id = :writerId "
-		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	List<Bookmark> findByWriterIdFetchTags(long writerId);
-
 	/* 아이디로 전체 페치 조회 */
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.writer "
 		+ "join fetch b.linkMetadata "
-		+ "left join fetch b.tags t "
+		+ "left join fetch b.tagIds t "
 		+ "where b.id = :id "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Bookmark> findByIdFetchAll(long id);

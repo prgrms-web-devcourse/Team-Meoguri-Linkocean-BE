@@ -3,6 +3,7 @@ package com.meoguri.linkocean.domain.tag.persistence;
 import static java.util.stream.Collectors.*;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,5 +43,16 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
 	default Set<String> getTags(Set<Long> tagIds) {
 		return getTagsInternal(tagIds).stream().map(tuple -> (String)tuple.get(1)).collect(toSet());
+	}
+
+	default List<String> getTags(List<Long> tagIds) {
+		final Set<Tuple> tupleSet = getTagsInternal(new HashSet<>(tagIds));
+
+		final Map<Long, String> tagMap = tupleSet.stream().collect(toMap(
+			tuple -> (Long)tuple.get(0),
+			tuple -> (String)tuple.get(1)
+		));
+
+		return tagIds.stream().map(tagMap::get).collect(toList());
 	}
 }

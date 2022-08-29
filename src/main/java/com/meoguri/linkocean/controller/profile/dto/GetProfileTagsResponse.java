@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.profile.dto;
 
-import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public final class GetProfileTagsResponse {
 	private String tag;
 	private int count;
 
-	public static GetProfileTagsResponse of(final GetProfileTagsResult result) {
+	public static GetProfileTagsResponse of(final GetUsedTagWithCountResult result) {
 		return new GetProfileTagsResponse(result.getTag(), result.getCount());
 	}
 }

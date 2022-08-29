@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,9 +22,11 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
@@ -309,5 +312,24 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public void updateLikeCount(final long bookmarkId, final ReactionType existedType, final ReactionType requestType) {
 		bookmarkRepository.updateLikeCount(bookmarkId, existedType, requestType);
+	}
+
+	@Override
+	public List<GetUsedTagWithCountResult> getUsedTagsWithCount(final long profileId) {
+		final List<FindUsedTagIdWithCountResult> tagIdsWithCount = bookmarkRepository.findUsedTagIdsWithCount(
+			profileId);
+
+		final List<Long> tagIds = tagIdsWithCount.stream()
+			.map(FindUsedTagIdWithCountResult::getTagId)
+			.collect(toList());
+		final List<String> tags = tagService.getTags(tagIds);
+		final int size = tags.size();
+
+		return IntStream.range(0, size)
+			.boxed()
+			.map(it -> new GetUsedTagWithCountResult(
+				tags.get(it),
+				tagIdsWithCount.get(it).getCount()
+			)).collect(toList());
 	}
 }

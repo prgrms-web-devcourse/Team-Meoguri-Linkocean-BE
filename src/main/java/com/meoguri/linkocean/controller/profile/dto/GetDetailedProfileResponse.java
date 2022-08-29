@@ -5,8 +5,8 @@ import static java.util.stream.Collectors.*;
 import java.util.List;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public final class GetDetailedProfileResponse {
 
 	public static GetDetailedProfileResponse of(
 		final GetDetailedProfileResult result,
-		final List<GetProfileTagsResult> tags,
+		final List<GetUsedTagWithCountResult> tags,
 		final List<Category> categories
 	) {
 		return new GetDetailedProfileResponse(

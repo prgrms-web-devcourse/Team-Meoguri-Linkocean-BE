@@ -25,6 +25,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
@@ -52,7 +53,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			).fetchFirst() != null;
 	}
 
-	/* 대상의 프로필 id 로 북마크 페이징 조회 */
 	@Override
 	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
 		/* cond 풀기 */
@@ -103,31 +103,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					() -> availableByOpenType(currentUserProfileId),
 					() -> followedBy(isFollow, currentUserProfileId)
 				)
-			),
-			Bookmark::getTagNames
+			)
 		);
-	}
-
-	@Override
-	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
-		/* 리액션 카운트 맵 조회 */
-		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
-			.select(r_type, count())
-			.from(reaction)
-			.where(r_bookmarkId.eq(bookmarkId))
-			.groupBy(r_type)
-			.stream()
-			.collect(Collectors.toMap(
-				tuple -> (tuple.get(r_type)),
-				tuple -> (tuple.get(count())))
-			);
-
-		/* 없는 리액션에 대해서 0 채워 주기 */
-		Arrays.stream(ReactionType.values())
-			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
-			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
-
-		return reactionCountMap;
 	}
 
 	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final Long profileId) {
@@ -180,8 +157,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 				.where(follow.id.follower.id.eq(currentUserProfileId))
 		));
 	}
-	// 작성자 id 대상 북마크 조회에서 사용
 
+	// 작성자 id 대상 북마크 조회에서 사용
 	private BooleanBuilder availableByOpenType(final OpenType openType) {
 		// PRIVATE 이상을 조회 하는 요청이므로 필터링이 필요 없음
 		if (openType == OpenType.PRIVATE) {
@@ -191,9 +168,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		// 주어진 openType 이하의 모든 openType 을 조회 할 필요가 있음
 		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
 	}
+
 	// 피드 조회에서 사용
 	// 전체 공개 북마크, 팔로우 중인 사용자의 일부 공개 북마크, 자신의 북마크 (private 포함) 에 접근 가능하다
-
 	private BooleanBuilder availableByOpenType(long currentUserProfileId) {
 		return nullSafeBuilder(() ->
 			bookmark.openType.eq(OpenType.ALL)
@@ -238,5 +215,49 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		}
 
 		return result;
+	}
+
+	@Override
+	public Map<ReactionType, Long> countReactionGroup(final long bookmarkId) {
+		/* 리액션 카운트 맵 조회 */
+		final Map<ReactionType, Long> reactionCountMap = getJpasqlQuery()
+			.select(r_type, count())
+			.from(reaction)
+			.where(r_bookmarkId.eq(bookmarkId))
+			.groupBy(r_type)
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> (tuple.get(r_type)),
+				tuple -> (tuple.get(count())))
+			);
+
+		/* 없는 리액션에 대해서 0 채워 주기 */
+		Arrays.stream(ReactionType.values())
+			.filter(reactionType -> !reactionCountMap.containsKey(reactionType))
+			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
+
+		return reactionCountMap;
+	}
+
+	@Override
+	public List<FindUsedTagIdWithCountResult> findUsedTagIdsWithCount(final long profileId) {
+
+		return getJpasqlQuery()
+			.select(bt_tagId, count())
+			.from(bookmark_tag)
+			.where(bt_bookmarkId.in(
+				select(bookmark.id)
+					.from(bookmark)
+					.where(b_profileId.eq(profileId)))
+			)
+			.groupBy(bt_tagId)
+			.stream()
+			.map(tuple -> new FindUsedTagIdWithCountResult(
+				tuple.get(bt_tagId),
+				(int)((long)tuple.get(count())))
+			)
+			.collect(
+				Collectors.toList()
+			);
 	}
 }

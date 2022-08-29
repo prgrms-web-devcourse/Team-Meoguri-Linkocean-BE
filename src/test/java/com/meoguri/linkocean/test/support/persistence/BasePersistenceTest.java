@@ -110,7 +110,7 @@ public class BasePersistenceTest {
 		final OpenType openType,
 		final Category category,
 		final String url,
-		final Tag... tags
+		final long... tagIds
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
 			linkMetadata,
@@ -119,7 +119,7 @@ public class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			new TagIds(Arrays.stream(tags).collect(toList()))
+			new TagIds(Arrays.stream(tagIds).boxed().collect(toList()))
 		));
 	}
 
@@ -144,10 +144,10 @@ public class BasePersistenceTest {
 		final OpenType openType,
 		final Category category,
 		final String url,
-		final Tag... tags
+		final long... tagIds
 	) {
 		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), title, "memo", openType, category, url,
-			tags);
+			tagIds);
 	}
 
 	/* 주의 ! em.flush & em.clear occurs */

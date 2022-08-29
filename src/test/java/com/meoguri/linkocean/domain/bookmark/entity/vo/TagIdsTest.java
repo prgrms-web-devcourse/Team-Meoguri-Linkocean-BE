@@ -8,16 +8,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.tag.entity.Tag;
-
 class TagIdsTest {
 
 	@Test
 	void 북마크_업데이트_실패_태그_개수_초과() {
 		//given
-		final List<Tag> tooManyTags = new ArrayList<>();
-		for (int i = 0; i < MAX_TAGS_COUNT + 1; i++) {
-			tooManyTags.add(new Tag("tag" + i));
+		final List<Long> tooManyTags = new ArrayList<>();
+		for (long i = 0; i < MAX_TAGS_COUNT + 1; i++) {
+			tooManyTags.add(i);
 		}
 
 		//when then

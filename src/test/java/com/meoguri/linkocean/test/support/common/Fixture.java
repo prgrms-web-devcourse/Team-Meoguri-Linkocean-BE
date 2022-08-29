@@ -16,7 +16,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
@@ -31,8 +30,8 @@ public final class Fixture {
 		return createProfile("haha", IT);
 	}
 
-	public static TagIds createTags(final String... tags) {
-		return new TagIds(Arrays.stream(tags).map(Tag::new).collect(toList()));
+	public static TagIds createTagIds(final long... tags) {
+		return new TagIds(Arrays.stream(tags).boxed().collect(toList()));
 	}
 
 	public static Profile createProfile(final String username, final Category... categories) {
@@ -41,7 +40,7 @@ public final class Fixture {
 
 	public static Bookmark createBookmark() {
 		return new Bookmark(createProfile(), createLinkMetadata(), "title", "dream company", OpenType.ALL, null,
-			"google.com", createTags());
+			"google.com", createTagIds());
 	}
 
 	public static LinkMetadata createLinkMetadata() {

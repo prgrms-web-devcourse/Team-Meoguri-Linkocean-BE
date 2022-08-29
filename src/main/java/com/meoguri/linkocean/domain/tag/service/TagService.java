@@ -3,12 +3,7 @@ package com.meoguri.linkocean.domain.tag.service;
 import java.util.List;
 import java.util.Set;
 
-import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
-
 public interface TagService {
-
-	/* 태그 목록 조회 */
-	List<GetProfileTagsResult> getTags(long profileId);
 
 	/*
 	 * 태그 조회 혹은 추가
@@ -20,6 +15,8 @@ public interface TagService {
 	List<Long> getOrSaveTags(List<String> tagNames);
 
 	Set<String> getTags(Set<Long> tagIds);
+
+	List<String> getTags(List<Long> tagIds);
 
 	List<Set<String>> getTagsList(List<Set<Long>> tagIdsList);
 }

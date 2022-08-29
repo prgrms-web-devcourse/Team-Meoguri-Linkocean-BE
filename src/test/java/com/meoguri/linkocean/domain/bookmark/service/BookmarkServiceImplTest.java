@@ -23,6 +23,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.test.support.service.BaseServiceTest;
@@ -502,6 +503,28 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		//then
 		assertThat(duplicated).isPresent().get().isEqualTo(bookmarkId);
 		assertThat(notDuplicated).isEmpty();
+	}
+
+	@Test
+	void 태그_목록_조회_성공() {
+		//given
+		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+
+		북마크_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
+		북마크_등록(profileId, "www.google.com", "tag1", "tag2");
+		북마크_등록(profileId, "www.prgrms.com", "tag1");
+
+		//when
+		final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+
+		//then
+		assertThat(result).hasSize(3)
+			.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
+			.containsExactly(
+				tuple("tag1", 3),
+				tuple("tag2", 2),
+				tuple("tag3", 1)
+			);
 	}
 
 }

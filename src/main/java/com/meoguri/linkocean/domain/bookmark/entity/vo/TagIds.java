@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -29,6 +30,7 @@ public class TagIds {
 		joinColumns = @JoinColumn(name = "bookmark_id"),
 		uniqueConstraints = @UniqueConstraint(columnNames = {"bookmark_id", "tag_id"})
 	)
+	@Column(name = "tag_id")
 	private Set<Long> values = new HashSet<>();
 
 	public TagIds(final List<Long> values) {
