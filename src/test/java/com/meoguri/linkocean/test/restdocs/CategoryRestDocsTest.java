@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.CategoryController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
-@RestDocs
+
 class CategoryRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(CategoryController.class);

@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.meoguri.linkocean.controller.linkmetadata.LinkMetadataController;
 import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
-@RestDocs
+
 class LinkMetadataRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LinkMetadataController.class);
