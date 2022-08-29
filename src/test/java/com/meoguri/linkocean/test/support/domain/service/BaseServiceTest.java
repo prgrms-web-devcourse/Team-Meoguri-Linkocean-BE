@@ -13,6 +13,9 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
@@ -71,6 +74,10 @@ public class BaseServiceTest {
 
 	@PersistenceContext
 	protected EntityManager em;
+
+	public static Pageable createPageable(String... properties) {
+		return PageRequest.of(0, 8, Sort.by(properties));
+	}
 
 	protected long 사용자_없으면_등록(final String email, final OAuthType oAuthType) {
 		return userService.registerIfNotExists(new Email(email), oAuthType);
@@ -157,4 +164,5 @@ public class BaseServiceTest {
 	protected GetDetailedProfileResult 내_프로필_상세_조회(final long currentUserProfileId) {
 		return profileQueryService.getByProfileId(currentUserProfileId, currentUserProfileId);
 	}
+
 }

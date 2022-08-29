@@ -2,7 +2,6 @@ package com.meoguri.linkocean.test.support.domain.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -14,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
@@ -21,6 +23,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
@@ -28,6 +31,7 @@ import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.entity.Tags;
 import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
+import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
@@ -62,12 +66,17 @@ public class BasePersistenceTest {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
 	}
 
+	public static Pageable createPageable(String... properties) {
+		return PageRequest.of(0, 8, Sort.by(properties));
+	}
+
 	protected User 사용자_저장(final String email, final OAuthType oAuthType) {
-		return userRepository.save(createUser(email, oAuthType));
+		return userRepository.save(new User(new Email(email), oAuthType));
 	}
 
 	protected Profile 프로필_저장(final String username, final Category... categories) {
-		return profileRepository.save(createProfile(username, categories));
+		return profileRepository.save(
+			new Profile(username, new FavoriteCategories(Arrays.stream(categories).collect(toList()))));
 	}
 
 	protected Profile 사용자_프로필_동시_저장(
