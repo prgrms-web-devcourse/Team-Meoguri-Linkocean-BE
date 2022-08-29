@@ -14,7 +14,7 @@ import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepositor
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class UserServiceImplTest extends BaseServiceTest {
 

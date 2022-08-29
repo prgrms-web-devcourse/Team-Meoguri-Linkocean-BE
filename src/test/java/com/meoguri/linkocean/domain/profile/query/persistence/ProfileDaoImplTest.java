@@ -15,7 +15,7 @@ import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class ProfileDaoImplTest extends BasePersistenceTest {
 

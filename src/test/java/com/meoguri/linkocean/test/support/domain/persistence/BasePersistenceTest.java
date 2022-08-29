@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.test.support.persistence;
+package com.meoguri.linkocean.test.support.domain.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;

@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
 import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class LinkMetadataServiceImplTest extends BaseServiceTest {
 
