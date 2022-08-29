@@ -1,12 +1,14 @@
-package com.meoguri.linkocean.domain.tag.entity;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
-import static com.meoguri.linkocean.domain.tag.entity.Tags.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Tags.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 
 class TagsTest {
 

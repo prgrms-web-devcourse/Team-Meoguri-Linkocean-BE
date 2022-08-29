@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.tag.entity;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;
@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.UniqueConstraint;
+
+import com.meoguri.linkocean.domain.tag.entity.Tag;
 
 import lombok.NoArgsConstructor;
 

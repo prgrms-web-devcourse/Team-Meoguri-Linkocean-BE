@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Tags;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfileTagsResult;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
-import com.meoguri.linkocean.domain.tag.entity.Tags;
 import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 
 import lombok.RequiredArgsConstructor;
