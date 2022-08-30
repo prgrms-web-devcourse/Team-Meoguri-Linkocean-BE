@@ -592,8 +592,8 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		assertThat(result)
 			.extracting(FindUsedTagIdWithCountResult::getTagId, FindUsedTagIdWithCountResult::getCount)
 			.containsExactlyInAnyOrder(
-				tuple(tagId1, 2),
-				tuple(tagId2, 1)
+				tuple(tagId1, 2L),
+				tuple(tagId2, 1L)
 			);
 	}
 }

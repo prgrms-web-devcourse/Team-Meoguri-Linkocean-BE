@@ -521,9 +521,9 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		assertThat(result).hasSize(3)
 			.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
 			.containsExactly(
-				tuple("tag1", 3),
-				tuple("tag2", 2),
-				tuple("tag3", 1)
+				tuple("tag1", 3L),
+				tuple("tag2", 2L),
+				tuple("tag3", 1L)
 			);
 	}
 

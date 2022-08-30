@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public final class GetProfileTagsResponse {
 
 	private String tag;
-	private int count;
+	private long count;
 
 	public static GetProfileTagsResponse of(final GetUsedTagWithCountResult result) {
 		return new GetProfileTagsResponse(result.getTag(), result.getCount());

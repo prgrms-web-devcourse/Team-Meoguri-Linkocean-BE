@@ -12,5 +12,5 @@ import lombok.RequiredArgsConstructor;
 public final class GetUsedTagWithCountResult {
 
 	private final String tag;
-	private final int count;
+	private final long count;
 }

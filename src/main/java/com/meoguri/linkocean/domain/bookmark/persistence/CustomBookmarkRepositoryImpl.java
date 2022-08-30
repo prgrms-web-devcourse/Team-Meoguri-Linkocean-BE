@@ -26,6 +26,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.QFindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
@@ -243,7 +244,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	public List<FindUsedTagIdWithCountResult> findUsedTagIdsWithCount(final long profileId) {
 
 		return getJpasqlQuery()
-			.select(bt_tagId, count())
+			.select(new QFindUsedTagIdWithCountResult(bt_tagId, count()))
 			.from(bookmark_tag)
 			.where(bt_bookmarkId.in(
 				select(bookmark.id)
@@ -251,13 +252,6 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					.where(b_profileId.eq(profileId)))
 			)
 			.groupBy(bt_tagId)
-			.stream()
-			.map(tuple -> new FindUsedTagIdWithCountResult(
-				tuple.get(bt_tagId),
-				(int)((long)tuple.get(count())))
-			)
-			.collect(
-				Collectors.toList()
-			);
+			.fetch();
 	}
 }
