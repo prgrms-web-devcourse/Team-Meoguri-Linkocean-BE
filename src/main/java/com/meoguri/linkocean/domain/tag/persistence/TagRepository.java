@@ -41,10 +41,12 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 		).collect(toList());
 	}
 
+	/* 태그 아이디 집합으로 태그 집합 조회 */
 	default Set<String> getTags(Set<Long> tagIds) {
 		return getTagsInternal(tagIds).stream().map(tuple -> (String)tuple.get(1)).collect(toSet());
 	}
 
+	/* 태그 아이디 목록으로 태그 목록 조회 */
 	default List<String> getTags(List<Long> tagIds) {
 		final Set<Tuple> tupleSet = getTagsInternal(new HashSet<>(tagIds));
 
