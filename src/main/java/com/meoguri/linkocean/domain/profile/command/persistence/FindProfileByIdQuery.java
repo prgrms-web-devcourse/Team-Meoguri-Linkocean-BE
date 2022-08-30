@@ -25,17 +25,10 @@ public class FindProfileByIdQuery {
 		return findProfileById(profileId, profileRepository::findProfileFetchFavoriteIdsById);
 	}
 
-	public Profile findProfileFetchReactionById(long profileId) {
-		return findProfileById(profileId, profileRepository::findProfileFetchReactionById);
-	}
-
 	public Profile findProfileFetchFollows(long profileId) {
 		return findProfileById(profileId, profileRepository::findProfileFetchFollows);
 	}
 
-	public Profile findProfileFetchFavoriteAndReactionById(long profileId) {
-		return findProfileById(profileId, profileRepository::findProfileFetchFavoriteAndReactionById);
-	}
 
 	private Profile findProfileById(long profileId, Function<Long, Optional<Profile>> findById) {
 		return findById.apply(profileId)

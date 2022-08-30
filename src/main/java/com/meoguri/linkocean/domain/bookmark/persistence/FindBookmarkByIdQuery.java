@@ -18,4 +18,9 @@ public class FindBookmarkByIdQuery {
 		return bookmarkRepository.findById(id)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id %d", id)));
 	}
+
+	public Bookmark findByIdFetchReactions(final long id) {
+		return bookmarkRepository.findByIdFetchReactions(id)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id %d", id)));
+	}
 }

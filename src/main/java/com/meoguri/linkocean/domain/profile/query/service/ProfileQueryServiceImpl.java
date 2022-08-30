@@ -39,7 +39,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final Profile target = findProfileByIdQuery.findById(targetProfileId);
 
 		/* 추가 정보 조회 */
-		final boolean isFollow = profile.checkIsFollow(target);
+		final boolean isFollow = profile.isFollow(target);
 		final int followerCount = profileRepository.getFollowerCount(target);
 		final int followeeCount = profileRepository.getFolloweeCount(target);
 
@@ -69,7 +69,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final List<Profile> profiles = profilesSlice.getContent();
 
 		/* 추가 정보 조회 */
-		final List<Boolean> isFollows = currentProfile.checkIsFollows(profiles);
+		final List<Boolean> isFollows = currentProfile.isFollows(profiles);
 
 		/* 결과 반환 */
 		return toResultSlice(profiles, isFollows, pageable, profilesSlice.hasNext());

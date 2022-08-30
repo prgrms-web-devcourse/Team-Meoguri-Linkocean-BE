@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
@@ -34,7 +35,6 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByU
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.tag.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
@@ -124,19 +124,18 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
-		/* 현재 사용자 프로필, 대상 북마크 조회 */
-		final Profile profile = findProfileByIdQuery.findProfileFetchFollows(profileId);
+		/* 대상 북마크 조회 */
 		final Bookmark bookmark = bookmarkRepository
 			.findByIdFetchAll(bookmarkId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
 
 		/* 추가 정보 조회 */
-		final Profile writer = findProfileByIdQuery.findProfileFetchFavoriteAndReactionById(profileId);
-		final boolean isFavorite = writer.isFavoriteBookmark(bookmark);
-		final boolean isFollow = profile.checkIsFollow(writer);
+		final Profile writer = bookmark.getWriter();
+		final boolean follow = findProfileByIdQuery.findProfileFetchFollows(profileId).isFollow(writer);
+		final boolean favorite = findProfileByIdQuery.findProfileFetchFavoriteById(profileId).isFavorite(bookmark);
 
-		final Map<ReactionType, Long> reactionCountMap = bookmarkRepository.countReactionGroup(bookmark.getId());
-		final Map<ReactionType, Boolean> reactionMap = writer.checkReaction(bookmark);
+		final Map<ReactionType, Long> reactionCountMap = bookmark.countReactionGroup();
+		final Map<ReactionType, Boolean> reactionMap = bookmark.checkReaction(profileId);
 		final Set<String> tags = tagService.getTags(bookmark.getTagIds());
 
 		/* 결과 반환 */
@@ -149,7 +148,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			bookmark.getMemo(),
 			bookmark.getOpenType(),
 			bookmark.getCreatedAt(),
-			isFavorite,
+			favorite,
 			tags,
 			reactionCountMap,
 			reactionMap,
@@ -157,7 +156,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				writer.getId(),
 				writer.getUsername(),
 				writer.getImage(),
-				isFollow
+				follow
 			)
 		);
 	}
@@ -201,7 +200,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final List<Boolean> isFavorites = profile.isFavoriteBookmarks(bookmarks);
-		final List<Boolean> isFollows = profile.checkIsFollows(writers);
+		final List<Boolean> isFollows = profile.isFollows(writers);
 
 		return toResultPage(bookmarkPage, isFavorites, isFollows, profileId, pageable);
 	}
