@@ -29,7 +29,6 @@ public class FindProfileByIdQuery {
 		return findProfileById(profileId, profileRepository::findProfileFetchFollows);
 	}
 
-
 	private Profile findProfileById(long profileId, Function<Long, Optional<Profile>> findById) {
 		return findById.apply(profileId)
 			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));

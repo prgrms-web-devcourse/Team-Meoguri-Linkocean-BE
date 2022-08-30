@@ -1,9 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static java.lang.String.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
 
@@ -82,4 +85,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	@Query("update Bookmark b set b.likeCount = b.likeCount - 1 where b.id = :bookmarkId")
 	void subtractLikeCount(long bookmarkId);
 
+	default Bookmark findBookmarkById(long bookmarkId, Function<Long, Optional<Bookmark>> findById) {
+		return findById.apply(bookmarkId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
+	}
 }

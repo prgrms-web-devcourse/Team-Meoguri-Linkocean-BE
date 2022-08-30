@@ -25,11 +25,10 @@ public class ReactionServiceImpl implements ReactionService {
 	public void requestReaction(ReactionCommand command) {
 		final long profileId = command.getProfileId();
 		final long bookmarkId = command.getBookmarkId();
-
-		final Bookmark bookmark = findBookmarkByIdQuery.findByIdFetchReactions(bookmarkId);
 		final ReactionType requestType = command.getReactionType();
 
 		/* 리액션 요청 */
+		final Bookmark bookmark = findBookmarkByIdQuery.findByIdFetchReactions(bookmarkId);
 		final ReactionType existedType = bookmark.requestReaction(profileId, requestType);
 
 		/* 북마크 좋아요 숫자 업데이트 */
