@@ -22,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public final class Link {
 
-	private static final String URL_REGEX =
-		"^((http|https)://)?(www.)?([^:\\/\\s]+)(:([^\\/]*))?((\\/[^\\s/\\/]+)*)?\\/?([^#\\s\\?]*)(\\?([^#\\s]*))?(#(\\w*))?([가-힣])?$";
+	private static final String URL_REGEX = "^((http|https)://)?(www.)?([^:\\/\\s]+)(:([^\\/]*))?"
+		+ "((\\/[^\\s/\\/]+)*)?\\/?([^#\\s\\?]*)(\\?([^#\\s]*))?(#(\\w*))?([가-힣])?$";
 	private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
 	@Column(nullable = false, unique = true, length = 700)
