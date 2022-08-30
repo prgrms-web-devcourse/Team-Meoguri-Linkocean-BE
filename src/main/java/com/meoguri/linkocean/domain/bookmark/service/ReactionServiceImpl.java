@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReactionServiceImpl implements ReactionService {
 
-	private final BookmarkService bookmarkService;
+	private final BookmarkRepository bookmarkRepository;
 
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
@@ -32,7 +33,7 @@ public class ReactionServiceImpl implements ReactionService {
 		final ReactionType existedType = bookmark.requestReaction(profileId, requestType);
 
 		/* 북마크 좋아요 숫자 업데이트 */
-		bookmarkService.updateLikeCount(bookmarkId, existedType, requestType);
+		bookmarkRepository.updateLikeCount(bookmarkId, existedType, requestType);
 	}
 
 }

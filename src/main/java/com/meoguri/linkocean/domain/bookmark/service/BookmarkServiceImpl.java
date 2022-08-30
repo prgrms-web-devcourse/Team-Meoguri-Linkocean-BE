@@ -307,12 +307,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
 	}
 
-	@Transactional
-	@Override
-	public void updateLikeCount(final long bookmarkId, final ReactionType existedType, final ReactionType requestType) {
-		bookmarkRepository.updateLikeCount(bookmarkId, existedType, requestType);
-	}
-
 	@Override
 	public List<GetUsedTagWithCountResult> getUsedTagsWithCount(final long profileId) {
 		final List<FindUsedTagIdWithCountResult> tagIdsWithCount = bookmarkRepository.findUsedTagIdsWithCount(
