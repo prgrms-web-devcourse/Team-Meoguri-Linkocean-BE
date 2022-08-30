@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.bookmark;
+package com.meoguri.linkocean.controller.profile;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
