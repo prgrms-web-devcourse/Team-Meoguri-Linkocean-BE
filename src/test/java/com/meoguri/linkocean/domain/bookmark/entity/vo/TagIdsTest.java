@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class TagIdsTest {
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
+
+class TagIdsTest extends BaseEntityTest {
 
 	@Test
 	void 북마크_업데이트_실패_태그_개수_초과() {

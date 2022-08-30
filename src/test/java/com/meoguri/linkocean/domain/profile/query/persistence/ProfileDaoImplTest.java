@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.profile.query.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +14,7 @@ import org.springframework.data.domain.Slice;
 
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class ProfileDaoImplTest extends BasePersistenceTest {
 

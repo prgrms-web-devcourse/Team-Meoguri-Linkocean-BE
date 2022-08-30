@@ -22,7 +22,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class BookmarkRepositoryTest extends BasePersistenceTest {
 

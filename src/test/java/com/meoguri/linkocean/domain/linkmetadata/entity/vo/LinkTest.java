@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class LinkTest {
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
+
+class LinkTest extends BaseEntityTest {
 
 	@ParameterizedTest
 	@ValueSource(

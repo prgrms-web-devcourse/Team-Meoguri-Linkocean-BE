@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class ProfileRepositoryTest extends BasePersistenceTest {
 

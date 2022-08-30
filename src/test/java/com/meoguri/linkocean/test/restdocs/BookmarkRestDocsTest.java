@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.meoguri.linkocean.controller.bookmark.BookmarkController;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
-@RestDocs
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
+
 class BookmarkRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.test.support.controller;
+package com.meoguri.linkocean.test.restdocs.support;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

@@ -2,19 +2,22 @@ package com.meoguri.linkocean.domain.user.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
+import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class UserServiceImplTest extends BaseServiceTest {
 
@@ -71,6 +74,7 @@ class UserServiceImplTest extends BaseServiceTest {
 	}
 
 	private Profile 프로필_저장(final String username, final Category... categories) {
-		return profileRepository.save(createProfile(username, categories));
+		return profileRepository.save(
+			new Profile(username, new FavoriteCategories(Arrays.stream(categories).collect(toList()))));
 	}
 }

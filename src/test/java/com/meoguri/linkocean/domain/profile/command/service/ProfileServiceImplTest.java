@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class ProfileServiceImplTest extends BaseServiceTest {
 

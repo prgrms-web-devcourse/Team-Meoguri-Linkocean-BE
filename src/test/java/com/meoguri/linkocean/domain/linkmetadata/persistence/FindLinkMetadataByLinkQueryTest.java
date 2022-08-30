@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
+import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 @Import(FindLinkMetadataByUrlQuery.class)
 class FindLinkMetadataByLinkQueryTest extends BasePersistenceTest {

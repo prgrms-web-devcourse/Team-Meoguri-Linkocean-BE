@@ -4,7 +4,6 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.profile.command.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,8 +19,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
 
-class ProfileTest {
+class ProfileTest extends BaseEntityTest {
 
 	@Nested
 	class 프로필_생성 {

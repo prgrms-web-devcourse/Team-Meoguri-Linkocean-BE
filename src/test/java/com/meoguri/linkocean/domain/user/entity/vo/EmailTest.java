@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class EmailTest {
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
+
+class EmailTest extends BaseEntityTest {
 
 	@Test
 	void 이메일_생성_성공() {

@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.CategoryController;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
-@RestDocs
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
+
 class CategoryRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(CategoryController.class);
