@@ -1,9 +1,9 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
@@ -31,7 +31,7 @@ public final class GetDetailedBookmarkResponse {
 
 	private Boolean isFavorite;
 	private LocalDateTime createdAt;
-	private List<String> tags;
+	private Set<String> tags;
 	private Map<ReactionType, Long> reactionCount;
 	private Map<ReactionType, Boolean> reaction;
 	private GetBookmarkProfileResponse profile;

@@ -1,10 +1,11 @@
 package com.meoguri.linkocean.util.querydsl;
 
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -88,8 +89,7 @@ public abstract class Querydsl4RepositorySupport {
 		final Pageable pageable,
 		JPAQuery<T> contentQuery,
 		final List<JoinInfoBuilder.JoinIf> joinIfs,
-		final List<Predicate> where,
-		final Consumer<T> lazyLoader
+		final List<Predicate> where
 	) {
 		final JPAQuery<T> countQuery = contentQuery.clone(entityManager);
 		final Predicate[] whereArray = where.toArray(new Predicate[0]);
@@ -100,9 +100,8 @@ public abstract class Querydsl4RepositorySupport {
 		}
 		contentQuery = contentQuery.where(whereArray);
 
-		/* 페이징 적용 후 레이지 로딩 하여 content 완성 */
+		/* 페이징 적용 */
 		List<T> content = querydsl.applyPagination(pageable, contentQuery).fetch();
-		content.forEach(lazyLoader);
 
 		/* content query 에는 where 만 적용 */
 		countQuery.where(whereArray);
@@ -190,11 +189,23 @@ public abstract class Querydsl4RepositorySupport {
 		return base;
 	}
 
-	protected List<Predicate> where(Predicate... where) {
+	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+	@SafeVarargs
+	protected final List<Predicate> where(final List<Predicate> always, final List<Predicate>... whereIfs) {
+		final List<Predicate> wheres = new ArrayList<>(always);
+		Arrays.stream(whereIfs).forEachOrdered(wheres::addAll);
+		return wheres;
+	}
+
+	protected static List<Predicate> always(final Predicate... where) {
 		return Arrays.stream(where).collect(toList());
 	}
 
-	/* 동적 where 절을 지원하기 위한 유틸리티 메서드 */
+	@SafeVarargs
+	protected static List<Predicate> whereIf(final boolean expression, final Supplier<Predicate>... where) {
+		return expression ? Arrays.stream(where).map(Supplier::get).collect(toList()) : emptyList();
+	}
+
 	protected static BooleanBuilder nullSafeBuilder(final Supplier<BooleanExpression> cond) {
 		try {
 			return new BooleanBuilder(cond.get());

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.query.service.dto;
+package com.meoguri.linkocean.domain.bookmark.service.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public final class GetProfileTagsResult {
+public final class GetUsedTagWithCountResult {
 
 	private final String tag;
-	private final int count;
+	private final long count;
 }

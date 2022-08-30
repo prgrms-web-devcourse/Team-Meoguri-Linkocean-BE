@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
@@ -25,7 +26,6 @@ import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
-import com.meoguri.linkocean.domain.tag.entity.Tags;
 import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
@@ -113,7 +113,7 @@ public abstract class BasePersistenceTest {
 		final OpenType openType,
 		final Category category,
 		final String url,
-		final Tag... tags
+		final long... tagIds
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
 			linkMetadata,
@@ -122,7 +122,7 @@ public abstract class BasePersistenceTest {
 			openType,
 			category,
 			url,
-			new Tags(Arrays.stream(tags).collect(toList()))
+			new TagIds(Arrays.stream(tagIds).boxed().collect(toList()))
 		));
 	}
 
@@ -147,10 +147,10 @@ public abstract class BasePersistenceTest {
 		final OpenType openType,
 		final Category category,
 		final String url,
-		final Tag... tags
+		final long... tagIds
 	) {
 		return 북마크_저장(writer, 링크_메타데이터_저장(url, "제목 없음", "default-image.png"), title, "memo", openType, category, url,
-			tags);
+			tagIds);
 	}
 
 	/* 주의 ! em.flush & em.clear occurs */
