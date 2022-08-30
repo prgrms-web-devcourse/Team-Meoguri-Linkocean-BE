@@ -25,6 +25,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
+import com.meoguri.linkocean.domain.bookmark.persistence.dto.QFindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
@@ -52,15 +54,16 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			).fetchFirst() != null;
 	}
 
-	/* 대상의 프로필 id 로 북마크 페이징 조회 */
 	@Override
-	public Page<Bookmark> findByTargetProfileId(final BookmarkFindCond findCond, final Pageable pageable) {
+	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
 		/* cond 풀기 */
+		final long currentUserProfileId = findCond.getCurrentUserProfileId();
 		final Long targetProfileId = findCond.getTargetProfileId();
 		final Category category = findCond.getCategory();
 		final boolean isFavorite = toBoolean(findCond.getFavorite());
 		final List<String> tags = findCond.getTags();
 		final String title = findCond.getTitle();
+		final boolean isFollow = toBoolean(findCond.getFollow());
 		final OpenType openType = findCond.getOpenType();
 
 		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
@@ -69,6 +72,9 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final Long writerId = toBoolean(isFavorite) ? null : targetProfileId;
 
 		/* 페이지 쿼리 */
+		final boolean isTargetQuery = targetProfileId != null;
+		final boolean isFeedQuery = targetProfileId == null;
+
 		return applyPagination(
 			convertBookmarkSort(pageable),
 			selectFrom(bookmark),
@@ -80,69 +86,37 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 					() -> join(bookmark.writer).fetchJoin())
 			),
 			where(
-				titleContains(title),
-				categoryEq(category),
-				writerIdEq(writerId),
-				bookmarkIdsIn(bookmarkIds),
-				bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
-				availableByOpenType(openType),
-				registered()
-			),
-			Bookmark::getTagNames
+				always(
+					titleContains(title),
+					categoryEq(category),
+					bookmarkIdsIn(bookmarkIds),
+					registered()
+				),
+				whereIf(
+					isTargetQuery,
+					() -> bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, targetProfileId)),
+					() -> availableByOpenType(openType),
+					() -> writerIdEq(writerId)
+				),
+				whereIf(
+					isFeedQuery,
+					() -> bookmarkIdsIn(getFavoriteBookmarkIds(isFavorite, currentUserProfileId)),
+					() -> availableByOpenType(currentUserProfileId),
+					() -> followedBy(isFollow, currentUserProfileId)
+				)
+			)
 		);
 	}
 
-	/* 피드 북마크 조회 */
-	@Override
-	public Page<Bookmark> findBookmarks(final BookmarkFindCond findCond, final Pageable pageable) {
-		/* cond 풀기 */
-		final long currentUserProfileId = findCond.getCurrentUserProfileId();
-		final Category category = findCond.getCategory();
-		final String title = findCond.getTitle();
-		final boolean isFavorite = toBoolean(findCond.getFavorite());
-		final boolean isFollow = toBoolean(findCond.getFollow());
-		final List<String> tags = findCond.getTags();
-
-		/* 태그는 북마크와 many-many 로 이어져 있기 때문에 별도 쿼리를 통해 북마크 아이디를 셋업 */
-		final List<Long> bookmarkIds = getBookmarkIds(tags);
-		/* 즐겨찾기는 엔티티가 아니라 join 이 아닌 별도 쿼리를 통해 북마크 아이디를 셋업 */
-		final List<Long> favoriteBookmarkIds = getFavoriteBookmarkIds(isFavorite, currentUserProfileId);
-
-		/* 페이지 쿼리 */
-		return applyPagination(
-			convertBookmarkSort(pageable),
-			selectFrom(bookmark),
-			joinIfs(
-				joinIf(category != null,
-					() -> join(bookmark.writer).fetchJoin()
-						.join(bookmark.linkMetadata).fetchJoin()),
-
-				joinIf(tags != null,
-					() -> join(bookmark.writer).fetchJoin())
-			),
-			where(
-				titleContains(title),
-				categoryEq(category),
-				bookmarkIdsIn(bookmarkIds),
-				bookmarkIdsIn(favoriteBookmarkIds),
-				followedBy(isFollow, currentUserProfileId),
-				availableByOpenType(currentUserProfileId),
-				registered()
-			),
-			Bookmark::getTagNames
-		);
-
-	}
-
-	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final long profileId) {
+	private List<Long> getFavoriteBookmarkIds(final boolean isFavorite, final Long profileId) {
 		return !isFavorite ? null : getJpasqlQuery()
 			.select(bookmarkId)
 			.from(favorite)
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
-
 	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
+
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
@@ -209,8 +183,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	private BooleanBuilder registered() {
 		return nullSafeBuilder(() -> bookmark.status.eq(BookmarkStatus.REGISTERED));
 	}
-
 	// Spring Pageable -> QueryDsl Pageable
+
 	private Pageable convertBookmarkSort(Pageable pageable) {
 		return QPageRequest.of(
 			pageable.getPageNumber(),
@@ -264,5 +238,20 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			.forEach(reactionType -> reactionCountMap.put(reactionType, 0L));
 
 		return reactionCountMap;
+	}
+
+	@Override
+	public List<FindUsedTagIdWithCountResult> findUsedTagIdsWithCount(final long profileId) {
+
+		return getJpasqlQuery()
+			.select(new QFindUsedTagIdWithCountResult(bt_tagId, count()))
+			.from(bookmark_tag)
+			.where(bt_bookmarkId.in(
+				select(bookmark.id)
+					.from(bookmark)
+					.where(b_profileId.eq(profileId)))
+			)
+			.groupBy(bt_tagId)
+			.fetch();
 	}
 }

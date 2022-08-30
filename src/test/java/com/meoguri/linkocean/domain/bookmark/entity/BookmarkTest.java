@@ -16,10 +16,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
-import com.meoguri.linkocean.domain.tag.entity.Tags;
 
 class BookmarkTest {
 
@@ -38,7 +38,7 @@ class BookmarkTest {
 
 		//when
 		final Bookmark bookmark =
-			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, createTags());
+			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, createTagIds());
 
 		//then
 		assertThat(bookmark).isNotNull()
@@ -64,7 +64,7 @@ class BookmarkTest {
 		//when then
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata(),
-				tooLongTitle, "memo", ALL, IT, "www.google.com", createTags()));
+				tooLongTitle, "memo", ALL, IT, "www.google.com", createTagIds()));
 	}
 
 	@Test
@@ -82,10 +82,10 @@ class BookmarkTest {
 		ReflectionTestUtils.setField(tag1, "id", 1L);
 		ReflectionTestUtils.setField(tag2, "id", 2L);
 
-		final Tags tags = new Tags(List.of(tag1, tag2));
+		final TagIds tagIds = new TagIds(List.of(1L, 2L));
 
 		//when
-		bookmark.update(updatedTitle, updatedMemo, category, openType, tags);
+		bookmark.update(updatedTitle, updatedMemo, category, openType, tagIds);
 
 		//then
 		assertThat(bookmark)
@@ -95,8 +95,8 @@ class BookmarkTest {
 				Bookmark::getCategory,
 				Bookmark::getOpenType
 			).containsExactly(updatedTitle, updatedMemo, category, openType);
-		assertThat(bookmark.getTagNames())
-			.containsExactly("tag1", "tag2");
+		assertThat(bookmark.getTagIds())
+			.containsExactly(1L, 2L);
 	}
 
 	@Test
@@ -106,7 +106,8 @@ class BookmarkTest {
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> createBookmark().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE, createTags()));
+			.isThrownBy(
+				() -> createBookmark().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE, createTagIds()));
 	}
 
 }

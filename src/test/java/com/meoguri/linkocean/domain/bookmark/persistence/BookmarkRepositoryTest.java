@@ -22,7 +22,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
-import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.persistence.BasePersistenceTest;
 
 class BookmarkRepositoryTest extends BasePersistenceTest {
@@ -35,9 +34,9 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 	private LinkMetadata linkMetadata;
 
-	private Tag tag1;
-	private Tag tag2;
-	private Tag tag3;
+	private long tagId1;
+	private long tagId2;
+	private long tagId3;
 
 	@BeforeEach
 	void setUp() {
@@ -48,9 +47,9 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
 
 		// 태그 셋업
-		tag1 = 태그_저장("tag1");
-		tag2 = 태그_저장("tag2");
-		tag3 = 태그_저장("tag3");
+		tagId1 = 태그_저장("tag1").getId();
+		tagId2 = 태그_저장("tag2").getId();
+		tagId3 = 태그_저장("tag3").getId();
 	}
 
 	@Test
@@ -67,33 +66,9 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 	}
 
 	@Test
-	void 작성자의_아이디로_태그페치_조회_성공() {
-		//given
-		북마크_저장(writer, linkMetadata, "bookmark1", "memo1", ALL, IT, "www.naver.com", tag1, tag2, tag3);
-		북마크_저장(writer, linkMetadata, "bookmark2", "memo2", ALL, IT, "www.naver.com", tag2, tag3);
-		북마크_저장(writer, linkMetadata, "bookmark3", "memo3", ALL, IT, "www.naver.com", tag3);
-
-		//when
-		final List<Bookmark> bookmarks = bookmarkRepository.findByWriterIdFetchTags(writer.getId());
-
-		//then
-		assertThat(bookmarks).hasSize(3)
-			.extracting(Bookmark::getTitle, Bookmark::getTagNames)
-			.containsExactly(
-				tuple("bookmark1", List.of("tag1", "tag2", "tag3")),
-				tuple("bookmark2", List.of("tag2", "tag3")),
-				tuple("bookmark3", List.of("tag3"))
-			);
-
-		assertThat(bookmarks.get(0).getWriter().getUsername()).isEqualTo("haha");
-		assertThat(bookmarks.get(0).getLinkMetadata().getTitle()).isEqualTo("구글");
-
-	}
-
-	@Test
 	void 아이디로_전체_페치_조회_성공() {
 		//given
-		final Bookmark savedBookmark = 북마크_저장(writer, linkMetadata, "title", "memo", ALL, IT, "www.google.com", tag1);
+		final Bookmark savedBookmark = 북마크_저장(writer, linkMetadata, "title", "memo", ALL, IT, "www.google.com", tagId1);
 
 		//when
 		final Optional<Bookmark> oFindBookmark = bookmarkRepository.findByIdFetchAll(savedBookmark.getId());
@@ -103,7 +78,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 			() -> assertThat(oFindBookmark).isPresent(),
 			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isEqualTo(true),
 			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isEqualTo(true),
-			() -> assertThat(oFindBookmark.get().getTagNames()).contains(tag1.getName())
+			() -> assertThat(oFindBookmark.get().getTagIds()).containsExactly(tagId1)
 		);
 	}
 
