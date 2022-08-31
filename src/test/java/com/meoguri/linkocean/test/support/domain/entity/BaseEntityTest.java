@@ -24,7 +24,7 @@ public abstract class BaseEntityTest {
 		return new TagIds(Arrays.stream(tags).boxed().collect(toList()));
 	}
 
-	protected static Bookmark createBookmark() {
+	protected static Bookmark createBookmarkWithLinkMetaData() {
 		return new Bookmark(createProfile(), createLinkMetadata().getId(), "title", "dream company", OpenType.ALL, null,
 			"google.com", createTagIds());
 	}

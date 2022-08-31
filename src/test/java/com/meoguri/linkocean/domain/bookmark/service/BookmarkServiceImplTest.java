@@ -83,7 +83,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
-		void 중복_url_북마크_생성_요청에_따라_실패() {
+		void 북마크_등록_실패_중복_url() {
 			//given
 			북마크_등록(profileId, "www.youtube.com");
 

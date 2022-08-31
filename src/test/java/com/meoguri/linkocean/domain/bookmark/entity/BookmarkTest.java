@@ -69,7 +69,7 @@ class BookmarkTest extends BaseEntityTest {
 	@Test
 	void 북마크_업데이트_성공() {
 		//given
-		final Bookmark bookmark = createBookmark();
+		final Bookmark bookmark = createBookmarkWithLinkMetaData();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
 		final Category category = HUMANITIES;
@@ -105,7 +105,8 @@ class BookmarkTest extends BaseEntityTest {
 
 		//when then
 		assertThatIllegalArgumentException().isThrownBy(
-			() -> createBookmark().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE, createTagIds()));
+			() -> createBookmarkWithLinkMetaData().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE,
+				createTagIds()));
 	}
 
 }
