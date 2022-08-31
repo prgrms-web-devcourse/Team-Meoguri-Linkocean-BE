@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.meoguri.linkocean.annotation.Query;
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;

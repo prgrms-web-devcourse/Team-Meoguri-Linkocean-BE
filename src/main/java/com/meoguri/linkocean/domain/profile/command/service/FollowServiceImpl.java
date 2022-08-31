@@ -3,8 +3,8 @@ package com.meoguri.linkocean.domain.profile.command.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.RequiredArgsConstructor;
 

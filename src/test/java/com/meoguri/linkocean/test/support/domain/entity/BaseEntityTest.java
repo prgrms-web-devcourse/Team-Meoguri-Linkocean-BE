@@ -10,8 +10,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 @EntityTest
 public abstract class BaseEntityTest {

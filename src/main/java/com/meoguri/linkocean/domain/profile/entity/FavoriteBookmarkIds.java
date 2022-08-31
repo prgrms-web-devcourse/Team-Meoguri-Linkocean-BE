@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.command.entity;
+package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.stream.Collectors.*;

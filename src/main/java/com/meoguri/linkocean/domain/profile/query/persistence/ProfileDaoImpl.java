@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.profile.query.persistence;
 
-import static com.meoguri.linkocean.domain.profile.command.entity.QFollow.*;
-import static com.meoguri.linkocean.domain.profile.command.entity.QProfile.*;
+import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
+import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
 
 import javax.persistence.EntityManager;
@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;

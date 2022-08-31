@@ -27,7 +27,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Reactions;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

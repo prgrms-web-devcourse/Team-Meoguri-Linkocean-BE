@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.profile.query.service;
 
-import static com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories.*;
+import static com.meoguri.linkocean.domain.profile.entity.FavoriteCategories.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.ProfileDao;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;

@@ -21,7 +21,7 @@ import org.hibernate.annotations.TypeDef;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.Getter;
