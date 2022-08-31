@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.bookmark;
+package com.meoguri.linkocean.controller.profile;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.apache.http.HttpHeaders.*;

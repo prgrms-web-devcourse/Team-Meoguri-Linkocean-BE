@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.command.entity.vo;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
 /**
  * 북마크 리액션 타입

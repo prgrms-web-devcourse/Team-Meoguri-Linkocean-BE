@@ -8,7 +8,6 @@ import static lombok.AccessLevel.*;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -20,7 +19,6 @@ import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,9 +46,6 @@ public class Profile extends BaseIdEntity {
 
 	@OneToMany(cascade = ALL, orphanRemoval = true, mappedBy = "id.follower")
 	private Set<Follow> follows = new HashSet<>();
-
-	@Embedded
-	private Reactions reactions = new Reactions();
 
 	@Column(nullable = false, unique = true, length = MAX_PROFILE_USERNAME_LENGTH)
 	private String username;
@@ -90,7 +85,7 @@ public class Profile extends BaseIdEntity {
 
 	/* 팔로우 */
 	public void follow(final Profile target) {
-		checkCondition(!checkIsFollow(target),
+		checkCondition(!isFollow(target),
 			format("illegal follow command of profileId: %d on targetProfileId: %d", this.getId(), target.getId()));
 
 		this.follows.add(new Follow(this, target));
@@ -98,19 +93,19 @@ public class Profile extends BaseIdEntity {
 
 	/* 언팔로우 */
 	public void unfollow(final Profile target) {
-		checkCondition(checkIsFollow(target),
+		checkCondition(isFollow(target),
 			format("illegal unfollow command of profileId: %d on targetProfileId: %d", this.getId(), target.getId()));
 
 		this.follows.remove(new Follow(this, target));
 	}
 
 	/* 프로필 팔로우 중인지 확인 */
-	public boolean checkIsFollow(final Profile profile) {
+	public boolean isFollow(final Profile profile) {
 		return this.follows.stream().anyMatch(f -> f.isFolloweeOf(profile));
 	}
 
 	/* 프로필 목록 팔로우 중인지 확인 */
-	public List<Boolean> checkIsFollows(final List<Profile> profiles) {
+	public List<Boolean> isFollows(final List<Profile> profiles) {
 		return profiles.stream().map(
 			p -> follows.stream().anyMatch(f -> f.isFolloweeOf(p))
 		).collect(toList());
@@ -127,18 +122,13 @@ public class Profile extends BaseIdEntity {
 	}
 
 	/* 북마크 즐겨찾기 여부 확인 */
-	public boolean isFavoriteBookmark(final Bookmark bookmark) {
+	public boolean isFavorite(final Bookmark bookmark) {
 		return favoriteBookmarkIds.isFavoriteBookmark(bookmark);
 	}
 
 	/* 북마크 목록 즐겨찾기 여부 확인 */
 	public List<Boolean> isFavoriteBookmarks(final List<Bookmark> bookmarks) {
 		return favoriteBookmarkIds.isFavoriteBookmarks(bookmarks);
-	}
-
-	/* 리액션 요청 */
-	public ReactionType requestReaction(final Bookmark bookmark, final ReactionType requestType) {
-		return reactions.requestReaction(bookmark, requestType);
 	}
 
 	/**
@@ -148,15 +138,11 @@ public class Profile extends BaseIdEntity {
 	public OpenType getAvailableBookmarkOpenType(final Profile target) {
 		if (this.equals(target)) {
 			return OpenType.PRIVATE;
-		} else if (this.checkIsFollow(target)) {
+		} else if (this.isFollow(target)) {
 			return OpenType.PARTIAL;
 		} else {
 			return OpenType.ALL;
 		}
 	}
 
-	/* 리액션 확인 */
-	public Map<ReactionType, Boolean> checkReaction(final Bookmark bookmark) {
-		return reactions.checkReaction(bookmark);
-	}
 }

@@ -1,9 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static java.lang.String.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,7 +13,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, CustomBookmarkRepository {
 
@@ -36,6 +39,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "join fetch b.writer "
 		+ "join fetch b.linkMetadata "
 		+ "left join fetch b.tagIds t "
+		+ "left join fetch b.reactions r "
 		+ "where b.id = :id "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Bookmark> findByIdFetchAll(long id);
@@ -47,6 +51,14 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(long writerId);
+
+	/* 아이디로 조회 리액션 페치 */
+	@Query("select distinct b "
+		+ "from Bookmark b "
+		+ "left join fetch b.reactions t "
+		+ "where b.id = :id "
+		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
+	Optional<Bookmark> findByIdFetchReactions(long id);
 
 	default void updateLikeCount(long bookmarkId, ReactionType existedType, ReactionType requestType) {
 		if (requestType.equals(LIKE)) {
@@ -72,4 +84,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query("update Bookmark b set b.likeCount = b.likeCount - 1 where b.id = :bookmarkId")
 	void subtractLikeCount(long bookmarkId);
+
+	default Bookmark findBookmarkById(long bookmarkId, Function<Long, Optional<Bookmark>> findById) {
+		return findById.apply(bookmarkId)
+			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
+	}
 }
