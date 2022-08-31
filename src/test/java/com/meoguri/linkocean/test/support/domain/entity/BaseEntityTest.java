@@ -25,7 +25,7 @@ public abstract class BaseEntityTest {
 	}
 
 	protected static Bookmark createBookmark() {
-		return new Bookmark(createProfile(), createLinkMetadata(), "title", "dream company", OpenType.ALL, null,
+		return new Bookmark(createProfile(), createLinkMetadata().getId(), "title", "dream company", OpenType.ALL, null,
 			"google.com", createTagIds());
 	}
 

@@ -116,7 +116,7 @@ public abstract class BasePersistenceTest {
 		final long... tagIds
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
-			linkMetadata,
+			linkMetadata.getId(),
 			title,
 			memo,
 			openType,
