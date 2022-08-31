@@ -16,15 +16,15 @@ import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
 @Repository
-public class ProfileQueryRepositoryImpl extends Querydsl4RepositorySupport implements ProfileQueryRepository {
+public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
+	implements CustomProfileQueryRepository {
 
-	public ProfileQueryRepositoryImpl(final EntityManager em) {
+	public CustomProfileQueryRepositoryImpl(final EntityManager em) {
 		super(Profile.class);
 	}
 
 	@Override
 	public Slice<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
-
 		final Long currentProfileId = findCond.getProfileId();
 		final boolean isFollower = findCond.isFollower();
 		final boolean isFollowee = findCond.isFollowee();

@@ -14,7 +14,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.ProfileQueryRepository;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
@@ -30,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 public class ProfileQueryServiceImpl implements ProfileQueryService {
 
 	private final ProfileQueryRepository profileQueryRepository;
-	private final ProfileRepository profileRepository;
 
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
@@ -40,8 +38,8 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 
 		/* 추가 정보 조회 */
 		final boolean isFollow = profile.isFollow(target);
-		final int followerCount = profileRepository.getFollowerCount(target);
-		final int followeeCount = profileRepository.getFolloweeCount(target);
+		final int followerCount = profileQueryRepository.getFollowerCount(target);
+		final int followeeCount = profileQueryRepository.getFolloweeCount(target);
 
 		/* 결과 반환 */
 		return new GetDetailedProfileResult(
@@ -98,17 +96,17 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 
 	@Override
 	public Profile findById(final long profileId) {
-		return findProfileById(profileId, profileRepository::findById);
+		return findProfileById(profileId, profileQueryRepository::findById);
 	}
 
 	@Override
 	public Profile findProfileFetchFavoriteById(final long profileId) {
-		return findProfileById(profileId, profileRepository::findProfileFetchFavoriteIdsById);
+		return findProfileById(profileId, profileQueryRepository::findProfileFetchFavoriteIdsById);
 	}
 
 	@Override
 	public Profile findProfileFetchFollows(final long profileId) {
-		return findProfileById(profileId, profileRepository::findProfileFetchFollows);
+		return findProfileById(profileId, profileQueryRepository::findProfileFetchFollows);
 	}
 
 	private Profile findProfileById(long profileId, LongFunction<Optional<Profile>> findById) {

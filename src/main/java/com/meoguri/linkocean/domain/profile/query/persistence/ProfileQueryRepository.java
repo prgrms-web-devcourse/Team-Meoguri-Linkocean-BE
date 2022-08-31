@@ -1,19 +1,35 @@
 package com.meoguri.linkocean.domain.profile.query.persistence;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.repository.Repository;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 
-public interface ProfileQueryRepository extends Repository<Profile, Long> {
+public interface ProfileQueryRepository extends JpaRepository<Profile, Long>, CustomProfileQueryRepository {
 
-	/**
-	 * 다양한 조건으로 프로필 목록 조회
-	 * - 팔로워 목록 조회
-	 * - 팔로이 목록 조회
-	 * - 특정 username 프로필 목록 조회
-	 */
-	Slice<Profile> findProfiles(ProfileFindCond findCond, Pageable pageable);
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.favoriteBookmarkIds.favoriteBookmarkIds "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFavoriteIdsById(long profileId);
+
+	@Query("select p "
+		+ "from Profile p "
+		+ "left join fetch p.follows "
+		+ "where p.id = :profileId")
+	Optional<Profile> findProfileFetchFollows(long profileId);
+
+	/* user 를 팔로우 하는 사용자의 카운트 */
+	@Query("select count(f) "
+		+ "from Follow f "
+		+ "where f.id.follower = :profile")
+	int getFolloweeCount(Profile profile);
+
+	/* user 가 팔로우 하는 사용자의 카운트 */
+	@Query("select count(f) "
+		+ "from Follow f "
+		+ "where f.id.followee = :profile")
+	int getFollowerCount(Profile profile);
 }
