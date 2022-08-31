@@ -160,8 +160,8 @@ class ProfileTest extends BaseEntityTest {
 			profile.favorite(bookmark1);
 
 			//when
-			final boolean isFavorite1 = profile.isFavoriteBookmark(bookmark1);
-			final boolean isFavorite2 = profile.isFavoriteBookmark(bookmark2);
+			final boolean isFavorite1 = profile.isFavorite(bookmark1);
+			final boolean isFavorite2 = profile.isFavorite(bookmark2);
 			final List<Boolean> isFavorites = profile.isFavoriteBookmarks(of(bookmark1, bookmark2));
 
 			//then
@@ -184,13 +184,13 @@ class ProfileTest extends BaseEntityTest {
 		void 프로필_즐겨찾기_취소_성공() {
 			//given
 			profile.favorite(bookmark1);
-			assertThat(profile.isFavoriteBookmark(bookmark1)).isEqualTo(true);
+			assertThat(profile.isFavorite(bookmark1)).isEqualTo(true);
 
 			//when
 			profile.unfavorite(bookmark1);
 
 			//then
-			assertThat(profile.isFavoriteBookmark(bookmark1)).isEqualTo(false);
+			assertThat(profile.isFavorite(bookmark1)).isEqualTo(false);
 		}
 
 		@Test

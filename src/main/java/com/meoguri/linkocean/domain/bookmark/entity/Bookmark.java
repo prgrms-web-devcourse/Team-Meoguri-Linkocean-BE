@@ -7,6 +7,7 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -23,6 +24,8 @@ import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.Reactions;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
@@ -51,6 +54,9 @@ public class Bookmark extends BaseIdEntity {
 	/* 링크 메타 데이터 식별자 */
 	@Column(name = "linkMetadata_id")
 	private Long linkMetadataId;
+
+	@Embedded
+	private Reactions reactions = new Reactions();
 
 	@Embedded
 	private TagIds tagIds;
@@ -130,6 +136,21 @@ public class Bookmark extends BaseIdEntity {
 
 	public boolean isOpenTypeAll() {
 		return this.openType.equals(OpenType.ALL);
+	}
+
+	/* 리액션 요청 */
+	public ReactionType requestReaction(final long profileId, final ReactionType requestType) {
+		return reactions.requestReaction(profileId, requestType);
+	}
+
+	/* 리액션 카운트 맵 조회 */
+	public Map<ReactionType, Long> countReactionGroup() {
+		return reactions.countReactionGroup();
+	}
+
+	/* 리액션 확인 */
+	public Map<ReactionType, Boolean> checkReaction(final long profileId) {
+		return reactions.checkReaction(profileId);
 	}
 
 	public Set<Long> getTagIds() {

@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.test.support.domain.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -17,13 +17,13 @@ import org.springframework.data.domain.Sort;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.profile.command.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
@@ -155,14 +155,14 @@ public abstract class BasePersistenceTest {
 
 	/* 주의 ! em.flush & em.clear occurs */
 	protected Profile 좋아요_저장(final Profile profile, final Bookmark bookmark) {
-		profile.requestReaction(bookmark, LIKE);
+		bookmark.requestReaction(profile.getId(), LIKE);
 		bookmarkRepository.updateLikeCount(bookmark.getId(), null, LIKE);
 		return 프로필_load(profile.getId());
 	}
 
 	/* 주의 ! em.flush & em.clear occurs */
 	protected Profile 싫어요_저장(final Profile profile, final Bookmark bookmark) {
-		profile.requestReaction(bookmark, HATE);
+		bookmark.requestReaction(profile.getId(), HATE);
 		bookmarkRepository.updateLikeCount(bookmark.getId(), null, HATE);
 		return 프로필_load(profile.getId());
 	}
@@ -170,7 +170,7 @@ public abstract class BasePersistenceTest {
 	/* 주의 ! em.flush & em.clear occurs */
 	protected Profile 리액션_요청(final Profile profile, final Bookmark bookmark, final ReactionType requestType) {
 		if (requestType != null) {
-			profile.requestReaction(bookmark, requestType);
+			bookmark.requestReaction(profile.getId(), requestType);
 			bookmarkRepository.updateLikeCount(bookmark.getId(), null, requestType);
 			return 프로필_load(profile.getId());
 		} else {

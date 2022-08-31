@@ -46,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
 		/* 비즈니스 로직 검사 */
-		final boolean isSenderFollowedByReceiver = receiver.checkIsFollow(sender);
+		final boolean isSenderFollowedByReceiver = receiver.isFollow(sender);
 		final boolean isOpenTypeAll = bookmark.isOpenTypeAll();
 		checkCondition(isSenderFollowedByReceiver && isOpenTypeAll, "illegal share command");
 

@@ -17,7 +17,10 @@ class LinkTest extends BaseEntityTest {
 			"https://www.naver.com",
 			"www.naver.com",
 			"naver.com",
-			"dev.naver.com"
+			"dev.naver.com",
+			"https://yozm.wishket.com/magazine/detail/1217",
+			"https://map.naver.com/v5/entry/place/1368783268?c=14142328.7122523,4515635.3114847,13,0,0,0,dh&placePath=%2Fhome&entry=plt",
+			"https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=쵸리상경"
 		}
 	)
 	void url_생성_성공(final String textUrl) {

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.command.entity;
+package com.meoguri.linkocean.domain.bookmark.entity.vo;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
@@ -7,9 +7,6 @@ import static lombok.AccessLevel.*;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
-
-import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,23 +21,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class Reaction {
 
-	@Column(nullable = false, name = "bookmark_id")
-	private long bookmarkId;
+	@Column(nullable = false, name = "profile_id")
+	private long profileId;
 
 	@Getter
 	@Enumerated(STRING)
 	private ReactionType type;
 
-	public Reaction(final Bookmark bookmark, final ReactionType type) {
-		checkNotNull(bookmark);
+	public Reaction(final long profileId, final ReactionType type) {
 		checkNotNull(type);
 
-		this.bookmarkId = bookmark.getId();
+		this.profileId = profileId;
 		this.type = type;
 	}
 
-	public boolean isOf(final Bookmark bookmark) {
-		return bookmarkId == bookmark.getId();
+	public boolean isOf(final long profileId) {
+		return this.profileId == profileId;
 	}
 
 	public void updateType(final ReactionType reactionType) {
