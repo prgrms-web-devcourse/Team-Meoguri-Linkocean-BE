@@ -27,7 +27,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.QFindUsedTagIdWithCountResult;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 import com.meoguri.linkocean.util.querydsl.CustomPath;
@@ -44,12 +43,12 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	@Override
-	public boolean existsByWriterAndLinkMetadata(final Profile writer, final LinkMetadata linkMetadata) {
+	public boolean existsByWriterAndLinkMetadata(final Profile writer, final Long linkMetadataId) {
 		return selectOne()
 			.from(bookmark)
 			.where(
 				writerIdEq(writer.getId()),
-				linMetadataEq(linkMetadata),
+				linMetadataIdEq(linkMetadataId),
 				registered()
 			).fetchFirst() != null;
 	}
@@ -80,8 +79,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			selectFrom(bookmark),
 			joinIfs(
 				joinIf(category != null,
-					() -> join(bookmark.writer).fetchJoin()
-						.join(bookmark.linkMetadata).fetchJoin()),
+					() -> join(bookmark.writer).fetchJoin()),
 				joinIf(tags != null,
 					() -> join(bookmark.writer).fetchJoin())
 			),
@@ -131,8 +129,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.title.containsIgnoreCase(title));
 	}
 
-	private BooleanBuilder linMetadataEq(final LinkMetadata linkMetadata) {
-		return nullSafeBuilder(() -> bookmark.linkMetadata.eq(linkMetadata));
+	private BooleanBuilder linMetadataIdEq(final Long linkMetadataId) {
+		return nullSafeBuilder(() -> bookmark.linkMetadataId.eq(linkMetadataId));
 	}
 
 	private BooleanBuilder categoryEq(final Category category) {

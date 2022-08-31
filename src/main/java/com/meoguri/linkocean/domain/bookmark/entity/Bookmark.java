@@ -24,7 +24,6 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
 import lombok.Getter;
@@ -49,8 +48,9 @@ public class Bookmark extends BaseIdEntity {
 	@JoinColumn(name = "profile_id")
 	private Profile writer;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	private LinkMetadata linkMetadata;
+	/* 링크 메타 데이터 식별자 */
+	@Column(name = "linkMetadata_id")
+	private Long linkMetadataId;
 
 	@Embedded
 	private TagIds tagIds;
@@ -87,7 +87,7 @@ public class Bookmark extends BaseIdEntity {
 	private LocalDateTime updatedAt;
 
 	/* 북마크 등록시 사용하는 생성자 */
-	public Bookmark(final Profile writer, final LinkMetadata linkMetadata, final String title, final String memo,
+	public Bookmark(final Profile writer, final Long linkMetadataId, final String title, final String memo,
 		final OpenType openType, final Category category, final String url, final TagIds tagIds) {
 		checkNotNull(openType);
 		checkNotNull(tagIds);
@@ -95,7 +95,7 @@ public class Bookmark extends BaseIdEntity {
 		checkNullableStringLength(title, MAX_BOOKMARK_TITLE_LENGTH, "제목의 길이는 %d보다 작아야 합니다.", MAX_BOOKMARK_TITLE_LENGTH);
 
 		this.writer = writer;
-		this.linkMetadata = linkMetadata;
+		this.linkMetadataId = linkMetadataId;
 		this.title = title;
 		this.memo = memo;
 		this.openType = openType;

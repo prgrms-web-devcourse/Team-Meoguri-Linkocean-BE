@@ -34,7 +34,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.writer "
-		+ "join fetch b.linkMetadata "
 		+ "left join fetch b.tagIds t "
 		+ "where b.id = :id "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
