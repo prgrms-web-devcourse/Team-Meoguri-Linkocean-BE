@@ -7,7 +7,7 @@ import org.springframework.data.repository.Repository;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 
-public interface ProfileDao extends Repository<Profile, Long> {
+public interface ProfileQueryRepository extends Repository<Profile, Long> {
 
 	/**
 	 * 다양한 조건으로 프로필 목록 조회

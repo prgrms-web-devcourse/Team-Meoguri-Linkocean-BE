@@ -16,9 +16,9 @@ import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
 @Repository
-public class ProfileDaoImpl extends Querydsl4RepositorySupport implements ProfileDao {
+public class ProfileQueryRepositoryImpl extends Querydsl4RepositorySupport implements ProfileQueryRepository {
 
-	public ProfileDaoImpl(final EntityManager em) {
+	public ProfileQueryRepositoryImpl(final EntityManager em) {
 		super(Profile.class);
 	}
 
