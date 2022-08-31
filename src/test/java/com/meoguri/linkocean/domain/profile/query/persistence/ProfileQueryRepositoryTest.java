@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.profile.command.persistence;
+package com.meoguri.linkocean.domain.profile.query.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
@@ -16,10 +16,10 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
-class ProfileRepositoryTest extends BasePersistenceTest {
+class ProfileQueryRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
-	private ProfileRepository profileRepository;
+	private ProfileQueryRepository profileQueryRepository;
 
 	@Test
 	void findProfileFetchFavoriteIdsById_성공() {
@@ -33,7 +33,7 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark3);
 
 		//when
-		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
+		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFavoriteIdsById(profile.getId());
 
 		//then
 		assertThat(oProfile).isPresent();
@@ -47,7 +47,7 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 
 		//when
-		final Optional<Profile> oProfile = profileRepository.findProfileFetchFavoriteIdsById(profile.getId());
+		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFavoriteIdsById(profile.getId());
 
 		//then
 		assertThat(oProfile).isPresent();
@@ -67,12 +67,11 @@ class ProfileRepositoryTest extends BasePersistenceTest {
 		팔로우_저장(follower, profile3);
 
 		//when
-		final Optional<Profile> oProfile = profileRepository.findProfileFetchFollows(follower.getId());
+		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFollows(follower.getId());
 
 		//then
 		assertThat(oProfile).isPresent();
 		assertThat(oProfile.get().isFollows(List.of(profile1, profile2, profile3, profile4)))
 			.containsExactly(true, true, true, false);
 	}
-
 }
