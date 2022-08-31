@@ -16,7 +16,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
@@ -31,25 +30,25 @@ class BookmarkTest extends BaseEntityTest {
 	void 북마크_생성_성공(final String memo, final String title) {
 		//given
 		final Profile profile = createProfile();
-		final LinkMetadata linkMetadata = createLinkMetadata();
+		final Long linkMetadataId = createLinkMetadata().getId();
 		final OpenType openType = ALL;
 		final Category category = IT;
 		final String url = "www.naver.com";
 
 		//when
 		final Bookmark bookmark =
-			new Bookmark(profile, linkMetadata, title, memo, openType, category, url, createTagIds());
+			new Bookmark(profile, linkMetadataId, title, memo, openType, category, url, createTagIds());
 
 		//then
 		assertThat(bookmark).isNotNull()
 			.extracting(
 				Bookmark::getWriter,
 				Bookmark::getTitle,
-				Bookmark::getLinkMetadata,
+				Bookmark::getLinkMetadataId,
 				Bookmark::getMemo,
 				Bookmark::getCategory,
 				Bookmark::getOpenType
-			).containsExactly(profile, title, linkMetadata, memo, category, openType);
+			).containsExactly(profile, title, linkMetadataId, memo, category, openType);
 
 		assertThat(bookmark)
 			.extracting(Bookmark::getCreatedAt, Bookmark::getUpdatedAt)
@@ -63,14 +62,14 @@ class BookmarkTest extends BaseEntityTest {
 
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata(),
+			.isThrownBy(() -> new Bookmark(createProfile(), createLinkMetadata().getId(),
 				tooLongTitle, "memo", ALL, IT, "www.google.com", createTagIds()));
 	}
 
 	@Test
 	void 북마크_업데이트_성공() {
 		//given
-		final Bookmark bookmark = createBookmark();
+		final Bookmark bookmark = createBookmarkWithLinkMetaData();
 		final String updatedTitle = "updatedTitle";
 		final String updatedMemo = "updatedMemo";
 		final Category category = HUMANITIES;
@@ -106,7 +105,8 @@ class BookmarkTest extends BaseEntityTest {
 
 		//when then
 		assertThatIllegalArgumentException().isThrownBy(
-			() -> createBookmark().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE, createTagIds()));
+			() -> createBookmarkWithLinkMetaData().update(tooLongTitle, "updatedMemo", HUMANITIES, PRIVATE,
+				createTagIds()));
 	}
 
 }

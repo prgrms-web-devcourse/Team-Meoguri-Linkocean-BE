@@ -37,7 +37,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 	@Query("select distinct b "
 		+ "from Bookmark b "
 		+ "join fetch b.writer "
-		+ "join fetch b.linkMetadata "
 		+ "left join fetch b.tagIds t "
 		+ "left join fetch b.reactions r "
 		+ "where b.id = :id "

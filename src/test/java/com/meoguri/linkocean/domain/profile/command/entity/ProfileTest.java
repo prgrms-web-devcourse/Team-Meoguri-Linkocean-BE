@@ -145,8 +145,10 @@ class ProfileTest extends BaseEntityTest {
 			final LinkMetadata naver = new LinkMetadata("www.naver.com", "네이버", "naver.png");
 			final LinkMetadata google = new LinkMetadata("www.google.com", "구글", "google.png");
 
-			bookmark1 = new Bookmark(profile, naver, "bookmark1", null, ALL, null, "www.naver.com", createTagIds());
-			bookmark2 = new Bookmark(profile, google, "bookmark2", null, ALL, null, "www.google.com", createTagIds());
+			bookmark1 = new Bookmark(profile, naver.getId(), "bookmark1", null, ALL, null, "www.naver.com",
+				createTagIds());
+			bookmark2 = new Bookmark(profile, google.getId(), "bookmark2", null, ALL, null, "www.google.com",
+				createTagIds());
 
 			ReflectionTestUtils.setField(bookmark1, "id", 1L);
 			ReflectionTestUtils.setField(bookmark2, "id", 2L);

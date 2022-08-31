@@ -3,7 +3,9 @@ package com.meoguri.linkocean.domain.linkmetadata.persistence;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,21 @@ class LinkMetadataRepositoryTest extends BasePersistenceTest {
 
 		assertThatDataIntegrityViolationException()
 			.isThrownBy(() -> linkMetadataRepository.save(new LinkMetadata(duplicatedLink, "네이버", "naver.png")));
+	}
+
+	@Test
+	void 링크_메타데이터_집합_조회() {
+		//given
+		final Long id1 = 링크_메타데이터_저장("https://www.naver.com", "네이버", "naver.png").getId();
+		final Long id2 = 링크_메타데이터_저장("https://www.google.com", "구글", "google.png").getId();
+		final Long id3 = 링크_메타데이터_저장("https://www.kakao.com", "카카오", "kakao.png").getId();
+
+		//when
+		final Set<LinkMetadata> linkMetaDatas = linkMetadataRepository.findByIds(List.of(id1, id2, id3));
+
+		//then
+		assertThat(linkMetaDatas)
+			.extracting(LinkMetadata::getId)
+			.containsExactlyInAnyOrder(id1, id2, id3);
 	}
 }

@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,4 +23,9 @@ public interface LinkMetadataRepository extends JpaRepository<LinkMetadata, Long
 
 	/* 배치작업 최적화를 위해 Slice 이용 */
 	Slice<LinkMetadata> findBy(Pageable pageable);
+
+	@Query("select l "
+		+ "from LinkMetadata l "
+		+ "where l.id in :ids")
+	Set<LinkMetadata> findByIds(List<Long> ids);
 }

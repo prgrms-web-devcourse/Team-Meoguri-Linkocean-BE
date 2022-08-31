@@ -75,7 +75,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 		//when
 		final boolean exists =
-			bookmarkRepository.existsByWriterAndLinkMetadata(profile, linkMetadata);
+			bookmarkRepository.existsByWriterAndLinkMetadata(profile, linkMetadata.getId());
 
 		//then
 		assertThat(exists).isEqualTo(true);

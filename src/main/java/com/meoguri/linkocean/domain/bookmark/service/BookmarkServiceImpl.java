@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
@@ -31,6 +33,7 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByIdQuery;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
@@ -53,6 +56,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	private final FindProfileByIdQuery findProfileByIdQuery;
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
+	private final FindLinkMetadataByIdQuery findLinkMetadataByIdQuery;
 
 	/**
 	 * 북마크 등록
@@ -69,7 +73,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
-		final boolean exists = bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata);
+		final boolean exists = bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata.getId());
 		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
@@ -78,7 +82,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
 			writer,
-			linkMetadata,
+			linkMetadata.getId(),
 			command.getTitle(),
 			command.getMemo(),
 			command.getOpenType(),
@@ -134,6 +138,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean follow = findProfileByIdQuery.findProfileFetchFollows(profileId).isFollow(writer);
 		final boolean favorite = findProfileByIdQuery.findProfileFetchFavoriteById(profileId).isFavorite(bookmark);
 
+		final LinkMetadata linkMetadata = findLinkMetadataByIdQuery.findById(bookmark.getLinkMetadataId());
+
 		final Map<ReactionType, Long> reactionCountMap = bookmark.countReactionGroup();
 		final Map<ReactionType, Boolean> reactionMap = bookmark.checkReaction(profileId);
 		final Set<String> tags = tagService.getTags(bookmark.getTagIds());
@@ -143,7 +149,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			bookmarkId,
 			bookmark.getTitle(),
 			bookmark.getUrl(),
-			bookmark.getLinkMetadata().getImage(),
+			linkMetadata.getImage(),
 			bookmark.getCategory(),
 			bookmark.getMemo(),
 			bookmark.getOpenType(),
@@ -178,11 +184,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
 		/* 추가 정보 조회 */
+		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
+			bookmarks.stream().map(BaseIdEntity::getId).collect(toList()));
+
 		final Profile currentUserProfile = findProfileByIdQuery.findProfileFetchFavoriteById(profileId);
 		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
 
 		/* 결과 반환 */
-		return toResultPage(bookmarkPage, isFavorites, profileId, pageable);
+		return toResultPage(bookmarkPage, linkMetadataSet, isFavorites, profileId, pageable);
 	}
 
 	@Override
@@ -199,10 +208,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Profile> writers = bookmarks.stream().map(Bookmark::getWriter).collect(toList());
 
 		/* 추가 정보 조회 */
+		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
+			bookmarks.stream().map(BaseIdEntity::getId).collect(toList()));
 		final List<Boolean> isFavorites = profile.isFavoriteBookmarks(bookmarks);
 		final List<Boolean> isFollows = profile.isFollows(writers);
 
-		return toResultPage(bookmarkPage, isFavorites, isFollows, profileId, pageable);
+		return toResultPage(bookmarkPage, linkMetadataSet, isFavorites, isFollows, profileId, pageable);
 	}
 
 	/* 북마크 공유 알림 */
@@ -227,6 +238,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 */
 	private Page<GetBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
+		final Set<LinkMetadata> linkMetadataSet,
 		final List<Boolean> isFavorites,
 		final long currentUserProfileId,
 		final Pageable pageable
@@ -249,7 +261,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				bookmark.getCreatedAt(),
 				isFavorites.get(i),
 				bookmark.getLikeCount(),
-				bookmark.getLinkMetadata().getImage(),
+				getLinkMetadataImage(bookmark, linkMetadataSet),
 				writer.getId().equals(currentUserProfileId),
 				tagsList.get(i)
 			));
@@ -268,6 +280,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 */
 	private Page<GetFeedBookmarksResult> toResultPage(
 		final Page<Bookmark> bookmarkPage,
+		final Set<LinkMetadata> linkMetadataSet,
 		final List<Boolean> isFavorites,
 		final List<Boolean> isFollows,
 		final long currentUserProfileId,
@@ -289,7 +302,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				bookmark.getOpenType(),
 				bookmark.getCategory(),
 				bookmark.getCreatedAt(),
-				bookmark.getLinkMetadata().getImage(),
+				getLinkMetadataImage(bookmark, linkMetadataSet),
 				bookmark.getLikeCount(),
 				isFavorites.get(i),
 				writer.getId().equals(currentUserProfileId),
@@ -305,6 +318,17 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final long totalCount = bookmarkPage.getTotalElements();
 
 		return new PageImpl<>(bookmarkResults, pageable, totalCount);
+	}
+
+	/**
+	 * 북마크 링크 메타데이터 이미지를 반환한다.
+	 * 만약 링크 메타데이터가 존재하지 않으면 DEFAULT_IMAEG를 반환한다.
+	 */
+	private String getLinkMetadataImage(final Bookmark bookmark, final Set<LinkMetadata> linkMetadataSet) {
+		return linkMetadataSet.stream()
+			.filter(linkMetadata -> linkMetadata.getId().equals(bookmark.getLinkMetadataId()))
+			.map(LinkMetadata::getImage)
+			.findFirst().orElse(DEFAULT_IMAGE);
 	}
 
 	@Override

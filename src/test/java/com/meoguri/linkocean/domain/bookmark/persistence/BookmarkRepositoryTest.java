@@ -77,7 +77,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		assertAll(
 			() -> assertThat(oFindBookmark).isPresent(),
 			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isEqualTo(true),
-			() -> assertThat(isLoaded(oFindBookmark.get().getLinkMetadata())).isEqualTo(true),
 			() -> assertThat(oFindBookmark.get().getTagIds()).containsExactly(tagId1)
 		);
 	}

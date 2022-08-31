@@ -8,12 +8,11 @@ import org.springframework.data.domain.Pageable;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.profile.command.entity.Profile;
 
 public interface CustomBookmarkRepository {
 
-	boolean existsByWriterAndLinkMetadata(Profile writer, LinkMetadata linkMetadata);
+	boolean existsByWriterAndLinkMetadata(Profile writer, Long linkMetadata);
 
 	/* 피드 북마크 조회 */
 	Page<Bookmark> findBookmarks(BookmarkFindCond findCond, Pageable pageable);
