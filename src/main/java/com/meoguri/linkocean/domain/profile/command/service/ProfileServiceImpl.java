@@ -5,12 +5,12 @@ import static com.meoguri.linkocean.exception.Preconditions.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.command.persistence.FindProfileByIdQuery;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ProfileServiceImpl implements ProfileService {
 
 	private final UserService userService;
+	private final ProfileQueryService profileQueryService;
 
 	private final ProfileRepository profileRepository;
-
-	private final FindProfileByIdQuery findProfileByIdQuery;
 
 	@Transactional
 	@Override
@@ -54,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
 		final String updateUsername = command.getUsername();
 
 		/* 프로필 조회 */
-		final Profile profile = findProfileByIdQuery.findById(profileId);
+		final Profile profile = profileQueryService.findById(profileId);
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
 		final boolean exists = profileRepository.existsByUsernameExceptMe(updateUsername, profileId);
