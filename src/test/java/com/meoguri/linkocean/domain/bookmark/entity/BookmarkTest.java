@@ -27,7 +27,7 @@ class BookmarkTest extends BaseEntityTest {
 		value = {"null, null", "null, title", "memo, null", "memo, title"},
 		nullValues = {"null"}
 	)
-	void 북마크_생성_성공(final String memo, final String title) {
+	void 북마크_생성_성공_제목과_메모는_null_가능(final String memo, final String title) {
 		//given
 		final Profile profile = createProfile();
 		final Long linkMetadataId = createLinkMetadata().getId();
@@ -44,7 +44,7 @@ class BookmarkTest extends BaseEntityTest {
 			.extracting(
 				Bookmark::getWriter,
 				Bookmark::getTitle,
-				Bookmark::getLinkMetadataId,
+				b -> b.getLinkMetadataId().orElse(null),
 				Bookmark::getMemo,
 				Bookmark::getCategory,
 				Bookmark::getOpenType
@@ -53,6 +53,23 @@ class BookmarkTest extends BaseEntityTest {
 		assertThat(bookmark)
 			.extracting(Bookmark::getCreatedAt, Bookmark::getUpdatedAt)
 			.doesNotContainNull();
+	}
+
+	@Test
+	void 북마크_생성_성공_링크_메타데이터가_없어도_된다() {
+		//given
+		final Long nullLinkMetadataId = null;
+
+		//when
+		final Bookmark newBookmark = new Bookmark(
+			createProfile(),
+			nullLinkMetadataId,
+			"title", "memo", ALL, IT, "https://hello.co.kr",
+			createTagIds());
+
+		//then
+		assertThat(newBookmark).isNotNull();
+		assertThat(newBookmark.getLinkMetadataId()).isEmpty();
 	}
 
 	@Test
