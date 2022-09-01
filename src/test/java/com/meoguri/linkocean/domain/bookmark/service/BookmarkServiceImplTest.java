@@ -4,7 +4,9 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -73,23 +75,37 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		}
 
 		@Test
+		void 북마크_등록_성공_링크_메타데이터_없어도_됨() {
+			//given
+			String noLinkMetadataUrl = "https://noLinkMetadata.com";
+			final RegisterBookmarkCommand command = new RegisterBookmarkCommand(profileId, noLinkMetadataUrl,
+				"title", "memo", IT, ALL, emptyList());
+
+			//when
+			final long registeredBookmarkId = bookmarkService.registerBookmark(command);
+
+			//then
+			assertThat(북마크_상세_조회(profileId, registeredBookmarkId)).isNotNull();
+		}
+
+		@Test
 		void 북마크_등록_실패_유효하지_않은_사용자() {
 			//given
 			final long invalidId = -1L;
 
 			//when then
 			assertThatLinkoceanRuntimeException()
-				.isThrownBy(() -> 북마크_등록(invalidId, "www.youtube.com"));
+				.isThrownBy(() -> 북마크_링크_메타데이터_동시_등록(invalidId, "www.youtube.com"));
 		}
 
 		@Test
 		void 북마크_등록_실패_중복_url() {
 			//given
-			북마크_등록(profileId, "www.youtube.com");
+			북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com");
 
 			//when then
 			assertThatIllegalArgumentException()
-				.isThrownBy(() -> 북마크_등록(profileId, "www.youtube.com"));
+				.isThrownBy(() -> 북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com"));
 		}
 
 	}
@@ -103,7 +119,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		@BeforeEach
 		void setUp() {
 			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-			bookmarkId = 북마크_등록(profileId, "www.youtube.com");
+			bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com");
 		}
 
 		@Test
@@ -158,7 +174,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		void 북마크_업데이트_실패_다른_사용자의_북마크() {
 			//given
 			final long crushProfileId = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
-			final long crushBookmarkId = 북마크_등록(crushProfileId, "www.linkocean.com");
+			final long crushBookmarkId = 북마크_링크_메타데이터_동시_등록(crushProfileId, "www.linkocean.com");
 
 			final UpdateBookmarkCommand command = createUpdateBookmarkCommand(profileId, crushBookmarkId);
 
@@ -189,7 +205,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		@BeforeEach
 		void setUp() {
 			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-			bookmarkId = 북마크_등록(profileId, "www.youtube.com");
+			bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com");
 		}
 
 		@Test
@@ -216,7 +232,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		void 북마크_삭제_실패_다른_사용자의_북마크_삭제_시도() {
 			//given
 			final long crushProfileId = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
-			final long crushBookmarkId = 북마크_등록(crushProfileId, "www.linkocean.com");
+			final long crushBookmarkId = 북마크_링크_메타데이터_동시_등록(crushProfileId, "www.linkocean.com");
 
 			//when then
 			assertThatLinkoceanRuntimeException()
@@ -233,7 +249,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		@BeforeEach
 		void setUp() {
 			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-			bookmarkId = 북마크_등록(profileId, "www.youtube.com");
+			bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com");
 		}
 
 		@Test
@@ -282,15 +298,19 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		private long bookmarkId1;
 		private long bookmarkId2;
 		private long bookmarkId3;
+		private long bookmarkId4;
 
 		@BeforeEach
 		void setUp() {
 			profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-			bookmarkId1 = 북마크_등록(profileId1, "http://www.naver.com", "title1", null, IT, ALL, "tag1", "tag2");
-			bookmarkId2 = 북마크_등록(profileId1, "http://www.daum.com", "title2", null, IT, PARTIAL, "tag2");
-			bookmarkId3 = 북마크_등록(profileId1, "http://www.kakao.com", "title3", null, HOME, PRIVATE, "tag1");
+			bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.naver.com", "title1", null, IT, ALL, "tag1",
+				"tag2");
+			bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.daum.com", "title2", null, IT, PARTIAL, "tag2");
+			bookmarkId3 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.kakao.com", "title3", null, HOME, PRIVATE, "tag1");
 
 			profileId2 = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
+
+			bookmarkId4 = 북마크_등록(profileId2, "https://noLinkMetadata.com", ALL);
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all 인 글만 볼 수 있다 */
@@ -310,6 +330,24 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			assertThat(resultPage.getContent()).hasSize(1)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId1, ALL));
+		}
+
+		@Test
+		void 다른_사람_북마크_목록_조회_링크_메타데이터_없는_북마크() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.targetProfileId(profileId2)
+				.build();
+
+			//when
+			final Page<GetBookmarksResult> resultPage =
+				bookmarkService.getByTargetProfileId(findCond, createPageable());
+
+			//then
+			assertThat(resultPage.getContent()).hasSize(1)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getImage)
+				.containsExactly(tuple(bookmarkId4, DEFAULT_IMAGE));
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
@@ -402,17 +440,17 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			profileId3 = 사용자_프로필_동시_등록("user3@gmail.com", GOOGLE, "user3", IT);
 
 			// 링크 메타 데이터 3개 셋업
-			북마크_등록(profileId3, "www.github.com", PRIVATE);
-			북마크_등록(profileId3, "www.kakao.com", PRIVATE);
-			bookmarkId10 = 북마크_등록(profileId3, "www.naver.com", ALL);
+			북마크_링크_메타데이터_동시_등록(profileId3, "www.github.com", PRIVATE);
+			북마크_링크_메타데이터_동시_등록(profileId3, "www.kakao.com", PRIVATE);
+			bookmarkId10 = 북마크_링크_메타데이터_동시_등록(profileId3, "www.naver.com", ALL);
 
-			북마크_등록(profileId2, "www.github.com", PRIVATE);
-			bookmarkId8 = 북마크_등록(profileId2, "www.kakao.com", PARTIAL);
-			bookmarkId7 = 북마크_등록(profileId2, "www.naver.com", ALL);
+			북마크_링크_메타데이터_동시_등록(profileId2, "www.github.com", PRIVATE);
+			bookmarkId8 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.kakao.com", PARTIAL);
+			bookmarkId7 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.naver.com", ALL);
 
-			bookmarkId6 = 북마크_등록(profileId1, "www.github.com", PRIVATE);
-			bookmarkId5 = 북마크_등록(profileId1, "www.kakao.com", PARTIAL);
-			bookmarkId4 = 북마크_등록(profileId1, "www.naver.com", ALL);
+			bookmarkId6 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.github.com", PRIVATE);
+			bookmarkId5 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.kakao.com", PARTIAL);
+			bookmarkId4 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.naver.com", ALL);
 
 			팔로우(profileId1, profileId2);
 		}
@@ -493,7 +531,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 	void 중복_url_확인_성공() {
 		//given
 		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
-		final long bookmarkId = 북마크_등록(profileId, "www.google.com");
+		final long bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
 
 		//when
 		final Optional<Long> duplicated = bookmarkService.getBookmarkIdIfExist(profileId, "www.google.com");
@@ -509,9 +547,9 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		//given
 		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 
-		북마크_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
-		북마크_등록(profileId, "www.google.com", "tag1", "tag2");
-		북마크_등록(profileId, "www.prgrms.com", "tag1");
+		북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
+		북마크_링크_메타데이터_동시_등록(profileId, "www.google.com", "tag1", "tag2");
+		북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
 
 		//when
 		final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);

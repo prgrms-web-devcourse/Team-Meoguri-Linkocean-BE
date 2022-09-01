@@ -39,12 +39,12 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	@Override
-	public boolean existsByWriterAndLinkMetadata(final Profile writer, final Long linkMetadataId) {
+	public boolean existsByWriterAndUrl(final Profile writer, final String url) {
 		return selectOne()
 			.from(bookmark)
 			.where(
 				writerIdEq(writer.getId()),
-				linMetadataIdEq(linkMetadataId),
+				bookmark.url.eq(url),
 				registered()
 			).fetchFirst() != null;
 	}

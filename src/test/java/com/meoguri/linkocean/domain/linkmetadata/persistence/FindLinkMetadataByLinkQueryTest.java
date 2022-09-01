@@ -1,7 +1,8 @@
 package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
-import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,18 @@ class FindLinkMetadataByLinkQueryTest extends BasePersistenceTest {
 		final LinkMetadata savedLinkMetadata = 링크_메타데이터_저장(saveLink, "네이버", "naver.png");
 
 		//when
-		final LinkMetadata foundLinkMetadata = query.findByUrl("naver.com");
+		final Optional<LinkMetadata> oFoundLinkMetadata = query.findByUrl("naver.com");
 
 		//then
-		assertThat(foundLinkMetadata).isEqualTo(savedLinkMetadata);
+		assertThat(oFoundLinkMetadata).hasValue(savedLinkMetadata);
 	}
 
 	@Test
 	void 존재하지_않는_url_조회() {
-		//when then
-		assertThatLinkoceanRuntimeException()
-			.isThrownBy(() -> query.findByUrl("invalid.com"));
+		//when
+		final Optional<LinkMetadata> oFoundLinkMetadata = query.findByUrl("invalid.com");
+
+		// then
+		assertThat(oFoundLinkMetadata).isEmpty();
 	}
 }

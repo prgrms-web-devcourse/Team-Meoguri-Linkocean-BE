@@ -2,6 +2,7 @@ package com.meoguri.linkocean.test.support.domain.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -105,20 +106,27 @@ public abstract class BaseServiceTest {
 	}
 
 	protected long 북마크_등록(final long writerId, final String url, final OpenType openType) {
-		return 북마크_등록(writerId, url, null, null, null, openType);
+		return bookmarkService.registerBookmark(
+			new RegisterBookmarkCommand(writerId, url, "title", "memo", Category.IT, openType, emptyList())
+		);
 	}
 
-	protected long 북마크_등록(final long writerId, final String url, final String... tags) {
-		return 북마크_등록(writerId, url, null, tags);
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final OpenType openType) {
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, null, null, null, openType);
 	}
 
-	protected long 북마크_등록(final long writerId, final String url, final Category category, final String... tags) {
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final String... tags) {
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, null, tags);
+	}
+
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final Category category,
+		final String... tags) {
 		final String title = linkMetadataService.obtainTitle(url);
 
-		return 북마크_등록(writerId, url, title, null, category, ALL, tags);
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, title, null, category, ALL, tags);
 	}
 
-	protected long 북마크_등록(
+	protected long 북마크_링크_메타데이터_동시_등록(
 		final long writerId,
 		final String url,
 		final String title,

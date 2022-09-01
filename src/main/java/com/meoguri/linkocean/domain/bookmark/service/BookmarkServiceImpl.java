@@ -59,10 +59,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final FindLinkMetadataByIdQuery findLinkMetadataByIdQuery;
 
-	/**
-	 * 북마크 등록
-	 * - 북마크 등록을 위해 항상 linkMetadata 가 먼저 저장 되어 있어야 한다.
-	 */
+	/* 북마크 등록 */
 	@Transactional
 	@Override
 	public long registerBookmark(final RegisterBookmarkCommand command) {
@@ -71,10 +68,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 연관 필드 조회 */
 		final Profile writer = profileQueryService.findById(writerId);
-		final LinkMetadata linkMetadata = findLinkMetadataByUrlQuery.findByUrl(url);
+		final Long linkMetadataId = findLinkMetadataByUrlQuery.findByUrl(url)
+			.map(BaseIdEntity::getId).orElse(null);
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
-		final boolean exists = bookmarkRepository.existsByWriterAndLinkMetadata(writer, linkMetadata.getId());
+		final boolean exists = bookmarkRepository.existsByWriterAndUrl(writer, url);
 		checkUniqueConstraint(exists, "이미 해당 url 의 북마크를 가지고 있습니다");
 
 		/* 태그 조회/저장 */
@@ -83,7 +81,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		/* 북마크 등록 진행 */
 		return bookmarkRepository.save(new Bookmark(
 			writer,
-			linkMetadata.getId(),
+			linkMetadataId,
 			command.getTitle(),
 			command.getMemo(),
 			command.getOpenType(),
@@ -139,7 +137,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final boolean follow = profileQueryService.findProfileFetchFollows(profileId).isFollow(writer);
 		final boolean favorite = profileQueryService.findProfileFetchFavoriteById(profileId).isFavorite(bookmark);
 
-		final LinkMetadata linkMetadata = findLinkMetadataByIdQuery.findById(bookmark.getLinkMetadataId());
+		final String linkMetaDataImage = bookmark.getLinkMetadataId()
+			.map(linkMetadataId -> findLinkMetadataByIdQuery.findById(linkMetadataId).getImage())
+			.orElse(DEFAULT_IMAGE);
 
 		final Map<ReactionType, Long> reactionCountMap = bookmark.countReactionGroup();
 		final Map<ReactionType, Boolean> reactionMap = bookmark.checkReaction(profileId);
@@ -150,7 +150,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			bookmarkId,
 			bookmark.getTitle(),
 			bookmark.getUrl(),
-			linkMetadata.getImage(),
+			linkMetaDataImage,
 			bookmark.getCategory(),
 			bookmark.getMemo(),
 			bookmark.getOpenType(),
@@ -186,7 +186,11 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
-			bookmarks.stream().map(BaseIdEntity::getId).collect(toList()));
+			bookmarks.stream()
+				.map(Bookmark::getLinkMetadataId)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(toList()));
 
 		final Profile currentUserProfile = profileQueryService.findProfileFetchFavoriteById(profileId);
 		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
@@ -210,7 +214,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
-			bookmarks.stream().map(BaseIdEntity::getId).collect(toList()));
+			bookmarks.stream()
+				.map(Bookmark::getLinkMetadataId)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(toList()));
+
 		final List<Boolean> isFavorites = profile.isFavoriteBookmarks(bookmarks);
 		final List<Boolean> isFollows = profile.isFollows(writers);
 
@@ -327,7 +336,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	 */
 	private String getLinkMetadataImage(final Bookmark bookmark, final Set<LinkMetadata> linkMetadataSet) {
 		return linkMetadataSet.stream()
-			.filter(linkMetadata -> linkMetadata.getId().equals(bookmark.getLinkMetadataId()))
+			.filter(linkMetadata -> linkMetadata.getId().equals(bookmark.getLinkMetadataId().orElse(null)))
 			.map(LinkMetadata::getImage)
 			.findFirst().orElse(DEFAULT_IMAGE);
 	}

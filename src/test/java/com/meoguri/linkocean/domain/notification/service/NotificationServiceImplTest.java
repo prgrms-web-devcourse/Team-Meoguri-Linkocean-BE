@@ -32,7 +32,7 @@ class NotificationServiceImplTest extends BaseServiceTest {
 		receiver1ProfileId = 사용자_프로필_동시_등록("receiver1@gamil.com", GOOGLE, "receiver1", IT);
 		receiver2ProfileId = 사용자_프로필_동시_등록("receiver2@gamil.com", GOOGLE, "receiver2", IT);
 
-		bookmarkId = 북마크_등록(senderProfileId, "www.google.com", "구글", "메모", IT, ALL);
+		bookmarkId = 북마크_링크_메타데이터_동시_등록(senderProfileId, "www.google.com", "구글", "메모", IT, ALL);
 
 		팔로우(receiver1ProfileId, senderProfileId);
 		팔로우(receiver2ProfileId, senderProfileId);
