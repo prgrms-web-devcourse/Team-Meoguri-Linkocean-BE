@@ -104,21 +104,22 @@ public abstract class BaseServiceTest {
 		favoriteService.favorite(profileId, bookmarkId);
 	}
 
-	protected long 북마크_등록(final long writerId, final String url, final OpenType openType) {
-		return 북마크_등록(writerId, url, null, null, null, openType);
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final OpenType openType) {
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, null, null, null, openType);
 	}
 
-	protected long 북마크_등록(final long writerId, final String url, final String... tags) {
-		return 북마크_등록(writerId, url, null, tags);
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final String... tags) {
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, null, tags);
 	}
 
-	protected long 북마크_등록(final long writerId, final String url, final Category category, final String... tags) {
+	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final Category category,
+		final String... tags) {
 		final String title = linkMetadataService.obtainTitle(url);
 
-		return 북마크_등록(writerId, url, title, null, category, ALL, tags);
+		return 북마크_링크_메타데이터_동시_등록(writerId, url, title, null, category, ALL, tags);
 	}
 
-	protected long 북마크_등록(
+	protected long 북마크_링크_메타데이터_동시_등록(
 		final long writerId,
 		final String url,
 		final String title,

@@ -31,8 +31,8 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 		log.info("== set up start ==");
 
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-		bookmarkId1 = 북마크_등록(profileId, "www.google.com");
-		bookmarkId2 = 북마크_등록(profileId, "www.naver.com");
+		bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
+		bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com");
 
 		em.flush();
 		em.clear();
