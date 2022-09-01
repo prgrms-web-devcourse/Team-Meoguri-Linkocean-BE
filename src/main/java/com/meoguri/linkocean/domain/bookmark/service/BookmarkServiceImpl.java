@@ -214,7 +214,12 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
-			bookmarks.stream().map(BaseIdEntity::getId).collect(toList()));
+			bookmarks.stream()
+				.map(Bookmark::getLinkMetadataId)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(toList()));
+
 		final List<Boolean> isFavorites = profile.isFavoriteBookmarks(bookmarks);
 		final List<Boolean> isFollows = profile.isFollows(writers);
 

@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -297,6 +298,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		private long bookmarkId1;
 		private long bookmarkId2;
 		private long bookmarkId3;
+		private long bookmarkId4;
 
 		@BeforeEach
 		void setUp() {
@@ -307,6 +309,8 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			bookmarkId3 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.kakao.com", "title3", null, HOME, PRIVATE, "tag1");
 
 			profileId2 = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
+
+			bookmarkId4 = 북마크_등록(profileId2, "https://noLinkMetadata.com", ALL);
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계가 아니므로 공개 범위가 all 인 글만 볼 수 있다 */
@@ -326,6 +330,24 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			assertThat(resultPage.getContent()).hasSize(1)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(tuple(bookmarkId1, ALL));
+		}
+
+		@Test
+		void 다른_사람_북마크_목록_조회_링크_메타데이터_없는_북마크() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.currentUserProfileId(profileId1)
+				.targetProfileId(profileId2)
+				.build();
+
+			//when
+			final Page<GetBookmarksResult> resultPage =
+				bookmarkService.getByTargetProfileId(findCond, createPageable());
+
+			//then
+			assertThat(resultPage.getContent()).hasSize(1)
+				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getImage)
+				.containsExactly(tuple(bookmarkId4, DEFAULT_IMAGE));
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */

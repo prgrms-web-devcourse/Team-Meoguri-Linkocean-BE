@@ -2,6 +2,7 @@ package com.meoguri.linkocean.test.support.domain.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
@@ -102,6 +103,12 @@ public abstract class BaseServiceTest {
 
 	protected void 즐겨찾기(final long profileId, final long bookmarkId) {
 		favoriteService.favorite(profileId, bookmarkId);
+	}
+
+	protected long 북마크_등록(final long writerId, final String url, final OpenType openType) {
+		return bookmarkService.registerBookmark(
+			new RegisterBookmarkCommand(writerId, url, "title", "memo", Category.IT, openType, emptyList())
+		);
 	}
 
 	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final OpenType openType) {
