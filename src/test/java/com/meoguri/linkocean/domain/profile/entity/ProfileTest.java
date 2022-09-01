@@ -1,8 +1,8 @@
-package com.meoguri.linkocean.domain.profile.command.entity;
+package com.meoguri.linkocean.domain.profile.entity;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.profile.command.entity.Profile.*;
+import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
