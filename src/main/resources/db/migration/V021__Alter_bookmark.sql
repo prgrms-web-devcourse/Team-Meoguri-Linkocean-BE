@@ -1,0 +1,1 @@
+alter table bookmark modify link_metadata_id bigint;
