@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -70,6 +71,20 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			assertThat(result.getProfile().getUsername()).isEqualTo("haha");
 			assertThat(result.getProfile().getImage()).isEqualTo(null);
 			assertThat(result.getProfile().isFollow()).isEqualTo(false);
+		}
+
+		@Test
+		void 북마크_등록_성공_링크_메타데이터_없어도_됨() {
+			//given
+			String noLinkMetadataUrl = "https://noLinkMetadata.com";
+			final RegisterBookmarkCommand command = new RegisterBookmarkCommand(profileId, noLinkMetadataUrl,
+				"title", "memo", IT, ALL, emptyList());
+
+			//when
+			final long registeredBookmarkId = bookmarkService.registerBookmark(command);
+
+			//then
+			assertThat(북마크_상세_조회(profileId, registeredBookmarkId)).isNotNull();
 		}
 
 		@Test
