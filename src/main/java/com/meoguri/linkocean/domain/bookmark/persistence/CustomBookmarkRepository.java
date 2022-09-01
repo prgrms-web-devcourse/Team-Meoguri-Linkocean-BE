@@ -12,7 +12,7 @@ import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 public interface CustomBookmarkRepository {
 
-	boolean existsByWriterAndLinkMetadata(Profile writer, Long linkMetadata);
+	boolean existsByWriterAndUrl(Profile writer, String url);
 
 	/* 피드 북마크 조회 */
 	Page<Bookmark> findBookmarks(BookmarkFindCond findCond, Pageable pageable);

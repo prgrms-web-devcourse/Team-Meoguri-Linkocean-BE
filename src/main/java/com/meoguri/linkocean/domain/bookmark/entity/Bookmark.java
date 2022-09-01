@@ -8,6 +8,7 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -153,6 +154,10 @@ public class Bookmark extends BaseIdEntity {
 	/* 리액션 확인 */
 	public Map<ReactionType, Boolean> checkReaction(final long profileId) {
 		return reactions.checkReaction(profileId);
+	}
+
+	public Optional<Long> getLinkMetadataId() {
+		return Optional.ofNullable(linkMetadataId);
 	}
 
 	public Set<Long> getTagIds() {
