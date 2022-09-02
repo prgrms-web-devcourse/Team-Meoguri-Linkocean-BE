@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
-import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LinkMetadataServiceImpl implements LinkMetadataService {
 
-	private final JsoupLinkMetadataService jsoupLinkMetadataService;
+	private final GetLinkMetadata getLinkMetadata;
 
 	private final LinkMetadataRepository linkMetadataRepository;
 
@@ -32,10 +31,10 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 			.orElseGet(() -> saveLinkMetadataAndReturnTitle(url));
 	}
 
-	/* 링크 메타데이터가 존재하면 저장하고, 제목을 반환한다 */
+	/* 링크 메타데이터가 존재하면 저장하고 제목을 반환한다 */
 	private String saveLinkMetadataAndReturnTitle(final String url) {
 		try {
-			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(url);
+			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(url);
 			linkMetadataRepository.save(new LinkMetadata(url, result.getTitle(), result.getImage()));
 			return result.getTitle();
 		} catch (IllegalArgumentException e) {
@@ -49,11 +48,10 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
 
 		slice.forEach(link -> {
-			final SearchLinkMetadataResult result = jsoupLinkMetadataService.search(Link.toString(link.getLink()));
+			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(Link.toString(link.getLink()));
 			link.update(result.getTitle(), result.getImage());
 		});
 
 		return slice.hasNext() ? slice.nextPageable() : null;
 	}
-
 }

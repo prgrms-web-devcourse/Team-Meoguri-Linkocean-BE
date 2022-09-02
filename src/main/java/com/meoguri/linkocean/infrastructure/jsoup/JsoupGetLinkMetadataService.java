@@ -7,8 +7,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
+import com.meoguri.linkocean.domain.linkmetadata.service.GetLinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
+
 @Service
-public class JsoupLinkMetadataService {
+public class JsoupGetLinkMetadataService implements GetLinkMetadata {
 
 	private static final String CONTENT = "content";
 
@@ -22,14 +25,15 @@ public class JsoupLinkMetadataService {
 	 * @return 조회할 수 있지만 링크 메타데이터가 존재하지 않는 경우. DEFAULT_TITLE, DEFAULT_IMAGE를 반환
 	 * @throws IllegalArgumentException 조회할 수 없는 url
 	 */
-	public SearchLinkMetadataResult search(String url) {
+	@Override
+	public GetLinkMetadataResult getLinkMetadata(String url) {
 		try {
 			Document document = Jsoup.connect(url).get();
 
 			final Element titleElement = document.select("meta[property=og:title]").first();
 			final Element imageElement = document.select("meta[property=og:image]").first();
 
-			return new SearchLinkMetadataResult(getTitle(titleElement), getImage(imageElement));
+			return new GetLinkMetadataResult(getTitle(titleElement), getImage(imageElement));
 		} catch (IOException | IllegalArgumentException e) { /* jsoup으로 조회 할 수 없는 url */
 			throw new IllegalArgumentException("링크 메타데이터가 존재하지 않습니다.");
 		}

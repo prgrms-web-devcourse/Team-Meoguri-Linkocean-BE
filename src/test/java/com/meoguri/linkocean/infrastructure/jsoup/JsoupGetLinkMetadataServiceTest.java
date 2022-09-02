@@ -6,9 +6,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class JsoupLinkMetadataServiceTest {
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
 
-	JsoupLinkMetadataService service = new JsoupLinkMetadataService();
+class JsoupGetLinkMetadataServiceTest {
+
+	JsoupGetLinkMetadataService service = new JsoupGetLinkMetadataService();
 
 	@ParameterizedTest
 	@CsvSource(value = {
@@ -17,7 +19,7 @@ class JsoupLinkMetadataServiceTest {
 	})
 	void 링크_메타데이터_검색_성공(final String link, final String expectedTitle) {
 		//when
-		final SearchLinkMetadataResult result = service.search(link);
+		final GetLinkMetadataResult result = service.getLinkMetadata(link);
 
 		//then
 		assertThat(result.getTitle()).isEqualTo(expectedTitle);
@@ -32,7 +34,7 @@ class JsoupLinkMetadataServiceTest {
 	void 링크_메타데이터_검색_실패(final String invalidLink) {
 		//when then
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> service.search(invalidLink));
+			.isThrownBy(() -> service.getLinkMetadata(invalidLink));
 	}
 
 }

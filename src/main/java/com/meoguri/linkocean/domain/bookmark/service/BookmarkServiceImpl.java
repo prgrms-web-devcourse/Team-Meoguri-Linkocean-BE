@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
