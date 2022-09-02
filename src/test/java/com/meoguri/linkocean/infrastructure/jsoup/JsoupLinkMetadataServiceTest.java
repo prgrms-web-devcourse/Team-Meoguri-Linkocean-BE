@@ -1,6 +1,5 @@
 package com.meoguri.linkocean.infrastructure.jsoup;
 
-import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,13 +29,10 @@ class JsoupLinkMetadataServiceTest {
 		"invalid link",
 		"http://localhost:8080"
 	})
-	void 링크가_잘못된_경우_검색시_기본값_반환(final String invalidLink) {
-		//when
-		final SearchLinkMetadataResult result = service.search(invalidLink);
-
-		//then
-		assertThat(result.getTitle()).isEqualTo(DEFAULT_TITLE);
-		assertThat(result.getImage()).isEqualTo(DEFAULT_IMAGE);
+	void 링크_메타데이터_검색_실패(final String invalidLink) {
+		//when then
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> service.search(invalidLink));
 	}
 
 }
