@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
+import com.meoguri.linkocean.controller.common.Default;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
@@ -55,7 +56,7 @@ public final class GetFeedBookmarksResponse {
 			result.getLikeCount(),
 			result.isFavorite(),
 			result.isWriter(),
-			result.getImage(),
+			result.getImage() == null ? Default.IMAGE.getText() : result.getImage(),
 			result.getTags(),
 			new ProfileResponse(
 				profileResult.getProfileId(),
