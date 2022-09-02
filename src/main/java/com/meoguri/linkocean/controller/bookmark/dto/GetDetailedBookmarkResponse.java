@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.meoguri.linkocean.controller.common.Default;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
@@ -45,7 +46,7 @@ public final class GetDetailedBookmarkResponse {
 			result.getBookmarkId(),
 			result.getTitle(),
 			result.getUrl(),
-			result.getImage(),
+			result.getImage() == null ? Default.IMAGE.getText() : result.getImage(),
 			category,
 			result.getMemo(),
 			openType,

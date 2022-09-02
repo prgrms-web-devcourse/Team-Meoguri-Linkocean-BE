@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meoguri.linkocean.controller.common.Default;
 import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,6 @@ public class LinkMetadataController {
 		final @RequestBody Map<String, String> request
 	) {
 		String title = linkMetadataService.obtainTitle(request.get("url"));
-		return Map.of("title", title == null ? "제목 없음" : title);
+		return Map.of("title", title == null ? Default.TITLE.getText() : title);
 	}
 }

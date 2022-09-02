@@ -4,7 +4,6 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -347,7 +346,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(1)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getImage)
-				.containsExactly(tuple(bookmarkId4, DEFAULT_IMAGE));
+				.containsExactly(tuple(bookmarkId4, null));
 		}
 
 		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */

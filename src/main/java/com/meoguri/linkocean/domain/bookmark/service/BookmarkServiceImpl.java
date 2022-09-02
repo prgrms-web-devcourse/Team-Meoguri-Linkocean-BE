@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.bookmark.service;
 
 import static com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.*;
 import static com.meoguri.linkocean.exception.Preconditions.*;
-import static com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
@@ -139,7 +138,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		final String linkMetaDataImage = bookmark.getLinkMetadataId()
 			.map(linkMetadataId -> findLinkMetadataByIdQuery.findById(linkMetadataId).getImage())
-			.orElse(DEFAULT_IMAGE);
+			.orElse(null);
 
 		final Map<ReactionType, Long> reactionCountMap = bookmark.countReactionGroup();
 		final Map<ReactionType, Boolean> reactionMap = bookmark.checkReaction(profileId);
@@ -338,7 +337,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		return linkMetadataSet.stream()
 			.filter(linkMetadata -> linkMetadata.getId().equals(bookmark.getLinkMetadataId().orElse(null)))
 			.map(LinkMetadata::getImage)
-			.findFirst().orElse(DEFAULT_IMAGE);
+			.findFirst().orElse(null);
 	}
 
 	@Override
