@@ -31,7 +31,7 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 			.orElseGet(() -> saveLinkMetadataAndReturnTitle(url));
 	}
 
-	/* 링크 메타데이터가 존재하면 저장하고 제목을 반환한다 */
+	/* url의 링크 메타데이터가 존재하면 db에 저장하고 제목을 반환한다 */
 	private String saveLinkMetadataAndReturnTitle(final String url) {
 		try {
 			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(url);
