@@ -23,6 +23,7 @@ public class LinkMetadataController {
 	public Map<String, Object> obtainTitle(
 		final @RequestBody Map<String, String> request
 	) {
-		return Map.of("title", linkMetadataService.obtainTitle(request.get("url")));
+		String title = linkMetadataService.obtainTitle(request.get("url"));
+		return Map.of("title", title == null ? "제목 없음" : title);
 	}
 }
