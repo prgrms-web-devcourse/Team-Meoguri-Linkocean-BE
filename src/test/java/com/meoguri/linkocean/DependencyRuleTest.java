@@ -3,7 +3,6 @@ package com.meoguri.linkocean;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -35,18 +34,12 @@ class DependencyRuleTest {
 			.check(importPackages);
 	}
 
-	/**
-	 * 레이어 아키텍처의 한계 중 하나가 도메인이 인프라(영속성) 레이어에 의존하게 되는 것입니다.
-	 * 이런 문제는 DIP를 활용하면 해결할 수 있는 부분도 있습니다. LinkMetadata 도메인에서가 딱 그런 경우 같습니다.
-	 * 그래서 해당 제약 조건은 없어져도 될 것 같습니다!
-	 */
-	@Disabled
 	@Test
-	void infrastructure_는_domain_에_접근할_수_없다() {
-		String infrastructurePackage = "com.meoguri.linkocean.infrastructure";
+	void domain_은_infrastructure_에_접근할_수_없다() {
 		String domainPackage = "com.meoguri.linkocean.domain";
+		String infrastructurePackage = "com.meoguri.linkocean.infrastructure";
 
-		denyAnyDependency(infrastructurePackage, domainPackage, importPackages);
+		denyAnyDependency(domainPackage, infrastructurePackage, importPackages);
 	}
 
 	private void denyAnyDependency(String fromPackage, String toPackage, JavaClasses classes) {
