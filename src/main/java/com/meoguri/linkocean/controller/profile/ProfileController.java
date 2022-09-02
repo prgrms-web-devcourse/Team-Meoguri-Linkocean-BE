@@ -30,12 +30,12 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.CategoryService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
+import com.meoguri.linkocean.domain.profile.command.service.ProfileImageUploader;
 import com.meoguri.linkocean.domain.profile.command.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.infrastructure.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class ProfileController {
 	private final CategoryService categoryService;
 	private final BookmarkService bookmarkService;
 
-	private final S3Uploader s3Uploader;
+	private final ProfileImageUploader profileImageUploader;
 
 	/* 프로필 등록 */
 	@PostMapping
@@ -89,12 +89,12 @@ public class ProfileController {
 	/* 프로필 수정 */
 	@PutMapping("/me")
 	public void updateProfile(
-		@AuthenticationPrincipal SecurityUser user,
-		@ModelAttribute UpdateProfileRequest request,
-		@RequestPart(required = false, name = "image") MultipartFile profileImage
+		final @AuthenticationPrincipal SecurityUser user,
+		final @ModelAttribute UpdateProfileRequest request,
+		final @RequestPart(required = false, name = "image") MultipartFile profileImage
 	) {
-		final String imageUrl = s3Uploader.upload(profileImage, "profile");
-		profileService.updateProfile(request.toCommand(user.getProfileId(), imageUrl));
+		final String image = profileImageUploader.upload(profileImage);
+		profileService.updateProfile(request.toCommand(user.getProfileId(), image));
 	}
 
 	/**
