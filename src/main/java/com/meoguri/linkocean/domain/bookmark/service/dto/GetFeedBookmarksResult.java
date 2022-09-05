@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
@@ -27,7 +27,7 @@ public final class GetFeedBookmarksResult {
 	private final long likeCount;
 	private final boolean isFavorite;
 	private final boolean isWriter;
-	private final List<String> tags;
+	private final Set<String> tags;
 	private final ProfileResult profile;
 
 	@Getter

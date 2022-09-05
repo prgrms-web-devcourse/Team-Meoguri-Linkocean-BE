@@ -1,13 +1,13 @@
 package com.meoguri.linkocean.domain.linkmetadata.entity;
 
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
 
-class LinkMetadataTest {
+class LinkMetadataTest extends BaseEntityTest {
 
 	@Test
 	void 링크_메타데이터_생성_성공() {

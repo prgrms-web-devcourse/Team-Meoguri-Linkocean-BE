@@ -35,11 +35,11 @@ class DependencyRuleTest {
 	}
 
 	@Test
-	void infrastructure_는_domain_에_접근할_수_없다() {
-		String infrastructurePackage = "com.meoguri.linkocean.infrastructure";
+	void domain_은_infrastructure_에_접근할_수_없다() {
 		String domainPackage = "com.meoguri.linkocean.domain";
+		String infrastructurePackage = "com.meoguri.linkocean.infrastructure";
 
-		denyAnyDependency(infrastructurePackage, domainPackage, importPackages);
+		denyAnyDependency(domainPackage, infrastructurePackage, importPackages);
 	}
 
 	private void denyAnyDependency(String fromPackage, String toPackage, JavaClasses classes) {

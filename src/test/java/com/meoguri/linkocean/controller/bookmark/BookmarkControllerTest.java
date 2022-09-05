@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.bookmark;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static java.util.Collections.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
@@ -32,7 +34,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	@Test
 	void 북마크_등록_Api_성공() throws Exception {
-
+		//given
 		final String title = "title1";
 		final String memo = "memo";
 		final String category = "인문";
@@ -48,6 +50,27 @@ class BookmarkControllerTest extends BaseControllerTest {
 				.content(createJson(registerBookmarkRequest)))
 
 			//then
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").exists())
+			.andDo(print());
+	}
+
+	@Test
+	void 북마크_등록_Api_성공_링크_메타데이터_없음() throws Exception {
+		//given
+		final String noLinkMetaDataUrl = "https://noLinkMetadata.com";
+
+		final RegisterBookmarkRequest registerBookmarkRequest =
+			new RegisterBookmarkRequest(noLinkMetaDataUrl, "title", "memo", "인문", "all", emptyList());
+
+		//when
+		final ResultActions perform = mockMvc.perform(post(basePath)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON)
+			.content(createJson(registerBookmarkRequest)));
+
+		//then
+		perform
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());

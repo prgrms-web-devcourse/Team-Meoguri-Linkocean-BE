@@ -1,10 +1,10 @@
 package com.meoguri.linkocean.domain.profile.command.persistence;
 
-import static com.meoguri.linkocean.domain.profile.command.entity.QProfile.*;
+import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 
 import javax.persistence.EntityManager;
 
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
 
 public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport implements CustomProfileRepository {

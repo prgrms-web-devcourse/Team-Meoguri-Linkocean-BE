@@ -19,9 +19,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.profile.ProfileController;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
-@RestDocs
 class ProfileRestDocsTest extends RestDocsTestSupport {
 
 	private final String baseUrl = getBaseUrl(ProfileController.class);

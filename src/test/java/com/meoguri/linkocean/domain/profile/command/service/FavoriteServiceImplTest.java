@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 //TODO 서비스 보강 (예상하는대로 쿼리가 안나감?)
 class FavoriteServiceImplTest extends BaseServiceTest {
@@ -31,8 +31,8 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 		log.info("== set up start ==");
 
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
-		bookmarkId1 = 북마크_등록(profileId, "www.google.com");
-		bookmarkId2 = 북마크_등록(profileId, "www.naver.com");
+		bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
+		bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com");
 
 		em.flush();
 		em.clear();

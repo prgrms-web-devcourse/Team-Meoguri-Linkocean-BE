@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
 
-class UserTest {
+class UserTest extends BaseEntityTest {
 
 	@Test
 	void 사용자_생성_성공() {

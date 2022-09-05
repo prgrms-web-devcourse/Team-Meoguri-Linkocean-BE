@@ -1,9 +1,10 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.meoguri.linkocean.controller.common.Default;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -26,7 +27,7 @@ public final class GetBookmarksResponse {
 	private final Boolean isFavorite;
 	private final Boolean isWriter;
 	private final String imageUrl;
-	private final List<String> tags;
+	private final Set<String> tags;
 
 	public static GetBookmarksResponse of(GetBookmarksResult result) {
 
@@ -43,7 +44,7 @@ public final class GetBookmarksResponse {
 			result.getLikeCount(),
 			result.isFavorite(),
 			result.isWriter(),
-			result.getImage(),
+			result.getImage() == null ? Default.IMAGE.getText() : result.getImage(),
 			result.getTags()
 		);
 	}

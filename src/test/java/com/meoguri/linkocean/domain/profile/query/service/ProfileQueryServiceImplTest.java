@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.profile.query.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
-import static com.meoguri.linkocean.test.support.common.Fixture.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class ProfileQueryServiceImplTest extends BaseServiceTest {
 
@@ -196,5 +196,17 @@ class ProfileQueryServiceImplTest extends BaseServiceTest {
 			assertThat(results.getContent().get(2).getProfileId()).isEqualTo(profileId3);
 			assertThat(results.getContent().get(2).isFollow()).isEqualTo(false);
 		}
+	}
+
+	@Test
+	void 프로필_아이디로_조회_성공() {
+		//given
+		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT, ART);
+
+		//when
+		final Profile foundProfile = profileQueryService.findById(profileId);
+
+		//then
+		assertThat(foundProfile.getId()).isEqualTo(profileId);
 	}
 }

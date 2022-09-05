@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,9 +10,9 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
 
 public interface BookmarkService {
 
@@ -39,6 +40,7 @@ public interface BookmarkService {
 	/* 중복Url 확인 */
 	Optional<Long> getBookmarkIdIfExist(long profileId, String url);
 
-	/* 좋아요 숫자 업데이트 */
-	void updateLikeCount(long bookmarkId, ReactionType existedType, ReactionType requestType);
+	/* 태그 목록 조회 */
+	List<GetUsedTagWithCountResult> getUsedTagsWithCount(long profileId);
+
 }

@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.bookmark.service.dto;
 
-import com.meoguri.linkocean.domain.profile.command.entity.vo.ReactionType;
+import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

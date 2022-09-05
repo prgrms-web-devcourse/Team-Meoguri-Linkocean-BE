@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.linkmetadata.service;
 
-import static com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService.*;
+import static com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -13,9 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.meoguri.linkocean.infrastructure.jsoup.JsoupLinkMetadataService;
-import com.meoguri.linkocean.infrastructure.jsoup.SearchLinkMetadataResult;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class LinkMetadataServiceImplTest extends BaseServiceTest {
 
@@ -23,15 +22,15 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	private LinkMetadataService linkMetadataService;
 
 	@MockBean
-	private JsoupLinkMetadataService jsoupLinkMetadataService;
+	private GetLinkMetadata getLinkMetadata;
 
 	@BeforeEach
 	void setUp() {
-		given(jsoupLinkMetadataService.search(anyString()))
-			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
+		given(getLinkMetadata.getLinkMetadata(anyString()))
+			.willReturn(new GetLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
-		given(jsoupLinkMetadataService.search("https://www.naver.com"))
-			.willReturn(new SearchLinkMetadataResult("네이버", "naver.png"));
+		given(getLinkMetadata.getLinkMetadata("https://www.naver.com"))
+			.willReturn(new GetLinkMetadataResult("네이버", "naver.png"));
 	}
 
 	@Test
@@ -63,8 +62,8 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	void 링크_제목_얻기_성공_유효하지_않은_url() {
 		//given
 		final String invalidUrl = "https://www.invalid.com";
-		given(jsoupLinkMetadataService.search(invalidUrl))
-			.willReturn(new SearchLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
+		given(getLinkMetadata.getLinkMetadata(invalidUrl))
+			.willReturn(new GetLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
 		//when
 		final String title = linkMetadataService.obtainTitle(invalidUrl);
@@ -118,12 +117,12 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	}
 
 	private void 네이버_링크_메타데이터_업데이트됨() {
-		final SearchLinkMetadataResult updatedResult = new SearchLinkMetadataResult("네이버짱", "naver-zzang.png");
+		final GetLinkMetadataResult updatedResult = new GetLinkMetadataResult("네이버짱", "naver-zzang.png");
 
-		given(jsoupLinkMetadataService.search("www.naver1.com")).willReturn(updatedResult);
-		given(jsoupLinkMetadataService.search("www.naver2.com")).willReturn(updatedResult);
-		given(jsoupLinkMetadataService.search("www.naver3.com")).willReturn(updatedResult);
-		given(jsoupLinkMetadataService.search("www.naver4.com")).willReturn(updatedResult);
-		given(jsoupLinkMetadataService.search("www.naver5.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver1.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver2.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver3.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver4.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver5.com")).willReturn(updatedResult);
 	}
 }

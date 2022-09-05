@@ -5,7 +5,7 @@ import static java.lang.String.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.meoguri.linkocean.domain.profile.command.entity.Profile;
+import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;

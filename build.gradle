@@ -27,6 +27,10 @@ checkstyle {
     configFile = file("${rootDir}/checkstyle/naver-checkstyle-rules.xml")
     toolVersion = "10.2"  // checkstyle 버전 8.24 이상 선언
 }
+configure(List.of(tasks.checkstyleMain, tasks.checkstyleTest)) {
+    group = 'checkstyle'
+}
+
 
 jacoco {
     toolVersion = '0.8.7'
@@ -83,6 +87,17 @@ dependencies {
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     testImplementation 'io.findify:s3mock_2.12:0.2.6'
+}
+
+/* layer test tasks */
+configure(List.of(
+        tasks.register("entityTest", Test) { useJUnitPlatform { includeTags "entity" } }.get(),
+        tasks.register("persistenceTest", Test) { useJUnitPlatform { includeTags "persistence" } }.get(),
+        tasks.register("serviceTest", Test) { useJUnitPlatform { includeTags "service" } }.get(),
+        tasks.register("controllerTest", Test) { useJUnitPlatform { includeTags "controller" } }.get(),
+        tasks.register("restdocsTest", Test) { useJUnitPlatform { includeTags "restdocs" } }.get()
+)) {
+    group = 'layer test'
 }
 
 task copyProperty(type: Copy) {
@@ -167,7 +182,7 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
-    from ('build/docs/asciidoc/') {
+    from('build/docs/asciidoc/') {
         into 'static/docs'
     }
 }

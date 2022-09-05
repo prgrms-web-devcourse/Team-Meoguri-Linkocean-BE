@@ -14,9 +14,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.user.LoginController;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
-import com.meoguri.linkocean.test.support.controller.RestDocsTestSupport;
+import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
-@RestDocs
 class LoginRestDocsTest extends RestDocsTestSupport {
 
 	private final String basePath = getBaseUrl(LoginController.class);

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.test.support.service.BaseServiceTest;
+import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class CategoryServiceImplTest extends BaseServiceTest {
 
@@ -29,12 +29,12 @@ class CategoryServiceImplTest extends BaseServiceTest {
 	@Test
 	void 사용자가_작성한_북마크가있는_카테고리_조회_성공() {
 		//given
-		북마크_등록(profileId, "www.naver.com", IT);
-		북마크_등록(profileId, "www.prgrms.com", IT);
-		북마크_등록(profileId, "www.daum.com", IT);
-		북마크_등록(profileId, "www.hello.com", SOCIAL);
-		북마크_등록(profileId, "www.linkocean.com", SOCIAL);
-		북마크_등록(profileId, "www.jacob.com", HEALTH);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", IT);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", IT);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.daum.com", IT);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.hello.com", SOCIAL);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.linkocean.com", SOCIAL);
+		북마크_링크_메타데이터_동시_등록(profileId, "www.jacob.com", HEALTH);
 
 		//when
 		final List<Category> categories = categoryService.getUsedCategories(profileId);
