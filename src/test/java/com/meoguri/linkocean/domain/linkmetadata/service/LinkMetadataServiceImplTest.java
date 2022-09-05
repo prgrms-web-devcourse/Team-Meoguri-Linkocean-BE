@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
-import com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class LinkMetadataServiceImplTest extends BaseServiceTest {
@@ -23,14 +22,14 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	private LinkMetadataService linkMetadataService;
 
 	@MockBean
-	private JsoupGetLinkMetadataService jsoupGetLinkMetadataService;
+	private GetLinkMetadata getLinkMetadata;
 
 	@BeforeEach
 	void setUp() {
-		given(jsoupGetLinkMetadataService.getLinkMetadata(anyString()))
+		given(getLinkMetadata.getLinkMetadata(anyString()))
 			.willReturn(new GetLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
-		given(jsoupGetLinkMetadataService.getLinkMetadata("https://www.naver.com"))
+		given(getLinkMetadata.getLinkMetadata("https://www.naver.com"))
 			.willReturn(new GetLinkMetadataResult("네이버", "naver.png"));
 	}
 
@@ -63,7 +62,7 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	void 링크_제목_얻기_성공_유효하지_않은_url() {
 		//given
 		final String invalidUrl = "https://www.invalid.com";
-		given(jsoupGetLinkMetadataService.getLinkMetadata(invalidUrl))
+		given(getLinkMetadata.getLinkMetadata(invalidUrl))
 			.willReturn(new GetLinkMetadataResult(DEFAULT_TITLE, DEFAULT_IMAGE));
 
 		//when
@@ -120,10 +119,10 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 	private void 네이버_링크_메타데이터_업데이트됨() {
 		final GetLinkMetadataResult updatedResult = new GetLinkMetadataResult("네이버짱", "naver-zzang.png");
 
-		given(jsoupGetLinkMetadataService.getLinkMetadata("www.naver1.com")).willReturn(updatedResult);
-		given(jsoupGetLinkMetadataService.getLinkMetadata("www.naver2.com")).willReturn(updatedResult);
-		given(jsoupGetLinkMetadataService.getLinkMetadata("www.naver3.com")).willReturn(updatedResult);
-		given(jsoupGetLinkMetadataService.getLinkMetadata("www.naver4.com")).willReturn(updatedResult);
-		given(jsoupGetLinkMetadataService.getLinkMetadata("www.naver5.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver1.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver2.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver3.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver4.com")).willReturn(updatedResult);
+		given(getLinkMetadata.getLinkMetadata("www.naver5.com")).willReturn(updatedResult);
 	}
 }
