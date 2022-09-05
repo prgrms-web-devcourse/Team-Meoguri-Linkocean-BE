@@ -300,7 +300,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void Url_중복확인_성공_새로운_url() throws Exception {
+	void Url_중복확인_Api_성공_새로운_url() throws Exception {
 		//given <- ?!?!?
 		final String locationHeader = "Location";
 
@@ -316,7 +316,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void Url_중복확인_성공_이미있는_url() throws Exception {
+	void Url_중복확인_Api_성공_이미있는_url() throws Exception {
 		//given
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title1", "IT", List.of("공부"), "all");
 		final String expectedLocationHeader = "api/v1/bookmarks/" + bookmarkId;
@@ -359,7 +359,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
 					.header(AUTHORIZATION, token)
@@ -375,7 +375,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 팔로우_유저_북마크_목록_조회() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_팔로우_유저() throws Exception {
 			//given
 			팔로우(otherProfileId);
 
@@ -396,7 +396,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_즐겨찾기_필터링() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저_즐겨찾기_필터링() throws Exception {
 			//given
 			로그인("otherUser@gmail.com", GOOGLE);
 			북마크_즐겨찾기(bookmarkId1);
@@ -417,7 +417,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_카테고리_필터링() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저_카테고리_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
 					.param("category", "IT")
@@ -431,7 +431,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_태그_두개로_필터링() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저_태그_두개로_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
 					.param("tags", "머구리", "공부")
@@ -447,7 +447,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_제목으로_필터링() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저_제목으로_필터링() throws Exception {
 			//when then
 			mockMvc.perform(get(basePath + "/others/{profileId}", otherProfileId)
 					.param("searchTitle", "1")
@@ -461,7 +461,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 모르는_유저_북마크_목록_조회_좋아요_순으로_정렬() throws Exception {
+		void 다른_유저_북마크_목록_조회_Api_모르는_유저_좋아요_순으로_정렬() throws Exception {
 			//given
 			북마크_좋아요(bookmarkId1);
 
@@ -524,7 +524,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 피드_북마크_조회_성공() throws Exception {
+		void 피드_북마크_조회_Api_성공() throws Exception {
 			//when
 			mockMvc.perform(get(basePath + "/feed")
 					.header(AUTHORIZATION, token)
@@ -544,7 +544,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 피드_북마크_조회_팔로우_여부로_성공() throws Exception {
+		void 피드_북마크_조회_Api_성공_팔로워_글_필터링() throws Exception {
 			//when
 			mockMvc.perform(get(basePath + "/feed")
 					.param("follow", "true")
@@ -560,8 +560,9 @@ class BookmarkControllerTest extends BaseControllerTest {
 				).andDo(print());
 		}
 
+		//질문 : 현재 프론트에서는 피드 페이지 필터링이 없는데, 여긴 있네요?? (그리고 피드 페이지에서 즐겨찾기 필터링이 의미 있을까요?)
 		@Test
-		void 피드_북마크_조회_즐겨찾기_후_조회_성공() throws Exception {
+		void 피드_북마크_조회_Api_성공_즐겨찾기_후_조회() throws Exception {
 			로그인("user2@gmail.com", GOOGLE);
 			북마크_즐겨찾기(bookmarkId10);
 
