@@ -24,12 +24,12 @@ class BookmarkControllerTest extends BaseControllerTest {
 
 	private final String basePath = getBaseUrl(BookmarkController.class);
 
-	private long profileId;
+	private long haniProfileId;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		유저_등록_로그인("hani@gmail.com", GOOGLE);
-		profileId = 프로필_등록("hani", List.of("정치", "인문", "사회"));
+		haniProfileId = 프로필_등록("hani", List.of("정치", "인문", "사회"));
 	}
 
 	@Test
@@ -122,7 +122,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 				jsonPath("$.reactionCount.HATE").value(0),
 				jsonPath("$.reaction.LIKE").value(false),
 				jsonPath("$.reaction.HATE").value(false),
-				jsonPath("$.profile.profileId").value(profileId),
+				jsonPath("$.profile.profileId").value(haniProfileId),
 				jsonPath("$.profile.username").value("hani"),
 				jsonPath("$.profile.imageUrl").value(nullValue()),
 				jsonPath("$.profile.isFollow").value(false)
@@ -164,7 +164,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
+		void 북마크_상세_조회_성공_제목_메모_카테고리_없음() throws Exception {
 			//when
 			mockMvc.perform(get(basePath + "/" + haniBookmarkId)
 					.header(AUTHORIZATION, token)
@@ -186,7 +186,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.reactionCount.HATE").value(0),
 					jsonPath("$.reaction.LIKE").value(false),
 					jsonPath("$.reaction.HATE").value(false),
-					jsonPath("$.profile.profileId").value(profileId),
+					jsonPath("$.profile.profileId").value(haniProfileId),
 					jsonPath("$.profile.username").value("hani"),
 					jsonPath("$.profile.imageUrl").value(nullValue()),
 					jsonPath("$.profile.isFollow").value(false)
@@ -207,13 +207,13 @@ class BookmarkControllerTest extends BaseControllerTest {
 			//then
 			perform
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.profile.profileId").value(profileId))
+				.andExpect(jsonPath("$.profile.profileId").value(haniProfileId))
 				.andDo(print());
 		}
 	}
 
 	@Nested
-	class 내_북마크_목록_조회_테스트 {
+	class 내_북마크_목록_조회 {
 
 		private long bookmarkId1;
 		private long bookmarkId2;
@@ -333,7 +333,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 	}
 
 	@Nested
-	class 다른_유저_북마크_목록_조회_테스트 {
+	class 다른_유저_북마크_목록_조회 {
 
 		private long bookmarkId1;
 		private long bookmarkId2;
