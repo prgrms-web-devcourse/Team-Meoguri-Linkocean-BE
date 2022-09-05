@@ -152,38 +152,64 @@ class BookmarkControllerTest extends BaseControllerTest {
 			.andExpect(status().isBadRequest());
 	}
 
-	@Test
-	void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
-		//given
-		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"),
-			"title", "IT", List.of("good", "spring"), "all");
+	@Nested
+	class 북마크_상세_조회 {
 
-		//when
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
+		private long haniBookmarkId;
+
+		@BeforeEach
+		void setUp() throws Exception {
+			haniBookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"),
+				"title", "IT", List.of("good", "spring"), "all");
+		}
+
+		@Test
+		void 제목_메모_카테고리_없는_북마크_상세_조회_Api_성공() throws Exception {
+			//when
+			mockMvc.perform(get(basePath + "/" + haniBookmarkId)
+					.header(AUTHORIZATION, token)
+					.contentType(APPLICATION_JSON))
+				//then
+				.andExpect(status().isOk())
+				.andExpectAll(
+					jsonPath("$.bookmarkId").value(haniBookmarkId),
+					jsonPath("$.title").value("title"),
+					jsonPath("$.url").value("https://www.naver.com"),
+					jsonPath("$.imageUrl").exists(),
+					jsonPath("$.category").value("IT"),
+					jsonPath("$.memo").value("memo"),
+					jsonPath("$.openType").value("all"),
+					jsonPath("$.isFavorite").value(false),
+					jsonPath("$.createdAt").exists(),
+					jsonPath("$.tags", hasItems("good", "spring")),
+					jsonPath("$.reactionCount.LIKE").value(0),
+					jsonPath("$.reactionCount.HATE").value(0),
+					jsonPath("$.reaction.LIKE").value(false),
+					jsonPath("$.reaction.HATE").value(false),
+					jsonPath("$.profile.profileId").value(profileId),
+					jsonPath("$.profile.username").value("hani"),
+					jsonPath("$.profile.imageUrl").value(nullValue()),
+					jsonPath("$.profile.isFollow").value(false)
+				).andDo(print());
+		}
+
+		@Test
+		void 북마크_상세_조회_성공_다른_사람_북마크() throws Exception {
+			//given
+			유저_등록_로그인("crush@gmail.com", GOOGLE);
+			long crushProfileId = 프로필_등록("crush", List.of("정치", "인문", "사회"));
+
+			//when
+			final ResultActions perform = mockMvc.perform(get(basePath + "/" + haniBookmarkId)
 				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+				.contentType(APPLICATION_JSON));
+
 			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.bookmarkId").value(bookmarkId),
-				jsonPath("$.title").value("title"),
-				jsonPath("$.url").value("https://www.naver.com"),
-				jsonPath("$.imageUrl").exists(),
-				jsonPath("$.category").value("IT"),
-				jsonPath("$.memo").value("memo"),
-				jsonPath("$.openType").value("all"),
-				jsonPath("$.isFavorite").value(false),
-				jsonPath("$.createdAt").exists(),
-				jsonPath("$.tags", hasItems("good", "spring")),
-				jsonPath("$.reactionCount.LIKE").value(0),
-				jsonPath("$.reactionCount.HATE").value(0),
-				jsonPath("$.reaction.LIKE").value(false),
-				jsonPath("$.reaction.HATE").value(false),
-				jsonPath("$.profile.profileId").value(profileId),
-				jsonPath("$.profile.username").value("hani"),
-				jsonPath("$.profile.imageUrl").value(nullValue()),
-				jsonPath("$.profile.isFollow").value(false)
-			).andDo(print());
+			perform
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.profile.profileId").value(profileId))
+				.andDo(print());
+		}
 	}
 
 	@Nested

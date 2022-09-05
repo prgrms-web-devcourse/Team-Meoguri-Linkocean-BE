@@ -286,6 +286,18 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.isThrownBy(() -> 북마크_상세_조회(profileId, invalidBookmarkId));
 		}
 
+		@Test
+		void 북마크_상세_조회_성공_다른_사람_북마크() {
+			//given
+			final long crushProfileId = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
+
+			//when
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(crushProfileId, bookmarkId);
+
+			//then
+			assertThat(result.getProfile().getProfileId()).isEqualTo(profileId);
+		}
+
 	}
 
 	@Nested
