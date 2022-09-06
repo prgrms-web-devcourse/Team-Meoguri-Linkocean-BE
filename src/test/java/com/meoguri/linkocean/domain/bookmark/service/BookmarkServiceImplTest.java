@@ -116,7 +116,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 	}
 
 	@Nested
-	class 북마크_업데이트_테스트 {
+	class 북마크_업데이트 {
 
 		private long profileId;
 		private long bookmarkId;
