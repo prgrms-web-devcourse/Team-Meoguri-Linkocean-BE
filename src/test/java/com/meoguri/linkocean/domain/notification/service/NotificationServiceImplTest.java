@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.notification.entity.Notification;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+//TODO : transaction이 없으면 깨짐? Map Type이 Object라 그런 것 같은 느낌이 듭니다.. 알림 기능 구체화하면서 해결해야 할 것 같아요..
 @Transactional
 class NotificationServiceImplTest extends BaseServiceTest {
 
@@ -40,6 +41,12 @@ class NotificationServiceImplTest extends BaseServiceTest {
 		팔로우(receiver2ProfileId, senderProfileId);
 	}
 
+	/** @Transactional Issue 해결하면 제거하기
+	 @AfterEach void cleanUp() {
+	 databaseCleanup.execute();
+	 }
+	 **/
+
 	@Test
 	void 북마크_공유_조회_성공() {
 		//given
@@ -54,12 +61,12 @@ class NotificationServiceImplTest extends BaseServiceTest {
 		assertThat(result.getContent().get(0).getReceiver().getId()).isEqualTo(receiver1ProfileId);
 		assertThat(result.getContent().get(0).getInfo()).containsAllEntriesOf(Map.of(
 			"bookmark", Map.of(
-				"id", bookmarkId,
+				"id", Long.valueOf(bookmarkId),
 				"title", "구글",
 				"link", "www.google.com"
 			),
 			"sender", Map.of(
-				"id", senderProfileId,
+				"id", Long.valueOf(senderProfileId),
 				"username", "sender"
 			)
 		));
@@ -80,12 +87,12 @@ class NotificationServiceImplTest extends BaseServiceTest {
 		assertThat(result.getContent().get(0).getReceiver().getId()).isEqualTo(receiver1ProfileId);
 		assertThat(result.getContent().get(0).getInfo()).containsAllEntriesOf(Map.of(
 			"bookmark", Map.of(
-				"id", bookmarkId,
+				"id", Long.valueOf(bookmarkId),
 				"title", "구글",
 				"link", "www.google.com"
 			),
 			"sender", Map.of(
-				"id", senderProfileId,
+				"id", Long.valueOf(senderProfileId),
 				"username", "sender"
 			)
 		));
