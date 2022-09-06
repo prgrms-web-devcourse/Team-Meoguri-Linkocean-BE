@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
@@ -20,7 +20,6 @@ import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class UserServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -28,6 +27,11 @@ class UserServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
+	}
 
 	@Test
 	void 사용자_조회_성공() {
