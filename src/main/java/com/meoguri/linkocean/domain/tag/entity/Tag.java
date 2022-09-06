@@ -5,6 +5,7 @@ import static lombok.AccessLevel.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import com.meoguri.linkocean.domain.BaseIdEntity;
 
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "tag")
 @Entity
 public class Tag extends BaseIdEntity {
 
