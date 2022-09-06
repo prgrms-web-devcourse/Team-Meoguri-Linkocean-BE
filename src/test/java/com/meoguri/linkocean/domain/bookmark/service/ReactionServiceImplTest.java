@@ -14,7 +14,6 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-// @Transactional
 class ReactionServiceImplTest extends BaseServiceTest {
 
 	@Autowired

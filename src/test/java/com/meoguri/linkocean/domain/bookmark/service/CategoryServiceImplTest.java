@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-// @Transactional
 class CategoryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
