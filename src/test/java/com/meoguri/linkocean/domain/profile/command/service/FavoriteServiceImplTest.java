@@ -5,17 +5,16 @@ import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class FavoriteServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -35,10 +34,12 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 		bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
 		bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com");
 
-		em.flush();
-		em.clear();
-
 		log.info("== set up finish ==");
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test
@@ -48,11 +49,6 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		//when
 		favoriteService.favorite(profileId, bookmarkId2);
-
-		em.flush();
-		em.clear();
-
-		log.info("add favorite bookmark");
 
 		//then
 		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId2);

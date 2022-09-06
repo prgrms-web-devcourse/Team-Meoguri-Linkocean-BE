@@ -6,17 +6,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class ProfileServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -27,6 +26,11 @@ class ProfileServiceImplTest extends BaseServiceTest {
 	@BeforeEach
 	void setUp() {
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test

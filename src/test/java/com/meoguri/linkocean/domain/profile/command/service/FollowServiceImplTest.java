@@ -5,14 +5,13 @@ import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class FollowServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -25,6 +24,11 @@ class FollowServiceImplTest extends BaseServiceTest {
 	void setUp() {
 		profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 		profileId2 = 사용자_프로필_동시_등록("papa@gmail.com", GOOGLE, "papa", IT);
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test
