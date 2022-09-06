@@ -5,16 +5,16 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.ReactionCommand;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
+// @Transactional
 class ReactionServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -27,6 +27,11 @@ class ReactionServiceImplTest extends BaseServiceTest {
 	void setUp() {
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 		bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.youtube.com");
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test

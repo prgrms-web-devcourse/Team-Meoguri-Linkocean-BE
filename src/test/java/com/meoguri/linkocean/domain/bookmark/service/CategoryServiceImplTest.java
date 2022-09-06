@@ -6,15 +6,15 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
+// @Transactional
 class CategoryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -26,6 +26,11 @@ class CategoryServiceImplTest extends BaseServiceTest {
 	void setUp() {
 		// 유저, 프로필, 링크 셋업
 		profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test
