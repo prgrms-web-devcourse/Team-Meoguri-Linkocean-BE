@@ -47,11 +47,17 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 	public Pageable synchronizeDataAndReturnNextPageable(final Pageable pageable) {
 		final Slice<LinkMetadata> slice = linkMetadataRepository.findBy(pageable);
 
-		slice.forEach(link -> {
-			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(Link.toString(link.getLink()));
-			link.update(result.getTitle(), result.getImage());
-		});
+		slice.forEach(this::synchronizeLinkMetadata);
 
 		return slice.hasNext() ? slice.nextPageable() : null;
+	}
+
+	private void synchronizeLinkMetadata(final LinkMetadata link) {
+		try {
+			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(Link.toString(link.getLink()));
+			link.update(result.getTitle(), result.getImage());
+		} catch (IllegalArgumentException e) {
+			linkMetadataRepository.delete(link);
+		}
 	}
 }
