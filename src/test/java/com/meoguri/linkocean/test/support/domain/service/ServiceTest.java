@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Tag("service")
-@Import(P6spyLogMessageFormatConfiguration.class)
-// @Transactional
+@Import({P6spyLogMessageFormatConfiguration.class, DatabaseCleanup.class})
 @SpringBootTest
 public @interface ServiceTest {
 }

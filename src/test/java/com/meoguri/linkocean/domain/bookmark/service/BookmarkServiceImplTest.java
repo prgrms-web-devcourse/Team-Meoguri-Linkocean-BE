@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -29,11 +29,15 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class BookmarkServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private BookmarkService bookmarkService;
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
+	}
 
 	@Nested
 	class 북마크_등록 {

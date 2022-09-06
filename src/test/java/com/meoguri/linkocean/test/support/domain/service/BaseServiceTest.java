@@ -36,6 +36,7 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ServiceTest
 public abstract class BaseServiceTest {
@@ -69,6 +70,9 @@ public abstract class BaseServiceTest {
 
 	@PersistenceContext
 	protected EntityManager em;
+
+	@Autowired
+	protected DatabaseCleanup databaseCleanup;
 
 	public static Pageable createPageable(String... properties) {
 		return PageRequest.of(0, 8, Sort.by(properties));
