@@ -7,18 +7,17 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-@Transactional
 class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -34,6 +33,11 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 		given(getLinkMetadata.getLinkMetadata("https://www.naver.com"))
 			.willReturn(new GetLinkMetadataResult("네이버", "naver.png"));
+	}
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
 	}
 
 	@Test
@@ -150,9 +154,6 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 		//when
 		linkMetadataService.synchronizeDataAndReturnNextPageable(createPageable());
-
-		em.flush();
-		em.clear();
 
 		//then
 		assertAll(
