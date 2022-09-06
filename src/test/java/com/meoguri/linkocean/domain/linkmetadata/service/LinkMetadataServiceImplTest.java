@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+@Transactional
 class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 	@Autowired

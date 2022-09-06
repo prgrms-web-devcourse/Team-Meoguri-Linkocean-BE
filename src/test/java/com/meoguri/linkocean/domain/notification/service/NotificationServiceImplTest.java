@@ -12,10 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.notification.entity.Notification;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+@Transactional
 class NotificationServiceImplTest extends BaseServiceTest {
 
 	@Autowired

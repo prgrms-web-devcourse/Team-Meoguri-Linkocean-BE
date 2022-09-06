@@ -9,10 +9,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+@Transactional
 class CategoryServiceImplTest extends BaseServiceTest {
 
 	@Autowired

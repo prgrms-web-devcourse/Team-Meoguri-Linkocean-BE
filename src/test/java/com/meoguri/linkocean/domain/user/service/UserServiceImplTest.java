@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
@@ -19,6 +20,7 @@ import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+@Transactional
 class UserServiceImplTest extends BaseServiceTest {
 
 	@Autowired
