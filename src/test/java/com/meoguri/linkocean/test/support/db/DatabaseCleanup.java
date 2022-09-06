@@ -44,20 +44,20 @@ public class DatabaseCleanup implements InitializingBean {
 		tableNames.addAll(getCollectionTableNames());
 	}
 
+	private List<String> getEntityTableNames() {
+
+		return entityManager.getMetamodel().getEntities().stream()
+			.filter(e -> e.getJavaType().getAnnotation(Table.class) != null)
+			.map(e -> e.getJavaType().getAnnotation(Table.class).name())
+			.collect(Collectors.toList());
+	}
+
 	private List<String> getCollectionTableNames() {
 
 		return entityManager.getMetamodel().getEmbeddables().stream()
 			.flatMap(e -> Arrays.stream(getAllFields(e.getJavaType())))
 			.filter(f -> f.getAnnotation(CollectionTable.class) != null)
 			.map(f -> f.getAnnotation(CollectionTable.class).name())
-			.collect(Collectors.toList());
-	}
-
-	private List<String> getEntityTableNames() {
-
-		return entityManager.getMetamodel().getEntities().stream()
-			.filter(e -> e.getJavaType().getAnnotation(Table.class) != null)
-			.map(e -> e.getJavaType().getAnnotation(Table.class).name())
 			.collect(Collectors.toList());
 	}
 }
