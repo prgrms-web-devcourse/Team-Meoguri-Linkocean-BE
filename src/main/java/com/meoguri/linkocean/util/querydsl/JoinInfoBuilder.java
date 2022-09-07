@@ -103,7 +103,7 @@ public class JoinInfoBuilder {
 	}
 
 	/* 동적 join 을 지원하기 위한 유틸리티 클래스
-	- 각 JoinInfo 에 제네릭을 적용하니 외부에서 타입 추론이 제대로 되지 않아
+	  각 JoinInfo 에 제네릭을 적용하니 외부에서 타입 추론이 제대로 되지 않아
 	  SubQueryExpression 를 QueryBase 로 처리하는 문제가 생겨 로 타입을 사용 */
 	@AllArgsConstructor
 	public static class JoinIf {
