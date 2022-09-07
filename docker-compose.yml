@@ -7,6 +7,9 @@ services:
     container_name: mysql
     env_file:
       - env/mysql.env
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
 
   migration:
     image: flyway/flyway:7.5.1
