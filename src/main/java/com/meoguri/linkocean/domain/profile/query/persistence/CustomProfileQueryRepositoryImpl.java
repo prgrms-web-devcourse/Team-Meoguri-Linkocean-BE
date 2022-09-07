@@ -26,30 +26,26 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 	@Override
 	public Slice<Profile> findProfiles(final ProfileFindCond findCond, final Pageable pageable) {
 		final Long currentProfileId = findCond.getProfileId();
+		final String username = findCond.getUsername();
+
 		final boolean isFollower = findCond.isFollower();
 		final boolean isFollowee = findCond.isFollowee();
-		final String username = findCond.getUsername();
 
 		return applySlicing(
 			pageable,
-			selectFrom(profile)
-				.where(
-					followerOfUsername(isFollower, currentProfileId, username),
-					followeeOfUsername(isFollowee, currentProfileId, username),
-					usernameContains(username)
-				)
+			selectFrom(profile),
+			where(
+				always(usernameContains(username)),
+				whereIf(isFollower, () -> followerOfUsername(currentProfileId, username)),
+				whereIf(isFollowee, () -> followeeOfUsername(currentProfileId, username))
+			)
 		);
 	}
 
 	private BooleanBuilder followerOfUsername(
-		final boolean isFollower,
 		final Long profileId,
 		final String username
 	) {
-		if (!isFollower) {
-			return new BooleanBuilder();
-		}
-
 		return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,
@@ -62,16 +58,13 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 				usernameContains(username)
 			))
 		);
+
 	}
 
 	private BooleanBuilder followeeOfUsername(
-		final boolean isFollowee,
 		final Long profileId,
 		final String username
 	) {
-		if (!isFollowee) {
-			return new BooleanBuilder();
-		}
 		return nullSafeBuilder(() -> profile.in(
 			joinIf(
 				username != null,

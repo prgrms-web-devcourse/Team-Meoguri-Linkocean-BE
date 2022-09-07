@@ -111,13 +111,20 @@ public abstract class Querydsl4RepositorySupport {
 	/* 무한 스크롤 전용 슬라이싱 */
 	protected <T> Slice<T> applySlicing(
 		final Pageable pageable,
-		final JPAQuery<T> jpaContentQuery
+		JPAQuery<T> contentQuery,
+		final List<Predicate> where
 	) {
-		final List<T> content = jpaContentQuery
+		/* content query 에 where 적용 */
+		final Predicate[] whereArray = where.toArray(new Predicate[0]);
+		contentQuery = contentQuery.where(whereArray);
+
+		/* 슬라이싱 적용 */
+		final List<T> content = contentQuery
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();
 
+		/* content 보다 page 의 사이즈가 크다면 hasNext 플래그 세팅 */
 		boolean hasNext = false;
 		if (content.size() > pageable.getPageSize()) {
 			content.remove(pageable.getPageSize());
