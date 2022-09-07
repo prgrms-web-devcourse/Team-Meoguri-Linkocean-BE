@@ -42,21 +42,6 @@ class DependencyRuleTest {
 		denyAnyDependency(domainPackage, infrastructurePackage, importPackages);
 	}
 
-	@Test
-	void util_은_core_에_접근할_수_없다() {
-		String utilPackage = "com.meoguri.linkocean.util";
-
-		String domainPackage = "com.meoguri.linkocean.domain";
-		String controllerPackage = "com.meoguri.linkocean.controller";
-		String infrastructurePackage = "com.meoguri.linkocean.infrastructure";
-
-		// QBookmark.bookmark 참조가 CustomPath 에서 필요해서 주석 처리
-		// CustomPath 는 util 이 아닌 domain 의 support 정도로 가도 좋을거 같음
-		// denyAnyDependency(utilPackage, domainPackage, importPackages);
-		denyAnyDependency(utilPackage, controllerPackage, importPackages);
-		denyAnyDependency(utilPackage, infrastructurePackage, importPackages);
-	}
-
 	private void denyAnyDependency(String fromPackage, String toPackage, JavaClasses classes) {
 		noClasses()
 			.that()
