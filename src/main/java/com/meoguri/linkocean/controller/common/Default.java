@@ -1,19 +1,20 @@
 package com.meoguri.linkocean.controller.common;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 컨트롤러 계층에서 사용하는 기본 상수값들 모음
  */
+@RequiredArgsConstructor
 public enum Default {
-	IMAGE("default-image.png"),
-	TITLE("제목 없음");
 
-	private final String text;
+	LINK_METADATA_IMAGE("default-image.png"),
+	BOOKMARK_TITLE("제목 없음"),
+	CATEGORY("no-category");
 
-	Default(final String text) {
-		this.text = text;
-	}
+	private final String defaultValue;
 
-	public String getText() {
-		return text;
+	public String getText(String text) {
+		return text == null ? defaultValue : text;
 	}
 }
