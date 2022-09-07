@@ -4,6 +4,7 @@ import static com.meoguri.linkocean.exception.Preconditions.*;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -16,7 +17,7 @@ import lombok.Getter;
 public final class SecurityUser extends User {
 
 	private final long id;
-	private final Long profileId; // profileId is nullable
+	private final Long profileId;
 
 	public SecurityUser(
 		final long id,
@@ -32,6 +33,7 @@ public final class SecurityUser extends User {
 	}
 
 	public long getProfileId() {
+		/* 회원 가입만 하고 프로필 등록을 하지 않은 경우 프로필 id 는 null 이다 */
 		checkCondition(profileId != null, "profile is null");
 		return profileId;
 	}
@@ -42,10 +44,9 @@ public final class SecurityUser extends User {
 
 	@Override
 	public String toString() {
-		return new StringBuilder()
-			.append("SecurityUser{")
-			.append("id=").append(id).append(", ")
-			.append("profileId=").append(profileId).append("}")
+		return new ToStringBuilder(this)
+			.append("id", id)
+			.append("profileId", profileId)
 			.toString();
 	}
 }

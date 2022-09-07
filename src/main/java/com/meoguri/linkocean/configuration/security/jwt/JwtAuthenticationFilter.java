@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			final String email = jwtProvider.getClaims(token, Claims::getId);
 			final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
 
-			// @AuthenticationPrincipal 을 위한 UserDetails
+			/* @AuthenticationPrincipal 을 위한 UserDetails */
 			final GetUserResult user = userService.getUser(new Email(email), OAuthType.of(oauthType));
 			final UserDetails userDetails = new SecurityUser(
 				user.getId(),

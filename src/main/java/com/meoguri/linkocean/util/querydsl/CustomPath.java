@@ -1,9 +1,8 @@
 package com.meoguri.linkocean.util.querydsl;
 
+
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
-import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.sql.RelationalPathBase;
@@ -24,19 +23,6 @@ public final class CustomPath {
 	/* f.bookmark_id */
 	public static NumberPath<Long> bookmarkId = Expressions.numberPath(Long.class, favorite, "bookmark_id");
 
-	/* reaction r */
-	public static RelationalPathBase<Object> reaction = new RelationalPathBase<>(Object.class, "r", "linkocean",
-		"reaction");
-
-	/* r.profile_id */
-	public static NumberPath<Long> r_profileId = Expressions.numberPath(Long.class, reaction, "profile_id");
-
-	/* r.bookmark_id */
-	public static NumberPath<Long> r_bookmarkId = Expressions.numberPath(Long.class, reaction, "bookmark_id");
-
-	/* r.type */
-	public static EnumPath<ReactionType> r_type = Expressions.enumPath(ReactionType.class, reaction, "type");
-
 	/* bookmark_tag bt */
 	public static RelationalPathBase<Object> bookmark_tag = new RelationalPathBase<>(Object.class, "bt", "linkocean",
 		"bookmark_tag");
@@ -47,7 +33,7 @@ public final class CustomPath {
 	/* bt.tag_id */
 	public static NumberPath<Long> bt_tagId = Expressions.numberPath(Long.class, bookmark_tag, "tag_id");
 
-	/* bt.tag_id */
+	/* bookmark.profile_id */
 	public static NumberPath<Long> b_profileId = Expressions.numberPath(Long.class, bookmark, "profile_id");
 
 }
