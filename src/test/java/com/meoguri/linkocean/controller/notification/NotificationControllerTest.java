@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
@@ -37,7 +38,7 @@ class NotificationControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 공유_알림_생성하고_조회_성공() throws Exception {
+	void 공유_알림_생성_Api_성공() throws Exception {
 		//given
 		로그인("sender@gmail.com", GOOGLE);
 		final Map<String, Long> request = Map.of(
@@ -80,7 +81,7 @@ class NotificationControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 대상이_나를_팔로우_중이_아니라면_공유_알림_추가_실패() throws Exception {
+	void 공유_알림_생성_Api_실패_대상이_나를_팔로우_중이_아님() throws Exception {
 		//given
 		로그인("target@gmail.com", GOOGLE);
 		final Map<String, Object> request = Map.of(
@@ -88,27 +89,34 @@ class NotificationControllerTest extends BaseControllerTest {
 		);
 
 		//when
-		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
+		final ResultActions perform = mockMvc.perform(
+			post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
-				.content(createJson(request)))
-			//then
+				.content(createJson(request)));
+
+		//then
+		perform
 			.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void 일부_공개글_공유_알림_생성_요청_실패() throws Exception {
+	void 공유_알림_생성_Api_실패_북마크_공개범위_일부_공개() throws Exception {
 		//given
 		로그인("sender@gmail.com", GOOGLE);
 		final Map<String, Object> request = Map.of(
 			"targetId", targetProfileId
 		);
+
 		//when
-		mockMvc.perform(post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
+		final ResultActions perform = mockMvc.perform(
+			post("/api/v1/bookmarks/{bookmarkId}" + "/share", unsharableBookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
-				.content(createJson(request)))
-			//then
+				.content(createJson(request)));
+
+		//then
+		perform
 			.andExpect(status().isBadRequest());
 	}
 }
