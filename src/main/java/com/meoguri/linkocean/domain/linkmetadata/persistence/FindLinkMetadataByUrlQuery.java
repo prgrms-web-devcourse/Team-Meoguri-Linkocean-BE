@@ -2,9 +2,9 @@ package com.meoguri.linkocean.domain.linkmetadata.persistence;
 
 import java.util.Optional;
 
-import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.support.domain.persistence.Query;
 
 import lombok.RequiredArgsConstructor;
 

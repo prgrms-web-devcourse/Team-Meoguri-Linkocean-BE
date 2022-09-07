@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.support.querydsl;
+package com.meoguri.linkocean.support.domain.persistence.querydsl;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;

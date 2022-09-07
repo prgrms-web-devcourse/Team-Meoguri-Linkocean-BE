@@ -5,7 +5,7 @@ import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
 import javax.persistence.EntityManager;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.support.querydsl.Querydsl4RepositorySupport;
+import com.meoguri.linkocean.support.domain.persistence.querydsl.Querydsl4RepositorySupport;
 
 public class CustomProfileRepositoryImpl extends Querydsl4RepositorySupport implements CustomProfileRepository {
 
