@@ -110,6 +110,7 @@ public class JoinInfoBuilder {
 		final boolean expression;
 		final Supplier<JoinInfoBuilder> joinInfo;
 
+		@SuppressWarnings("unchecked")
 		<T> JPAQuery<T> apply(final JPAQuery<T> query) {
 			if (expression) {
 				return query;

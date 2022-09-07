@@ -232,9 +232,9 @@ class ProfileControllerTest extends BaseControllerTest {
 					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles").isArray(),
 					jsonPath("$.profiles", hasSize(3)),
-					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
+					jsonPath("$.profiles[0].profileId").value(user3ProfileId),
 					jsonPath("$.profiles[1].profileId").value(user2ProfileId),
-					jsonPath("$.profiles[2].profileId").value(user3ProfileId),
+					jsonPath("$.profiles[2].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false),
 					jsonPath("$.profiles[1].isFollow").value(true),
 					jsonPath("$.profiles[2].isFollow").value(false)
@@ -329,9 +329,9 @@ class ProfileControllerTest extends BaseControllerTest {
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.profiles", hasSize(2)),
-					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
+					jsonPath("$.profiles[0].profileId").value(user3ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false),
-					jsonPath("$.profiles[1].profileId").value(user3ProfileId),
+					jsonPath("$.profiles[1].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[1].isFollow").value(false)
 				);
 
