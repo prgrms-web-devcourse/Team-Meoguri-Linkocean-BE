@@ -22,7 +22,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
@@ -30,6 +29,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Reactions;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

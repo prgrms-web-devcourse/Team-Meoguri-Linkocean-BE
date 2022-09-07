@@ -16,10 +16,10 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
