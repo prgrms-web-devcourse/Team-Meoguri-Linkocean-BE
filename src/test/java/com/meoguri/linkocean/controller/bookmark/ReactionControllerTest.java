@@ -32,12 +32,11 @@ class ReactionControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 리액션_좋아요() throws Exception {
+	void 리액션_요청_Api_성공_좋아요() throws Exception {
 		//when
 		mockMvc.perform(post(basePath + "/{bookmarkId}/reactions/{reactionType}", bookmarkId, "like")
 				.header(AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON))
-
 			//then
 			.andExpect(status().isOk())
 			.andDo(print());
@@ -58,9 +57,11 @@ class ReactionControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 리액션_좋아요_싫어요() throws Exception {
-		//when
+	void 리액션_요청_Api_성공_좋아요_후_싫어요() throws Exception {
+		//given
 		북마크_좋아요(bookmarkId);
+
+		//when
 		북마크_싫어요(bookmarkId);
 
 		//then
@@ -79,9 +80,11 @@ class ReactionControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 리액션_좋아요_좋아요() throws Exception {
-		//when
+	void 리액션_요청_Api_성공_좋아요_후_좋아요() throws Exception {
+		//given
 		북마크_좋아요(bookmarkId);
+
+		//when
 		북마크_좋아요(bookmarkId);
 
 		//then

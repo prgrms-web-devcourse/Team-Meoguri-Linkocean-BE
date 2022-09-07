@@ -2,7 +2,9 @@ package com.meoguri.linkocean.controller.bookmark;
 
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
@@ -87,70 +90,57 @@ class BookmarkControllerTest extends BaseControllerTest {
 		final String updateCategory = "IT";
 		final String updateOpenType = "all";
 
-		// Note - changed due to case-insensitive issue
+		//Note - changed due to case-insensitive issue
 		final List<String> updateTags = List.of("spring", "React", "LinkOcean");
 
 		final UpdateBookmarkRequest updateBookmarkRequest = new UpdateBookmarkRequest(updateTitle, updateMemo,
 			updateCategory, updateOpenType, updateTags);
+
 		//when
 		mockMvc.perform(put(basePath + "/" + bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON)
 				.content(createJson(updateBookmarkRequest)))
-
 			//then
 			.andExpect(status().isOk())
 			.andDo(print());
 
-		// 수정한 북마크 조회
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpect(status().isOk())
-			.andExpectAll(
-				jsonPath("$.bookmarkId").value(bookmarkId),
-				jsonPath("$.title").value(updateTitle),
-				jsonPath("$.url").value("https://www.naver.com"),
-				jsonPath("$.imageUrl").exists(),
-				jsonPath("$.category").value(updateCategory),
-				jsonPath("$.memo").value(updateMemo),
-				jsonPath("$.openType").value(updateOpenType),
-				jsonPath("$.isFavorite").value(false),
-				jsonPath("$.createdAt").exists(),
-				jsonPath("$.tags", containsInAnyOrder("spring", "React", "LinkOcean")),
-				jsonPath("$.reactionCount.LIKE").value(0),
-				jsonPath("$.reactionCount.HATE").value(0),
-				jsonPath("$.reaction.LIKE").value(false),
-				jsonPath("$.reaction.HATE").value(false),
-				jsonPath("$.profile.profileId").value(haniProfileId),
-				jsonPath("$.profile.username").value("hani"),
-				jsonPath("$.profile.imageUrl").value(nullValue()),
-				jsonPath("$.profile.isFollow").value(false)
-			).andDo(print());
+		//수정한 북마크 조회
+		//then
+		final GetDetailedBookmarkResponse result = 북마크_상세_조회(bookmarkId);
+		assertAll(
+			() -> assertThat(result.getBookmarkId()).isEqualTo(bookmarkId),
+			() -> assertThat(result.getTitle()).isEqualTo(updateTitle),
+			() -> assertThat(result.getMemo()).isEqualTo(updateMemo),
+			() -> assertThat(result.getCategory()).isEqualTo(updateCategory),
+			() -> assertThat(result.getOpenType()).isEqualTo(updateOpenType),
+			() -> assertThat(result.getTags()).containsExactlyInAnyOrder(
+				updateTags.get(0), updateTags.get(1), updateTags.get(2))
+		);
 	}
 
 	@Test
 	void 북마크_삭제_Api_성공() throws Exception {
-
+		//given
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "IT", List.of("good", "spring"), "all");
 
-		// 북마크 삭제
 		//when
 		mockMvc.perform(delete(basePath + "/" + bookmarkId)
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
-
 			//then
 			.andExpect(status().isOk())
 			.andDo(print());
 
-		// 삭제한 북마크 조회
-		mockMvc.perform(get(basePath + "/" + bookmarkId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
-			.andExpect(status().isBadRequest());
+		//삭제한 북마크 조회
+		//then
+		북마크_상세_조회_요청(bookmarkId).andExpect(status().isBadRequest());
+	}
+
+	private ResultActions 북마크_상세_조회_요청(final long bookmarkId) throws Exception {
+		return mockMvc.perform(get(basePath + "/" + bookmarkId)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
 	}
 
 	@Nested
@@ -165,7 +155,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 북마크_상세_조회_성공_제목_메모_카테고리_없음() throws Exception {
+		void 북마크_상세_조회_Api_성공_제목_메모_카테고리_없음() throws Exception {
 			//when
 			final ResultActions perform = mockMvc.perform(get(basePath + "/" + haniBookmarkId)
 				.header(AUTHORIZATION, token)
@@ -197,7 +187,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 북마크_상세_조회_성공_다른_사람_북마크() throws Exception {
+		void 북마크_상세_조회_Api_성공_다른_사람_북마크() throws Exception {
 			//given
 			유저_등록_로그인("crush@gmail.com", GOOGLE);
 			프로필_등록("crush", List.of("정치", "인문", "사회"));

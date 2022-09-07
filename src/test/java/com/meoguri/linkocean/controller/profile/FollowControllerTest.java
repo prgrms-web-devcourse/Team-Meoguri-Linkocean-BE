@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
@@ -38,10 +39,10 @@ class FollowControllerTest extends BaseControllerTest {
 				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
-
 			//then
 			.andExpect(status().isOk());
 
+		//then
 		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
 		final GetDetailedProfileResponse papaProfile = 내_프로필_조회();
 
@@ -53,17 +54,18 @@ class FollowControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 팔로우_두번_연속_실패() throws Exception {
+	void 팔로우_Api_실패_두번_연속_요청() throws Exception {
 		//given
 		팔로우(hahaId);
 
 		//when
-		mockMvc.perform(post(baseUrl + "/follow")
-				.param("followeeId", String.valueOf(hahaId))
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(post(baseUrl + "/follow")
+			.param("followeeId", String.valueOf(hahaId))
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andExpect(status().isBadRequest());
 	}
 
@@ -77,10 +79,10 @@ class FollowControllerTest extends BaseControllerTest {
 				.param("followeeId", String.valueOf(hahaId))
 				.header(AUTHORIZATION, token)
 				.contentType(APPLICATION_JSON))
-
 			//then
 			.andExpect(status().isOk());
 
+		//then
 		final GetDetailedProfileResponse hahaProfile = 프로필_상세_조회(hahaId);
 		final GetDetailedProfileResponse papaProfile = 내_프로필_조회();
 
@@ -92,14 +94,15 @@ class FollowControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 팔로우_안하고_언팔로우_하면_실패() throws Exception {
+	void 언팔로우_Api_실패_팔로우_안하고_언팔로우() throws Exception {
 		//when
-		mockMvc.perform(post(baseUrl + "/unfollow")
-				.param("followeeId", String.valueOf(hahaId))
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
+		final ResultActions perform = mockMvc.perform(post(baseUrl + "/unfollow")
+			.param("followeeId", String.valueOf(hahaId))
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
 
-			//then
+		//then
+		perform
 			.andExpect(status().isBadRequest());
 	}
 }

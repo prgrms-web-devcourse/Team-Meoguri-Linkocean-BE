@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
@@ -22,10 +23,12 @@ class CategoryControllerTest extends BaseControllerTest {
 		유저_등록_로그인("hello@gmail.com", GOOGLE);
 
 		//when
-		mockMvc.perform(get(basePath)
-				.contentType(MediaType.APPLICATION_JSON)
-				.header(AUTHORIZATION, token))
-			//then
+		final ResultActions perform = mockMvc.perform(get(basePath)
+			.contentType(MediaType.APPLICATION_JSON)
+			.header(AUTHORIZATION, token));
+
+		//then
+		perform
 			.andExpect(status().isOk())
 			.andExpectAll(
 				jsonPath("$.categories").isArray(),
