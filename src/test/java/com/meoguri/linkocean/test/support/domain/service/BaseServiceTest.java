@@ -115,6 +115,10 @@ public abstract class BaseServiceTest {
 		);
 	}
 
+	protected void 북마크_삭제(final long writerId, final long bookmarkId) {
+		bookmarkService.removeBookmark(writerId, bookmarkId);
+	}
+
 	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final OpenType openType) {
 		return 북마크_링크_메타데이터_동시_등록(writerId, url, null, null, null, openType);
 	}
