@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.tag.entity.QTag.*;
 import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
@@ -18,7 +19,6 @@ import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
@@ -175,7 +175,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private BooleanBuilder registered() {
-		return nullSafeBuilder(() -> bookmark.status.eq(BookmarkStatus.REGISTERED));
+		return nullSafeBuilder(() -> bookmark.status.eq(REGISTERED));
 	}
 	// Spring Pageable -> QueryDsl Pageable
 
@@ -221,7 +221,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			.where(bt_bookmarkId.in(
 				select(bookmark.id)
 					.from(bookmark)
-					.where(b_profileId.eq(profileId)))
+					.where(b_profileId.eq(profileId)
+						.and(b_status.eq(REGISTERED.name()))))
 			)
 			.groupBy(bt_tagId)
 			.fetch();
