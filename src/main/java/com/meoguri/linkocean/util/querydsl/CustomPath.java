@@ -48,9 +48,9 @@ public final class CustomPath {
 	/* bt.tag_id */
 	public static NumberPath<Long> bt_tagId = Expressions.numberPath(Long.class, bookmark_tag, "tag_id");
 
-	/* bt.profile_id */
+	/* bookmark.profile_id */
 	public static NumberPath<Long> b_profileId = Expressions.numberPath(Long.class, bookmark, "profile_id");
 
-	/* b.status */
+	/* bookmark.status */
 	public static StringPath b_status = Expressions.stringPath(bookmark, "status");
 }
