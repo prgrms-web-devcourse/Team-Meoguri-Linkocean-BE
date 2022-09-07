@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.profile.query.persistence;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
-import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
+import static com.meoguri.linkocean.support.querydsl.JoinInfoBuilder.Initializer.*;
 
 import javax.persistence.EntityManager;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
-import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
+import com.meoguri.linkocean.support.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 
 @Repository

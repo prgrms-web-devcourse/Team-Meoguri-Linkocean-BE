@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.util.querydsl;
+package com.meoguri.linkocean.support.querydsl;
 
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;

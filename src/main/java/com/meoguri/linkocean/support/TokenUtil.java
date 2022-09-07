@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.util;
+package com.meoguri.linkocean.support;
 
 import static lombok.AccessLevel.*;
 import static org.springframework.http.HttpHeaders.*;
