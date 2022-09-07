@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -100,6 +101,12 @@ public abstract class Querydsl4RepositorySupport {
 		return contentQuery;
 	}
 
+	private <T> JPAQuery<T> applyWhere(JPAQuery<T> contentQuery, final List<Predicate> where) {
+		final Predicate[] whereArray = where.toArray(new Predicate[0]);
+		contentQuery = contentQuery.where(whereArray);
+		return contentQuery;
+	}
+
 	/* 동적 쿼리에 대한 페이징 적용
 	- group by, having 등의 문제가 될 수 있는 쿼리를 사용하지 않기 때문에 JPAQuery.fetchCount 사용 */
 	@SuppressWarnings("deprecation")
@@ -109,19 +116,24 @@ public abstract class Querydsl4RepositorySupport {
 		final List<JoinInfoBuilder.JoinIf> joinIfs,
 		final List<Predicate> where
 	) {
-		final JPAQuery<T> countQuery = contentQuery.clone(entityManager);
-		final Predicate[] whereArray = where.toArray(new Predicate[0]);
+		JPAQuery<T> countQuery = contentQuery.clone(entityManager);
 
 		/* 동적 쿼리 적용 해서 content 조회 */
 		contentQuery = applyDynamicJoin(contentQuery, joinIfs);
-		contentQuery = contentQuery.where(whereArray);
-		List<T> content = querydsl.applyPagination(pageable, contentQuery).fetch();
+		contentQuery = applyWhere(contentQuery, where);
+		contentQuery = applyPagination(pageable, contentQuery);
 
 		/* content query 에는 where 만 적용 */
-		countQuery.where(whereArray);
+		countQuery = applyWhere(countQuery, where);
 
-		/* 카운트 결과를 포함한 페이지 반환 */
-		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+		/* 전체 카운트를 포함한 페이지 반환 */
+		List<T> content = contentQuery.fetch();
+		final LongSupplier totalSupplier = countQuery::fetchCount;
+		return PageableExecutionUtils.getPage(content, pageable, totalSupplier);
+	}
+
+	protected <T> JPAQuery<T> applyPagination(final Pageable pageable, final JPAQuery<T> contentQuery) {
+		return (JPAQuery<T>)querydsl.applyPagination(pageable, contentQuery);
 	}
 
 	/* 무한 스크롤 전용 슬라이싱 */
@@ -130,16 +142,13 @@ public abstract class Querydsl4RepositorySupport {
 		JPAQuery<T> contentQuery,
 		final List<Predicate> where
 	) {
-		/* content query 에 where 적용 */
-		final Predicate[] whereArray = where.toArray(new Predicate[0]);
-		contentQuery = contentQuery.where(whereArray);
-
-		/* 슬라이싱 적용 */
+		/* content query 에 where, slice 적용 적용 */
+		contentQuery = applyWhere(contentQuery, where);
 		contentQuery = applySlicing(pageable, contentQuery);
-		List<T> content = contentQuery.fetch();
-		boolean hasNext = isHasNext(pageable, content);
 
 		/* hasNext 결과를 포함한 슬라이스 반환 */
+		List<T> content = contentQuery.fetch();
+		boolean hasNext = isHasNext(pageable, content);
 		return new SliceImpl<>(content, pageable, hasNext);
 	}
 

@@ -26,6 +26,6 @@ public class LinkMetadataController {
 		final @RequestBody Map<String, String> request
 	) {
 		final String title = linkMetadataService.obtainTitle(request.get("url"));
-		return Map.of("title", BOOKMARK_TITLE.getText(title));
+		return Map.of("title", LINK_METADATA_TITLE.getText(title));
 	}
 }

@@ -47,7 +47,7 @@ public final class GetDetailedBookmarkResponse {
 			result.getTitle(),
 			result.getUrl(),
 			LINK_METADATA_IMAGE.getText(result.getImage()),
-			CATEGORY.getText(Category.toStringKor(result.getCategory())),
+			BOOKMARK_CATEGORY.getText(Category.toStringKor(result.getCategory())),
 			result.getMemo(),
 			OpenType.toString(result.getOpenType()),
 			result.isFavorite(),

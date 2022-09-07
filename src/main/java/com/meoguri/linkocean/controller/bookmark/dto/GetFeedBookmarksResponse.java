@@ -48,7 +48,7 @@ public final class GetFeedBookmarksResponse {
 			result.getTitle(),
 			result.getUrl(),
 			OpenType.toString(result.getOpenType()),
-			CATEGORY.getText(Category.toStringKor(result.getCategory())),
+			BOOKMARK_CATEGORY.getText(Category.toStringKor(result.getCategory())),
 			result.getCreatedAt(),
 			result.getLikeCount(),
 			result.isFavorite(),

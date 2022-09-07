@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum Default {
 
 	LINK_METADATA_IMAGE("default-image.png"),
-	BOOKMARK_TITLE("제목 없음"),
-	CATEGORY("no-category");
+	LINK_METADATA_TITLE("제목 없음"),
+	BOOKMARK_CATEGORY("no-category");
 
 	private final String defaultValue;
 
