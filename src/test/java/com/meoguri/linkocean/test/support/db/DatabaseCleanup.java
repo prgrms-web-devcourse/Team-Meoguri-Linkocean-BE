@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.annotation.AnnotationConfigurationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +48,12 @@ public class DatabaseCleanup implements InitializingBean {
 	private List<String> getEntityTableNames() {
 
 		return entityManager.getMetamodel().getEntities().stream()
-			.filter(e -> e.getJavaType().getAnnotation(Table.class) != null)
-			.map(e -> e.getJavaType().getAnnotation(Table.class).name())
+			.map(e -> {
+				if (e.getJavaType().getAnnotation(Table.class) == null) {
+					throw new AnnotationConfigurationException("엔티티에 @table은 필수입니다.");
+				}
+				return e.getJavaType().getAnnotation(Table.class).name();
+			})
 			.collect(Collectors.toList());
 	}
 
