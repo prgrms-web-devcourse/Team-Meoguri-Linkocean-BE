@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.common;
+package com.meoguri.linkocean.support.controller;
 
 import lombok.RequiredArgsConstructor;
 

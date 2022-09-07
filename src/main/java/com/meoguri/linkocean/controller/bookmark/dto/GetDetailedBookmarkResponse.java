@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
-import static com.meoguri.linkocean.controller.common.Default.*;
+import static com.meoguri.linkocean.support.controller.Default.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
