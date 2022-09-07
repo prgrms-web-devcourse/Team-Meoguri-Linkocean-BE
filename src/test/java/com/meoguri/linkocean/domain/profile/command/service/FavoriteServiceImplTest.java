@@ -35,7 +35,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		log.info("== set up finish ==");
 	}
-	
+
 	@Test
 	void 즐겨찾기_추가() {
 		//given

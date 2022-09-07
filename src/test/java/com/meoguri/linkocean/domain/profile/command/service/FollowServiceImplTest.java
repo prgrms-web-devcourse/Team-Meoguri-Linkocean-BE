@@ -24,7 +24,7 @@ class FollowServiceImplTest extends BaseServiceTest {
 		profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 		profileId2 = 사용자_프로필_동시_등록("papa@gmail.com", GOOGLE, "papa", IT);
 	}
-	
+
 	@Test
 	void 팔로우_성공() {
 		//when

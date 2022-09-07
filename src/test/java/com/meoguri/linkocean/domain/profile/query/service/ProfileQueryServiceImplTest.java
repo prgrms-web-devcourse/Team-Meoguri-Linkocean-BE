@@ -23,7 +23,7 @@ class ProfileQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private ProfileQueryService profileQueryService;
-	
+
 	@Nested
 	class 프로필_단건_조회 {
 		private long profileId;
