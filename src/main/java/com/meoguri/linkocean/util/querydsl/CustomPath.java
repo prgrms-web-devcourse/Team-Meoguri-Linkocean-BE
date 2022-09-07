@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.RelationalPathBase;
 
 import lombok.NoArgsConstructor;
@@ -36,4 +37,6 @@ public final class CustomPath {
 	/* bookmark.profile_id */
 	public static NumberPath<Long> b_profileId = Expressions.numberPath(Long.class, bookmark, "profile_id");
 
+	/* bookmark.status */
+	public static StringPath b_status = Expressions.stringPath(bookmark, "status");
 }

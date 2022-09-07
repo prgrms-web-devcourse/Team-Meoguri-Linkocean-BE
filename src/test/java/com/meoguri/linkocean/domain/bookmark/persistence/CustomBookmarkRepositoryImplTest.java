@@ -563,7 +563,8 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		북마크_링크_메타데이터_동시_저장(profile1, "링크오션", ALL, IT, "www.linkocean.com");
 
 		//when
-		final List<FindUsedTagIdWithCountResult> result = bookmarkRepository.findUsedTagIdsWithCount(profile1.getId());
+		final List<FindUsedTagIdWithCountResult> result =
+			pretty(() -> bookmarkRepository.findUsedTagIdsWithCount(profile1.getId()));
 
 		//then
 		assertThat(result)

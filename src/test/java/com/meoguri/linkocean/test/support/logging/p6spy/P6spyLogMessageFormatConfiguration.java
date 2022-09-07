@@ -1,5 +1,7 @@
 package com.meoguri.linkocean.test.support.logging.p6spy;
 
+import java.util.function.Supplier;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
@@ -24,14 +26,16 @@ public class P6spyLogMessageFormatConfiguration {
 	}
 
 	/* target 을 pretty 포맷으로 실행하고 oneline 포맷 으로 변경 */
-	public static void pretty(final Runnable target, final EntityManager em) {
+	public static <T> T pretty(final Supplier<T> supplier, final EntityManager em) {
 		em.flush();
 		pretty();
 
-		target.run();
+		final T result = supplier.get();
 
 		em.flush();
 		oneline();
+
+		return result;
 	}
 
 }

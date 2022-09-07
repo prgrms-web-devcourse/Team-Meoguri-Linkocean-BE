@@ -553,26 +553,47 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		assertThat(notDuplicated).isEmpty();
 	}
 
-	@Test
-	void 태그_목록_조회_성공() {
-		//given
-		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+	@Nested
+	class 태그_목록_조회 {
 
-		북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
-		북마크_링크_메타데이터_동시_등록(profileId, "www.google.com", "tag1", "tag2");
-		북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+		private long profileId;
 
-		//when
-		final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+		@BeforeEach
+		void setUp() {
+			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		}
 
-		//then
-		assertThat(result).hasSize(3)
-			.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
-			.containsExactly(
-				tuple("tag1", 3L),
-				tuple("tag2", 2L),
-				tuple("tag3", 1L)
-			);
+		@Test
+		void 태그_목록_조회_성공() {
+			//given
+			북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
+			북마크_링크_메타데이터_동시_등록(profileId, "www.google.com", "tag1", "tag2");
+			북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+
+			//when
+			final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+
+			//then
+			assertThat(result).hasSize(3)
+				.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
+				.containsExactly(
+					tuple("tag1", 3L),
+					tuple("tag2", 2L),
+					tuple("tag3", 1L)
+				);
+		}
+
+		@Test
+		void 태그_목록_조회_성공_삭제된_북마크는_조회_안됨() {
+			//given
+			final long bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+			북마크_삭제(profileId, bookmarkId);
+
+			//when
+			final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+
+			//then
+			assertThat(result).isEmpty();
+		}
 	}
-
 }
