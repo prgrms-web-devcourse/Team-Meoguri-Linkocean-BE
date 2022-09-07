@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +32,6 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 
 		given(getLinkMetadata.getLinkMetadata("https://www.naver.com"))
 			.willReturn(new GetLinkMetadataResult("네이버", "naver.png"));
-	}
-
-	@AfterEach
-	void cleanUp() {
-		databaseCleanup.execute();
 	}
 
 	@Test

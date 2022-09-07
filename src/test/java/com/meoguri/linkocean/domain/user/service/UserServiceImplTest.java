@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,11 +26,6 @@ class UserServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private ProfileRepository profileRepository;
-
-	@AfterEach
-	void cleanUp() {
-		databaseCleanup.execute();
-	}
 
 	@Test
 	void 사용자_조회_성공() {

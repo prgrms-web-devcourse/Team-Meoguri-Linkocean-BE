@@ -4,7 +4,6 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,12 +23,7 @@ class ProfileQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private ProfileQueryService profileQueryService;
-
-	@AfterEach
-	void cleanUp() {
-		databaseCleanup.execute();
-	}
-
+	
 	@Nested
 	class 프로필_단건_조회 {
 		private long profileId;

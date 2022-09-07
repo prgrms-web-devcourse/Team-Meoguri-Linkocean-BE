@@ -11,6 +11,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -73,6 +74,11 @@ public abstract class BaseServiceTest {
 
 	@Autowired
 	protected DatabaseCleanup databaseCleanup;
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
+	}
 
 	public static Pageable createPageable(String... properties) {
 		return PageRequest.of(0, 8, Sort.by(properties));

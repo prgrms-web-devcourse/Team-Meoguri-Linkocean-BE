@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,11 +32,6 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private BookmarkService bookmarkService;
-
-	@AfterEach
-	void cleanUp() {
-		databaseCleanup.execute();
-	}
 
 	@Nested
 	class 북마크_등록 {

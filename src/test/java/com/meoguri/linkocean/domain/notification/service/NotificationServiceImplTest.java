@@ -41,12 +41,6 @@ class NotificationServiceImplTest extends BaseServiceTest {
 		팔로우(receiver2ProfileId, senderProfileId);
 	}
 
-	/** @Transactional Issue 해결하면 제거하기
-	 @AfterEach void cleanUp() {
-	 databaseCleanup.execute();
-	 }
-	 **/
-
 	@Test
 	void 북마크_공유_조회_성공() {
 		//given

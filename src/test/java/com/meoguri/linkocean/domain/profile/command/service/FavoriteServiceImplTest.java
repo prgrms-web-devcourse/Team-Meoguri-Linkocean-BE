@@ -5,7 +5,6 @@ import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -36,12 +35,7 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		log.info("== set up finish ==");
 	}
-
-	@AfterEach
-	void cleanUp() {
-		databaseCleanup.execute();
-	}
-
+	
 	@Test
 	void 즐겨찾기_추가() {
 		//given
