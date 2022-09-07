@@ -39,7 +39,7 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public <R> R getClaims(final String token, Function<Claims, R> claimsResolver) {
+	public <R> R getClaims(final String token, final Function<Claims, R> claimsResolver) {
 		final Claims claims = parseClaimsJwt(token);
 		return claimsResolver.apply(claims);
 	}

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class WebConfiguration implements WebMvcConfigurer {
 
 	private static final String ID = "id";
+	private static final String SORT_PARAMETER = "order";
 	private static final int MAX_PAGE_SIZE = 8;
 
 	@Override
@@ -25,7 +26,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		/* set default pageable as Page request [number:0, size 8, sort: id: DESC] */
 		SortHandlerMethodArgumentResolver sortArgumentResolver = new SortHandlerMethodArgumentResolver();
 		sortArgumentResolver.setFallbackSort(Sort.by(Sort.Direction.DESC, ID));
-		sortArgumentResolver.setSortParameter("order");
+		sortArgumentResolver.setSortParameter(SORT_PARAMETER);
 
 		PageableHandlerMethodArgumentResolver resolver =
 			new PageableHandlerMethodArgumentResolver(sortArgumentResolver);
@@ -34,6 +35,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		resolvers.add(resolver);
 	}
 
+	/* 정적인 페이지에 대한 뷰 컨트롤러 추가 */
 	@Override
 	public void addViewControllers(final ViewControllerRegistry registry) {
 		registry.addRedirectViewController("/api/v1/healthCheck", "/health.html");
