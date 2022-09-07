@@ -5,6 +5,7 @@ import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,15 +32,10 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @PersistenceTest
 public abstract class BasePersistenceTest {
-
-	@Autowired
-	protected EntityManager em;
-
-	@Autowired
-	protected EntityManagerFactory emf;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -55,6 +51,16 @@ public abstract class BasePersistenceTest {
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
+
+	@Autowired
+	protected EntityManager em;
+
+	@Autowired
+	protected EntityManagerFactory emf;
+
+	protected <T> T pretty(final Supplier<T> supplier) {
+		return P6spyLogMessageFormatConfiguration.pretty(supplier, em);
+	}
 
 	protected boolean isLoaded(final Object entity) {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
