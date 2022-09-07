@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
@@ -17,6 +18,7 @@ import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfile
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
+@Transactional
 class ProfileQueryServiceImplTest extends BaseServiceTest {
 
 	@Autowired

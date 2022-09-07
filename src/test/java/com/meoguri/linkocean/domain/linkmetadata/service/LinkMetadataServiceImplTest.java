@@ -149,9 +149,6 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 		//when
 		linkMetadataService.synchronizeDataAndReturnNextPageable(createPageable());
 
-		em.flush();
-		em.clear();
-
 		//then
 		assertAll(
 			() -> assertThat(링크_제목_얻기("https://www.naver.com")).isEqualTo("네이버 채용"),
