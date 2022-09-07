@@ -31,7 +31,7 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 		final boolean isFollower = findCond.isFollower();
 		final boolean isFollowee = findCond.isFollowee();
 
-		return applySlicing(
+		return applyDynamicSlicing(
 			pageable,
 			selectFrom(profile),
 			where(
@@ -42,41 +42,30 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 		);
 	}
 
-	private BooleanBuilder followerOfUsername(
-		final Long profileId,
-		final String username
-	) {
-		return nullSafeBuilder(() -> profile.in(
-			joinIf(
-				username != null,
-				select(follow.id.follower)
-					.from(follow),
+	private BooleanBuilder followerOfUsername(final Long profileId, final String username) {
+		return nullSafeBuilder(() -> profile.in(applyDynamicJoin(
+			select(follow.id.follower).from(follow),
+			joinIf(username != null,
 				() -> join(follow.id.follower, profile)
-					.on(follow.id.follower.id.eq(profile.id))
-			).where(
+					.on(follow.id.follower.id.eq(profile.id))))
+			.where(
 				follow.id.followee.id.eq(profileId),
 				usernameContains(username)
-			))
-		);
-
+			)
+		));
 	}
 
-	private BooleanBuilder followeeOfUsername(
-		final Long profileId,
-		final String username
-	) {
-		return nullSafeBuilder(() -> profile.in(
-			joinIf(
-				username != null,
-				select(follow.id.followee)
-					.from(follow),
+	private BooleanBuilder followeeOfUsername(final Long profileId, final String username) {
+		return nullSafeBuilder(() -> profile.in(applyDynamicJoin(
+			select(follow.id.followee).from(follow),
+			joinIf(username != null,
 				() -> join(follow.id.followee, profile)
-					.on(follow.id.followee.id.eq(profile.id))
-			).where(
+					.on(follow.id.followee.id.eq(profile.id))))
+			.where(
 				follow.id.follower.id.eq(profileId),
 				usernameContains(username)
-			))
-		);
+			)
+		));
 	}
 
 	private BooleanBuilder usernameContains(final String username) {

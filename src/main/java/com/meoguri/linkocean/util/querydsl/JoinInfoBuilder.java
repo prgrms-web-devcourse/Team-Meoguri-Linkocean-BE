@@ -1,7 +1,5 @@
 package com.meoguri.linkocean.util.querydsl;
 
-import static com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,13 +102,46 @@ public class JoinInfoBuilder {
 		return this;
 	}
 
+	/* 동적 join 을 지원하기 위한 유틸리티 클래스
+	- 각 JoinInfo 에 제네릭을 적용하니 외부에서 타입 추론이 제대로 되지 않아
+	  SubQueryExpression 를 QueryBase 로 처리하는 문제가 생겨 로 타입을 사용 */
 	@AllArgsConstructor
 	public static class JoinIf {
 		final boolean expression;
 		final Supplier<JoinInfoBuilder> joinInfo;
 
 		<T> JPAQuery<T> apply(final JPAQuery<T> query) {
-			return expression ? joinIf(true, query, joinInfo) : query;
+			if (expression) {
+				return query;
+			}
+
+			JPAQuery<T> base = query;
+			final JoinInfoBuilder joinInfoBuilder = joinInfo.get().build();
+
+			for (Join join : joinInfoBuilder.joinList) {
+				if (join.joinType == 1) {
+					base = base.join(join.targetEntityPath);
+				} else if (join.joinType == 2) {
+					base = base.join(join.targetEntityPath, join.alias);
+				} else if (join.joinType == 3) {
+					base = base.join(join.targetCollection);
+				} else if (join.joinType == 4) {
+					base = base.join(join.targetCollection, join.alias);
+				} else if (join.joinType == 5) {
+					base = base.join(join.targetMap);
+				} else if (join.joinType == 6) {
+					base = base.join(join.targetMap, join.alias);
+				}
+
+				if (join.fetchJoin) {
+					base = base.fetchJoin();
+				}
+
+				if (join.on) {
+					base = base.on(join.condition.toArray(Predicate[]::new));
+				}
+			}
+			return query;
 		}
 	}
 }

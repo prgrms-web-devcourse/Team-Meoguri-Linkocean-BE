@@ -70,7 +70,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final boolean isTargetQuery = targetProfileId != null;
 		final boolean isFeedQuery = targetProfileId == null;
 
-		return applyPagination(
+		return applyDynamicPagination(
 			convertBookmarkSort(pageable),
 			selectFrom(bookmark),
 			joinIfs(
