@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.persistence.EntityManager;
-
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,12 +34,10 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ControllerTest
 public abstract class BaseControllerTest {
-
-	@Autowired
-	protected EntityManager em;
 
 	@Autowired
 	protected MockMvc mockMvc;
@@ -58,6 +55,14 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	private LinkMetadataRepository linkMetadataRepository;
+
+	@Autowired
+	private DatabaseCleanup databaseCleanup;
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
+	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(dto);
