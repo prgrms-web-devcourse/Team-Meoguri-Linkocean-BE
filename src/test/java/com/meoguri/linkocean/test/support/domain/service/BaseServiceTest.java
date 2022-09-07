@@ -8,9 +8,6 @@ import static java.util.stream.Collectors.*;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -68,9 +65,6 @@ public abstract class BaseServiceTest {
 
 	@Autowired
 	private NotificationService notificationService;
-
-	@PersistenceContext
-	protected EntityManager em;
 
 	@Autowired
 	protected DatabaseCleanup databaseCleanup;
