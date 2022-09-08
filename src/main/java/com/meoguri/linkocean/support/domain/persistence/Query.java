@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.annotation;
+package com.meoguri.linkocean.support.domain.persistence;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

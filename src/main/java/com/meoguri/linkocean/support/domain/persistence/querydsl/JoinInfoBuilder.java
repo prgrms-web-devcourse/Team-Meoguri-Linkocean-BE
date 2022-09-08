@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.util.querydsl;
+package com.meoguri.linkocean.support.domain.persistence.querydsl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

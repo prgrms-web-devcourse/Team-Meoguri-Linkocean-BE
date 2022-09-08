@@ -13,10 +13,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

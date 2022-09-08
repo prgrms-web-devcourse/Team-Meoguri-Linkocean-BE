@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.controller.common;
+package com.meoguri.linkocean.support.controller;
 
 import java.io.IOException;
 
@@ -7,19 +7,16 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * 슬라이스 조회의 공통 Serializer
+ * 리스트 조회의 공통 Serializer
  * - 데이터 타입 별로 array 의 이름을 커스터마이징 하기 위해 사용
  */
-public class SliceResponseJsonSerializer extends JsonSerializer<SliceResponse<?>> {
+public class ListResponseJsonSerializer extends JsonSerializer<ListResponse<?>> {
 
 	@Override
-	public void serialize(final SliceResponse value, final JsonGenerator gen, final SerializerProvider serializers)
+	public void serialize(final ListResponse<?> value, final JsonGenerator gen, final SerializerProvider serializers)
 		throws IOException {
 
 		gen.writeStartObject();
-
-		gen.writeFieldName("hasNext");
-		gen.writeBoolean(value.getHasNext());
 
 		gen.writeArrayFieldStart(value.getName());
 		for (Object datum : value.getData()) {
@@ -29,5 +26,4 @@ public class SliceResponseJsonSerializer extends JsonSerializer<SliceResponse<?>
 
 		gen.writeEndObject();
 	}
-
 }

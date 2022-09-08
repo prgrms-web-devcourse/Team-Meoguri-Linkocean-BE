@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.controller.common.SliceResponse;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.controller.profile.dto.GetProfilesResponse;
@@ -36,6 +35,7 @@ import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCon
 import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
+import com.meoguri.linkocean.support.controller.SliceResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

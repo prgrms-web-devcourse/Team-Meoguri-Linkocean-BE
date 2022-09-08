@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
-import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
+import com.meoguri.linkocean.support.domain.persistence.Query;
 
 import lombok.RequiredArgsConstructor;
 
