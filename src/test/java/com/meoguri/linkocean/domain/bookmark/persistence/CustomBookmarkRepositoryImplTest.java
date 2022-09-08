@@ -192,7 +192,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.build();
 			final Pageable pageable = createPageable("like");
 
-			// when
+			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
@@ -269,7 +269,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -280,6 +280,42 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId1);
 			assertThat(bookmarkPage.getContent().get(1).getTagIds()).containsExactlyInAnyOrder(tagId1, tagId2);
+		}
+
+		@Test
+		void 북마크_태그로_조회_성공_대_소문자_구분() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("Tag1"))
+				.build();
+			final Pageable pageable = createPageable("upload");
+
+			//when
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
+
+			//then
+			assertThat(bookmarkPage).isEmpty();
+		}
+
+		@Test
+		void 북마크_태그로_조회_성공_한글_태그() {
+			//given
+			북마크_저장(profile, "https://test1.com", 태그_저장("한국말").getId());
+			북마크_저장(profile, "https://test2.com", 태그_저장("카카오").getId());
+			북마크_저장(profile, "https://test3.com", 태그_저장("구글").getId());
+
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("한국말"))
+				.build();
+			final Pageable pageable = createPageable("upload");
+
+			//when
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
+
+			//then
+			assertThat(bookmarkPage).hasSize(1);
 		}
 
 		@Test
