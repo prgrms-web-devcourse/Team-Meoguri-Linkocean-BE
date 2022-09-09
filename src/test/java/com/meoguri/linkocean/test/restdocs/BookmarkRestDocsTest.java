@@ -73,7 +73,7 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 	@Test
 	void 내_북마크_목록_조회_api() throws Exception {
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
-		북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
+		북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "private");
 
 		//when
 		final ResultActions perform = mockMvc.perform(get(basePath + "/me")
@@ -125,7 +125,7 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		final long otherProfileId = 프로필_등록("user1", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
-		북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
+		북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "all");
 		북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
 		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
 
@@ -182,21 +182,21 @@ class BookmarkRestDocsTest extends RestDocsTestSupport {
 		프로필_등록("user3", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 		유저_등록_로그인("user2@gmail.com", GOOGLE);
 		final long profileId2 = 프로필_등록("user2", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 		유저_등록_로그인("user1@gmail.com", GOOGLE);
 		프로필_등록("user1", List.of("IT"));
 
 		북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+		북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 		북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 		팔로우(profileId2);

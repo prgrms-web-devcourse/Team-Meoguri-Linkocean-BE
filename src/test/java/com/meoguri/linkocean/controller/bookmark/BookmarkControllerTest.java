@@ -214,7 +214,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		@BeforeEach
 		void setUp() throws Exception {
 			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
-			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
+			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "private");
 		}
 
 		@Test
@@ -353,7 +353,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 			otherProfileId = 프로필_등록("user1", List.of("IT"));
 
 			bookmarkId1 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "title1", "IT", List.of("공부"), "all");
-			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "partial");
+			bookmarkId2 = 북마크_등록(링크_메타데이터_얻기("https://www.airbnb.co.kr"), "title2", "여행", List.of("travel"), "all");
 			북마크_등록(링크_메타데이터_얻기("https://programmers.co.kr"), "title3", "기술", List.of("공부", "코테"), "private");
 			bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "title4", "자기계발", List.of("머구리"), "all");
 
@@ -371,11 +371,13 @@ class BookmarkControllerTest extends BaseControllerTest {
 			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(2),
+					jsonPath("$.totalCount").value(3),
 					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
 					jsonPath("$.bookmarks[0].openType").value("all"),
-					jsonPath("$.bookmarks[1].id").value(bookmarkId1),
-					jsonPath("$.bookmarks[1].openType").value("all"))
+					jsonPath("$.bookmarks[1].id").value(bookmarkId2),
+					jsonPath("$.bookmarks[1].openType").value("all"),
+					jsonPath("$.bookmarks[2].id").value(bookmarkId1),
+					jsonPath("$.bookmarks[2].openType").value("all"))
 				.andDo(print());
 		}
 
@@ -397,7 +399,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
 					jsonPath("$.bookmarks[0].openType").value("all"),
 					jsonPath("$.bookmarks[1].id").value(bookmarkId2),
-					jsonPath("$.bookmarks[1].openType").value("partial"),
+					jsonPath("$.bookmarks[1].openType").value("all"),
 					jsonPath("$.bookmarks[2].id").value(bookmarkId1),
 					jsonPath("$.bookmarks[2].openType").value("all"))
 				.andDo(print());
@@ -495,11 +497,14 @@ class BookmarkControllerTest extends BaseControllerTest {
 			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(2),
+					jsonPath("$.totalCount").value(3),
 					jsonPath("$.bookmarks[0].id").value(bookmarkId1),
 					jsonPath("$.bookmarks[0].likeCount").value(1),
 					jsonPath("$.bookmarks[1].id").value(bookmarkId4),
-					jsonPath("$.bookmarks[1].likeCount").value(0));
+					jsonPath("$.bookmarks[1].likeCount").value(0),
+					jsonPath("$.bookmarks[2].id").value(bookmarkId2),
+					jsonPath("$.bookmarks[2].likeCount").value(0)
+				);
 		}
 	}
 
@@ -519,6 +524,7 @@ class BookmarkControllerTest extends BaseControllerTest {
 		private long bookmarkId8;
 
 		private long bookmarkId10;
+		private long bookmarkId11;
 
 		@BeforeEach
 		void setUp() throws Exception {
@@ -526,21 +532,21 @@ class BookmarkControllerTest extends BaseControllerTest {
 			프로필_등록("user3", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-			북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId11 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 			bookmarkId10 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 			유저_등록_로그인("user2@gmail.com", GOOGLE);
 			final long profileId2 = 프로필_등록("user2", List.of("IT"));
 
 			북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-			bookmarkId8 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId8 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 			bookmarkId7 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 			유저_등록_로그인("user1@gmail.com", GOOGLE);
 			프로필_등록("user1", List.of("IT"));
 
 			bookmarkId6 = 북마크_등록(링크_메타데이터_얻기("https://www.github.com"), "private");
-			bookmarkId5 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "partial");
+			bookmarkId5 = 북마크_등록(링크_메타데이터_얻기("https://www.google.com"), "all");
 			bookmarkId4 = 북마크_등록(링크_메타데이터_얻기("https://www.naver.com"), "all");
 
 			팔로우(profileId2);
@@ -557,14 +563,15 @@ class BookmarkControllerTest extends BaseControllerTest {
 			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.totalCount").value(6),
-					jsonPath("$.bookmarks", hasSize(6)),
+					jsonPath("$.totalCount").value(7),
+					jsonPath("$.bookmarks", hasSize(7)),
 					jsonPath("$.bookmarks[0].id").value(bookmarkId4),
 					jsonPath("$.bookmarks[1].id").value(bookmarkId5),
 					jsonPath("$.bookmarks[2].id").value(bookmarkId6),
 					jsonPath("$.bookmarks[3].id").value(bookmarkId7),
 					jsonPath("$.bookmarks[4].id").value(bookmarkId8),
-					jsonPath("$.bookmarks[5].id").value(bookmarkId10)
+					jsonPath("$.bookmarks[5].id").value(bookmarkId10),
+					jsonPath("$.bookmarks[6].id").value(bookmarkId11)
 				).andDo(print());
 		}
 

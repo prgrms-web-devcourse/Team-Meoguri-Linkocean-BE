@@ -26,7 +26,7 @@ class ProfileQueryRepositoryTest extends BasePersistenceTest {
 		//given
 		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 		final Bookmark bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com");
-		final Bookmark bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com");
+		final Bookmark bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", ALL, HOME, "www.google.com");
 		final Bookmark bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
 
 		즐겨찾기_저장(profile, bookmark1);
