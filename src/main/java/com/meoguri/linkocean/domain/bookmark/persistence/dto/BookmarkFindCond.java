@@ -45,9 +45,10 @@ public final class BookmarkFindCond {
 
 	/* 공개 범위 조건 - 북마크 작성자와 자신의 관계에 따라 결정 된다
 	   조건은 계층적이다
-	   현재 사용자가 북마크 조회 대상 사용자 인 경우 PRIVATE 		-> PRIVATE, PARTIAL, ALL 모든 북마크에 접근 가능
-	   현재 사용자가 북마크 조회 대상을 팔로우 중인 경우 PARTIAL 	-> PARTIAL, ALL 북마크에 접근 가능
-	   그 외의 경우 ALL								 	-> ALL 북마크만 접근 가능 .*/
+	   현재 사용자가 북마크 조회 대상 사용자 인 경우 PRIVATE 		-> PRIVATE, ALL 모든 북마크에 접근 가능
+	   다른 사용자의 북마크 조회 	                            -> ALL 북마크에 접근 가능
+
+	   피드 북마크 조회								 	    -> 내 북마크 PRIVATE, ALL, 다른 사람 북마크 ALL 북마크만 접근 가능 .*/
 	@Setter
 	private OpenType openType;
 }
