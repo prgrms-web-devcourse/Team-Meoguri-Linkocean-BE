@@ -17,17 +17,28 @@ class TagRepositoryTest extends BasePersistenceTest {
 	@Autowired
 	private TagRepository tagRepository;
 
-	/* Note - mysql varchar case-insensitive */
 	@Test
 	void 이름으로_조회_성공() {
 		//given
 		final Tag savedTag = 태그_저장("tag태그");
 
 		//when
-		final Optional<Tag> oFoundTag = tagRepository.findByName("TAG태그");
+		final Optional<Tag> oFoundTag = tagRepository.findByName(savedTag.getName());
 
 		//then
 		assertThat(oFoundTag).isPresent().get().isEqualTo(savedTag);
+	}
+
+	@Test
+	void 이름으로_조회_대_소문자_구분() {
+		//given
+		final Tag savedTag = 태그_저장("fun");
+
+		//when
+		final Optional<Tag> oFoundTag = pretty(() -> tagRepository.findByName(savedTag.getName().toUpperCase()));
+
+		//then
+		assertThat(oFoundTag).isEmpty();
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.test.support.domain.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
@@ -106,6 +107,10 @@ public abstract class BasePersistenceTest {
 		return 북마크_저장(writer, linkMetadata, null, null, ALL, null, url);
 	}
 
+	protected Bookmark 북마크_저장(final Profile writer, final String url, final long... tagIds) {
+		return 북마크_저장(writer, null, "title", "memo", ALL, IT, url, tagIds);
+	}
+
 	protected Bookmark 북마크_저장(final Profile writer, final LinkMetadata linkMetadata, final OpenType openType,
 		final String url) {
 		return 북마크_저장(writer, linkMetadata, null, null, openType, null, url);
@@ -122,7 +127,7 @@ public abstract class BasePersistenceTest {
 		final long... tagIds
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
-			linkMetadata.getId(),
+			linkMetadata != null ? linkMetadata.getId() : null,
 			title,
 			memo,
 			openType,

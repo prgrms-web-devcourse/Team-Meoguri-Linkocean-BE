@@ -109,16 +109,15 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
-	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 
+	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
 			.from(bookmark_tag)
-			.join(tag)
+			.join(tag).on(bt_tagId.eq(tag.id))
 			.where(tag.name.in(tags))
 			.fetch() : null;
-
 	}
 
 	private BooleanBuilder titleContains(final String title) {
