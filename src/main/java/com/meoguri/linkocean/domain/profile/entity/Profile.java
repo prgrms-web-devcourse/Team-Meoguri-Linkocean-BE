@@ -140,11 +140,8 @@ public class Profile extends BaseIdEntity {
 	public OpenType getAvailableBookmarkOpenType(final Profile target) {
 		if (this.equals(target)) {
 			return OpenType.PRIVATE;
-		} else if (this.isFollow(target)) {
-			return OpenType.PARTIAL;
-		} else {
-			return OpenType.ALL;
 		}
+		return OpenType.ALL;
 	}
 
 }

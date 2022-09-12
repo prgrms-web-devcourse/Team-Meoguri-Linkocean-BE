@@ -316,7 +316,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 			bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.naver.com", "title1", null, IT, ALL, "tag1",
 				"tag2");
-			bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.daum.com", "title2", null, IT, PARTIAL, "tag2");
+			bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.daum.com", "title2", null, IT, ALL, "tag2");
 			bookmarkId3 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.kakao.com", "title3", null, HOME, PRIVATE, "tag1");
 
 			profileId2 = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
@@ -338,9 +338,9 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(resultPage.getContent()).hasSize(1)
+			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId1, ALL));
+				.containsExactly(tuple(bookmarkId2, ALL), tuple(bookmarkId1, ALL));
 		}
 
 		@Test
@@ -361,7 +361,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.containsExactly(tuple(bookmarkId4, null));
 		}
 
-		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
+		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all 인 글을 볼 수 있다 */
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
@@ -378,7 +378,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId2, PARTIAL), tuple(bookmarkId1, ALL));
+				.containsExactly(tuple(bookmarkId2, ALL), tuple(bookmarkId1, ALL));
 		}
 
 		@Test
@@ -398,7 +398,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(
 					tuple(bookmarkId3, PRIVATE),
-					tuple(bookmarkId2, PARTIAL),
+					tuple(bookmarkId2, ALL),
 					tuple(bookmarkId1, ALL)
 				);
 		}
@@ -456,11 +456,11 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			bookmarkId10 = 북마크_링크_메타데이터_동시_등록(profileId3, "www.naver.com", ALL);
 
 			북마크_링크_메타데이터_동시_등록(profileId2, "www.github.com", PRIVATE);
-			bookmarkId8 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.kakao.com", PARTIAL);
+			bookmarkId8 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.kakao.com", ALL);
 			bookmarkId7 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.naver.com", ALL);
 
 			bookmarkId6 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.github.com", PRIVATE);
-			bookmarkId5 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.kakao.com", PARTIAL);
+			bookmarkId5 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.kakao.com", ALL);
 			bookmarkId4 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.naver.com", ALL);
 
 			팔로우(profileId1, profileId2);
