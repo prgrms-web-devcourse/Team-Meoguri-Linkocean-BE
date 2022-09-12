@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
-//TODO 서비스 보강 (예상하는대로 쿼리가 안나감?)
 class FavoriteServiceImplTest extends BaseServiceTest {
 
 	@Autowired
@@ -34,9 +33,6 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 		bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
 		bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com");
 
-		em.flush();
-		em.clear();
-
 		log.info("== set up finish ==");
 	}
 
@@ -47,11 +43,6 @@ class FavoriteServiceImplTest extends BaseServiceTest {
 
 		//when
 		favoriteService.favorite(profileId, bookmarkId2);
-
-		em.flush();
-		em.clear();
-
-		log.info("add favorite bookmark");
 
 		//then
 		final GetDetailedBookmarkResult result = 북마크_상세_조회(profileId, bookmarkId2);

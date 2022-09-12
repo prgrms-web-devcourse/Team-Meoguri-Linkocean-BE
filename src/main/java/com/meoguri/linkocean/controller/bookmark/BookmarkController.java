@@ -28,12 +28,12 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.GetFeedBookmarksResponse;
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.bookmark.dto.UpdateBookmarkRequest;
-import com.meoguri.linkocean.controller.common.PageResponse;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.GetBookmarkQueryParams;
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+import com.meoguri.linkocean.support.controller.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 

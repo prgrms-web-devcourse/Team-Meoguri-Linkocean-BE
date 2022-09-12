@@ -59,7 +59,7 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 		//when
 		final Optional<Bookmark> oFoundBookmark =
-			bookmarkRepository.findByIdAndWriterId(savedBookmark.getId(), writerId);
+			pretty(() -> bookmarkRepository.findByIdAndWriterId(savedBookmark.getId(), writerId));
 
 		//then
 		assertThat(oFoundBookmark).isPresent().get().isEqualTo(savedBookmark);

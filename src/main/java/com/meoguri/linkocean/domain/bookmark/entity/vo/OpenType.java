@@ -13,9 +13,6 @@ public enum OpenType {
 	/* 전체공개 */
 	ALL((byte)10),
 
-	/* 팔로워 대상 공개 */
-	PARTIAL((byte)20),
-
 	/* 개인 공개 */
 	PRIVATE((byte)30);
 

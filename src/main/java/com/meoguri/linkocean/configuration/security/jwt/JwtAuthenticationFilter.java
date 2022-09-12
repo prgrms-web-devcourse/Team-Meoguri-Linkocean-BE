@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.configuration.security.jwt;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
+import static org.springframework.http.HttpHeaders.*;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +24,6 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
-import com.meoguri.linkocean.util.TokenUtil;
 
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -50,17 +51,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	) {
 		try {
 			/* 토큰 가져오기 */
-			final String token = TokenUtil.get(request);
+			final String token = StringUtils.substringAfter(request.getHeader(AUTHORIZATION), "Bearer ");
 
 			/* 토큰이 비었는지 확인 */
-			if (TokenUtil.isBlankToken(token)) {
+			if (StringUtils.isBlank(token)) {
 				filterChain.doFilter(request, response);
 				return;
 			}
 			final String email = jwtProvider.getClaims(token, Claims::getId);
 			final String oauthType = jwtProvider.getClaims(token, Claims::getAudience);
 
-			// @AuthenticationPrincipal 을 위한 UserDetails
+			/* @AuthenticationPrincipal 을 위한 UserDetails */
 			final GetUserResult user = userService.getUser(new Email(email), OAuthType.of(oauthType));
 			final UserDetails userDetails = new SecurityUser(
 				user.getId(),

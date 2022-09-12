@@ -1,11 +1,12 @@
 package com.meoguri.linkocean.controller.bookmark.dto;
 
+import static com.meoguri.linkocean.support.controller.Default.*;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.meoguri.linkocean.controller.common.Default;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
@@ -39,17 +40,16 @@ public final class GetDetailedBookmarkResponse {
 
 	public static GetDetailedBookmarkResponse of(final GetDetailedBookmarkResult result) {
 
-		final String openType = OpenType.toString(result.getOpenType());
 		final String category = Optional.ofNullable(Category.toStringKor(result.getCategory())).orElse("no-category");
 
 		return new GetDetailedBookmarkResponse(
 			result.getBookmarkId(),
 			result.getTitle(),
 			result.getUrl(),
-			result.getImage() == null ? Default.IMAGE.getText() : result.getImage(),
-			category,
+			LINK_METADATA_IMAGE.getText(result.getImage()),
+			BOOKMARK_CATEGORY.getText(Category.toStringKor(result.getCategory())),
 			result.getMemo(),
-			openType,
+			OpenType.toString(result.getOpenType()),
 			result.isFavorite(),
 			result.getCreatedAt(),
 			result.getTags(),

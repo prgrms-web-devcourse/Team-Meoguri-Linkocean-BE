@@ -8,9 +8,7 @@ import static java.util.stream.Collectors.*;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +34,7 @@ import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ServiceTest
 public abstract class BaseServiceTest {
@@ -67,8 +66,13 @@ public abstract class BaseServiceTest {
 	@Autowired
 	private NotificationService notificationService;
 
-	@PersistenceContext
-	protected EntityManager em;
+	@Autowired
+	protected DatabaseCleanup databaseCleanup;
+
+	@AfterEach
+	void cleanUp() {
+		databaseCleanup.execute();
+	}
 
 	public static Pageable createPageable(String... properties) {
 		return PageRequest.of(0, 8, Sort.by(properties));
@@ -109,6 +113,10 @@ public abstract class BaseServiceTest {
 		return bookmarkService.registerBookmark(
 			new RegisterBookmarkCommand(writerId, url, "title", "memo", Category.IT, openType, emptyList())
 		);
+	}
+
+	protected void 북마크_삭제(final long writerId, final long bookmarkId) {
+		bookmarkService.removeBookmark(writerId, bookmarkId);
 	}
 
 	protected long 북마크_링크_메타데이터_동시_등록(final long writerId, final String url, final OpenType openType) {

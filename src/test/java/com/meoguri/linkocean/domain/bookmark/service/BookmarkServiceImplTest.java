@@ -110,7 +110,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 	}
 
 	@Nested
-	class 북마크_업데이트_테스트 {
+	class 북마크_업데이트 {
 
 		private long profileId;
 		private long bookmarkId;
@@ -286,6 +286,18 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.isThrownBy(() -> 북마크_상세_조회(profileId, invalidBookmarkId));
 		}
 
+		@Test
+		void 북마크_상세_조회_성공_다른_사람_북마크() {
+			//given
+			final long crushProfileId = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
+
+			//when
+			final GetDetailedBookmarkResult result = bookmarkService.getDetailedBookmark(crushProfileId, bookmarkId);
+
+			//then
+			assertThat(result.getProfile().getProfileId()).isEqualTo(profileId);
+		}
+
 	}
 
 	@Nested
@@ -304,7 +316,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			profileId1 = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
 			bookmarkId1 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.naver.com", "title1", null, IT, ALL, "tag1",
 				"tag2");
-			bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.daum.com", "title2", null, IT, PARTIAL, "tag2");
+			bookmarkId2 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.daum.com", "title2", null, IT, ALL, "tag2");
 			bookmarkId3 = 북마크_링크_메타데이터_동시_등록(profileId1, "http://www.kakao.com", "title3", null, HOME, PRIVATE, "tag1");
 
 			profileId2 = 사용자_프로필_동시_등록("crush@gmail.com", GOOGLE, "crush", IT);
@@ -326,9 +338,9 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			final Page<GetBookmarksResult> resultPage = bookmarkService.getByTargetProfileId(findCond, pageable);
 
 			//then
-			assertThat(resultPage.getContent()).hasSize(1)
+			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId1, ALL));
+				.containsExactly(tuple(bookmarkId2, ALL), tuple(bookmarkId1, ALL));
 		}
 
 		@Test
@@ -349,7 +361,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.containsExactly(tuple(bookmarkId4, null));
 		}
 
-		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all, partial 인 글을 볼 수 있다 */
+		/* 다른 사람과 팔로우/팔로이 관계기 때문에 공개 범위가 all 인 글을 볼 수 있다 */
 		@Test
 		void 팔로워_팔로이_관계인_사람의_북마크_목록_조회() {
 			//given
@@ -366,7 +378,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			//then
 			assertThat(resultPage.getContent()).hasSize(2)
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
-				.containsExactly(tuple(bookmarkId2, PARTIAL), tuple(bookmarkId1, ALL));
+				.containsExactly(tuple(bookmarkId2, ALL), tuple(bookmarkId1, ALL));
 		}
 
 		@Test
@@ -386,7 +398,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 				.extracting(GetBookmarksResult::getId, GetBookmarksResult::getOpenType)
 				.containsExactly(
 					tuple(bookmarkId3, PRIVATE),
-					tuple(bookmarkId2, PARTIAL),
+					tuple(bookmarkId2, ALL),
 					tuple(bookmarkId1, ALL)
 				);
 		}
@@ -444,11 +456,11 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			bookmarkId10 = 북마크_링크_메타데이터_동시_등록(profileId3, "www.naver.com", ALL);
 
 			북마크_링크_메타데이터_동시_등록(profileId2, "www.github.com", PRIVATE);
-			bookmarkId8 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.kakao.com", PARTIAL);
+			bookmarkId8 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.kakao.com", ALL);
 			bookmarkId7 = 북마크_링크_메타데이터_동시_등록(profileId2, "www.naver.com", ALL);
 
 			bookmarkId6 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.github.com", PRIVATE);
-			bookmarkId5 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.kakao.com", PARTIAL);
+			bookmarkId5 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.kakao.com", ALL);
 			bookmarkId4 = 북마크_링크_메타데이터_동시_등록(profileId1, "www.naver.com", ALL);
 
 			팔로우(profileId1, profileId2);
@@ -541,26 +553,47 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 		assertThat(notDuplicated).isEmpty();
 	}
 
-	@Test
-	void 태그_목록_조회_성공() {
-		//given
-		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+	@Nested
+	class 태그_목록_조회 {
 
-		북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
-		북마크_링크_메타데이터_동시_등록(profileId, "www.google.com", "tag1", "tag2");
-		북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+		private long profileId;
 
-		//when
-		final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+		@BeforeEach
+		void setUp() {
+			profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		}
 
-		//then
-		assertThat(result).hasSize(3)
-			.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
-			.containsExactly(
-				tuple("tag1", 3L),
-				tuple("tag2", 2L),
-				tuple("tag3", 1L)
-			);
+		@Test
+		void 태그_목록_조회_성공() {
+			//given
+			북마크_링크_메타데이터_동시_등록(profileId, "www.naver.com", "tag1", "tag2", "tag3");
+			북마크_링크_메타데이터_동시_등록(profileId, "www.google.com", "tag1", "tag2");
+			북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+
+			//when
+			final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+
+			//then
+			assertThat(result).hasSize(3)
+				.extracting(GetUsedTagWithCountResult::getTag, GetUsedTagWithCountResult::getCount)
+				.containsExactly(
+					tuple("tag1", 3L),
+					tuple("tag2", 2L),
+					tuple("tag3", 1L)
+				);
+		}
+
+		@Test
+		void 태그_목록_조회_성공_삭제된_북마크는_조회_안됨() {
+			//given
+			final long bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.prgrms.com", "tag1");
+			북마크_삭제(profileId, bookmarkId);
+
+			//when
+			final List<GetUsedTagWithCountResult> result = bookmarkService.getUsedTagsWithCount(profileId);
+
+			//then
+			assertThat(result).isEmpty();
+		}
 	}
-
 }

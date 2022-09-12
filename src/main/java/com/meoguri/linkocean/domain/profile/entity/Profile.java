@@ -14,11 +14,12 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
+import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "profile")
 @Entity
 public class Profile extends BaseIdEntity {
 
@@ -138,11 +140,8 @@ public class Profile extends BaseIdEntity {
 	public OpenType getAvailableBookmarkOpenType(final Profile target) {
 		if (this.equals(target)) {
 			return OpenType.PRIVATE;
-		} else if (this.isFollow(target)) {
-			return OpenType.PARTIAL;
-		} else {
-			return OpenType.ALL;
 		}
+		return OpenType.ALL;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain;
+package com.meoguri.linkocean.support.domain.entity;
 
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;

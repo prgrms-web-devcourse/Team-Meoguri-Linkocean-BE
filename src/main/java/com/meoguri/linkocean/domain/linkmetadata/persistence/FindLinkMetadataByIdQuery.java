@@ -5,9 +5,9 @@ import static java.lang.String.*;
 import java.util.List;
 import java.util.Set;
 
-import com.meoguri.linkocean.annotation.Query;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
+import com.meoguri.linkocean.support.domain.persistence.Query;
 
 import lombok.RequiredArgsConstructor;
 

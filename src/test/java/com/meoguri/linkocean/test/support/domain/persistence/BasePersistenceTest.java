@@ -1,10 +1,12 @@
 package com.meoguri.linkocean.test.support.domain.persistence;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,15 +33,10 @@ import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 
 @PersistenceTest
 public abstract class BasePersistenceTest {
-
-	@Autowired
-	protected EntityManager em;
-
-	@Autowired
-	protected EntityManagerFactory emf;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -55,6 +52,16 @@ public abstract class BasePersistenceTest {
 
 	@Autowired
 	private BookmarkRepository bookmarkRepository;
+
+	@Autowired
+	protected EntityManager em;
+
+	@Autowired
+	protected EntityManagerFactory emf;
+
+	protected <T> T pretty(final Supplier<T> supplier) {
+		return P6spyLogMessageFormatConfiguration.pretty(supplier, em);
+	}
 
 	protected boolean isLoaded(final Object entity) {
 		return emf.getPersistenceUnitUtil().isLoaded(entity);
@@ -100,6 +107,10 @@ public abstract class BasePersistenceTest {
 		return 북마크_저장(writer, linkMetadata, null, null, ALL, null, url);
 	}
 
+	protected Bookmark 북마크_저장(final Profile writer, final String url, final long... tagIds) {
+		return 북마크_저장(writer, null, "title", "memo", ALL, IT, url, tagIds);
+	}
+
 	protected Bookmark 북마크_저장(final Profile writer, final LinkMetadata linkMetadata, final OpenType openType,
 		final String url) {
 		return 북마크_저장(writer, linkMetadata, null, null, openType, null, url);
@@ -116,7 +127,7 @@ public abstract class BasePersistenceTest {
 		final long... tagIds
 	) {
 		return bookmarkRepository.save(new Bookmark(writer,
-			linkMetadata.getId(),
+			linkMetadata != null ? linkMetadata.getId() : null,
 			title,
 			memo,
 			openType,

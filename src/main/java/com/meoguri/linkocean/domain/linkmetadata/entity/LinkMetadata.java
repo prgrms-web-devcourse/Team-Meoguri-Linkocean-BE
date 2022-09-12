@@ -6,9 +6,10 @@ import static lombok.AccessLevel.*;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import com.meoguri.linkocean.domain.BaseIdEntity;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "link_metadata")
 @Entity
 public class LinkMetadata extends BaseIdEntity {
 

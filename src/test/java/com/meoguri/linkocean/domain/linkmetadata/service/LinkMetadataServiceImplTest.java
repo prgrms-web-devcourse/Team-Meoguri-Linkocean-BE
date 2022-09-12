@@ -2,6 +2,7 @@ package com.meoguri.linkocean.domain.linkmetadata.service;
 
 import static com.meoguri.linkocean.infrastructure.jsoup.JsoupGetLinkMetadataService.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
@@ -124,5 +125,43 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 		given(getLinkMetadata.getLinkMetadata("www.naver3.com")).willReturn(updatedResult);
 		given(getLinkMetadata.getLinkMetadata("www.naver4.com")).willReturn(updatedResult);
 		given(getLinkMetadata.getLinkMetadata("www.naver5.com")).willReturn(updatedResult);
+	}
+
+	@Test
+	void 링크_메타데이터_동기화_성공_유효하지_않은_url_존재() {
+		//given
+		final String crushUrl = "https://crush.com";
+
+		final String originTitle1 = 링크_제목_얻기("https://www.naver.com");
+		final String originTitle2 = 링크_제목_얻기(crushUrl);
+		final String originTitle3 = 링크_제목_얻기("https://haha.com");
+
+		assertAll(
+			() -> assertThat(originTitle1).isEqualTo("네이버"),
+			() -> assertThat(originTitle2).isEqualTo(DEFAULT_TITLE),
+			() -> assertThat(originTitle3).isEqualTo(DEFAULT_TITLE)
+		);
+
+		링크_메타데이터_업데이트("https://www.naver.com", "네이버 채용", "naver-recruite.png");
+		링크_메타데이터_없어짐(crushUrl);
+		링크_메타데이터_업데이트("https://haha.com", "하하", "haha.png");
+
+		//when
+		linkMetadataService.synchronizeDataAndReturnNextPageable(createPageable());
+
+		//then
+		assertAll(
+			() -> assertThat(링크_제목_얻기("https://www.naver.com")).isEqualTo("네이버 채용"),
+			() -> assertThat(링크_제목_얻기(crushUrl)).isNull(),
+			() -> assertThat(링크_제목_얻기("https://haha.com")).isEqualTo("하하")
+		);
+	}
+
+	private void 링크_메타데이터_업데이트(String url, String title, String image) {
+		given(getLinkMetadata.getLinkMetadata(url)).willReturn(new GetLinkMetadataResult(title, image));
+	}
+
+	private void 링크_메타데이터_없어짐(String url) {
+		given(getLinkMetadata.getLinkMetadata(url)).willThrow(new IllegalArgumentException());
 	}
 }

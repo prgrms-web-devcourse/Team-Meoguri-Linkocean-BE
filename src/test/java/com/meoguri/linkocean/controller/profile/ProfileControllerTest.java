@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
@@ -35,30 +36,34 @@ class ProfileControllerTest extends BaseControllerTest {
 		final CreateProfileRequest createProfileRequest = new CreateProfileRequest(username, categories);
 
 		//when
-		mockMvc.perform(post(baseUrl)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON)
-				.content(createJson(createProfileRequest)))
-			//then
+		final ResultActions perform = mockMvc.perform(post(baseUrl)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON)
+			.content(createJson(createProfileRequest)));
+
+		//then
+		perform
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").exists())
 			.andDo(print());
 	}
 
 	@Nested
-	class 내_프로필_조회_테스트 {
+	class 내_프로필_조회 {
 
 		@Test
-		void 내프로필_조회_단순_프로필_정보_조회() throws Exception {
+		void 내_프로필_조회_Api() throws Exception {
 			//given
 			유저_등록_로그인("hani@gmail.com", GOOGLE);
 			프로필_등록("hani", List.of("인문", "정치", "사회"));
 
 			//when
-			mockMvc.perform(get(baseUrl + "/me")
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
-				//then
+			final ResultActions perform = mockMvc.perform(get(baseUrl + "/me")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.profileId").exists(),
@@ -75,7 +80,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 내프로필_조회_사용자가_작성한_카테고리_조회() throws Exception {
+		void 내_프로필_조회_Api_내가_작성한_카테고리_조회() throws Exception {
 			//given
 			유저_등록_로그인("hani@gmail.com", GOOGLE);
 			프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
@@ -85,27 +90,21 @@ class ProfileControllerTest extends BaseControllerTest {
 			북마크_등록(링크_메타데이터_얻기("https://github.com"), "IT", null, "private");
 
 			//when
-			mockMvc.perform(get(baseUrl + "/me")
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
-				//then
+			final ResultActions perform = mockMvc.perform(get(baseUrl + "/me")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
-					jsonPath("$.profileId").exists(),
-					jsonPath("$.imageUrl").isEmpty(),
-					jsonPath("$.favoriteCategories", hasSize(4)),
-					jsonPath("$.username").value("hani"),
-					jsonPath("$.bio").isEmpty(),
-					jsonPath("$.followerCount").value(0),
-					jsonPath("$.followeeCount").value(0),
-					jsonPath("$.tags", hasSize(0)),
 					jsonPath("$.categories", hasSize(3)),
 					jsonPath("$.categories", hasItems("인문", "사회", "IT")))
 				.andDo(print());
 		}
 
 		@Test
-		void 내프로필_조회_사용자가_작성한_카테고리_조회_카테고리가_null_일때() throws Exception {
+		void 내_프로필_조회_Api_내가_작성한_카테고리_조회_카테고리가_없을때() throws Exception {
 			//given
 			유저_등록_로그인("hani@gmail.com", GOOGLE);
 			프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
@@ -113,29 +112,20 @@ class ProfileControllerTest extends BaseControllerTest {
 			북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), null, null, "private");
 
 			//when
-			mockMvc.perform(get(baseUrl + "/me")
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
-				//then
-				.andExpect(status().isOk())
+			final ResultActions perform = mockMvc.perform(get(baseUrl + "/me")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON));
 
-				.andExpectAll(
-					jsonPath("$.profileId").exists(),
-					jsonPath("$.imageUrl").isEmpty(),
-					jsonPath("$.favoriteCategories", hasSize(4)),
-					jsonPath("$.username").value("hani"),
-					jsonPath("$.bio").isEmpty(),
-					jsonPath("$.followerCount").value(0),
-					jsonPath("$.followeeCount").value(0),
-					jsonPath("$.tags", hasSize(0)),
-					jsonPath("$.categories", hasSize(0))
-				)
+			//then
+			perform
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.categories", hasSize(0)))
 				.andDo(print());
 		}
 	}
 
 	@Test
-	void 프로필_상세_조회_Api_성공() throws Exception {
+	void 다른_사용자_프로필_조회_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("user1@gmail.com", GOOGLE);
 		final long user1ProfileId = 프로필_등록("user1", List.of("IT"));
@@ -147,10 +137,12 @@ class ProfileControllerTest extends BaseControllerTest {
 		팔로우(user2ProfileId);
 
 		//when
-		mockMvc.perform(get(baseUrl + "/{profileId}", user2ProfileId)
-				.header(AUTHORIZATION, token)
-				.contentType(APPLICATION_JSON))
-			//then
+		final ResultActions perform = mockMvc.perform(get(baseUrl + "/{profileId}", user2ProfileId)
+			.header(AUTHORIZATION, token)
+			.contentType(APPLICATION_JSON));
+
+		//then
+		perform
 			.andExpect(status().isOk())
 			.andExpectAll(
 				jsonPath("$.isFollow").value(true),
@@ -160,7 +152,7 @@ class ProfileControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void 내프로필_수정_Api_성공() throws Exception {
+	void 프로필_수정_Api_성공() throws Exception {
 		//given
 		유저_등록_로그인("hani@gmail.com", GOOGLE);
 		프로필_등록("hani", List.of("인문", "정치", "사회", "IT"));
@@ -171,7 +163,7 @@ class ProfileControllerTest extends BaseControllerTest {
 		final MockMultipartFile mockImage = new MockMultipartFile("image", "test.png", "image/png",
 			"image".getBytes());
 
-		// 내 프로필 수정
+		//프로필 수정
 		//when
 		mockMvc.perform(multipart(PUT, URI.create(baseUrl + "/me"))
 				.file(mockImage)
@@ -183,11 +175,10 @@ class ProfileControllerTest extends BaseControllerTest {
 			.andExpect(status().isOk())
 			.andDo(print());
 
-		// 수정된 프로필 조회
-		//when
+		//수정된 프로필 조회
+		//then
 		final GetDetailedProfileResponse myProfile = 내_프로필_조회();
 
-		//then
 		assertThat(myProfile.getUsername()).isEqualTo(updateUsername);
 		assertThat(myProfile.getFavoriteCategories()).containsExactlyInAnyOrder("자기계발", "과학");
 		assertThat(myProfile.getBio()).isEqualTo(bio);
@@ -195,7 +186,7 @@ class ProfileControllerTest extends BaseControllerTest {
 	}
 
 	@Nested
-	class 프로필_목록_조회_시리즈_테스트 {
+	class 프로필_목록_조회 {
 		long user1ProfileId;
 		long user2ProfileId;
 		long user3ProfileId;
@@ -221,20 +212,25 @@ class ProfileControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 유저네임으로_프로필_목록_조회_Api_성공() throws Exception {
+		void 프로필_목록_조회_Api_성공_유저네임으로_필터링_검색() throws Exception {
+			//given
 			로그인("user1@gmail.com", GOOGLE);
 
-			mockMvc.perform(get(baseUrl + "?username=" + "user")
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+			//when
+			final ResultActions perform = mockMvc.perform(get(baseUrl + "?username=" + "user")
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.hasNext").value(false),
 					jsonPath("$.profiles").isArray(),
 					jsonPath("$.profiles", hasSize(3)),
-					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
+					jsonPath("$.profiles[0].profileId").value(user3ProfileId),
 					jsonPath("$.profiles[1].profileId").value(user2ProfileId),
-					jsonPath("$.profiles[2].profileId").value(user3ProfileId),
+					jsonPath("$.profiles[2].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false),
 					jsonPath("$.profiles[1].isFollow").value(true),
 					jsonPath("$.profiles[2].isFollow").value(false)
@@ -242,12 +238,17 @@ class ProfileControllerTest extends BaseControllerTest {
 		}
 
 		@Test
-		void 프로필_목록_조회_Api_유저네임을_빠트리면_실패() throws Exception {
+		void 프로필_목록_조회_Api_실패_유저네임_필터링_조건_없음() throws Exception {
+			//given
 			로그인("user1@gmail.com", GOOGLE);
 
-			mockMvc.perform(get(baseUrl)
-					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+			//when
+			final ResultActions perform = mockMvc.perform(get(baseUrl)
+				.header(AUTHORIZATION, token)
+				.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isBadRequest())
 				.andDo(print());
 		}
@@ -260,13 +261,18 @@ class ProfileControllerTest extends BaseControllerTest {
 		user3 의 팔로워 : user2		 user3 의 팔로우 여부    x      x     x
 		 */
 		@Test
-		void 팔로워_조회_Api_성공() throws Exception {
+		void 프로필_목록_조회_Api_성공_자신의_팔로워_조회() throws Exception {
+			//given
 			로그인("user1@gmail.com", GOOGLE);
 
-			// user1 -> user1 의 팔로워 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "follower")
+			//when
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "follower")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.hasNext").value(false),
@@ -274,11 +280,21 @@ class ProfileControllerTest extends BaseControllerTest {
 					jsonPath("$.profiles[0].profileId").value(user2ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(true)
 				);
+		}
 
-			// user1 -> user2 의 팔로워 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "follower")
+		@Test
+		void 프로필_목록_조회_Api_성공_user1이_user2의_팔로워_조회() throws Exception {
+			//given
+			로그인("user1@gmail.com", GOOGLE);
+
+			//when
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "follower")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.hasNext").value(false),
@@ -286,11 +302,21 @@ class ProfileControllerTest extends BaseControllerTest {
 					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false)
 				);
+		}
 
-			// user1 -> user3 의 팔로워 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "follower")
+		@Test
+		void 프로필_목록_조회_Api_성공_user1이_user3의_팔로워_조회() throws Exception {
+			//given
+			로그인("user1@gmail.com", GOOGLE);
+
+			//when
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "follower")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.hasNext").value(false),
@@ -308,37 +334,63 @@ class ProfileControllerTest extends BaseControllerTest {
 		user3 의 팔로이 : x				 user3 의 팔로우 여부    x      x     x
 		 */
 		@Test
-		void 팔로이_조회_Api_성공() throws Exception {
+		void 프로필_목록_조회_Api_성공_자신의_팔로이_조회() throws Exception {
+			//given
 			로그인("user1@gmail.com", GOOGLE);
 
-			// user1 -> user1 의 팔로이 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "followee")
+			//when
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user1ProfileId, "followee")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.profiles", hasSize(1)),
 					jsonPath("$.profiles[0].profileId").value(user2ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(true)
 				);
+		}
 
-			// user1 -> user2 의 팔로이 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "followee")
+		@Test
+		void 프로필_목록_조회_Api_성공_user1이_user2의_팔로이_조회() throws Exception {
+			//given
+			로그인("user1@gmail.com", GOOGLE);
+
+			//when
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user2ProfileId, "followee")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpectAll(
 					jsonPath("$.profiles", hasSize(2)),
-					jsonPath("$.profiles[0].profileId").value(user1ProfileId),
+					jsonPath("$.profiles[0].profileId").value(user3ProfileId),
 					jsonPath("$.profiles[0].isFollow").value(false),
-					jsonPath("$.profiles[1].profileId").value(user3ProfileId),
+					jsonPath("$.profiles[1].profileId").value(user1ProfileId),
 					jsonPath("$.profiles[1].isFollow").value(false)
 				);
+		}
 
+		@Test
+		void 프로필_목록_조회_Api_성공_user1이_user3의_팔로이_조회() throws Exception {
+			//given
+			로그인("user1@gmail.com", GOOGLE);
+
+			//when
 			// user1 -> user3 의 팔로이 조회
-			mockMvc.perform(get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "followee")
+			final ResultActions perform = mockMvc.perform(
+				get(baseUrl + "/{profileId}/{tab}", user3ProfileId, "followee")
 					.header(AUTHORIZATION, token)
-					.contentType(APPLICATION_JSON))
+					.contentType(APPLICATION_JSON));
+
+			//then
+			perform
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.profiles", hasSize(0)));
 		}

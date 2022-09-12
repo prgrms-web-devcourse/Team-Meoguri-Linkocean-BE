@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.util.querydsl;
+package com.meoguri.linkocean.support.domain.persistence.querydsl;
 
 import java.util.List;
 
@@ -22,13 +22,13 @@ public class Join {
 
 	Path alias;
 
-	// 페치 조인 여부
+	/* 페치 조인 여부 */
 	boolean fetchJoin;
 
-	// on 절 사용 여부
+	/* on 절 사용 여부 */
 	boolean on;
 
-	// on 절에 사용되는 Predicate 목록
+	/* on 절에 사용되는 Predicate 목록 */
 	List<Predicate> condition;
 
 	int joinType;

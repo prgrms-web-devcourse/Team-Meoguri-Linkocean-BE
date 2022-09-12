@@ -46,4 +46,18 @@ public final class GetDetailedProfileResponse {
 			categories.stream().map(Category::getKorName).collect(toList())
 		);
 	}
+
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	static final class GetProfileTagsResponse {
+
+		private String tag;
+		private long count;
+
+		public static GetProfileTagsResponse of(final GetUsedTagWithCountResult result) {
+			return new GetProfileTagsResponse(result.getTag(), result.getCount());
+		}
+	}
+
 }

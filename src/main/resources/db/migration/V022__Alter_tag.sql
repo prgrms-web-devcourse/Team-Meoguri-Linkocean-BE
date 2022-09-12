@@ -1,0 +1,1 @@
+alter table tag modify name varchar(50) collate utf8mb4_bin;

@@ -1,10 +1,11 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.QBookmark.*;
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.*;
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.tag.entity.QTag.*;
-import static com.meoguri.linkocean.util.querydsl.CustomPath.*;
-import static com.meoguri.linkocean.util.querydsl.JoinInfoBuilder.Initializer.*;
+import static com.meoguri.linkocean.support.domain.persistence.querydsl.CustomPath.*;
+import static com.meoguri.linkocean.support.domain.persistence.querydsl.JoinInfoBuilder.Initializer.*;
 import static com.querydsl.sql.SQLExpressions.*;
 import static org.apache.commons.lang3.BooleanUtils.*;
 
@@ -18,15 +19,14 @@ import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.QFindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.util.querydsl.CustomPath;
-import com.meoguri.linkocean.util.querydsl.Querydsl4RepositorySupport;
+import com.meoguri.linkocean.support.domain.persistence.querydsl.CustomPath;
+import com.meoguri.linkocean.support.domain.persistence.querydsl.Querydsl4RepositorySupport;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -70,7 +70,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		final boolean isTargetQuery = targetProfileId != null;
 		final boolean isFeedQuery = targetProfileId == null;
 
-		return applyPagination(
+		return applyDynamicPagination(
 			convertBookmarkSort(pageable),
 			selectFrom(bookmark),
 			joinIfs(
@@ -109,16 +109,15 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			.where(CustomPath.profileId.eq(profileId))
 			.fetch();
 	}
-	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 
+	/* 태그를 포함한 북마크의 id 를 역으로 조회 */
 	private List<Long> getBookmarkIds(final List<String> tags) {
 		return tags != null ? getJpasqlQuery().select(bt_bookmarkId)
 			.distinct()
 			.from(bookmark_tag)
-			.join(tag)
+			.join(tag).on(bt_tagId.eq(tag.id))
 			.where(tag.name.in(tags))
 			.fetch() : null;
-
 	}
 
 	private BooleanBuilder titleContains(final String title) {
@@ -153,7 +152,7 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		));
 	}
 
-	// 작성자 id 대상 북마크 조회에서 사용
+	/* 작성자 id 대상 북마크 조회에서 사용 */
 	private BooleanBuilder availableByOpenType(final OpenType openType) {
 		// PRIVATE 이상을 조회 하는 요청이므로 필터링이 필요 없음
 		if (openType == OpenType.PRIVATE) {
@@ -164,18 +163,18 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 		return nullSafeBuilder(() -> bookmark.openType.loe(openType));
 	}
 
-	// 피드 조회에서 사용
-	// 전체 공개 북마크, 팔로우 중인 사용자의 일부 공개 북마크, 자신의 북마크 (private 포함) 에 접근 가능하다
+	/* 피드 조회에서 사용 */
+	/* 전체 공개 북마크, 자신의 북마크 (private 포함) 에 접근 가능하다 */
 	private BooleanBuilder availableByOpenType(long currentUserProfileId) {
 		return nullSafeBuilder(() ->
 			bookmark.openType.eq(OpenType.ALL)
-				.or(bookmark.openType.eq(OpenType.PARTIAL).and(followedBy(currentUserProfileId)))
+				// .or(bookmark.openType.eq(OpenType.PARTIAL).and(followedBy(currentUserProfileId)))
 				.or(bookmark.writer.id.eq(currentUserProfileId))
 		);
 	}
 
 	private BooleanBuilder registered() {
-		return nullSafeBuilder(() -> bookmark.status.eq(BookmarkStatus.REGISTERED));
+		return nullSafeBuilder(() -> bookmark.status.eq(REGISTERED));
 	}
 	// Spring Pageable -> QueryDsl Pageable
 
@@ -221,7 +220,8 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 			.where(bt_bookmarkId.in(
 				select(bookmark.id)
 					.from(bookmark)
-					.where(b_profileId.eq(profileId)))
+					.where(b_profileId.eq(profileId)
+						.and(b_status.eq(REGISTERED.name()))))
 			)
 			.groupBy(bt_tagId)
 			.fetch();

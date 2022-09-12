@@ -32,14 +32,11 @@ public class SecurityConfiguration {
 			.headers().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-
 			.logout(
 				logout -> logout.logoutSuccessUrl("/")
 			)
 			.authorizeRequests(
-				auth -> {
-					auth.anyRequest().permitAll();
-				}
+				auth -> auth.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint().userService(customOAuth2UserService)

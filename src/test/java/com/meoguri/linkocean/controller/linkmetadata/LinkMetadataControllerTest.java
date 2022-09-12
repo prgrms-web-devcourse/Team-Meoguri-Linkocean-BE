@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
@@ -28,13 +29,15 @@ class LinkMetadataControllerTest extends BaseControllerTest {
 		final Map<String, String> request = Map.of("url", link);
 
 		//when
-		mockMvc.perform(post(basePath + "/obtain")
-				.header(AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(createJson(request)))
+		final ResultActions perform = mockMvc.perform(post(basePath + "/obtain")
+			.header(AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(createJson(request)));
+
+		//then
+		perform
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.title").exists())
 			.andDo(print());
 	}
-
 }

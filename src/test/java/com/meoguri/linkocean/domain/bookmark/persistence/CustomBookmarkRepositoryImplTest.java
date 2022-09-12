@@ -52,7 +52,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		tagId2 = 태그_저장("tag2").getId();
 
 		bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com", tagId1, tagId2);
-		bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", PARTIAL, HOME, "www.google.com", tagId1);
+		bookmark2 = 북마크_링크_메타데이터_동시_저장(profile, "title2", ALL, HOME, "www.google.com", tagId1);
 		bookmark3 = 북마크_링크_메타데이터_동시_저장(profile, "title3", PRIVATE, IT, "www.github.com");
 
 		즐겨찾기_저장(profile, bookmark1);
@@ -192,7 +192,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 				.build();
 			final Pageable pageable = createPageable("like");
 
-			// when
+			//when
 			final Page<Bookmark> bookmarks = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
@@ -269,7 +269,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Pageable pageable = createPageable("upload");
 
 			//when
-			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
 
 			//then
 			assertThat(bookmarkPage).hasSize(2);
@@ -280,6 +280,42 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 			assertThat(bookmarkPage.getContent().get(1).getId()).isEqualTo(bookmarkId1);
 			assertThat(bookmarkPage.getContent().get(1).getTagIds()).containsExactlyInAnyOrder(tagId1, tagId2);
+		}
+
+		@Test
+		void 북마크_태그로_조회_성공_대_소문자_구분() {
+			//given
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("Tag1"))
+				.build();
+			final Pageable pageable = createPageable("upload");
+
+			//when
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
+
+			//then
+			assertThat(bookmarkPage).isEmpty();
+		}
+
+		@Test
+		void 북마크_태그로_조회_성공_한글_태그() {
+			//given
+			북마크_저장(profile, "https://test1.com", 태그_저장("한국말").getId());
+			북마크_저장(profile, "https://test2.com", 태그_저장("카카오").getId());
+			북마크_저장(profile, "https://test3.com", 태그_저장("구글").getId());
+
+			final BookmarkFindCond findCond = BookmarkFindCond.builder()
+				.targetProfileId(profileId)
+				.tags(List.of("한국말"))
+				.build();
+			final Pageable pageable = createPageable("upload");
+
+			//when
+			final Page<Bookmark> bookmarkPage = pretty(() -> bookmarkRepository.findBookmarks(findCond, pageable));
+
+			//then
+			assertThat(bookmarkPage).hasSize(1);
 		}
 
 		@Test
@@ -355,11 +391,11 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		}
 
 		@Test
-		void 북마크_기본_조회_Partial_공개범위_성공() {
+		void 북마크_기본_조회_다른_사용자_북마크() {
 			//given
 			final BookmarkFindCond findCond = BookmarkFindCond.builder()
 				.targetProfileId(profileId)
-				.openType(PARTIAL)
+				.openType(ALL)
 				.build();
 			final Pageable pageable = createPageable("upload");
 
@@ -463,6 +499,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		private Bookmark bookmark8;
 
 		private Bookmark bookmark10;
+		private Bookmark bookmark11;
 
 		//  사용자 1 			-팔로우->	사용자 2 				사용자 3
 		// bookmark4 all,    		bookmark7 all, 		bookmark10 all
@@ -482,15 +519,15 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			LinkMetadata naver = 링크_메타데이터_저장("www.naver.com", "네이버", "naver.png");
 
 			북마크_저장(profile3, github, PRIVATE, "www.github.com");
-			북마크_저장(profile3, google, PARTIAL, "www.github.com");
+			bookmark11 = 북마크_저장(profile3, google, ALL, "www.github.com");
 			bookmark10 = 북마크_저장(profile3, naver, ALL, "naver.com");
 
 			북마크_저장(profile2, github, PRIVATE, "www.github.com");
-			bookmark8 = 북마크_저장(profile2, google, PARTIAL, "github.com");
+			bookmark8 = 북마크_저장(profile2, google, ALL, "github.com");
 			bookmark7 = 북마크_저장(profile2, naver, ALL, "google.com");
 
 			bookmark6 = 북마크_저장(profile1, github, PRIVATE, "naver.com");
-			bookmark5 = 북마크_저장(profile1, google, PARTIAL, "github.com");
+			bookmark5 = 북마크_저장(profile1, google, ALL, "github.com");
 			bookmark4 = 북마크_저장(profile1, naver, ALL, "google.com");
 		}
 
@@ -506,10 +543,10 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
 
 			//then
-			assertThat(bookmarkPage).hasSize(6);
+			assertThat(bookmarkPage).hasSize(7);
 			assertThat(bookmarkPage.getContent())
-				.containsExactly(bookmark4, bookmark5, bookmark6, bookmark7, bookmark8, bookmark10);
-			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+				.containsExactly(bookmark4, bookmark5, bookmark6, bookmark7, bookmark8, bookmark10, bookmark11);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(7);
 		}
 
 		@Test
@@ -545,7 +582,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 			//then
 			assertThat(bookmarkPage).hasSize(2);
 			assertThat(bookmarkPage.getContent()).containsExactly(bookmark4, bookmark5);
-			assertThat(bookmarkPage.getTotalElements()).isEqualTo(6);
+			assertThat(bookmarkPage.getTotalElements()).isEqualTo(7);
 		}
 
 	}
@@ -563,7 +600,8 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		북마크_링크_메타데이터_동시_저장(profile1, "링크오션", ALL, IT, "www.linkocean.com");
 
 		//when
-		final List<FindUsedTagIdWithCountResult> result = bookmarkRepository.findUsedTagIdsWithCount(profile1.getId());
+		final List<FindUsedTagIdWithCountResult> result =
+			pretty(() -> bookmarkRepository.findUsedTagIdsWithCount(profile1.getId()));
 
 		//then
 		assertThat(result)
