@@ -8,7 +8,9 @@ import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult;
 
+@RequireSingleResult
 public interface FindLinkMetadataRepository extends Repository<LinkMetadata, Long> {
 
 	LinkMetadata findById(long id);

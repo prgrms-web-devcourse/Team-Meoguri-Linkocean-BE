@@ -9,14 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class FindLinkMetadataRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
 	private FindLinkMetadataRepository findLinkMetadataRepository;
-
-/*
 
 	@Test
 	void 링크로_조회_성공() {
@@ -36,29 +35,17 @@ class FindLinkMetadataRepositoryTest extends BasePersistenceTest {
 		assertThat(linkMetadata2).isNull();
 	}
 
-
 	@Test
-	void url_이용해_link_metadata_조회_성공() {
+	void 링크로_조회_성공_유효하지_않으면_null() {
 		//given
-		final String saveLink = "naver.com";
-		final LinkMetadata savedLinkMetadata = 링크_메타데이터_저장(saveLink, "네이버", "naver.png");
+		final Link invalidLink = new Link("invalid.com");
 
 		//when
-		final Optional<LinkMetadata> oFoundLinkMetadata = findLinkMetadataRepository.findByUrl("naver.com");
-
-		//then
-		assertThat(oFoundLinkMetadata).hasValue(savedLinkMetadata);
-	}
-
-	@Test
-	void 존재하지_않는_url_조회() {
-		//when
-		final Optional<LinkMetadata> oFoundLinkMetadata = findLinkMetadataRepository.findByUrl("invalid.com");
+		final LinkMetadata linkMeatadata = findLinkMetadataRepository.findByLink(invalidLink);
 
 		// then
-		assertThat(oFoundLinkMetadata).isEmpty();
+		assertThat(linkMeatadata).isNull();
 	}
-*/
 
 	@Test
 	void 링크_메타데이터_집합_조회() {
