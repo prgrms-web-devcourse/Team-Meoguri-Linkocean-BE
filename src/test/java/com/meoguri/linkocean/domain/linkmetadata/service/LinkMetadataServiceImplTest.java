@@ -142,23 +142,24 @@ class LinkMetadataServiceImplTest extends BaseServiceTest {
 			() -> assertThat(originTitle3).isEqualTo(DEFAULT_TITLE)
 		);
 
-		링크_메타데이터_업데이트("https://www.naver.com", "네이버 채용", "naver-recruite.png");
+		final String updatedTitle1 = 링크_메타데이터_업데이트("https://www.naver.com", "네이버 채용", "naver-recruite.png");
 		링크_메타데이터_없어짐(crushUrl);
-		링크_메타데이터_업데이트("https://haha.com", "하하", "haha.png");
+		final String updatedTitle3 = 링크_메타데이터_업데이트("https://haha.com", "하하", "haha.png");
 
 		//when
 		linkMetadataService.synchronizeDataAndReturnNextPageable(createPageable());
 
 		//then
 		assertAll(
-			() -> assertThat(링크_제목_얻기("https://www.naver.com")).isEqualTo("네이버 채용"),
-			() -> assertThat(링크_제목_얻기(crushUrl)).isNull(),
-			() -> assertThat(링크_제목_얻기("https://haha.com")).isEqualTo("하하")
+			() -> assertThat(링크_제목_얻기("https://www.naver.com")).isEqualTo(updatedTitle1),
+			() -> assertThat(링크_제목_얻기(crushUrl)).isEqualTo(originTitle2),
+			() -> assertThat(링크_제목_얻기("https://haha.com")).isEqualTo(updatedTitle3)
 		);
 	}
 
-	private void 링크_메타데이터_업데이트(String url, String title, String image) {
+	private String 링크_메타데이터_업데이트(String url, String title, String image) {
 		given(getLinkMetadata.getLinkMetadata(url)).willReturn(new GetLinkMetadataResult(title, image));
+		return title;
 	}
 
 	private void 링크_메타데이터_없어짐(String url) {

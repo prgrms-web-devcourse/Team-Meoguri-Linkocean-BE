@@ -56,8 +56,8 @@ public class LinkMetadataServiceImpl implements LinkMetadataService {
 		try {
 			final GetLinkMetadataResult result = getLinkMetadata.getLinkMetadata(Link.toString(link.getLink()));
 			link.update(result.getTitle(), result.getImage());
-		} catch (IllegalArgumentException e) {
-			linkMetadataRepository.delete(link);
+		} catch (IllegalArgumentException ignored) {
+			log.info("%s가 유효하지 않습니다.", Link.toString(link.getLink()));
 		}
 	}
 }
