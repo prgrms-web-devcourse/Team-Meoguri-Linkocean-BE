@@ -5,11 +5,11 @@ import static lombok.AccessLevel.*;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -27,12 +27,12 @@ public class Follow {
 	@EmbeddedId
 	private FollowId id;
 
-	public Follow(final Profile follower, final Profile followee) {
-		this.id = new FollowId(follower, followee);
+	public Follow(final long followerId, final long followeeId) {
+		this.id = new FollowId(followerId, followeeId);
 	}
 
 	public boolean isFolloweeOf(final Profile profile) {
-		return id.getFollowee().equals(profile);
+		return id.getFolloweeId() == profile.getId();
 	}
 
 	@Getter
@@ -41,21 +41,19 @@ public class Follow {
 	@EqualsAndHashCode
 	static class FollowId implements Serializable {
 
-		@ManyToOne(optional = false)
+		@Column(nullable = false)
 		@JoinColumn(name = "follower_id")
-		private Profile follower;
+		private long followerId;
 
-		@ManyToOne(optional = false)
+		@Column(nullable = false)
 		@JoinColumn(name = "followee_id")
-		private Profile followee;
+		private long followeeId;
 
-		public FollowId(final Profile follower, final Profile followee) {
-			checkNotNull(follower);
-			checkNotNull(followee);
-			checkCondition(!follower.equals(followee), "자기 자신을 팔로우 할 수 없습니다");
+		public FollowId(final long followerId, final long followeeId) {
+			checkCondition(followerId != followeeId, "자기 자신을 팔로우 할 수 없습니다");
 
-			this.follower = follower;
-			this.followee = followee;
+			this.followerId = followerId;
+			this.followeeId = followeeId;
 		}
 	}
 }

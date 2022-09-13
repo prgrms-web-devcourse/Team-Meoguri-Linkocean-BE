@@ -2,7 +2,6 @@ package com.meoguri.linkocean.domain.profile.query.persistence;
 
 import static com.meoguri.linkocean.domain.profile.entity.QFollow.*;
 import static com.meoguri.linkocean.domain.profile.entity.QProfile.*;
-import static com.meoguri.linkocean.support.domain.persistence.querydsl.JoinInfoBuilder.Initializer.*;
 
 import javax.persistence.EntityManager;
 
@@ -42,29 +41,22 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 		);
 	}
 
-	private BooleanBuilder followerOfUsername(final Long profileId, final String username) {
-		return nullSafeBuilder(() -> profile.in(applyDynamicJoin(
-			select(follow.id.follower).from(follow),
-			joinIf(username != null,
-				() -> join(follow.id.follower, profile)
-					.on(follow.id.follower.id.eq(profile.id))))
-			.where(
-				follow.id.followee.id.eq(profileId),
-				usernameContains(username)
-			)
+	private BooleanBuilder followerOfUsername(final Long currentProfileId, final String username) {
+		return nullSafeBuilder(() -> profile.id.in(
+			select(follow.id.followerId)
+				.from(follow)
+				.where(
+					usernameContains(username),
+					follow.id.followeeId.eq(currentProfileId)
+				)
 		));
 	}
 
-	private BooleanBuilder followeeOfUsername(final Long profileId, final String username) {
-		return nullSafeBuilder(() -> profile.in(applyDynamicJoin(
-			select(follow.id.followee).from(follow),
-			joinIf(username != null,
-				() -> join(follow.id.followee, profile)
-					.on(follow.id.followee.id.eq(profile.id))))
-			.where(
-				follow.id.follower.id.eq(profileId),
-				usernameContains(username)
-			)
+	private BooleanBuilder followeeOfUsername(final Long currentProfileId, final String username) {
+		return nullSafeBuilder(() -> profile.id.in(
+			select(follow.id.followeeId)
+				.from(follow)
+				.where(usernameContains(username), follow.id.followerId.eq(currentProfileId))
 		));
 	}
 

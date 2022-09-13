@@ -145,10 +145,10 @@ public class CustomBookmarkRepositoryImpl extends Querydsl4RepositorySupport imp
 	}
 
 	private BooleanBuilder followedBy(long currentUserProfileId) {
-		return nullSafeBuilder(() -> bookmark.writer.in(
-			select(follow.id.followee)
+		return nullSafeBuilder(() -> bookmark.writer.id.in(
+			select(follow.id.followeeId)
 				.from(follow)
-				.where(follow.id.follower.id.eq(currentUserProfileId))
+				.where(follow.id.followerId.eq(currentUserProfileId))
 		));
 	}
 
