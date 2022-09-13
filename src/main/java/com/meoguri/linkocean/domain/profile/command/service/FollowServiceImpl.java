@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,20 +13,20 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class FollowServiceImpl implements FollowService {
 
-	private final ProfileQueryService profileQueryService;
+	private final FindProfileByIdRepository findProfileByIdRepository;
 
 	@Override
 	public void follow(final long profileId, final long targetProfileId) {
-		final Profile profile = profileQueryService.findProfileFetchFollows(profileId);
-		final Profile target = profileQueryService.findById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.getById(targetProfileId);
 
 		profile.follow(target);
 	}
 
 	@Override
 	public void unfollow(final long profileId, final long targetProfileId) {
-		final Profile profile = profileQueryService.findProfileFetchFollows(profileId);
-		final Profile target = profileQueryService.findById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.getById(targetProfileId);
 
 		profile.unfollow(target);
 	}

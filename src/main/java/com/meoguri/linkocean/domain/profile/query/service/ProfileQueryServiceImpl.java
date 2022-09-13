@@ -1,12 +1,9 @@
 package com.meoguri.linkocean.domain.profile.query.service;
 
 import static com.meoguri.linkocean.domain.profile.entity.FavoriteCategories.*;
-import static java.lang.String.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.LongFunction;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,11 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 import com.meoguri.linkocean.domain.profile.query.persistence.ProfileQueryRepository;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,12 +26,13 @@ import lombok.RequiredArgsConstructor;
 public class ProfileQueryServiceImpl implements ProfileQueryService {
 
 	private final ProfileQueryRepository profileQueryRepository;
+	private final FindProfileByIdRepository findProfileByIdRepository;
 
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
 		/* 프로필 조회 */
-		final Profile profile = findProfileFetchFollows(currentProfileId);
-		final Profile target = findById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(currentProfileId);
+		final Profile target = findProfileByIdRepository.getById(targetProfileId);
 
 		/* 추가 정보 조회 */
 		final boolean isFollow = profile.isFollow(target);
@@ -60,7 +58,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
-		final Profile currentProfile = findProfileFetchFollows(currentProfileId);
+		final Profile currentProfile = findProfileByIdRepository.getProfileFetchFollows(currentProfileId);
 
 		/* 프로필 목록 가져 오기 */
 		final Slice<Profile> profilesSlice = profileQueryRepository.findProfiles(findCond, pageable);
@@ -94,23 +92,4 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		return new SliceImpl<>(results, pageable, hasNext);
 	}
 
-	@Override
-	public Profile findById(final long profileId) {
-		return findProfileById(profileId, profileQueryRepository::findById);
-	}
-
-	@Override
-	public Profile findProfileFetchFavoriteById(final long profileId) {
-		return findProfileById(profileId, profileQueryRepository::findProfileFetchFavoriteIdsById);
-	}
-
-	@Override
-	public Profile findProfileFetchFollows(final long profileId) {
-		return findProfileById(profileId, profileQueryRepository::findProfileFetchFollows);
-	}
-
-	private Profile findProfileById(long profileId, LongFunction<Optional<Profile>> findById) {
-		return findById.apply(profileId)
-			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such profile id :%d", profileId)));
-	}
 }

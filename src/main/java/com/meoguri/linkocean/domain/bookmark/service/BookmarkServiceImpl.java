@@ -36,7 +36,7 @@ import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByU
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 import com.meoguri.linkocean.domain.tag.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
@@ -51,9 +51,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final TagService tagService;
 	private final NotificationService notificationService;
 
-	private final ProfileQueryService profileQueryService;
-
 	private final BookmarkRepository bookmarkRepository;
+	private final FindProfileByIdRepository findProfileByIdRepository;
 
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
 	private final FindLinkMetadataByIdQuery findLinkMetadataByIdQuery;
@@ -66,7 +65,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final String url = command.getUrl();
 
 		/* 연관 필드 조회 */
-		final Profile writer = profileQueryService.findById(writerId);
+		final Profile writer = findProfileByIdRepository.getById(writerId);
 		final Long linkMetadataId = findLinkMetadataByUrlQuery.findByUrl(url)
 			.map(BaseIdEntity::getId).orElse(null);
 
@@ -133,8 +132,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Profile writer = bookmark.getWriter();
-		final boolean follow = profileQueryService.findProfileFetchFollows(profileId).isFollow(writer);
-		final boolean favorite = profileQueryService.findProfileFetchFavoriteById(profileId).isFavorite(bookmark);
+		final boolean follow = findProfileByIdRepository.getProfileFetchFollows(profileId).isFollow(writer);
+		final boolean favorite = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId)
+			.isFavorite(bookmark);
 
 		final String linkMetaDataImage = bookmark.getLinkMetadataId()
 			.map(linkMetadataId -> findLinkMetadataByIdQuery.findById(linkMetadataId).getImage())
@@ -173,8 +173,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Pageable pageable
 	) {
 		final long profileId = findCond.getCurrentUserProfileId();
-		final Profile profile = profileQueryService.findProfileFetchFollows(profileId);
-		final Profile target = profileQueryService.findById(findCond.getTargetProfileId());
+		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.getById(findCond.getTargetProfileId());
 
 		/* 이용 가능한 open type 설정 */
 		findCond.setOpenType(profile.getAvailableBookmarkOpenType(target));
@@ -191,7 +191,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				.map(Optional::get)
 				.collect(toList()));
 
-		final Profile currentUserProfile = profileQueryService.findProfileFetchFavoriteById(profileId);
+		final Profile currentUserProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
 		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
 
 		/* 결과 반환 */
@@ -204,7 +204,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Pageable pageable
 	) {
 		final long profileId = findCond.getCurrentUserProfileId();
-		final Profile profile = profileQueryService.findProfileFetchFavoriteById(profileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
 
 		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);

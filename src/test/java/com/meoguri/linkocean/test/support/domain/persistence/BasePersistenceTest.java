@@ -194,7 +194,7 @@ public abstract class BasePersistenceTest {
 	}
 
 	private Profile 프로필_load(final long profileId) {
-		return profileRepository.findById(profileId).orElseThrow();
+		return profileRepository.findById(profileId);
 	}
 
 }

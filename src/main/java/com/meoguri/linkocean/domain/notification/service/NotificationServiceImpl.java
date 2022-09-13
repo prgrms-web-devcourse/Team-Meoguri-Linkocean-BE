@@ -16,7 +16,7 @@ import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
 import com.meoguri.linkocean.domain.notification.persistence.NotificationRepository;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,10 +25,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-	private final ProfileQueryService profileQueryService;
-
 	private final NotificationRepository notificationRepository;
-
+	private final FindProfileByIdRepository findProfileByIdRepository;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
 	/**
@@ -40,10 +38,10 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void shareNotification(final ShareNotificationCommand command) {
 		/* 수신자 조회 */
-		final Profile receiver = profileQueryService.findProfileFetchFollows(command.getReceiverProfileId());
+		final Profile receiver = findProfileByIdRepository.getProfileFetchFollows(command.getReceiverProfileId());
 
 		/* 추가 정보 조회 */
-		final Profile sender = profileQueryService.findById(command.getSenderProfileId());
+		final Profile sender = findProfileByIdRepository.getById(command.getSenderProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
 		/* 비즈니스 로직 검사 */

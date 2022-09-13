@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
+import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,14 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
 
-	private final ProfileQueryService profileQueryService;
-
+	private final FindProfileByIdRepository findProfileByIdRepository;
 	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
 
 	@Transactional
 	@Override
 	public void favorite(final long profileId, final long bookmarkId) {
-		final Profile profile = profileQueryService.findProfileFetchFavoriteById(profileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
 		profile.favorite(bookmark);
@@ -31,7 +30,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 	@Transactional
 	@Override
 	public void unfavorite(final long profileId, final long bookmarkId) {
-		final Profile profile = profileQueryService.findProfileFetchFavoriteById(profileId);
+		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
 		profile.unfavorite(bookmark);

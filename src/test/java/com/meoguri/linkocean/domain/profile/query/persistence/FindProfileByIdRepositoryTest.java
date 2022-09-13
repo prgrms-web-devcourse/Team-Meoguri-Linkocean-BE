@@ -7,7 +7,6 @@ import static java.util.List.of;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,31 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
-class ProfileQueryRepositoryTest extends BasePersistenceTest {
+class FindProfileByIdRepositoryTest extends BasePersistenceTest {
 
 	@Autowired
-	private ProfileQueryRepository profileQueryRepository;
+	private FindProfileByIdRepository findProfileByIdRepository;
 
 	@Test
-	void findProfileFetchFavoriteIdsById_성공() {
+	void getById_성공() {
+		//given
+		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
+
+		//when
+		final Profile findProfile = findProfileByIdRepository.getById(profile.getId());
+
+		//then
+		assertThat(findProfile).isEqualTo(profile);
+	}
+
+	@Test
+	void getById_실패_유효하지_않은_id() {
+		final Profile profile = findProfileByIdRepository.getById(-1L);
+		assertThat(isLoaded(profile)).isFalse();
+	}
+
+	@Test
+	void getProfileFetchFavoriteIdsById_성공() {
 		//given
 		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 		final Bookmark bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com");
@@ -33,28 +50,27 @@ class ProfileQueryRepositoryTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark3);
 
 		//when
-		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFavoriteIdsById(profile.getId());
+		final Profile findProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profile.getId());
 
 		//then
-		assertThat(oProfile).isPresent();
-		assertThat(oProfile.get().isFavoriteBookmarks(of(bookmark1, bookmark2, bookmark3)))
+		assertThat(findProfile.isFavoriteBookmarks(of(bookmark1, bookmark2, bookmark3)))
 			.containsExactly(true, false, true);
 	}
 
 	@Test
-	void findProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
+	void getProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
 		//given
-		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
+		final Profile savedProfile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 
 		//when
-		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFavoriteIdsById(profile.getId());
+		final Profile findProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(savedProfile.getId());
 
 		//then
-		assertThat(oProfile).isPresent();
+		assertThat(findProfile).isEqualTo(savedProfile);
 	}
 
 	@Test
-	void findProfileFetchFollows_성공() {
+	void getProfileFetchFollows_성공() {
 		//given
 		final Profile follower = 사용자_프로필_동시_저장("follower@gmail.com", GOOGLE, "follower", IT);
 		final Profile profile1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
@@ -67,11 +83,10 @@ class ProfileQueryRepositoryTest extends BasePersistenceTest {
 		팔로우_저장(follower, profile3);
 
 		//when
-		final Optional<Profile> oProfile = profileQueryRepository.findProfileFetchFollows(follower.getId());
+		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(follower.getId());
 
 		//then
-		assertThat(oProfile).isPresent();
-		assertThat(oProfile.get().isFollows(List.of(profile1, profile2, profile3, profile4)))
+		assertThat(profile.isFollows(List.of(profile1, profile2, profile3, profile4)))
 			.containsExactly(true, true, true, false);
 	}
 }
