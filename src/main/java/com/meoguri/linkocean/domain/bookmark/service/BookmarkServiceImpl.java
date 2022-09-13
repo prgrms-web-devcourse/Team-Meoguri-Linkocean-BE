@@ -32,15 +32,14 @@ import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResu
 import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
 import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByIdQuery;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataByUrlQuery;
+import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataRepository;
 import com.meoguri.linkocean.domain.notification.service.NotificationService;
 import com.meoguri.linkocean.domain.notification.service.dto.ShareNotificationCommand;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.FindProfileByIdRepository;
 import com.meoguri.linkocean.domain.tag.service.TagService;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
-import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,9 +54,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final BookmarkRepository bookmarkRepository;
 	private final FindBookmarkByIdRepository findBookmarkByIdRepository;
 	private final FindProfileByIdRepository findProfileByIdRepository;
+	private final FindLinkMetadataRepository findLinkMetadataRepository;
 
-	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
-	private final FindLinkMetadataByIdQuery findLinkMetadataByIdQuery;
 
 	/* 북마크 등록 */
 	@Transactional
@@ -68,8 +66,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 연관 필드 조회 */
 		final Profile writer = findProfileByIdRepository.findById(writerId);
-		final Long linkMetadataId = findLinkMetadataByUrlQuery.findByUrl(url)
-			.map(BaseIdEntity::getId).orElse(null);
+		final LinkMetadata linkMetadata = findLinkMetadataRepository.findByLink(new Link(url));
+		final Long linkMetadataId = linkMetadata == null ? null : linkMetadata.getId();
 
 		/* 비즈니스 로직 검증 - 사용자는 [url]당 하나의 북마크를 가질 수 있다 */
 		final boolean exists = bookmarkRepository.existsByWriterAndUrl(writer, url);
@@ -137,7 +135,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 			.isFavorite(bookmark);
 
 		final String linkMetaDataImage = bookmark.getLinkMetadataId()
-			.map(linkMetadataId -> findLinkMetadataByIdQuery.findById(linkMetadataId).getImage())
+			.map(linkMetadataId -> findLinkMetadataRepository.findById(linkMetadataId).getImage())
 			.orElse(null);
 
 		final Map<ReactionType, Long> reactionCountMap = bookmark.countReactionGroup();
@@ -184,7 +182,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Bookmark> bookmarks = bookmarkPage.getContent();
 
 		/* 추가 정보 조회 */
-		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
+		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataRepository.findByIds(
 			bookmarks.stream()
 				.map(Bookmark::getLinkMetadataId)
 				.filter(Optional::isPresent)
@@ -212,7 +210,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final List<Profile> writers = bookmarks.stream().map(Bookmark::getWriter).collect(toList());
 
 		/* 추가 정보 조회 */
-		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataByIdQuery.findByIds(
+		final Set<LinkMetadata> linkMetadataSet = findLinkMetadataRepository.findByIds(
 			bookmarks.stream()
 				.map(Bookmark::getLinkMetadataId)
 				.filter(Optional::isPresent)
@@ -331,7 +329,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 	/**
 	 * 북마크 링크 메타데이터 이미지를 반환한다.
-	 * 만약 링크 메타데이터가 존재하지 않으면 DEFAULT_IMAEG를 반환한다.
+	 * 만약 링크 메타데이터가 존재하지 않으면 DEFAULT_IMAEG_를 반환한다.
 	 */
 	private String getLinkMetadataImage(final Bookmark bookmark, final Set<LinkMetadata> linkMetadataSet) {
 		return linkMetadataSet.stream()

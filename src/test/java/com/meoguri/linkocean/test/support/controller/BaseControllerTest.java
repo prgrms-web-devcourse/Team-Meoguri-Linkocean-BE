@@ -29,6 +29,7 @@ import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
 import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataRepository;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
 import com.meoguri.linkocean.domain.user.entity.User;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
@@ -54,7 +55,10 @@ public abstract class BaseControllerTest {
 	private UserRepository userRepository;
 
 	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
+	private FindLinkMetadataRepository findLinkMetadataRepository;
+
+	@Autowired
+	protected LinkMetadataRepository linkMetadataRepository;
 
 	@Autowired
 	private DatabaseCleanup databaseCleanup;
@@ -101,10 +105,10 @@ public abstract class BaseControllerTest {
 
 	/* 테스트 속도를 위해 리포지토리로 처리 */
 	protected String 링크_메타데이터_얻기(final String link) {
-		linkMetadataRepository.findByLink(new Link(link)).ifPresentOrElse(
-			LinkMetadata::getLink, // dummy consumer
-			() -> linkMetadataRepository.save(new LinkMetadata(link, "title", "image"))
-		);
+		final LinkMetadata linkMetadata = findLinkMetadataRepository.findByLink(new Link(link));
+		if (linkMetadata == null) {
+			linkMetadataRepository.save(new LinkMetadata(link, "title", "image"));
+		}
 		return link;
 	}
 
