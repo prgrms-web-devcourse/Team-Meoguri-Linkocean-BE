@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class FindByIdNullToLinkoceanRuntimeExceptionAop {
 
-	@Around("@within(com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult)")
+	@Around("@within(com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult)"
+		+ " && args(long)")
 	public Object nullToLinkoceanRuntimeException(final ProceedingJoinPoint joinPoint) throws Throwable {
 
 		final Object entity = joinPoint.proceed();
