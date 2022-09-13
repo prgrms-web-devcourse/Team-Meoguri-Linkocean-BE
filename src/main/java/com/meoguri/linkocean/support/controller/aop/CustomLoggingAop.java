@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.configuration.aop;
+package com.meoguri.linkocean.support.controller.aop;
 
 import static java.util.Objects.*;
 

@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.support.domain.persistence.RequireSingleResult;
+import com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult;
 
 @RequireSingleResult
 public interface FindProfileByIdRepository extends Repository<Profile, Long> {

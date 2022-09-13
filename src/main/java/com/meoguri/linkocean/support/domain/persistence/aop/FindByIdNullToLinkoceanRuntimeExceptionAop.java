@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.support.domain.persistence;
+package com.meoguri.linkocean.support.domain.persistence.aop;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FindByIdNullToLinkoceanRuntimeExceptionAop {
 
-	@Around("@within(com.meoguri.linkocean.support.domain.persistence.RequireSingleResult)")
+	@Around("@within(com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult)")
 	public Object nullToLinkoceanRuntimeException(final ProceedingJoinPoint joinPoint) throws Throwable {
 
 		final Object entity = joinPoint.proceed();

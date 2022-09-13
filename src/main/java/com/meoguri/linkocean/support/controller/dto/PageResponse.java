@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.support.controller;
+package com.meoguri.linkocean.support.controller.dto;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.linkmetadata;
 
-import static com.meoguri.linkocean.support.controller.Default.*;
+import static com.meoguri.linkocean.support.controller.dto.Default.*;
 
 import java.util.Map;
 

@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.support.domain.persistence.RequireSingleResult;
+import com.meoguri.linkocean.support.domain.persistence.aop.RequireSingleResult;
 
 @RequireSingleResult
 public interface FindBookmarkByIdRepository extends Repository<Bookmark, Long> {
