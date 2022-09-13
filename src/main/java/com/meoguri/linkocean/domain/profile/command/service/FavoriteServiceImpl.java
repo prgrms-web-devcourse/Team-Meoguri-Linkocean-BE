@@ -21,7 +21,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 	@Transactional
 	@Override
 	public void favorite(final long profileId, final long bookmarkId) {
-		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
 		profile.favorite(bookmark);
@@ -30,7 +30,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 	@Transactional
 	@Override
 	public void unfavorite(final long profileId, final long bookmarkId) {
-		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profileId);
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(bookmarkId);
 
 		profile.unfavorite(bookmark);

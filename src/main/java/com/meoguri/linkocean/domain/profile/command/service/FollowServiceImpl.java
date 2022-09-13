@@ -17,16 +17,16 @@ public class FollowServiceImpl implements FollowService {
 
 	@Override
 	public void follow(final long profileId, final long targetProfileId) {
-		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
-		final Profile target = findProfileByIdRepository.getById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.findById(targetProfileId);
 
 		profile.follow(target);
 	}
 
 	@Override
 	public void unfollow(final long profileId, final long targetProfileId) {
-		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
-		final Profile target = findProfileByIdRepository.getById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.findById(targetProfileId);
 
 		profile.unfollow(target);
 	}

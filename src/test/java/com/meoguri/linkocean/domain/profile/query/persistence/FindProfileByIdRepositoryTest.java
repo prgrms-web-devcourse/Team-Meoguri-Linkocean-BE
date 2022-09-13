@@ -21,25 +21,25 @@ class FindProfileByIdRepositoryTest extends BasePersistenceTest {
 	private FindProfileByIdRepository findProfileByIdRepository;
 
 	@Test
-	void getById_성공() {
+	void findById_성공() {
 		//given
 		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 
 		//when
-		final Profile findProfile = findProfileByIdRepository.getById(profile.getId());
+		final Profile findProfile = findProfileByIdRepository.findById(profile.getId());
 
 		//then
 		assertThat(findProfile).isEqualTo(profile);
 	}
 
 	@Test
-	void getById_실패_유효하지_않은_id() {
-		final Profile profile = findProfileByIdRepository.getById(-1L);
-		assertThat(isLoaded(profile)).isFalse();
+	void findById_성공_유효하지_않은_id_라면_null_반환() {
+		final Profile profile = findProfileByIdRepository.findById(-1L);
+		assertThat(profile).isNull();
 	}
 
 	@Test
-	void getProfileFetchFavoriteIdsById_성공() {
+	void findProfileFetchFavoriteIdsById_성공() {
 		//given
 		final Profile profile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 		final Bookmark bookmark1 = 북마크_링크_메타데이터_동시_저장(profile, "title1", ALL, IT, "www.naver.com");
@@ -50,7 +50,7 @@ class FindProfileByIdRepositoryTest extends BasePersistenceTest {
 		즐겨찾기_저장(profile, bookmark3);
 
 		//when
-		final Profile findProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profile.getId());
+		final Profile findProfile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profile.getId());
 
 		//then
 		assertThat(findProfile.isFavoriteBookmarks(of(bookmark1, bookmark2, bookmark3)))
@@ -58,19 +58,19 @@ class FindProfileByIdRepositoryTest extends BasePersistenceTest {
 	}
 
 	@Test
-	void getProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
+	void findProfileFetchFavoriteIdsById_성공_즐겨찾기가_없어도() {
 		//given
 		final Profile savedProfile = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
 
 		//when
-		final Profile findProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(savedProfile.getId());
+		final Profile findProfile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(savedProfile.getId());
 
 		//then
 		assertThat(findProfile).isEqualTo(savedProfile);
 	}
 
 	@Test
-	void getProfileFetchFollows_성공() {
+	void findProfileFetchFollows_성공() {
 		//given
 		final Profile follower = 사용자_프로필_동시_저장("follower@gmail.com", GOOGLE, "follower", IT);
 		final Profile profile1 = 사용자_프로필_동시_저장("user1@gmail.com", GOOGLE, "user1", IT);
@@ -83,7 +83,7 @@ class FindProfileByIdRepositoryTest extends BasePersistenceTest {
 		팔로우_저장(follower, profile3);
 
 		//when
-		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(follower.getId());
+		final Profile profile = findProfileByIdRepository.findProfileFetchFollows(follower.getId());
 
 		//then
 		assertThat(profile.isFollows(List.of(profile1, profile2, profile3, profile4)))

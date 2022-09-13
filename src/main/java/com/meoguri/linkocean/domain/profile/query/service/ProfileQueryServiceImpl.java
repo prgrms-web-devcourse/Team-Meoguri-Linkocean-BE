@@ -31,8 +31,8 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 	@Override
 	public GetDetailedProfileResult getByProfileId(final long currentProfileId, final long targetProfileId) {
 		/* 프로필 조회 */
-		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(currentProfileId);
-		final Profile target = findProfileByIdRepository.getById(targetProfileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFollows(currentProfileId);
+		final Profile target = findProfileByIdRepository.findById(targetProfileId);
 
 		/* 추가 정보 조회 */
 		final boolean isFollow = profile.isFollow(target);
@@ -58,7 +58,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 		final ProfileFindCond findCond,
 		final Pageable pageable
 	) {
-		final Profile currentProfile = findProfileByIdRepository.getProfileFetchFollows(currentProfileId);
+		final Profile currentProfile = findProfileByIdRepository.findProfileFetchFollows(currentProfileId);
 
 		/* 프로필 목록 가져 오기 */
 		final Slice<Profile> profilesSlice = profileQueryRepository.findProfiles(findCond, pageable);

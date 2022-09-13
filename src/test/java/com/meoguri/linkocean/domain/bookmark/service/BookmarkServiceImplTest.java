@@ -93,7 +93,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 			final long invalidId = -1L;
 
 			//when then
-			assertThatDataIntegrityViolationException()
+			assertThatLinkoceanRuntimeException()
 				.isThrownBy(() -> 북마크_링크_메타데이터_동시_등록(invalidId, "www.youtube.com"));
 		}
 

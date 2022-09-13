@@ -38,10 +38,10 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void shareNotification(final ShareNotificationCommand command) {
 		/* 수신자 조회 */
-		final Profile receiver = findProfileByIdRepository.getProfileFetchFollows(command.getReceiverProfileId());
+		final Profile receiver = findProfileByIdRepository.findProfileFetchFollows(command.getReceiverProfileId());
 
 		/* 추가 정보 조회 */
-		final Profile sender = findProfileByIdRepository.getById(command.getSenderProfileId());
+		final Profile sender = findProfileByIdRepository.findById(command.getSenderProfileId());
 		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
 
 		/* 비즈니스 로직 검사 */

@@ -65,7 +65,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final String url = command.getUrl();
 
 		/* 연관 필드 조회 */
-		final Profile writer = findProfileByIdRepository.getById(writerId);
+		final Profile writer = findProfileByIdRepository.findById(writerId);
 		final Long linkMetadataId = findLinkMetadataByUrlQuery.findByUrl(url)
 			.map(BaseIdEntity::getId).orElse(null);
 
@@ -132,8 +132,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 		/* 추가 정보 조회 */
 		final Profile writer = bookmark.getWriter();
-		final boolean follow = findProfileByIdRepository.getProfileFetchFollows(profileId).isFollow(writer);
-		final boolean favorite = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId)
+		final boolean follow = findProfileByIdRepository.findProfileFetchFollows(profileId).isFollow(writer);
+		final boolean favorite = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profileId)
 			.isFavorite(bookmark);
 
 		final String linkMetaDataImage = bookmark.getLinkMetadataId()
@@ -173,8 +173,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Pageable pageable
 	) {
 		final long profileId = findCond.getCurrentUserProfileId();
-		final Profile profile = findProfileByIdRepository.getProfileFetchFollows(profileId);
-		final Profile target = findProfileByIdRepository.getById(findCond.getTargetProfileId());
+		final Profile profile = findProfileByIdRepository.findProfileFetchFollows(profileId);
+		final Profile target = findProfileByIdRepository.findById(findCond.getTargetProfileId());
 
 		/* 이용 가능한 open type 설정 */
 		findCond.setOpenType(profile.getAvailableBookmarkOpenType(target));
@@ -191,7 +191,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 				.map(Optional::get)
 				.collect(toList()));
 
-		final Profile currentUserProfile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
+		final Profile currentUserProfile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profileId);
 		final List<Boolean> isFavorites = currentUserProfile.isFavoriteBookmarks(bookmarks);
 
 		/* 결과 반환 */
@@ -204,7 +204,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 		final Pageable pageable
 	) {
 		final long profileId = findCond.getCurrentUserProfileId();
-		final Profile profile = findProfileByIdRepository.getProfileFetchFavoriteIdsById(profileId);
+		final Profile profile = findProfileByIdRepository.findProfileFetchFavoriteIdsById(profileId);
 
 		/* 북마크 조회 */
 		final Page<Bookmark> bookmarkPage = bookmarkRepository.findBookmarks(findCond, pageable);
