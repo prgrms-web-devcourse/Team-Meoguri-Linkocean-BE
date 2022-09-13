@@ -56,7 +56,10 @@ public class CustomProfileQueryRepositoryImpl extends Querydsl4RepositorySupport
 		return nullSafeBuilder(() -> profile.id.in(
 			select(follow.id.followeeId)
 				.from(follow)
-				.where(usernameContains(username), follow.id.followerId.eq(currentProfileId))
+				.where(
+					usernameContains(username),
+					follow.id.followerId.eq(currentProfileId)
+				)
 		));
 	}
 
