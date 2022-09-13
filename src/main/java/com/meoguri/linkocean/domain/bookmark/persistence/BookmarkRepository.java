@@ -33,16 +33,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	Optional<Long> findIdByWriterIdAndUrl(long writerId, String url);
 
-	/* 아이디로 전체 페치 조회 */
-	@Query("select distinct b "
-		+ "from Bookmark b "
-		+ "join fetch b.writer "
-		+ "left join fetch b.tagIds t "
-		+ "left join fetch b.reactions r "
-		+ "where b.id = :id "
-		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByIdFetchAll(long id);
-
 	/* 사용자가 작성한 북마크들의 카테고리 조회 */
 	@Query("select distinct b.category "
 		+ "from Bookmark b "
@@ -50,14 +40,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Custo
 		+ "and b.category is not null "
 		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
 	List<Category> findCategoryExistsBookmark(long writerId);
-
-	/* 아이디로 조회 리액션 페치 */
-	@Query("select distinct b "
-		+ "from Bookmark b "
-		+ "left join fetch b.reactions t "
-		+ "where b.id = :id "
-		+ "and b.status = com.meoguri.linkocean.domain.bookmark.entity.vo.BookmarkStatus.REGISTERED")
-	Optional<Bookmark> findByIdFetchReactions(long id);
 
 	default void updateLikeCount(long bookmarkId, ReactionType existedType, ReactionType requestType) {
 		if (requestType.equals(LIKE)) {

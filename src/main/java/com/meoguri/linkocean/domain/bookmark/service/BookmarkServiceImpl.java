@@ -22,6 +22,7 @@ import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.domain.bookmark.entity.vo.TagIds;
 import com.meoguri.linkocean.domain.bookmark.persistence.BookmarkRepository;
+import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdRepository;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.BookmarkFindCond;
 import com.meoguri.linkocean.domain.bookmark.persistence.dto.FindUsedTagIdWithCountResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
@@ -52,6 +53,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	private final NotificationService notificationService;
 
 	private final BookmarkRepository bookmarkRepository;
+	private final FindBookmarkByIdRepository findBookmarkByIdRepository;
 	private final FindProfileByIdRepository findProfileByIdRepository;
 
 	private final FindLinkMetadataByUrlQuery findLinkMetadataByUrlQuery;
@@ -126,9 +128,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	@Override
 	public GetDetailedBookmarkResult getDetailedBookmark(final long profileId, final long bookmarkId) {
 		/* 대상 북마크 조회 */
-		final Bookmark bookmark = bookmarkRepository
-			.findByIdFetchAll(bookmarkId)
-			.orElseThrow(() -> new LinkoceanRuntimeException(format("no such bookmark id :%d", bookmarkId)));
+		final Bookmark bookmark = findBookmarkByIdRepository.findByIdFetchAll(bookmarkId);
 
 		/* 추가 정보 조회 */
 		final Profile writer = bookmark.getWriter();

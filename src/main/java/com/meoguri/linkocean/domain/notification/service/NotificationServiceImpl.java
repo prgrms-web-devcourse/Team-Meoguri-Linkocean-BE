@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.bookmark.entity.Bookmark;
-import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdQuery;
+import com.meoguri.linkocean.domain.bookmark.persistence.FindBookmarkByIdRepository;
 import com.meoguri.linkocean.domain.notification.entity.Notification;
 import com.meoguri.linkocean.domain.notification.entity.vo.NotificationType;
 import com.meoguri.linkocean.domain.notification.persistence.NotificationRepository;
@@ -27,7 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationRepository notificationRepository;
 	private final FindProfileByIdRepository findProfileByIdRepository;
-	private final FindBookmarkByIdQuery findBookmarkByIdQuery;
+	private final FindBookmarkByIdRepository findBookmarkByIdRepository;
 
 	/**
 	 * 북마크 공유 알림 생성
@@ -42,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		/* 추가 정보 조회 */
 		final Profile sender = findProfileByIdRepository.findById(command.getSenderProfileId());
-		final Bookmark bookmark = findBookmarkByIdQuery.findById(command.getBookmarkId());
+		final Bookmark bookmark = findBookmarkByIdRepository.findById(command.getBookmarkId());
 
 		/* 비즈니스 로직 검사 */
 		final boolean isSenderFollowedByReceiver = receiver.isFollow(sender);
