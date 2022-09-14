@@ -46,6 +46,12 @@ jobs:
           chmod +x gradlew
           ./gradlew clean build
 
+      ## codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./build/reports/jacoco/test/jacocoTestReport.xml
+
       ## docker build & push to dockerhub
       - name: Docker build & push to dockerhub
         run: |
