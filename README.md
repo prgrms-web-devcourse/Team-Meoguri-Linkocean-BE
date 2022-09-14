@@ -106,14 +106,17 @@
 ![jacoco](https://img.shields.io/badge/jacoco-white.svg?style=Plastic&logo=jacoco&logoColor=red)
 ![Postman](https://img.shields.io/badge/postman-white?style=Plastic&logo=postman)
 
+테스트 커버리지 - [@codecov](https://app.codecov.io/gh/prgrms-web-devcourse/Team-Meoguri-Linkocean-BE)
+
 ## 🏗️ architecture
 
 ### Backend
+
 <img width="993" alt="스크린샷 2022-08-14 오후 1 38 01" src="https://user-images.githubusercontent.com/68465557/184539427-6c114d7a-d273-482d-99ee-c3ebc7203df1.png">
 
 ### CI/CD
-<img width="858" alt="스크린샷 2022-08-14 오후 1 36 38" src="https://user-images.githubusercontent.com/68465557/184539425-ddb7dd6a-7e24-491f-98a0-3b7b2187ec2f.png">
 
+<img width="858" alt="스크린샷 2022-08-14 오후 1 36 38" src="https://user-images.githubusercontent.com/68465557/184539425-ddb7dd6a-7e24-491f-98a0-3b7b2187ec2f.png">
 
 ### ERD
 ![ERD](images/erd.png)
