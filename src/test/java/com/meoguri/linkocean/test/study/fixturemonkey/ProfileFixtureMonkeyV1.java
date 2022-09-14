@@ -1,10 +1,14 @@
 package com.meoguri.linkocean.test.study.fixturemonkey;
 
+import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.RepeatedTest;
 
+import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
@@ -83,5 +87,24 @@ class ProfileFixtureMonkeyV1 {
 		assertThat(actual.getUsername()).hasSizeLessThanOrEqualTo(MAX_PROFILE_USERNAME_LENGTH);
 		assertThat(actual.getBio()).hasSizeLessThanOrEqualTo(MAX_PROFILE_BIO_LENGTH);
 		assertThat(actual.getImage()).hasSizeLessThanOrEqualTo(MAX_PROFILE_IMAGE_URL_LENGTH);
+	}
+
+	@RepeatedTest(100)
+	void customize() {
+		//given
+		final FixtureMonkey fixture = FixtureMonkey.builder()
+			.defaultGenerator(FieldReflectionArbitraryGenerator.INSTANCE)
+			.build();
+
+		//when
+		final Profile actual = fixture.giveMeBuilder(Profile.class)
+			.customize(Profile.class, p -> {
+				p.update("haha", "bio", "image", new FavoriteCategories(List.of(IT)));
+				return p;
+			}).sample();
+
+		assertThat(actual.getUsername()).isEqualTo("haha");
+		assertThat(actual.getBio()).isEqualTo("bio");
+		assertThat(actual.getImage()).isEqualTo("image");
 	}
 }
