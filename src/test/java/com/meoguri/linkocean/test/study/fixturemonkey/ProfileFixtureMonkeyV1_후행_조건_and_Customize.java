@@ -17,7 +17,7 @@ import com.navercorp.fixturemonkey.generator.FieldReflectionArbitraryGenerator;
 /**
  * 후행 조건을 이용해 단순 필드의 생성 제어
  */
-class ProfileFixtureMonkeyV1 {
+class ProfileFixtureMonkeyV1_후행_조건_and_Customize {
 
 	@RepeatedTest(100)
 	void 후행_조건을_이용해_id_값의_범위_제한() {

@@ -17,7 +17,7 @@ import com.navercorp.fixturemonkey.generator.FieldReflectionArbitraryGenerator;
 /**
  * set 이용한 단순 필드의 생성 제어
  */
-class ProfileFixtureMonkeyV2 {
+class ProfileFixtureMonkeyV2_단순_필드_생성_제어 {
 
 	@RepeatedTest(100)
 	void set_이용해_id_값의_범위_제한() {

@@ -24,7 +24,7 @@ import com.navercorp.fixturemonkey.generator.FieldReflectionArbitraryGenerator;
 /**
  * 컬렉션 필드의 생성 제어
  */
-class ProfileFixtureMonkeyV3 {
+class ProfileFixtureMonkeyV3_컬렉션_필드_생성_제어 {
 
 	@RepeatedTest(100)
 	void 필드의_컬렉션_크기를_제어하는_연산() {

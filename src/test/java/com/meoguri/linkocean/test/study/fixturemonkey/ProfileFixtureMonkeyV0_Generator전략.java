@@ -17,7 +17,7 @@ import com.navercorp.fixturemonkey.generator.FieldReflectionArbitraryGenerator;
 /**
  * 픽스처 몽키 깡통 테스트
  */
-class ProfileFixtureMonkeyV0 {
+class ProfileFixtureMonkeyV0_Generator전략 {
 
 	/**
 	 * setter 가 없기 때문에 BeanArbitraryGenerator 를 사용 할 수 없음
