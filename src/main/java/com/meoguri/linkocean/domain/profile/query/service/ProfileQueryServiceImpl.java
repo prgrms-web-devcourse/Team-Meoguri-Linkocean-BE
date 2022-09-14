@@ -38,8 +38,8 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 
 		/* 추가 정보 조회 */
 		final boolean isFollow = profile.isFollow(target);
-		final int followerCount = profileQueryRepository.getFollowerCount(target);
-		final int followeeCount = profileQueryRepository.getFolloweeCount(target);
+		final int followerCount = profileQueryRepository.getFollowerCount(target.getId());
+		final int followeeCount = profileQueryRepository.getFolloweeCount(target.getId());
 
 		/* 결과 반환 */
 		return new GetDetailedProfileResult(

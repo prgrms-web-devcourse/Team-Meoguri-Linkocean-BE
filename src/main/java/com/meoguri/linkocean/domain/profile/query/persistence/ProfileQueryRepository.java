@@ -24,12 +24,12 @@ public interface ProfileQueryRepository extends JpaRepository<Profile, Long>, Cu
 	/* user 를 팔로우 하는 사용자의 카운트 */
 	@Query("select count(f) "
 		+ "from Follow f "
-		+ "where f.id.follower = :profile")
-	int getFolloweeCount(Profile profile);
+		+ "where f.id.followerId = :profileId")
+	int getFolloweeCount(long profileId);
 
 	/* user 가 팔로우 하는 사용자의 카운트 */
 	@Query("select count(f) "
 		+ "from Follow f "
-		+ "where f.id.followee = :profile")
-	int getFollowerCount(Profile profile);
+		+ "where f.id.followeeId = :profileId")
+	int getFollowerCount(long profileId);
 }

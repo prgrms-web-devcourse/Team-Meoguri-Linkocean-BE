@@ -81,7 +81,7 @@ class CustomProfileQueryRepositoryImplTest extends BasePersistenceTest {
 			.build();
 
 		//when
-		final Slice<Profile> followerSlice = customProfileQueryRepository.findProfiles(cond, pageable);
+		final Slice<Profile> followerSlice = pretty(() -> customProfileQueryRepository.findProfiles(cond, pageable));
 
 		//then
 		assertThat(followerSlice).containsExactly(profile1);
@@ -100,7 +100,7 @@ class CustomProfileQueryRepositoryImplTest extends BasePersistenceTest {
 		ProfileFindCond cond3 = ProfileFindCond.builder().profileId(profileId3).followee(true).build();
 
 		//when
-		final Slice<Profile> followeeSlice1 = customProfileQueryRepository.findProfiles(cond1, pageable);
+		final Slice<Profile> followeeSlice1 = pretty(() -> customProfileQueryRepository.findProfiles(cond1, pageable));
 		final Slice<Profile> followeeSlice2 = customProfileQueryRepository.findProfiles(cond2, pageable);
 		final Slice<Profile> followeeSlice3 = customProfileQueryRepository.findProfiles(cond3, pageable);
 
@@ -124,7 +124,7 @@ class CustomProfileQueryRepositoryImplTest extends BasePersistenceTest {
 			.build();
 
 		//when
-		final Slice<Profile> followerSlice = customProfileQueryRepository.findProfiles(cond, pageable);
+		final Slice<Profile> followerSlice = pretty(() -> customProfileQueryRepository.findProfiles(cond, pageable));
 
 		//then
 		assertThat(followerSlice).containsExactly(profile3);
