@@ -86,6 +86,10 @@ jobs:
           gistURL: https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c
           file: badge.svg
 
+      ## codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+
       ## slack notification
       - name: GitHub Actions Pull Request Notification
         uses: 8398a7/action-slack@v3
