@@ -33,7 +33,7 @@ import com.meoguri.linkocean.domain.bookmark.persistence.dto.GetBookmarkQueryPar
 import com.meoguri.linkocean.domain.bookmark.service.BookmarkService;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetBookmarksResult;
 import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
-import com.meoguri.linkocean.support.controller.PageResponse;
+import com.meoguri.linkocean.support.controller.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 

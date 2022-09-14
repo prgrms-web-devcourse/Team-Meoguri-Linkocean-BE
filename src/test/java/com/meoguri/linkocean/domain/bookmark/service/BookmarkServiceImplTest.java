@@ -541,7 +541,7 @@ class BookmarkServiceImplTest extends BaseServiceTest {
 	@Test
 	void 중복_url_확인_성공() {
 		//given
-		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "haha", IT);
+		final long profileId = 사용자_프로필_동시_등록("haha@gmail.com", GOOGLE, "papa", IT);
 		final long bookmarkId = 북마크_링크_메타데이터_동시_등록(profileId, "www.google.com");
 
 		//when

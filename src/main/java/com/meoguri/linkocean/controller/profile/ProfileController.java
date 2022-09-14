@@ -35,7 +35,7 @@ import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCon
 import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.support.controller.SliceResponse;
+import com.meoguri.linkocean.support.controller.dto.SliceResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

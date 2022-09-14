@@ -10,7 +10,6 @@ import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileC
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ProfileServiceImpl implements ProfileService {
 
 	private final UserService userService;
-	private final ProfileQueryService profileQueryService;
 
 	private final ProfileRepository profileRepository;
 
@@ -53,7 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
 		final String updateUsername = command.getUsername();
 
 		/* 프로필 조회 */
-		final Profile profile = profileQueryService.findById(profileId);
+		final Profile profile = profileRepository.findById(profileId);
 
 		/* 비즈니스 로직 검증 - 프로필의 [유저 이름]은 중복 될 수 없다 */
 		final boolean exists = profileRepository.existsByUsernameExceptMe(updateUsername, profileId);

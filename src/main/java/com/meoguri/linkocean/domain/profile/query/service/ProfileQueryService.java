@@ -3,7 +3,6 @@ package com.meoguri.linkocean.domain.profile.query.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetProfilesResult;
@@ -21,9 +20,4 @@ public interface ProfileQueryService {
 	 */
 	Slice<GetProfilesResult> getProfiles(long currentProfileId, ProfileFindCond searchCond, Pageable pageable);
 
-	Profile findById(long profileId);
-
-	Profile findProfileFetchFavoriteById(long profileId);
-
-	Profile findProfileFetchFollows(long profileId);
 }

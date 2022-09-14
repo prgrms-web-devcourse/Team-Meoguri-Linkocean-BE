@@ -1,11 +1,9 @@
 package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
 import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
@@ -34,10 +32,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 	private LinkMetadata linkMetadata;
 
-	private long tagId1;
-	private long tagId2;
-	private long tagId3;
-
 	@BeforeEach
 	void setUp() {
 		// 프로필, 링크 셋업
@@ -47,9 +41,9 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 		linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
 
 		// 태그 셋업
-		tagId1 = 태그_저장("tag1").getId();
-		tagId2 = 태그_저장("tag2").getId();
-		tagId3 = 태그_저장("tag3").getId();
+		태그_저장("tag1");
+		태그_저장("tag2");
+		태그_저장("tag3");
 	}
 
 	@Test
@@ -63,22 +57,6 @@ class BookmarkRepositoryTest extends BasePersistenceTest {
 
 		//then
 		assertThat(oFoundBookmark).isPresent().get().isEqualTo(savedBookmark);
-	}
-
-	@Test
-	void 아이디로_전체_페치_조회_성공() {
-		//given
-		final Bookmark savedBookmark = 북마크_저장(writer, linkMetadata, "title", "memo", ALL, IT, "www.google.com", tagId1);
-
-		//when
-		final Optional<Bookmark> oFindBookmark = bookmarkRepository.findByIdFetchAll(savedBookmark.getId());
-
-		//then
-		assertAll(
-			() -> assertThat(oFindBookmark).isPresent(),
-			() -> assertThat(isLoaded(oFindBookmark.get().getWriter())).isEqualTo(true),
-			() -> assertThat(oFindBookmark.get().getTagIds()).containsExactly(tagId1)
-		);
 	}
 
 	@Test
