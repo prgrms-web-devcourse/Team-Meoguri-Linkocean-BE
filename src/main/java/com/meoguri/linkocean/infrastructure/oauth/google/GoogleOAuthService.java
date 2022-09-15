@@ -85,7 +85,7 @@ public class GoogleOAuthService implements OAuthService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken);
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity(headers);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(
 			USERINFO_REQUEST_URL,
 			HttpMethod.GET,
