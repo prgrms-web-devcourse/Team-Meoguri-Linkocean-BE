@@ -43,7 +43,7 @@ public class GoogleOAuthService implements OAuthService {
 		params.put("redirect_uri", googleOAuthProperties.getRedirectUrl());
 
 		String redirectUrl = makeRedirectUrl(params);
-		log.info("google redirect url : %s", redirectUrl);
+		log.info("google redirect url : {}", redirectUrl);
 
 		return redirectUrl;
 	}
@@ -72,7 +72,7 @@ public class GoogleOAuthService implements OAuthService {
 			throw new IllegalArgumentException("access token을 응답 받지 못했습니다.");
 		}
 
-		return convertToGoogleAuthToken(responseEntity.getBody()).getAccess_token();
+		return convertToGoogleAuthToken(responseEntity.getBody()).getAccessToken();
 	}
 
 	private GoogleOAuthToken convertToGoogleAuthToken(final String body) throws JsonProcessingException {
