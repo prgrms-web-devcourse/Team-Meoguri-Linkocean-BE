@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.configuration;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -10,19 +10,19 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 public class RestTemplateConfig {
 
-	@Bean
-	public RestTemplateBuilder restTemplateBuilder() {
-		return new RestTemplateBuilder();
-	}
+	private final RestTemplateBuilder restTemplateBuilder;
 
 	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+	public RestTemplate restTemplate() {
 		return restTemplateBuilder
 			.requestFactory(() -> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
-			.additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
+			.additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
 			.build();
 	}
 }
