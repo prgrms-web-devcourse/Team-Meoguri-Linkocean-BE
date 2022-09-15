@@ -1,14 +1,25 @@
 package com.meoguri.linkocean.infrastructure.oauth.google;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public class GoogleOAuthToken {
-	private String access_token;
-	private int expires_in;
+
+	@JsonProperty("access_token")
+	private String accessToken;
+
+	@JsonProperty("expires_in")
+	private int expiresIn;
+
 	private String scope;
-	private String token_type;
-	private String id_token;
+
+	@JsonProperty("token_type")
+	private String tokenType;
+
+	@JsonProperty("id_token")
+	private String idToken;
 }
