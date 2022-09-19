@@ -16,7 +16,7 @@ public class AuthenticationService {
 	public String getRedirectUrl(final OAuthType oAuthType) {
 
 		if (oAuthType != OAuthType.GOOGLE) {
-			throw new IllegalArgumentException("알 수 없는 소셜 로그인 입니다.");
+			throw new IllegalArgumentException("구글 소셜 로그인만 지원되는 기능입니다.");
 		}
 
 		return oAuthClient.getRedirectUrl();
@@ -24,9 +24,9 @@ public class AuthenticationService {
 
 	public Email authenticate(final OAuthType oAuthType, final String authorizationCode) {
 
-		//TODO 벤더사 추가 쉽도록 확장성 있게 리팩토링하기
+		//TODO 벤더사 추가 쉽도록 확장성 있게 리팩토링하기, 아직 구글만 지원함.
 		if (oAuthType != OAuthType.GOOGLE) {
-			throw new IllegalArgumentException("알 수 없는 소셜 로그인 입니다.");
+			throw new IllegalArgumentException("구글 소셜 로그인만 지원되는 기능입니다.");
 		}
 
 		final String accessToken = oAuthClient.getAccessToken(authorizationCode);
