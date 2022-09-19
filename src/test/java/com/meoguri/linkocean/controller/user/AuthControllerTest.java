@@ -16,16 +16,19 @@ import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class AuthControllerTest extends BaseControllerTest {
 
+	private final String basePath = getBaseUrl(AuthController.class);
+
 	@MockBean
 	private OAuthClient oAuthClient;
 
 	@Test
 	void 사용자_인증_api_성공() throws Exception {
 		//given
+		final String oAuthType = "google";
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
 
 		//when
-		final ResultActions perform = mockMvc.perform(post("/api/v1/auth/google")
+		final ResultActions perform = mockMvc.perform(post(basePath + "/{oAuthType}", oAuthType)
 			.param("code", "code")
 			.accept(APPLICATION_JSON));
 
