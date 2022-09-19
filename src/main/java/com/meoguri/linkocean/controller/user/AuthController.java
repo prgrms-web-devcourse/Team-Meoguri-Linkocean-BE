@@ -30,14 +30,14 @@ public class AuthController {
 	//TODO: 프론트랑 통합하면 해당 API는 없어질 예정
 	@Deprecated
 	@GetMapping("/{oAuthType}/temp")
-	public void socialLoginRedirect(
+	public void redirectToAuthorizationUri(
 		@PathVariable("oAuthType") String oAuthType,
 		HttpServletResponse response) throws IOException {
 
 		final OAuthType type = OAuthType.of(oAuthType.toUpperCase());
-		final String redirectUrl = authenticationService.getRedirectUrl(type);
+		final String authorizationUri = authenticationService.getAuthorizationUri(type);
 
-		response.sendRedirect(redirectUrl);
+		response.sendRedirect(authorizationUri);
 	}
 
 	//TODO: 프론트랑 통합하면 HTTP METHOD POST로 변경하기

@@ -31,17 +31,17 @@ public class GoogleOAuthClient implements OAuthClient {
 	private final ObjectMapper objectMapper;
 
 	@Override
-	public String getRedirectUrl() {
+	public String getAuthorizationUri() {
 
-		String redirectUri = UriComponentsBuilder.fromHttpUrl(googleOAuthProperties.getAuthorizationUri())
+		String authorizationUri = UriComponentsBuilder.fromHttpUrl(googleOAuthProperties.getAuthorizationUri())
 			.queryParam("scope", googleOAuthProperties.getScope())
 			.queryParam("response_type", googleOAuthProperties.getResponseType())
 			.queryParam("client_id", googleOAuthProperties.getClientId())
 			.queryParam("redirect_uri", googleOAuthProperties.getRedirectUri())
 			.build().encode().toString();
-		log.info("google redirect url : {}", redirectUri);
+		log.info("google authorization url : {}", authorizationUri);
 
-		return redirectUri;
+		return authorizationUri;
 	}
 
 	@Override
