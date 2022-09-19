@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.AuthenticationService;
 
@@ -45,11 +43,9 @@ public class AuthController {
 	public Map<String, Object> authenticate(
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestParam("code") String code
-	) throws JsonProcessingException {
-		OAuthType type = OAuthType.of(oAuthType.toUpperCase());
-		final Email email = authenticationService.authenticate(type, code);
-
-		//TODO: refresh token, redis 도입하기
-		return Map.of("token", jwtProvider.generate(email, type));
+	) {
+		final String jwt = authenticationService.authenticate(OAuthType.of(oAuthType.toUpperCase()), code);
+		
+		return Map.of("token", jwt);
 	}
 }
