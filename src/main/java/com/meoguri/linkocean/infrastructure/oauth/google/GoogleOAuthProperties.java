@@ -12,10 +12,14 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "oauth.google")
 public class GoogleOAuthProperties {
 
-	private String url;
 	private String clientId;
 	private String clientSecret;
 	private String scope;
 	private String grantType;
-	private String redirectUrl;
+	private String redirectUri;
+	private String responseType;
+
+	private String authorizationUri;
+	private String tokenUri;
+	private String userInfoUri;
 }
