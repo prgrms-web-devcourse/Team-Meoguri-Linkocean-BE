@@ -1,6 +1,7 @@
 package com.meoguri.linkocean.controller.user;
 
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -39,8 +40,8 @@ public class AuthController {
 		return new ResponseEntity<>(headers, PERMANENT_REDIRECT);
 	}
 
-	//TODO: 프론트랑 통합하면 HTTP METHOD POST로 변경하기
-	@GetMapping("/{oAuthType}")
+	//TODO: 프론트랑 통합하면 HTTP METHOD GET 제거하기
+	@RequestMapping(value = "/{oAuthType}", method = {GET, POST})
 	public Map<String, Object> authenticate(
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestParam("code") String code
