@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.domain.user.service.AuthenticationService;
 
@@ -25,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final AuthenticationService authenticationService;
-	private final JwtProvider jwtProvider;
 
 	//TODO: 프론트랑 통합하면 해당 API는 없어질 예정
 	@Deprecated
