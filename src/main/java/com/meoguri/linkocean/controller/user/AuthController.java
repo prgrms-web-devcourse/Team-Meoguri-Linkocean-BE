@@ -1,10 +1,12 @@
 package com.meoguri.linkocean.controller.user;
 
-import java.io.IOException;
+import static org.springframework.http.HttpStatus.*;
+
+import java.net.URI;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +30,15 @@ public class AuthController {
 	//TODO: 프론트랑 통합하면 해당 API는 없어질 예정
 	@Deprecated
 	@GetMapping("/{oAuthType}/temp")
-	public void redirectToAuthorizationUri(
-		@PathVariable("oAuthType") String oAuthType,
-		HttpServletResponse response) throws IOException {
+	public ResponseEntity<Void> redirectToAuthorizationUri(
+		@PathVariable("oAuthType") String oAuthType
+	) {
+		final String authorizationUri = authenticationService.getAuthorizationUri(
+			OAuthType.of(oAuthType.toUpperCase()));
 
-		final OAuthType type = OAuthType.of(oAuthType.toUpperCase());
-		final String authorizationUri = authenticationService.getAuthorizationUri(type);
-
-		response.sendRedirect(authorizationUri);
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(URI.create(authorizationUri));
+		return new ResponseEntity<>(headers, PERMANENT_REDIRECT);
 	}
 
 	//TODO: 프론트랑 통합하면 HTTP METHOD POST로 변경하기
@@ -45,7 +48,7 @@ public class AuthController {
 		@RequestParam("code") String code
 	) {
 		final String jwt = authenticationService.authenticate(OAuthType.of(oAuthType.toUpperCase()), code);
-		
+
 		return Map.of("token", jwt);
 	}
 }
