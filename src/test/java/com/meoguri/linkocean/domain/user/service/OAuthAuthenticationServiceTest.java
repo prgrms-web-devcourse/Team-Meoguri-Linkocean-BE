@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.infrastructure.oauth.google.GoogleOAuthClient;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class OAuthAuthenticationServiceTest extends BaseServiceTest {
@@ -20,7 +19,7 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 	private OAuthAuthenticationService oAuthAuthenticationService;
 
 	@MockBean
-	private GoogleOAuthClient googleOAuthClient;
+	private OAuthClient oAuthClient;
 
 	@AfterEach
 	void cleanup() {
@@ -32,7 +31,7 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 		//given
 		final String authorizationCode = "code";
 
-		given(googleOAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
+		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
 
 		//when
 		final String jwt = oAuthAuthenticationService.authenticate(GOOGLE, authorizationCode);
