@@ -35,8 +35,7 @@ public class CustomRestControllerAdvice {
 
 		return ErrorResponse.of(BAD_REQUEST, ex.getMessage(), isProd, ex);
 	}
-
-	//질문? RuntimeException 타입을 잡으면 LinkoceanException도 잘못된 요청으로 응답되지 않나요..?
+	
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler({RuntimeException.class, ServletException.class})
 	public ErrorResponse handleBadRequestException(final Exception ex) {
