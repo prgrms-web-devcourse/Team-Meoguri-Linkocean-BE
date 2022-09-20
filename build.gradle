@@ -87,6 +87,7 @@ dependencies {
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     testImplementation 'io.findify:s3mock_2.12:0.2.6'
+    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:0.3.5'
 }
 
 /* layer test tasks */

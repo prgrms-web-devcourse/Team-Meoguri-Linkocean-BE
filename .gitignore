@@ -48,3 +48,6 @@ spy.log
 
 ### Rest Docs
 /src/main/resources/static/docs/
+
+### fixture monkey -> jqwik
+.jqwik-database
