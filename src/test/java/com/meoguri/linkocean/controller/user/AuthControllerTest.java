@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.service.OAuthClient;
+import com.meoguri.linkocean.exception.OAuthException;
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class AuthControllerTest extends BaseControllerTest {
@@ -36,6 +37,23 @@ class AuthControllerTest extends BaseControllerTest {
 		perform
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.token").exists())
+			.andDo(print());
+	}
+
+	@Test
+	void 사용자_인증_api_실패() throws Exception {
+		//given
+		final String oAuthType = "google";
+		given(oAuthClient.getUserEmail(any())).willThrow(new OAuthException("OAuth 로그인에 실패했습니다."));
+
+		//when
+		final ResultActions perform = mockMvc.perform(post(basePath + "/{oAuthType}", oAuthType)
+			.param("code", "code")
+			.accept(APPLICATION_JSON));
+
+		//then
+		perform
+			.andExpect(status().is5xxServerError())
 			.andDo(print());
 	}
 }

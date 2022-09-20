@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.meoguri.linkocean.exception.OAuthException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class CustomRestControllerAdvice {
 		return ErrorResponse.of(BAD_REQUEST, ex.getMessage(), isProd, ex);
 	}
 
+	//질문? RuntimeException 타입을 잡으면 LinkoceanException도 잘못된 요청으로 응답되지 않나요..?
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler({RuntimeException.class, ServletException.class})
 	public ErrorResponse handleBadRequestException(final Exception ex) {
@@ -43,7 +46,7 @@ public class CustomRestControllerAdvice {
 	}
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({Exception.class, OAuthException.class})
 	public ErrorResponse handleServerException(final Exception ex) {
 		log.error(ex.getMessage(), ex);
 
