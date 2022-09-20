@@ -28,8 +28,9 @@ class DependencyRuleTest {
 			.layer("Controller").definedBy(controllerDescribe())
 			.layer("Service").definedBy(serviceDescribe())
 			.layer("Persistence").definedBy("..persistence..")
+			.layer("Infrastructure").definedBy("..infrastructure..")
 			.whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration", "Controller")
+			.whereLayer("Service").mayOnlyBeAccessedByLayers("Configuration", "Controller", "Infrastructure")
 			.whereLayer("Persistence").mayOnlyBeAccessedByLayers("Controller", "Service")
 			.check(importPackages);
 	}

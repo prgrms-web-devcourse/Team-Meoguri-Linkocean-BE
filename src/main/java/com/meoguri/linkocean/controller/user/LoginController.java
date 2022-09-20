@@ -28,6 +28,7 @@ public class LoginController {
 	private final JwtProvider jwtProvider;
 
 	/* 로그인 - 토큰을 반환한다 */
+	@Deprecated
 	@PostMapping
 	public Map<String, Object> login(
 		@RequestBody LoginRequest request

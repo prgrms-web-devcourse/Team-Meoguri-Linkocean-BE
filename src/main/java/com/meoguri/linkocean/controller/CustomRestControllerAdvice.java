@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.meoguri.linkocean.exception.OAuthException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,7 @@ public class CustomRestControllerAdvice {
 	}
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({Exception.class, OAuthException.class})
 	public ErrorResponse handleServerException(final Exception ex) {
 		log.error(ex.getMessage(), ex);
 
