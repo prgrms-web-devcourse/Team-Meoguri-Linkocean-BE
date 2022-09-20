@@ -35,7 +35,7 @@ public class CustomRestControllerAdvice {
 
 		return ErrorResponse.of(BAD_REQUEST, ex.getMessage(), isProd, ex);
 	}
-	
+
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler({RuntimeException.class, ServletException.class})
 	public ErrorResponse handleBadRequestException(final Exception ex) {
