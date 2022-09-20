@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,11 +19,6 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 
 	@MockBean
 	private OAuthClient oAuthClient;
-
-	@AfterEach
-	void cleanup() {
-		databaseCleanup.execute();
-	}
 
 	@Test
 	void 사용자_인증_성공() {
