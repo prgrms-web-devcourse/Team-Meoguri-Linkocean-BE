@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.service.AuthenticationService;
+import com.meoguri.linkocean.domain.user.service.OAuthAuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class AuthController {
 
-	private final AuthenticationService authenticationService;
+	private final OAuthAuthenticationService oAuthAuthenticationService;
 
 	//TODO: 프론트랑 통합하면 해당 API는 없어질 예정
 	@Deprecated
@@ -32,7 +32,7 @@ public class AuthController {
 	public ResponseEntity<Void> redirectToAuthorizationUri(
 		@PathVariable("oAuthType") String oAuthType
 	) {
-		final String authorizationUri = authenticationService.getAuthorizationUri(
+		final String authorizationUri = oAuthAuthenticationService.getAuthorizationUri(
 			OAuthType.of(oAuthType.toUpperCase()));
 
 		final HttpHeaders headers = new HttpHeaders();
@@ -46,7 +46,7 @@ public class AuthController {
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestParam("code") String code
 	) {
-		final String jwt = authenticationService.authenticate(OAuthType.of(oAuthType.toUpperCase()), code);
+		final String jwt = oAuthAuthenticationService.authenticate(OAuthType.of(oAuthType.toUpperCase()), code);
 
 		return Map.of("token", jwt);
 	}
