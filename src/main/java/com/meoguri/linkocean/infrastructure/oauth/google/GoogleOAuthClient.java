@@ -45,14 +45,14 @@ public class GoogleOAuthClient implements OAuthClient {
 	}
 
 	@Override
-	public String getAccessToken(final String authorizationCode) {
+	public String getAccessToken(final String authorizationCode, final String redirectUri) {
 
 		final HashMap<String, Object> params = new HashMap<>();
 		params.put("code", authorizationCode);
 		params.put("client_id", googleOAuthProperties.getClientId());
 		params.put("client_secret", googleOAuthProperties.getClientSecret());
 		params.put("grant_type", googleOAuthProperties.getGrantType());
-		params.put("redirect_uri", googleOAuthProperties.getRedirectUri());
+		params.put("redirect_uri", redirectUri);
 
 		final ResponseEntity<String> responseEntity = restTemplate.postForEntity(
 			googleOAuthProperties.getTokenUri(),
