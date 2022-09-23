@@ -37,7 +37,7 @@ public class GoogleOAuthClient implements OAuthClient {
 			.queryParam("scope", googleOAuthProperties.getScope())
 			.queryParam("response_type", googleOAuthProperties.getResponseType())
 			.queryParam("client_id", googleOAuthProperties.getClientId())
-			.queryParam("redirect_uri", googleOAuthProperties.getRedirectUri())
+			.queryParam("redirect_uri", "https://localhost/api/v1/auth/google")
 			.build().encode().toString();
 		log.info("google authorization url : {}", authorizationUri);
 

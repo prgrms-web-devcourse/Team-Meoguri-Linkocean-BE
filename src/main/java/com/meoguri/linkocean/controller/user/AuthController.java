@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
@@ -27,7 +28,7 @@ public class AuthController {
 
 	private final OAuthAuthenticationService oAuthAuthenticationService;
 
-	//TODO: 프론트랑 통합하면 해당 API는 없어질 예정
+	/* 테스트용 API - 프론트 역할 */
 	@Deprecated
 	@GetMapping("/{oAuthType}/temp")
 	public ResponseEntity<Void> redirectToAuthorizationUri(
@@ -39,6 +40,17 @@ public class AuthController {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(URI.create(authorizationUri));
 		return new ResponseEntity<>(headers, PERMANENT_REDIRECT);
+	}
+
+	/* 테스트용 API - 프론트 역할 */
+	@Deprecated
+	@GetMapping("/{oAuthType}")
+	public Map<String, Object> authenticate(
+		@PathVariable("oAuthType") String oAuthType,
+		@RequestParam("code") String code
+	) {
+		final AuthRequest request = new AuthRequest(code, "https://localhost/api/v1/auth/google");
+		return authenticate(oAuthType, request);
 	}
 
 	@PostMapping("/{oAuthType}")
