@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.domain.user.entity.vo.Email;
 import com.meoguri.linkocean.domain.user.service.OAuthClient;
 import com.meoguri.linkocean.exception.OAuthException;
@@ -26,11 +27,14 @@ class AuthControllerTest extends BaseControllerTest {
 	void 사용자_인증_api_성공() throws Exception {
 		//given
 		final String oAuthType = "google";
+		final AuthRequest request = new AuthRequest("code", "http://localhost/redirect");
+
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
 
 		//when
 		final ResultActions perform = mockMvc.perform(post(basePath + "/{oAuthType}", oAuthType)
-			.param("code", "code")
+			.contentType(APPLICATION_JSON)
+			.content(createJson(request))
 			.accept(APPLICATION_JSON));
 
 		//then
@@ -44,11 +48,14 @@ class AuthControllerTest extends BaseControllerTest {
 	void 사용자_인증_api_실패() throws Exception {
 		//given
 		final String oAuthType = "google";
+		final AuthRequest request = new AuthRequest("code", "http://localhost/redirect");
+
 		given(oAuthClient.getUserEmail(any())).willThrow(new OAuthException("OAuth 로그인에 실패했습니다."));
 
 		//when
 		final ResultActions perform = mockMvc.perform(post(basePath + "/{oAuthType}", oAuthType)
-			.param("code", "code")
+			.contentType(APPLICATION_JSON)
+			.content(createJson(request))
 			.accept(APPLICATION_JSON));
 
 		//then

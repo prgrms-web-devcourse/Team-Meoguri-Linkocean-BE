@@ -48,6 +48,8 @@ class GoogleOAuthClientTest {
 	void access_token_발급_요청_성공() throws JsonProcessingException {
 		//given
 		final String authorizationCode = "code";
+		final String redirectUri = "http://localhost/redirectUri";
+
 		final String accessToken = "access token";
 		final GoogleOAuthToken googleOAuthToken = new GoogleOAuthToken(
 			accessToken,
@@ -61,13 +63,13 @@ class GoogleOAuthClientTest {
 		params.put("client_id", googleOAuthProperties.getClientId());
 		params.put("client_secret", googleOAuthProperties.getClientSecret());
 		params.put("grant_type", googleOAuthProperties.getGrantType());
-		params.put("redirect_uri", googleOAuthProperties.getRedirectUri());
+		params.put("redirect_uri", redirectUri);
 
 		given(restTemplate.postForEntity(googleOAuthProperties.getTokenUri(), params, String.class))
 			.willReturn(ResponseEntity.ok(objectMapper.writeValueAsString(googleOAuthToken)));
 
 		//when
-		final String responseAccessToken = googleOAuthClient.getAccessToken(authorizationCode);
+		final String responseAccessToken = googleOAuthClient.getAccessToken(authorizationCode, redirectUri);
 
 		//then
 		assertThat(accessToken).isEqualTo(responseAccessToken);
