@@ -5,4 +5,4 @@
 
 === 사용자 인증
 
-operation::/auth-rest-docs-test/사용자_인증_api/[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
+operation::/auth-rest-docs-test/사용자_인증_api/[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
