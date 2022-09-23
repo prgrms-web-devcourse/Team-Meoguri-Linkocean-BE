@@ -30,6 +30,8 @@ public class GoogleOAuthClient implements OAuthClient {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 
+	/* 테스트 용도 */
+	@Deprecated
 	@Override
 	public String getAuthorizationUri() {
 

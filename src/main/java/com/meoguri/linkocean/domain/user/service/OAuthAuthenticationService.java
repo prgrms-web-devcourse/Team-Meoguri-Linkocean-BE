@@ -17,7 +17,7 @@ public class OAuthAuthenticationService {
 
 	private final UserService userService;
 
-	/* oAuthType에 맞는 소셜 로그인 uri를 반환한다. */
+	/* oAuthType에 맞는 소셜 로그인 uri를 반환한다.- 테스트용 */
 	@Deprecated
 	public String getAuthorizationUri(final OAuthType oAuthType) {
 
