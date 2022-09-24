@@ -16,7 +16,6 @@ public class GoogleOAuthProperties {
 	private String clientSecret;
 	private String scope;
 	private String grantType;
-	private String redirectUri;
 	private String responseType;
 
 	private String authorizationUri;

@@ -24,11 +24,12 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 	void 사용자_인증_성공() {
 		//given
 		final String authorizationCode = "code";
+		final String redirectUri = "http://localhost/redirectUri";
 
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
 
 		//when
-		final String jwt = oAuthAuthenticationService.authenticate(GOOGLE, authorizationCode);
+		final String jwt = oAuthAuthenticationService.authenticate(GOOGLE, authorizationCode, redirectUri);
 
 		//then
 		assertThat(jwt).isNotBlank();

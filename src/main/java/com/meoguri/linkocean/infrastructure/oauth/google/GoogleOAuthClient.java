@@ -30,6 +30,8 @@ public class GoogleOAuthClient implements OAuthClient {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 
+	/* 테스트 용도 */
+	@Deprecated
 	@Override
 	public String getAuthorizationUri() {
 
@@ -37,7 +39,7 @@ public class GoogleOAuthClient implements OAuthClient {
 			.queryParam("scope", googleOAuthProperties.getScope())
 			.queryParam("response_type", googleOAuthProperties.getResponseType())
 			.queryParam("client_id", googleOAuthProperties.getClientId())
-			.queryParam("redirect_uri", googleOAuthProperties.getRedirectUri())
+			.queryParam("redirect_uri", "https://localhost/api/v1/auth/google")
 			.build().encode().toString();
 		log.info("google authorization url : {}", authorizationUri);
 
@@ -45,14 +47,14 @@ public class GoogleOAuthClient implements OAuthClient {
 	}
 
 	@Override
-	public String getAccessToken(final String authorizationCode) {
+	public String getAccessToken(final String authorizationCode, final String redirectUri) {
 
 		final HashMap<String, Object> params = new HashMap<>();
 		params.put("code", authorizationCode);
 		params.put("client_id", googleOAuthProperties.getClientId());
 		params.put("client_secret", googleOAuthProperties.getClientSecret());
 		params.put("grant_type", googleOAuthProperties.getGrantType());
-		params.put("redirect_uri", googleOAuthProperties.getRedirectUri());
+		params.put("redirect_uri", redirectUri);
 
 		final ResponseEntity<String> responseEntity = restTemplate.postForEntity(
 			googleOAuthProperties.getTokenUri(),
