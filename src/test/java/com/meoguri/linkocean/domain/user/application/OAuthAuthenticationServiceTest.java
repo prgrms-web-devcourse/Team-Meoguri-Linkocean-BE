@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.service;
+package com.meoguri.linkocean.domain.user.application;
 
 import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
