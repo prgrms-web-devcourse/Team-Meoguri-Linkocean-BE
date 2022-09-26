@@ -39,6 +39,7 @@ public class User extends BaseIdEntity {
 	@Enumerated(STRING)
 	private OAuthType oauthType;
 
+	/* 고민 - profile을 User에서 참조하는게 어색하다고 느껴짐 */
 	@Getter(NONE)
 	@OneToOne(fetch = LAZY)
 	private Profile profile;
