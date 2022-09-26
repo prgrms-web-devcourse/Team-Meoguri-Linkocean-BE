@@ -30,10 +30,10 @@ import com.meoguri.linkocean.domain.profile.command.service.ProfileService;
 import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.domain.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.domain.user.model.Email;
-import com.meoguri.linkocean.domain.user.model.OAuthType;
-import com.meoguri.linkocean.domain.user.service.UserService;
-import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.UserService;
+import com.meoguri.linkocean.domain.user.domain.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
 import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ServiceTest

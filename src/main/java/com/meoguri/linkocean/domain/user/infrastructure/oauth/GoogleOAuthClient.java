@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meoguri.linkocean.domain.user.application.OAuthClient;
-import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
 import com.meoguri.linkocean.exception.OAuthException;
 
 import lombok.RequiredArgsConstructor;

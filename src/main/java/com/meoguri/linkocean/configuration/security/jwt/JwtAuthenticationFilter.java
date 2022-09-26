@@ -20,10 +20,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.meoguri.linkocean.domain.user.model.Email;
-import com.meoguri.linkocean.domain.user.model.OAuthType;
-import com.meoguri.linkocean.domain.user.service.UserService;
-import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.UserService;
+import com.meoguri.linkocean.domain.user.domain.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
 
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;

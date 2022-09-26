@@ -8,8 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import com.meoguri.linkocean.domain.user.model.Email;
-import com.meoguri.linkocean.domain.user.model.OAuthType;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
 
 import lombok.Getter;
 

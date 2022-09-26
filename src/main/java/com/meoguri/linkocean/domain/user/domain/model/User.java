@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.model;
+package com.meoguri.linkocean.domain.user.domain.model;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;

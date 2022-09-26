@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.user.application;
 
-import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
 
 public interface OAuthClient {
 

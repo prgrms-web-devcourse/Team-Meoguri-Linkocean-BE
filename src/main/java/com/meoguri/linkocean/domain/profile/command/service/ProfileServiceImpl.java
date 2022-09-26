@@ -10,7 +10,7 @@ import com.meoguri.linkocean.domain.profile.command.service.dto.RegisterProfileC
 import com.meoguri.linkocean.domain.profile.command.service.dto.UpdateProfileCommand;
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.service.UserService;
+import com.meoguri.linkocean.domain.user.domain.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

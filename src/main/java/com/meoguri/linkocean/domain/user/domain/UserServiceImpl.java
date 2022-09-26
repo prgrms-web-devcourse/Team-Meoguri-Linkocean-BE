@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.service;
+package com.meoguri.linkocean.domain.user.domain;
 
 import static java.lang.String.*;
 
@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.model.Email;
-import com.meoguri.linkocean.domain.user.model.OAuthType;
-import com.meoguri.linkocean.domain.user.model.User;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
-import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.dto.GetUserResult;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
+import com.meoguri.linkocean.domain.user.domain.model.User;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;

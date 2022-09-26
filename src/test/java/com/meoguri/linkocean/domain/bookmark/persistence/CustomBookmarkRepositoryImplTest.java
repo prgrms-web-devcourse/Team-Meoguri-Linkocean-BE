@@ -2,7 +2,7 @@ package com.meoguri.linkocean.domain.bookmark.persistence;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
-import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.domain.model.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;

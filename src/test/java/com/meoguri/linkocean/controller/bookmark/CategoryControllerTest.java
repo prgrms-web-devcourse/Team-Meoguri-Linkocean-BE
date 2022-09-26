@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.domain.model.OAuthType.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

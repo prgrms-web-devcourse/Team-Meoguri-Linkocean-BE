@@ -5,8 +5,8 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
-import com.meoguri.linkocean.domain.user.model.Email;
-import com.meoguri.linkocean.domain.user.model.OAuthType;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import io.jsonwebtoken.Claims;

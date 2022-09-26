@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
 
 @SpringBootTest
 class GoogleOAuthClientTest {

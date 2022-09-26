@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.model;
+package com.meoguri.linkocean.domain.user.domain.model;
 
 import static org.assertj.core.api.Assertions.*;
 

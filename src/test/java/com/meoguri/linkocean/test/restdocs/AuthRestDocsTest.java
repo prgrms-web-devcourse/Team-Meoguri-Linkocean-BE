@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.meoguri.linkocean.controller.user.AuthController;
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.domain.user.application.OAuthClient;
-import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
 import com.meoguri.linkocean.test.restdocs.support.RestDocsTestSupport;
 
 class AuthRestDocsTest extends RestDocsTestSupport {

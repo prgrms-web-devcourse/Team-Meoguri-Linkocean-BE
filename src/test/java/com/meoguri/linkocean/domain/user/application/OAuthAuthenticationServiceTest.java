@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.user.application;
 
-import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.domain.model.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.domain.model.Email;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 
 class OAuthAuthenticationServiceTest extends BaseServiceTest {
