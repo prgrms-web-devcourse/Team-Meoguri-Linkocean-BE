@@ -11,9 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
+import com.meoguri.linkocean.exception.OAuthException;
 import com.meoguri.linkocean.internal.user.application.OAuthClient;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
-import com.meoguri.linkocean.exception.OAuthException;
 import com.meoguri.linkocean.test.support.controller.BaseControllerTest;
 
 class AuthControllerTest extends BaseControllerTest {

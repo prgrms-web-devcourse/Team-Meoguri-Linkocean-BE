@@ -9,13 +9,13 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.internal.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.internal.profile.entity.Profile;
 import com.meoguri.linkocean.internal.profile.query.persistence.FindProfileByIdRepository;
 import com.meoguri.linkocean.internal.profile.query.persistence.ProfileQueryRepository;
 import com.meoguri.linkocean.internal.profile.query.persistence.dto.ProfileFindCond;
 import com.meoguri.linkocean.internal.profile.query.service.dto.GetDetailedProfileResult;
 import com.meoguri.linkocean.internal.profile.query.service.dto.GetProfilesResult;
-import com.meoguri.linkocean.internal.profile.entity.FavoriteCategories;
 
 import lombok.RequiredArgsConstructor;
 

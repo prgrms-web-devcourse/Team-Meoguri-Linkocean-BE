@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.internal.bookmark.entity.Bookmark;
 import com.meoguri.linkocean.internal.bookmark.entity.vo.ReactionType;
 import com.meoguri.linkocean.internal.bookmark.entity.vo.TagIds;
@@ -38,7 +39,6 @@ import com.meoguri.linkocean.internal.notification.service.dto.ShareNotification
 import com.meoguri.linkocean.internal.profile.entity.Profile;
 import com.meoguri.linkocean.internal.profile.query.persistence.FindProfileByIdRepository;
 import com.meoguri.linkocean.internal.tag.service.TagService;
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
