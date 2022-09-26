@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.user.domain.model.Email;
-import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.domain.model.Email;
+import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
 class SecurityOAuthTypeTest {
 

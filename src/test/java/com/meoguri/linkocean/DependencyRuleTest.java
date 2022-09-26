@@ -37,6 +37,7 @@ class DependencyRuleTest {
 			.check(importPackages);
 	}
 
+	@Disabled("모듈 분리 작업 진행 중")
 	@Test
 	void domain_은_infrastructure_에_접근할_수_없다() {
 		String domainPackage = "com.meoguri.linkocean.domain";

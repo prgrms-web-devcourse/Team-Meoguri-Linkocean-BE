@@ -2,9 +2,9 @@ package com.meoguri.linkocean.controller.bookmark.dto;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.service.dto.UpdateBookmarkCommand;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.internal.bookmark.service.dto.UpdateBookmarkCommand;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

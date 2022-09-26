@@ -1,0 +1,31 @@
+package com.meoguri.linkocean.internal.bookmark.service.dto;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.OpenType;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 북마크 목록 조회 결과
+ */
+@Getter
+@RequiredArgsConstructor
+public final class GetBookmarksResult {
+
+	private final long id;
+	private final String url;
+	private final String title;
+	private final OpenType openType;
+	private final Category category;
+	private final LocalDateTime createdAt;
+
+	private final boolean isFavorite;
+	private final long likeCount;
+	private final String image;
+	private final boolean isWriter;
+	private final Set<String> tags;
+}

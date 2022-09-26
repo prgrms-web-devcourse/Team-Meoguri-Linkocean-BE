@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.test.restdocs;
 
-import static com.meoguri.linkocean.domain.user.domain.model.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;

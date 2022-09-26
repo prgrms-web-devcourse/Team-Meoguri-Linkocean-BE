@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.linkmetadata;
 
-import static com.meoguri.linkocean.domain.user.domain.model.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;

@@ -8,7 +8,7 @@ import java.util.Set;
 import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.internal.profile.entity.Profile;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.generator.BeanArbitraryGenerator;

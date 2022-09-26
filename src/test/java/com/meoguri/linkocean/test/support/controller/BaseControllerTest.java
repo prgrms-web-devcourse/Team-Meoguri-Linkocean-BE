@@ -27,14 +27,14 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataRepository;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.user.domain.UserRepository;
-import com.meoguri.linkocean.domain.user.domain.model.Email;
-import com.meoguri.linkocean.domain.user.domain.model.OAuthType;
-import com.meoguri.linkocean.domain.user.domain.model.User;
+import com.meoguri.linkocean.internal.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.internal.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.internal.linkmetadata.persistence.FindLinkMetadataRepository;
+import com.meoguri.linkocean.internal.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.internal.user.domain.UserRepository;
+import com.meoguri.linkocean.internal.user.domain.model.Email;
+import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.domain.model.User;
 import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ControllerTest
