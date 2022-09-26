@@ -31,7 +31,7 @@ class DependencyRuleTest {
 			.layer("Domain").definedBy("..domain..")
 			.layer("Infrastructure").definedBy("..infrastructure")
 			.whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-			.whereLayer("Application").mayOnlyBeAccessedByLayers("Controller")
+			.whereLayer("Application").mayOnlyBeAccessedByLayers("Controller", "Infrastructure")
 			.whereLayer("Domain").mayOnlyBeAccessedByLayers("Controller", "Application", "Infrastructure")
 			.whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer();
 	}
