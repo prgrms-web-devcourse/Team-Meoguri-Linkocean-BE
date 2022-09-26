@@ -22,6 +22,20 @@ class DependencyRuleTest {
 
 	JavaClasses importPackages = new ClassFileImporter().importPackages("com.meoguri.linkocean..");
 
+	/* Controller -> Application -> Domain <- Infrastructure */
+	@Test
+	void 새로운_계층형_아키텍처_의존성_테스트() {
+		layeredArchitecture()
+			.layer("Controller").definedBy(controllerDescribe())
+			.layer("Application").definedBy("..application..")
+			.layer("Domain").definedBy("..domain..")
+			.layer("Infrastructure").definedBy("..infrastructure")
+			.whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+			.whereLayer("Application").mayOnlyBeAccessedByLayers("Controller")
+			.whereLayer("Domain").mayOnlyBeAccessedByLayers("Controller", "Application", "Infrastructure")
+			.whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer();
+	}
+
 	@Disabled("모듈 분리 작업 진행 중")
 	@Test
 	void 계층형_아키텍처_의존성_테스트() {
