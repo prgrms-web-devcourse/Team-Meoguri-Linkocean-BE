@@ -3,7 +3,7 @@ package com.meoguri.linkocean.domain.bookmark.service;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType.*;
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
 import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;

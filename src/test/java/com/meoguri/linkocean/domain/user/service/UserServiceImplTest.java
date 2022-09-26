@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.user.service;
 
 import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
 import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,8 +14,8 @@ import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.domain.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 import com.meoguri.linkocean.test.support.domain.service.BaseServiceTest;
 

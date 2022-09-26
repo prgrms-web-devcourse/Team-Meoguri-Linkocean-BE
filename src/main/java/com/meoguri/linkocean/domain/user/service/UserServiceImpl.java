@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
+import com.meoguri.linkocean.domain.user.model.User;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 import com.meoguri.linkocean.exception.LinkoceanRuntimeException;

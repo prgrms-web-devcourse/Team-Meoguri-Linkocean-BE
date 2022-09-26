@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.entity.vo;
+package com.meoguri.linkocean.domain.user.model;
 
 /**
  * OAuth 지원 벤더 종류

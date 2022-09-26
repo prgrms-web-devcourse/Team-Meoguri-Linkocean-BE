@@ -31,9 +31,9 @@ import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
 import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.FindLinkMetadataRepository;
 import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.User;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 

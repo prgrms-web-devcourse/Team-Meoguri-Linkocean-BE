@@ -20,8 +20,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 import com.meoguri.linkocean.domain.user.service.dto.GetUserResult;
 

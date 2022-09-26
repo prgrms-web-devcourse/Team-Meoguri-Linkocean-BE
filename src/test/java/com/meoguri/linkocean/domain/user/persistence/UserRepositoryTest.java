@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.domain.user.persistence;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.domain.user.model.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
@@ -8,8 +8,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
+import com.meoguri.linkocean.domain.user.model.User;
+import com.meoguri.linkocean.domain.user.model.Email;
 import com.meoguri.linkocean.test.support.domain.persistence.BasePersistenceTest;
 
 class UserRepositoryTest extends BasePersistenceTest {

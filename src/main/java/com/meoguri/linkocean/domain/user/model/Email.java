@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.entity.vo;
+package com.meoguri.linkocean.domain.user.model;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static lombok.AccessLevel.*;

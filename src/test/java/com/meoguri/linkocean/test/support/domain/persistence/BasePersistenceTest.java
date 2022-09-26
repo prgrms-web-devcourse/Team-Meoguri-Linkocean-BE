@@ -29,9 +29,9 @@ import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
 import com.meoguri.linkocean.domain.profile.entity.Profile;
 import com.meoguri.linkocean.domain.tag.entity.Tag;
 import com.meoguri.linkocean.domain.tag.persistence.TagRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.User;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.persistence.UserRepository;
 import com.meoguri.linkocean.test.support.logging.p6spy.P6spyLogMessageFormatConfiguration;
 

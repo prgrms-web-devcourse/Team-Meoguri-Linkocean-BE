@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.service.OAuthAuthenticationService;
 
 import lombok.RequiredArgsConstructor;

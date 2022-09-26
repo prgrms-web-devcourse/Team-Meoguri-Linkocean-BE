@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.domain.user.service.dto;
 
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

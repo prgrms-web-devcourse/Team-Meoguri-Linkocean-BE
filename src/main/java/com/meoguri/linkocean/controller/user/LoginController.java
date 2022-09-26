@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
 import com.meoguri.linkocean.controller.user.dto.LoginRequest;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 import com.meoguri.linkocean.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;

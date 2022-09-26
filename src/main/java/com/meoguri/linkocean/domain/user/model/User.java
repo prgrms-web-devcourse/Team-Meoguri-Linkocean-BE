@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.domain.user.entity;
+package com.meoguri.linkocean.domain.user.model;
 
 import static com.meoguri.linkocean.exception.Preconditions.*;
 import static javax.persistence.EnumType.*;
@@ -14,8 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.meoguri.linkocean.domain.profile.entity.Profile;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.support.domain.entity.BaseIdEntity;
 
 import lombok.Getter;

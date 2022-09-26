@@ -3,8 +3,8 @@ package com.meoguri.linkocean.configuration.security.oauth;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
+import com.meoguri.linkocean.domain.user.model.Email;
+import com.meoguri.linkocean.domain.user.model.OAuthType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

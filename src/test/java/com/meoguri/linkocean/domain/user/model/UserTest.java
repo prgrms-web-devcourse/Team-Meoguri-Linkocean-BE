@@ -1,11 +1,9 @@
-package com.meoguri.linkocean.domain.user.entity;
+package com.meoguri.linkocean.domain.user.model;
 
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
 import com.meoguri.linkocean.test.support.domain.entity.BaseEntityTest;
 
 class UserTest extends BaseEntityTest {
