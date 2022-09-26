@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.infrastructure.oauth.google;
+package com.meoguri.linkocean.domain.user.infrastructure.oauth;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;

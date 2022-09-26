@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.infrastructure.oauth.google;
+package com.meoguri.linkocean.domain.user.infrastructure.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
