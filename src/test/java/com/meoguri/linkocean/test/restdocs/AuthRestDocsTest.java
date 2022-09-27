@@ -50,7 +50,9 @@ class AuthRestDocsTest extends RestDocsTestSupport {
 						fieldWithPath("redirectUri").description("REDIRECT URI")
 					),
 					responseFields(
-						fieldWithPath("token").description("jwt 토큰")
+						fieldWithPath("accessToken").description("리소스 접근 전용 토큰"),
+						fieldWithPath("refreshToken").description("access token 재발급 용도의 토큰"),
+						fieldWithPath("tokenType").description("토큰 타입")
 					)
 				)
 			);
