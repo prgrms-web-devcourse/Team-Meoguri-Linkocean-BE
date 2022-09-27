@@ -2,7 +2,6 @@ package com.meoguri.linkocean.internal.user.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,11 +14,6 @@ class RefreshTokenServiceImplTest extends BaseServiceTest {
 
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
-
-	@AfterEach
-	void cleanup() {
-		refreshTokenRepository.deleteAll();
-	}
 
 	@Test
 	void refresh_token_저장_등록_성공() {

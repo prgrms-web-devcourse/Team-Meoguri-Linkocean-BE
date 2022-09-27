@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
+import com.meoguri.linkocean.internal.user.domain.RefreshTokenService;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
@@ -18,6 +19,7 @@ public class OAuthAuthenticationService {
 	private final JwtProvider jwtProvider;
 
 	private final UserService userService;
+	private final RefreshTokenService refreshTokenService;
 
 	/* oAuthType에 맞는 소셜 로그인 uri를 반환한다.- 테스트용 */
 	@Deprecated
@@ -50,9 +52,11 @@ public class OAuthAuthenticationService {
 
 		final long userId = userService.registerIfNotExists(email, oAuthType);
 
-		//TODO: refresh token, redis 도입하기
-		return new GetAuthTokenResult(
-			jwtProvider.generateAccessToken(email, oAuthType),
-			jwtProvider.generateRefreshToken(userId));
+		final String linkoceanAccessToken = jwtProvider.generateAccessToken(email, oAuthType);
+		final String linkoceanRefreshToken = jwtProvider.generateRefreshToken(userId);
+
+		refreshTokenService.registerRefreshToken(userId, linkoceanRefreshToken);
+
+		return new GetAuthTokenResult(linkoceanAccessToken, linkoceanRefreshToken);
 	}
 }
