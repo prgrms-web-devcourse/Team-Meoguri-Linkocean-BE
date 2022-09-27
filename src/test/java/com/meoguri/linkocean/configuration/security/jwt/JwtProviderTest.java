@@ -37,6 +37,21 @@ class JwtProviderTest {
 		);
 	}
 
+	@Test
+	void refresh_token_발급_성공() {
+		//given
+		final Long userId = 1L;
+
+		//when
+		final String refreshToken = jwtProvider.generateRefreshToken(userId);
+
+		//then
+		assertAll(
+			() -> assertThat(refreshToken).isNotBlank(),
+			() -> assertThat(jwtProvider.getClaims(refreshToken, Claims::getId)).isEqualTo(String.valueOf(userId))
+		);
+	}
+
 	@TestConfiguration
 	static class Config {
 

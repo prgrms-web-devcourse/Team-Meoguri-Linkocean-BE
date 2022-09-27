@@ -39,6 +39,21 @@ public class JwtProvider {
 			.compact();
 	}
 
+	public String generateRefreshToken(final Long userId) {
+		final Date now = new Date();
+		//TODO : access token과 refresh token 만료일 다르게 설정하기 (/refresh API 만들면서 진행할 것)
+		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
+
+		return Jwts.builder()
+			.setSubject("LinkOcean Refresh Token")
+			.setIssuer("Meoguri")
+			.setIssuedAt(now)
+			.setId(String.valueOf(userId))
+			.setExpiration(expiration)
+			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+			.compact();
+	}
+
 	public <R> R getClaims(final String token, final Function<Claims, R> claimsResolver) {
 		final Claims claims = parseClaimsJwt(token);
 		return claimsResolver.apply(claims);
