@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.internal.user.application.OAuthAuthenticationService;
+import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
 import lombok.RequiredArgsConstructor;
@@ -58,11 +59,12 @@ public class AuthController {
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestBody AuthRequest authRequest
 	) {
-		final String jwt = oAuthAuthenticationService.authenticate(
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(
 			OAuthType.of(oAuthType.toUpperCase()),
 			authRequest.getCode(),
 			authRequest.getRedirectUri());
 
-		return Map.of("token", jwt);
+		return Map.of(
+			"token", getAuthTokenResult.getAccessToken(), "refreshToken", getAuthTokenResult.getRefreshToken());
 	}
 }

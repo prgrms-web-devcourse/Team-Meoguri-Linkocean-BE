@@ -3,6 +3,7 @@ package com.meoguri.linkocean.internal.user.application;
 import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
+import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
@@ -36,7 +37,8 @@ public class OAuthAuthenticationService {
 	 * 3. DB에 사용자 정보 없으면 저장하기
 	 * 4. Jwt 토큰 발급 후 반환
 	 */
-	public String authenticate(final OAuthType oAuthType, final String authorizationCode, final String redirectUri) {
+	public GetAuthTokenResult authenticate(final OAuthType oAuthType, final String authorizationCode,
+		final String redirectUri) {
 
 		//TODO 벤더사 추가 쉽도록 확장성 있게 리팩토링하기, 아직 구글만 지원함.
 		if (oAuthType != OAuthType.GOOGLE) {
@@ -46,9 +48,11 @@ public class OAuthAuthenticationService {
 		final String accessToken = oAuthClient.getAccessToken(authorizationCode, redirectUri);
 		final Email email = oAuthClient.getUserEmail(accessToken);
 
-		userService.registerIfNotExists(email, oAuthType);
+		final long userId = userService.registerIfNotExists(email, oAuthType);
 
 		//TODO: refresh token, redis 도입하기
-		return jwtProvider.generateAccessToken(email, oAuthType);
+		return new GetAuthTokenResult(
+			jwtProvider.generateAccessToken(email, oAuthType),
+			jwtProvider.generateRefreshToken(userId));
 	}
 }
