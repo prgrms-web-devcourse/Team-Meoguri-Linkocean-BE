@@ -24,7 +24,7 @@ public class JwtProvider {
 
 	private final JwtProperties jwtProperties;
 
-	public String generate(final Email email, final OAuthType oauthType) {
+	public String generateAccessToken(final Email email, final OAuthType oauthType) {
 		final Date now = new Date();
 		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
 

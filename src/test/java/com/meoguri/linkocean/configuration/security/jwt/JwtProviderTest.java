@@ -27,7 +27,7 @@ class JwtProviderTest {
 		final OAuthType google = OAuthType.GOOGLE;
 
 		//when
-		final String accessToken = jwtProvider.generate(email, google);
+		final String accessToken = jwtProvider.generateAccessToken(email, google);
 
 		//then
 		assertAll(

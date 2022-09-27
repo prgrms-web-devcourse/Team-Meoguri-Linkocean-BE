@@ -49,6 +49,6 @@ public class OAuthAuthenticationService {
 		userService.registerIfNotExists(email, oAuthType);
 
 		//TODO: refresh token, redis 도입하기
-		return jwtProvider.generate(email, oAuthType);
+		return jwtProvider.generateAccessToken(email, oAuthType);
 	}
 }
