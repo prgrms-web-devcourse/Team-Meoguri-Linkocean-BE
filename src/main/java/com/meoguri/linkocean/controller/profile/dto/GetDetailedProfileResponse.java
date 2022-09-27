@@ -4,9 +4,9 @@ import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetUsedTagWithCountResult;
-import com.meoguri.linkocean.domain.profile.query.service.dto.GetDetailedProfileResult;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.service.dto.GetUsedTagWithCountResult;
+import com.meoguri.linkocean.internal.profile.query.service.dto.GetDetailedProfileResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

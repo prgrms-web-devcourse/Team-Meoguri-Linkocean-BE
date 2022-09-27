@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.domain.notification.entity.Notification;
-import com.meoguri.linkocean.domain.notification.service.NotificationService;
+import com.meoguri.linkocean.internal.notification.entity.Notification;
+import com.meoguri.linkocean.internal.notification.service.NotificationService;
 import com.meoguri.linkocean.support.controller.dto.SliceResponse;
 
 import lombok.RequiredArgsConstructor;

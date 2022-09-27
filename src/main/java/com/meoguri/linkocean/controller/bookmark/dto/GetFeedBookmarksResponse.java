@@ -5,9 +5,9 @@ import static com.meoguri.linkocean.support.controller.dto.Default.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetFeedBookmarksResult;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.internal.bookmark.service.dto.GetFeedBookmarksResult;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

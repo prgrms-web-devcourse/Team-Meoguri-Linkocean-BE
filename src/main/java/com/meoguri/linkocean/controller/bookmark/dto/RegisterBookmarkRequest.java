@@ -5,9 +5,9 @@ import static java.util.Objects.*;
 
 import java.util.List;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.service.dto.RegisterBookmarkCommand;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.internal.bookmark.service.dto.RegisterBookmarkCommand;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

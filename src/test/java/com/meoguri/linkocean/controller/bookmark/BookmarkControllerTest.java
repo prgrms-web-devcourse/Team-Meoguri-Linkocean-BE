@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;

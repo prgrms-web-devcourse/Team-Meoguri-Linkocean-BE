@@ -1,15 +1,15 @@
 package com.meoguri.linkocean.test.study.fixturemonkey;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.Category.*;
-import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
+import static com.meoguri.linkocean.internal.bookmark.entity.vo.Category.*;
+import static com.meoguri.linkocean.internal.profile.entity.Profile.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import java.util.List;
 
 import org.junit.jupiter.api.RepeatedTest;
 
-import com.meoguri.linkocean.domain.profile.entity.FavoriteCategories;
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.internal.profile.entity.FavoriteCategories;
+import com.meoguri.linkocean.internal.profile.entity.Profile;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.generator.FieldReflectionArbitraryGenerator;

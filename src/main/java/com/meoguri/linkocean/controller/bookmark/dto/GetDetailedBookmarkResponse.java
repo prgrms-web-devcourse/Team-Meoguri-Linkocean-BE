@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.meoguri.linkocean.domain.bookmark.entity.vo.Category;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.OpenType;
-import com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult;
-import com.meoguri.linkocean.domain.bookmark.service.dto.GetDetailedBookmarkResult.ProfileResult;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.OpenType;
+import com.meoguri.linkocean.internal.bookmark.entity.vo.ReactionType;
+import com.meoguri.linkocean.internal.bookmark.service.dto.GetDetailedBookmarkResult;
+import com.meoguri.linkocean.internal.bookmark.service.dto.GetDetailedBookmarkResult.ProfileResult;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

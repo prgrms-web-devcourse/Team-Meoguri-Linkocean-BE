@@ -1,13 +1,13 @@
 package com.meoguri.linkocean.test.study.fixturemonkey;
 
-import static com.meoguri.linkocean.domain.profile.entity.Profile.*;
+import static com.meoguri.linkocean.internal.profile.entity.Profile.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import org.junit.jupiter.api.RepeatedTest;
 
 import net.jqwik.api.Arbitraries;
 
-import com.meoguri.linkocean.domain.profile.entity.Profile;
+import com.meoguri.linkocean.internal.profile.entity.Profile;
 
 import com.navercorp.fixturemonkey.ArbitraryBuilder;
 import com.navercorp.fixturemonkey.FixtureMonkey;
