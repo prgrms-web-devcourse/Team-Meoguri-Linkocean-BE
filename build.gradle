@@ -58,6 +58,9 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa"
     implementation 'com.querydsl:querydsl-sql'
 
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
