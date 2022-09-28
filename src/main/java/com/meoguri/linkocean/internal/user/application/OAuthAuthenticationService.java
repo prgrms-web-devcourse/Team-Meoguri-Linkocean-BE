@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
-import com.meoguri.linkocean.internal.user.domain.RefreshTokenService;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;

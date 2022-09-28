@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.internal.user.domain.model;
+package com.meoguri.linkocean.internal.user.infrastructure.redis;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

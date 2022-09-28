@@ -30,11 +30,11 @@ import com.meoguri.linkocean.internal.profile.command.service.ProfileService;
 import com.meoguri.linkocean.internal.profile.command.service.dto.RegisterProfileCommand;
 import com.meoguri.linkocean.internal.profile.query.service.ProfileQueryService;
 import com.meoguri.linkocean.internal.profile.query.service.dto.GetDetailedProfileResult;
-import com.meoguri.linkocean.internal.user.domain.RefreshTokenRepository;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.dto.GetUserResult;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.infrastructure.redis.RedisRefreshTokenRepository;
 import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ServiceTest
@@ -68,7 +68,7 @@ public abstract class BaseServiceTest {
 	private NotificationService notificationService;
 
 	@Autowired
-	private RefreshTokenRepository refreshTokenRepository;
+	private RedisRefreshTokenRepository redisRefreshTokenRepository;
 
 	@Autowired
 	protected DatabaseCleanup databaseCleanup;
@@ -76,7 +76,7 @@ public abstract class BaseServiceTest {
 	@AfterEach
 	void cleanUp() {
 		databaseCleanup.execute();
-		refreshTokenRepository.deleteAll();
+		redisRefreshTokenRepository.deleteAll();
 	}
 
 	public static Pageable createPageable(String... properties) {

@@ -1,4 +1,4 @@
-package com.meoguri.linkocean.internal.user.domain;
+package com.meoguri.linkocean.internal.user.application;
 
 public interface RefreshTokenService {
 

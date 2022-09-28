@@ -1,19 +1,20 @@
-package com.meoguri.linkocean.internal.user.domain;
+package com.meoguri.linkocean.internal.user.infrastructure.redis;
 
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.meoguri.linkocean.internal.user.application.RefreshTokenService;
 import com.meoguri.linkocean.test.support.internal.service.BaseServiceTest;
 
-class RefreshTokenServiceImplTest extends BaseServiceTest {
+class RedisRefreshTokenServiceTest extends BaseServiceTest {
 
 	@Autowired
 	private RefreshTokenService refreshTokenService;
 
 	@Autowired
-	private RefreshTokenRepository refreshTokenRepository;
+	private RedisRefreshTokenRepository redisRefreshTokenRepository;
 
 	@Test
 	void refresh_token_저장_등록_성공() {
