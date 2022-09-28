@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 
 import com.meoguri.linkocean.internal.user.application.RefreshTokenService;
+import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenCommand;
 
 @DataRedisTest
 @Import(RedisRefreshTokenService.class)
@@ -29,10 +30,10 @@ class RedisRefreshTokenServiceTest {
 	void refresh_token_저장_등록_성공() {
 		//given
 		final Long userId = 1L;
-		final String refreshToken = "refreshToken";
+		final RegisterRefreshTokenCommand command = new RegisterRefreshTokenCommand(1L, "refreshToken", 10000L);
 
 		//when
-		final Long registeredId = refreshTokenService.registerRefreshToken(userId, refreshToken);
+		final Long registeredId = refreshTokenService.registerRefreshToken(command);
 
 		//then
 		assertThat(registeredId).isEqualTo(userId);

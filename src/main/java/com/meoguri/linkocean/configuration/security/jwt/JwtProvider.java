@@ -79,4 +79,8 @@ public class JwtProvider {
 			throw new LinkoceanRuntimeException("the claimsJws string is null or empty or only whitespace", e);
 		}
 	}
+
+	public long getRefreshTokenExpiration() {
+		return jwtProperties.getExpiration();
+	}
 }

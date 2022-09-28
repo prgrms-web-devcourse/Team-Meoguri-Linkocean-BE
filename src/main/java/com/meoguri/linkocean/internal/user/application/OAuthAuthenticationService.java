@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.meoguri.linkocean.configuration.security.jwt.JwtProvider;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
+import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenCommand;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
@@ -54,7 +55,11 @@ public class OAuthAuthenticationService {
 		final String linkoceanAccessToken = jwtProvider.generateAccessToken(email, oAuthType);
 		final String linkoceanRefreshToken = jwtProvider.generateRefreshToken(userId);
 
-		refreshTokenService.registerRefreshToken(userId, linkoceanRefreshToken);
+		refreshTokenService.registerRefreshToken(new RegisterRefreshTokenCommand(
+			userId,
+			linkoceanRefreshToken,
+			jwtProvider.getRefreshTokenExpiration()
+		));
 
 		return new GetAuthTokenResult(linkoceanAccessToken, linkoceanRefreshToken);
 	}
