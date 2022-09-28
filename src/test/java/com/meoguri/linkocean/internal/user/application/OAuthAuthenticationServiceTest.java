@@ -22,6 +22,9 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 	@MockBean
 	private OAuthClient oAuthClient;
 
+	@MockBean
+	private RefreshTokenService refreshTokenService;
+
 	@Test
 	void 사용자_인증_성공() {
 		//given
@@ -29,6 +32,7 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 		final String redirectUri = "http://localhost/redirectUri";
 
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
+		given(refreshTokenService.registerRefreshToken(anyLong(), anyString())).willReturn(1L);
 
 		//when
 		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(
