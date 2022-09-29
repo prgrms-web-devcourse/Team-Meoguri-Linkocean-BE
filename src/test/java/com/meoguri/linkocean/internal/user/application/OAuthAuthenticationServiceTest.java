@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import com.meoguri.linkocean.internal.user.application.dto.AuthUserCommand;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.test.support.internal.service.BaseServiceTest;
@@ -28,16 +29,12 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 	@Test
 	void 사용자_인증_성공() {
 		//given
-		final String authorizationCode = "code";
-		final String redirectUri = "http://localhost/redirectUri";
+		final AuthUserCommand command = new AuthUserCommand(GOOGLE, "code", "http://localhost/redirectUri");
 
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
 
 		//when
-		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(
-			GOOGLE,
-			authorizationCode,
-			redirectUri);
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(command);
 
 		//then
 		assertAll(
