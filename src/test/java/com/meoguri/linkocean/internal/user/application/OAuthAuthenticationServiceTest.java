@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
-import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenCommand;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.test.support.internal.service.BaseServiceTest;
 
@@ -33,7 +32,6 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 		final String redirectUri = "http://localhost/redirectUri";
 
 		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
-		given(refreshTokenService.registerRefreshToken(any(RegisterRefreshTokenCommand.class))).willReturn(1L);
 
 		//when
 		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(

@@ -14,14 +14,12 @@ public class RedisRefreshTokenService implements RefreshTokenService {
 	private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
 	@Override
-	public Long registerRefreshToken(final RegisterRefreshTokenCommand command) {
+	public void registerRefreshToken(final RegisterRefreshTokenCommand command) {
 		final RefreshToken token = new RefreshToken(
 			command.getUserId(),
 			command.getRefreshToken(),
 			command.getExpiration());
 
 		redisRefreshTokenRepository.save(token);
-
-		return token.getUserId();
 	}
 }

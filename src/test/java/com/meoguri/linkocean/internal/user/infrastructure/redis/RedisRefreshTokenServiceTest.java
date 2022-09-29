@@ -33,9 +33,9 @@ class RedisRefreshTokenServiceTest {
 		final RegisterRefreshTokenCommand command = new RegisterRefreshTokenCommand(1L, "refreshToken", 10000L);
 
 		//when
-		final Long registeredId = refreshTokenService.registerRefreshToken(command);
+		refreshTokenService.registerRefreshToken(command);
 
 		//then
-		assertThat(registeredId).isEqualTo(userId);
+		assertThat(redisRefreshTokenRepository.findById(userId)).isPresent();
 	}
 }

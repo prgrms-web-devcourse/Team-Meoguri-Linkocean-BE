@@ -5,5 +5,5 @@ import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenC
 public interface RefreshTokenService {
 
 	/* refresh token 등록 */
-	Long registerRefreshToken(RegisterRefreshTokenCommand command);
+	void registerRefreshToken(RegisterRefreshTokenCommand command);
 }
