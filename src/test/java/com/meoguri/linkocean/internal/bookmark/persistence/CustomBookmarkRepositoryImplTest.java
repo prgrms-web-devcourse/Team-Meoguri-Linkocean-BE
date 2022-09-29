@@ -44,7 +44,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 
 	void setUpInternal() {
 		// 사용자 1명 셋업 - 크러쉬
-		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", GOOGLE, "crush", IT);
 		profileId = profile.getId();
 
 		// 태그 두개 셋업
@@ -69,7 +69,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 	@Test
 	void existsByWriterAndUrl_성공() {
 		//given
-		profile = 사용자_프로필_동시_저장("crush@gmail.com", NAVER, "crush", IT);
+		profile = 사용자_프로필_동시_저장("crush@gmail.com", GOOGLE, "crush", IT);
 		final LinkMetadata linkMetadata = 링크_메타데이터_저장("www.google.com", "구글", "google.png");
 		북마크_저장(profile, linkMetadata, "www.google.com");
 
@@ -205,7 +205,7 @@ class CustomBookmarkRepositoryImplTest extends BasePersistenceTest {
 		@Test
 		void 북마크_즐겨찾기_다른사람의_글도_있는경우() {
 			//setup
-			final Profile profile2 = 사용자_프로필_동시_저장("user2@naver.com", NAVER, "user2", IT);
+			final Profile profile2 = 사용자_프로필_동시_저장("user2@gmail.com", GOOGLE, "user2", IT);
 			final Bookmark bookmark4 = 북마크_링크_메타데이터_동시_저장(profile2, "www.linkocean.com");
 			final Bookmark bookmark5 = 북마크_링크_메타데이터_동시_저장(profile2, "www.artzip.com");
 

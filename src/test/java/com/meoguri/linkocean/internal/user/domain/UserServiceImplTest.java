@@ -45,31 +45,31 @@ class UserServiceImplTest extends BaseServiceTest {
 	@Test
 	void 사용자_없으면_등록_성공() {
 		//given
-		final Email email = new Email("crush@github.com");
-		final OAuthType oAuthType = GITHUB;
+		final Email email = new Email("crush@gmail.com");
+		final OAuthType oAuthType = GOOGLE;
 
 		//when
 		final long userId = userService.registerIfNotExists(email, oAuthType);
 
 		//then
-		final GetUserResult result = 사용자_조회("crush@github.com", GITHUB);
+		final GetUserResult result = 사용자_조회("crush@gmail.com", GOOGLE);
 		assertThat(result.getId()).isEqualTo(userId);
 		assertThat(result.getProfileId()).isNull();
-		assertThat(result.getEmail()).isEqualTo(new Email("crush@github.com"));
-		assertThat(result.getOauthType()).isEqualTo(GITHUB);
+		assertThat(result.getEmail()).isEqualTo(new Email("crush@gmail.com"));
+		assertThat(result.getOauthType()).isEqualTo(GOOGLE);
 	}
 
 	@Test
 	void 프로필_등록_성공() {
 		//given
-		final long userId = 사용자_없으면_등록("crush@github.com", GITHUB);
+		final long userId = 사용자_없으면_등록("crush@gmail.com", GOOGLE);
 		final Profile profile = 프로필_저장("crush", IT, ART);
 
 		//when
 		userService.registerProfile(userId, profile);
 
 		//then
-		final GetUserResult result = 사용자_조회("crush@github.com", GITHUB);
+		final GetUserResult result = 사용자_조회("crush@gmail.com", GOOGLE);
 		assertThat(result.getProfileId()).isEqualTo(profile.getId());
 	}
 

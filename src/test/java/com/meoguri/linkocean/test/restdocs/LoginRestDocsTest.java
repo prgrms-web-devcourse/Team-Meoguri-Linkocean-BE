@@ -23,8 +23,8 @@ class LoginRestDocsTest extends RestDocsTestSupport {
 	@Test
 	void 로그인_api() throws Exception {
 		//given
-		final String email = "jk05018@naver.com";
-		final String oauthType = "NAVER";
+		final String email = "jk05018@gmail.com";
+		final String oauthType = "GOOGLE";
 
 		final LoginRequest loginRequest = new LoginRequest(email, oauthType);
 

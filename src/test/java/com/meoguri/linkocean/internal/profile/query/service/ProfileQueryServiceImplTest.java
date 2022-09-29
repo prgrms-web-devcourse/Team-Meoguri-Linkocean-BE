@@ -96,8 +96,8 @@ class ProfileQueryServiceImplTest extends BaseServiceTest {
 		void setUp() {
 			// set up 3 users
 			profileId1 = 사용자_프로필_동시_등록("user1@gmail.com", GOOGLE, "user1", IT);
-			profileId2 = 사용자_프로필_동시_등록("user2@naver.com", NAVER, "user2", IT);
-			profileId3 = 사용자_프로필_동시_등록("user3@kakao.com", KAKAO, "user3", IT);
+			profileId2 = 사용자_프로필_동시_등록("user2@gmail.com", GOOGLE, "user2", IT);
+			profileId3 = 사용자_프로필_동시_등록("user3@gmail.com", GOOGLE, "user3", IT);
 
 			pageable = createPageable();
 		}
