@@ -1,5 +1,6 @@
 package com.meoguri.linkocean.internal.user.infrastructure.redis;
 
+import static com.meoguri.linkocean.exception.Preconditions.*;
 import static java.util.concurrent.TimeUnit.*;
 
 import org.springframework.data.annotation.Id;
@@ -21,6 +22,10 @@ public class RefreshToken {
 	private final long expiration;
 
 	public RefreshToken(final Long userId, final String value, final long expiration) {
+		checkNotNull(userId);
+		checkNotNull(value);
+		checkArgument(expiration > 0, "만료 기간은 0보다 작을 수 없습니다.");
+
 		this.userId = userId;
 		this.value = value;
 		this.expiration = expiration;
