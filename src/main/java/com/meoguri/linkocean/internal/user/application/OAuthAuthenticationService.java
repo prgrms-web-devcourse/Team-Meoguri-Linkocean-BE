@@ -8,7 +8,6 @@ import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenCommand;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
-import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +23,7 @@ public class OAuthAuthenticationService {
 
 	/* oAuthType에 맞는 소셜 로그인 uri를 반환한다.- 테스트용 */
 	@Deprecated
-	public String getAuthorizationUri(final OAuthType oAuthType) {
+	public String getAuthorizationUri() {
 		return oAuthClient.getAuthorizationUri();
 	}
 

@@ -34,10 +34,9 @@ public class AuthController {
 	@Deprecated
 	@GetMapping("/{oAuthType}/temp")
 	public ResponseEntity<Void> redirectToAuthorizationUri(
-		@PathVariable("oAuthType") String oAuthType
+		@PathVariable("oAuthType") OAuthType oAuthType
 	) {
-		final String authorizationUri = oAuthAuthenticationService.getAuthorizationUri(
-			OAuthType.of(oAuthType.toUpperCase()));
+		final String authorizationUri = oAuthAuthenticationService.getAuthorizationUri();
 
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(URI.create(authorizationUri));
@@ -48,7 +47,7 @@ public class AuthController {
 	@Deprecated
 	@GetMapping("/{oAuthType}")
 	public AuthResponse authenticate(
-		@PathVariable("oAuthType") String oAuthType,
+		@PathVariable("oAuthType") OAuthType oAuthType,
 		@RequestParam("code") String code
 	) {
 		final AuthRequest request = new AuthRequest(code, "https://localhost/api/v1/auth/google");
@@ -57,11 +56,11 @@ public class AuthController {
 
 	@PostMapping("/{oAuthType}")
 	public AuthResponse authenticate(
-		@PathVariable("oAuthType") String oAuthType,
+		@PathVariable("oAuthType") OAuthType oAuthType,
 		@RequestBody AuthRequest authRequest
 	) {
 		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(new AuthUserCommand(
-			OAuthType.of(oAuthType.toUpperCase()),
+			oAuthType,
 			authRequest.getCode(),
 			authRequest.getRedirectUri()));
 
