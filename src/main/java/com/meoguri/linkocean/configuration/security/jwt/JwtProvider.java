@@ -24,7 +24,7 @@ public class JwtProvider {
 
 	private final JwtProperties jwtProperties;
 
-	public String generate(final Email email, final OAuthType oauthType) {
+	public String generateAccessToken(final Email email, final OAuthType oauthType) {
 		final Date now = new Date();
 		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
 
@@ -34,6 +34,21 @@ public class JwtProvider {
 			.setIssuedAt(now)
 			.setId(Email.toString(email))
 			.setAudience(oauthType.name())
+			.setExpiration(expiration)
+			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+			.compact();
+	}
+
+	public String generateRefreshToken(final Long userId) {
+		final Date now = new Date();
+		//TODO : access token과 refresh token 만료일 다르게 설정하기 (/refresh API 만들면서 진행할 것)
+		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
+
+		return Jwts.builder()
+			.setSubject("LinkOcean Refresh Token")
+			.setIssuer("Meoguri")
+			.setIssuedAt(now)
+			.setId(String.valueOf(userId))
 			.setExpiration(expiration)
 			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
 			.compact();
@@ -63,5 +78,9 @@ public class JwtProvider {
 		} catch (IllegalArgumentException e) {
 			throw new LinkoceanRuntimeException("the claimsJws string is null or empty or only whitespace", e);
 		}
+	}
+
+	public long getRefreshTokenExpiration() {
+		return jwtProperties.getExpiration();
 	}
 }

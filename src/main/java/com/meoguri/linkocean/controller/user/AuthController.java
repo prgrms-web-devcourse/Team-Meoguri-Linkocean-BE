@@ -3,7 +3,6 @@ package com.meoguri.linkocean.controller.user;
 import static org.springframework.http.HttpStatus.*;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
+import com.meoguri.linkocean.controller.user.dto.AuthResponse;
 import com.meoguri.linkocean.internal.user.application.OAuthAuthenticationService;
+import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class AuthController {
 	/* 테스트용 API - 프론트 역할 */
 	@Deprecated
 	@GetMapping("/{oAuthType}")
-	public Map<String, Object> authenticate(
+	public AuthResponse authenticate(
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestParam("code") String code
 	) {
@@ -54,15 +55,18 @@ public class AuthController {
 	}
 
 	@PostMapping("/{oAuthType}")
-	public Map<String, Object> authenticate(
+	public AuthResponse authenticate(
 		@PathVariable("oAuthType") String oAuthType,
 		@RequestBody AuthRequest authRequest
 	) {
-		final String jwt = oAuthAuthenticationService.authenticate(
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(
 			OAuthType.of(oAuthType.toUpperCase()),
 			authRequest.getCode(),
 			authRequest.getRedirectUri());
 
-		return Map.of("token", jwt);
+		return new AuthResponse(
+			getAuthTokenResult.getAccessToken(),
+			getAuthTokenResult.getRefreshToken(),
+			"Bearer");
 	}
 }

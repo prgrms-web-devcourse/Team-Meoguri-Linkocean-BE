@@ -40,7 +40,9 @@ class AuthControllerTest extends BaseControllerTest {
 		//then
 		perform
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.token").exists())
+			.andExpect(jsonPath("$.accessToken").exists())
+			.andExpect(jsonPath("$.refreshToken").exists())
+			.andExpect(jsonPath("$.tokenType").value("Bearer"))
 			.andDo(print());
 	}
 

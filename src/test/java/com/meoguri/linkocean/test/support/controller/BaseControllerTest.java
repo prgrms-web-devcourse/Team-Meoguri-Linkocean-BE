@@ -83,13 +83,13 @@ public abstract class BaseControllerTest {
 	protected void 유저_등록_로그인(final String email, final OAuthType oAuthType) {
 		final Email emailField = new Email(email);
 		userRepository.save(new User(emailField, oAuthType));
-		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generateAccessToken(emailField, oAuthType));
 	}
 
 	protected void 로그인(final String email, final OAuthType oAuthType) {
 		final Email emailField = new Email(email);
 		userRepository.findByEmailAndOAuthType(emailField, oAuthType).orElseThrow();
-		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generateAccessToken(emailField, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {

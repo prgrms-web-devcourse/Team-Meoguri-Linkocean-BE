@@ -37,7 +37,7 @@ public class LoginController {
 		final OAuthType oAuthType = OAuthType.of(request.getOauthType());
 
 		userService.registerIfNotExists(email, oAuthType);
-		return Map.of("token", jwtProvider.generate(email, oAuthType));
+		return Map.of("token", jwtProvider.generateAccessToken(email, oAuthType));
 	}
 
 	/**
