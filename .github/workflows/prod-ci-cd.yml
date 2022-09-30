@@ -69,7 +69,7 @@ jobs:
           port: 22
           script: |
             docker image prune -f
-            sudo docker rm -f $(docker ps -qa)
+            sudo docker rm -f linkocean-spring
             sudo docker pull ${{ secrets.DOCKER_REPO }}/linkocean_prod
             sudo docker run -d -p 8080:8080 --name linkocean-spring ${{ secrets.DOCKER_REPO }}/linkocean_prod
 
