@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.controller.user.dto.AuthResponse;
 import com.meoguri.linkocean.internal.user.application.OAuthAuthenticationService;
+import com.meoguri.linkocean.internal.user.application.dto.AuthUserCommand;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
@@ -33,10 +34,9 @@ public class AuthController {
 	@Deprecated
 	@GetMapping("/{oAuthType}/temp")
 	public ResponseEntity<Void> redirectToAuthorizationUri(
-		@PathVariable("oAuthType") String oAuthType
+		@PathVariable("oAuthType") OAuthType oAuthType
 	) {
-		final String authorizationUri = oAuthAuthenticationService.getAuthorizationUri(
-			OAuthType.of(oAuthType.toUpperCase()));
+		final String authorizationUri = oAuthAuthenticationService.getAuthorizationUri();
 
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(URI.create(authorizationUri));
@@ -47,7 +47,7 @@ public class AuthController {
 	@Deprecated
 	@GetMapping("/{oAuthType}")
 	public AuthResponse authenticate(
-		@PathVariable("oAuthType") String oAuthType,
+		@PathVariable("oAuthType") OAuthType oAuthType,
 		@RequestParam("code") String code
 	) {
 		final AuthRequest request = new AuthRequest(code, "https://localhost/api/v1/auth/google");
@@ -56,13 +56,13 @@ public class AuthController {
 
 	@PostMapping("/{oAuthType}")
 	public AuthResponse authenticate(
-		@PathVariable("oAuthType") String oAuthType,
+		@PathVariable("oAuthType") OAuthType oAuthType,
 		@RequestBody AuthRequest authRequest
 	) {
-		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(
-			OAuthType.of(oAuthType.toUpperCase()),
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(new AuthUserCommand(
+			oAuthType,
 			authRequest.getCode(),
-			authRequest.getRedirectUri());
+			authRequest.getRedirectUri()));
 
 		return new AuthResponse(
 			getAuthTokenResult.getAccessToken(),

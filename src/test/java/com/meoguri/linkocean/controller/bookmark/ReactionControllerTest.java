@@ -26,7 +26,7 @@ class ReactionControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("haha@gmail.com", NAVER);
+		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "IT", null, "all");
 	}

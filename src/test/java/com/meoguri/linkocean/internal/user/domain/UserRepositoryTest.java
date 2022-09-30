@@ -20,15 +20,15 @@ class UserRepositoryTest extends BasePersistenceTest {
 	@Test
 	void findByEmailAndOAuthType_성공() {
 		//given
-		final Email email = new Email("user@naver.com");
-		사용자_저장(Email.toString(email), NAVER);
+		final Email email = new Email("user@gmail.com");
+		사용자_저장(Email.toString(email), GOOGLE);
 
 		//when
-		final Optional<User> oFoundUser = pretty(() -> userRepository.findByEmailAndOAuthType(email, NAVER));
+		final Optional<User> oFoundUser = pretty(() -> userRepository.findByEmailAndOAuthType(email, GOOGLE));
 
 		//then
 		assertThat(oFoundUser).isPresent();
 		assertThat(oFoundUser.get().getEmail()).isEqualTo(email);
-		assertThat(oFoundUser.get().getOauthType()).isEqualTo(NAVER);
+		assertThat(oFoundUser.get().getOauthType()).isEqualTo(GOOGLE);
 	}
 }

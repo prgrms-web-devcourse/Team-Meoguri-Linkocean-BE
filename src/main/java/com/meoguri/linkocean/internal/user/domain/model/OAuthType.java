@@ -5,13 +5,9 @@ package com.meoguri.linkocean.internal.user.domain.model;
  * GOOGLE, NAVER, KAKAO
  */
 public enum OAuthType {
-	GOOGLE,
-	NAVER,
-	KAKAO,
-	GITHUB;
+	GOOGLE;
 
 	public static OAuthType of(final String type) {
 		return OAuthType.valueOf(type);
 	}
-
 }
