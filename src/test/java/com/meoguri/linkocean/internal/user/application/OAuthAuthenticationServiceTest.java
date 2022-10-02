@@ -15,6 +15,8 @@ import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.test.support.internal.service.BaseServiceTest;
 
+import io.jsonwebtoken.JwtException;
+
 class OAuthAuthenticationServiceTest extends BaseServiceTest {
 
 	@Autowired
@@ -41,5 +43,39 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 			() -> assertThat(getAuthTokenResult.getAccessToken()).isNotBlank(),
 			() -> assertThat(getAuthTokenResult.getRefreshToken()).isNotBlank()
 		);
+	}
+
+	@Test
+	void access_token_재발급_성공() {
+		//given
+		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@gmail.com"));
+
+		final AuthUserCommand command = new AuthUserCommand(GOOGLE, "code", "http://localhost/redirectUri");
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.authenticate(command);
+
+		//when
+		final GetAuthTokenResult result = oAuthAuthenticationService.refreshAccessToken(
+			getAuthTokenResult.getRefreshToken());
+
+		//then
+		assertAll(
+			() -> assertThat(result.getAccessToken()).isNotBlank(),
+			() -> assertThat(result.getRefreshToken()).isNotBlank()
+		);
+	}
+
+	@Test
+	void access_token_재발급_실패_유효하지_않은_refresh_token() {
+		//given
+		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@gmail.com"));
+
+		final AuthUserCommand command = new AuthUserCommand(GOOGLE, "code", "http://localhost/redirectUri");
+		oAuthAuthenticationService.authenticate(command);
+
+		final String invalidRefreshToken = "invalidRefreshToken";
+
+		//when then
+		assertThatExceptionOfType(JwtException.class)
+			.isThrownBy(() -> oAuthAuthenticationService.refreshAccessToken(invalidRefreshToken));
 	}
 }

@@ -8,7 +8,10 @@ import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.application.dto.RegisterRefreshTokenCommand;
 import com.meoguri.linkocean.internal.user.domain.UserService;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
+import com.meoguri.linkocean.internal.user.domain.model.User;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -51,5 +54,36 @@ public class OAuthAuthenticationService {
 		));
 
 		return new GetAuthTokenResult(linkoceanAccessToken, linkoceanRefreshToken);
+	}
+
+	/**
+	 * access token 재발급
+	 * 1. refresh token이 유효한 JWT인지 검증
+	 * 2. refresh token이 redis에 저장된 refresh token과 동일한지 검증
+	 * 3. 새로운 access token, refresh token 발급
+	 */
+	public GetAuthTokenResult refreshAccessToken(final String refreshToken) {
+
+		final Long userId = Long.valueOf(jwtProvider.getClaims(refreshToken, Claims::getId));
+
+		try {
+			refreshTokenService.validateRefreshToken(userId, refreshToken);
+		} catch (JwtException ex) {
+			refreshTokenService.removeRefreshToken(userId);
+			throw new JwtException("인증 실패");
+		}
+
+		/* access token, refresh token 재발급 */
+		User user = userService.getUser(userId);
+		final String newAccessToken = jwtProvider.generateAccessToken(user.getEmail(), user.getOauthType());
+		final String newRefreshToken = jwtProvider.generateRefreshToken(userId);
+
+		refreshTokenService.registerRefreshToken(new RegisterRefreshTokenCommand(
+			userId,
+			newRefreshToken,
+			jwtProvider.getRefreshTokenExpiration()
+		));
+
+		return new GetAuthTokenResult(newAccessToken, newRefreshToken);
 	}
 }
