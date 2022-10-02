@@ -5,17 +5,13 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -66,17 +62,8 @@ public class JwtProvider {
 				.setSigningKey(secretKey)
 				.parseClaimsJws(token)
 				.getBody();
-		} catch (UnsupportedJwtException e) {
-			throw new LinkoceanRuntimeException("the claimsJws argument does not represent an Claims JWS", e);
-		} catch (MalformedJwtException e) {
-			throw new LinkoceanRuntimeException("the claimsJws string is not a valid JWS", e);
-		} catch (SignatureException e) {
-			throw new LinkoceanRuntimeException("the claimsJws JWS signature validation fails", e);
-		} catch (ExpiredJwtException e) {
-			throw new LinkoceanRuntimeException("the specified JWT is a Claims JWT and the Claims "
-				+ "has an expiration time before the time this method is invoked.", e);
 		} catch (IllegalArgumentException e) {
-			throw new LinkoceanRuntimeException("the claimsJws string is null or empty or only whitespace", e);
+			throw new JwtException("the claimsJws string is null or empty or only whitespace");
 		}
 	}
 
