@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 
 @Getter
@@ -29,5 +30,11 @@ public class RefreshToken {
 		this.userId = userId;
 		this.value = value;
 		this.expiration = expiration;
+	}
+
+	public void isSameRefreshToken(final String refreshToken) {
+		if (!value.equals(refreshToken)) {
+			throw new JwtException("만료된 refresh token 입니다.");
+		}
 	}
 }
