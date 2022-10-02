@@ -36,6 +36,11 @@ public class UserServiceImpl implements UserService {
 		);
 	}
 
+	@Override
+	public User getUser(final long userId) {
+		return userRepository.findById(userId).orElseThrow(() -> new LinkoceanRuntimeException("존재하지 않는 사용자 아이디입니다."));
+	}
+
 	@Transactional
 	@Override
 	public long registerIfNotExists(final Email email, final OAuthType oAuthType) {

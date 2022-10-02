@@ -10,6 +10,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.internal.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.internal.profile.entity.FavoriteCategories;
@@ -17,6 +18,7 @@ import com.meoguri.linkocean.internal.profile.entity.Profile;
 import com.meoguri.linkocean.internal.user.domain.dto.GetUserResult;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.domain.model.User;
 import com.meoguri.linkocean.test.support.internal.service.BaseServiceTest;
 
 class UserServiceImplTest extends BaseServiceTest {
@@ -40,6 +42,28 @@ class UserServiceImplTest extends BaseServiceTest {
 		assertThat(result.getProfileId()).isNull();
 		assertThat(result.getEmail()).isEqualTo(new Email("haha@gmail.com"));
 		assertThat(result.getOauthType()).isEqualTo(GOOGLE);
+	}
+
+	@Test
+	void 사용자_아이디로_사용자_조회_성공() {
+		//given
+		final long userId = 사용자_없으면_등록("crush@gmail.com", GOOGLE);
+
+		//when
+		final User user = userService.getUser(userId);
+
+		//then
+		assertThat(user).isNotNull();
+	}
+
+	@Test
+	void 사용자_아이디로_사용자_조회_실패() {
+		//given
+		final long invalidUserId = -1L;
+
+		//when then
+		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+			.isThrownBy(() -> userService.getUser(invalidUserId));
 	}
 
 	@Test
