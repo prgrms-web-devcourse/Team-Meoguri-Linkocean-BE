@@ -74,7 +74,7 @@ public class AuthController {
 			BEARER);
 	}
 
-	@PostMapping("/refresh")
+	@PostMapping("/token/refresh")
 	public AuthResponse refreshAccessToken(@RequestBody RefreshAccessTokenRequest request) {
 		if (!request.getTokenType().equals(BEARER)) {
 			throw new JwtException("잘못된 토큰 타입 입니다.");

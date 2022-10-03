@@ -99,7 +99,7 @@ public abstract class BaseControllerTest {
 		final String code,
 		final String redirectUri
 	) throws Exception {
-		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@google.com"));
+		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@gmail.com"));
 
 		final MvcResult mvcResult = mockMvc.perform(post("/api/v1/auth/{oAuthType}", oAuthType)
 				.contentType(APPLICATION_JSON)

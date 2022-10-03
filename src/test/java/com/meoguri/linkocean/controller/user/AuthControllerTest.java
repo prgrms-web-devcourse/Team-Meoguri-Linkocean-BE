@@ -73,7 +73,7 @@ class AuthControllerTest extends BaseControllerTest {
 			authResponse.getTokenType());
 
 		//when
-		final ResultActions perform = mockMvc.perform(post(basePath + "/refresh")
+		final ResultActions perform = mockMvc.perform(post(basePath + "/token/refresh")
 			.contentType(APPLICATION_JSON)
 			.content(createJson(request))
 			.accept(APPLICATION_JSON));
@@ -94,7 +94,7 @@ class AuthControllerTest extends BaseControllerTest {
 		final RefreshAccessTokenRequest request = new RefreshAccessTokenRequest(invalidRefreshToken, "Bearer");
 
 		//when
-		final ResultActions perform = mockMvc.perform(post(basePath + "/refresh")
+		final ResultActions perform = mockMvc.perform(post(basePath + "/token/refresh")
 			.contentType(APPLICATION_JSON)
 			.content(createJson(request))
 			.accept(APPLICATION_JSON));
