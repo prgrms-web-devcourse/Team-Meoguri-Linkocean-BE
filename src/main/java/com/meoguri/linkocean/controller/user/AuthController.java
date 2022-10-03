@@ -16,17 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.controller.user.dto.AuthResponse;
+import com.meoguri.linkocean.controller.user.dto.RefreshAccessTokenRequest;
 import com.meoguri.linkocean.internal.user.application.OAuthAuthenticationService;
 import com.meoguri.linkocean.internal.user.application.dto.AuthUserCommand;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
 public class AuthController {
+
+	private static final String BEARER = "Bearer";
 
 	private final OAuthAuthenticationService oAuthAuthenticationService;
 
@@ -67,6 +71,21 @@ public class AuthController {
 		return new AuthResponse(
 			getAuthTokenResult.getAccessToken(),
 			getAuthTokenResult.getRefreshToken(),
-			"Bearer");
+			BEARER);
+	}
+
+	@PostMapping("/refresh")
+	public AuthResponse refreshAccessToken(@RequestBody RefreshAccessTokenRequest request) {
+		if (!request.getTokenType().equals(BEARER)) {
+			throw new JwtException("잘못된 토큰 타입 입니다.");
+		}
+
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.refreshAccessToken(
+			request.getRefreshToken());
+
+		return new AuthResponse(
+			getAuthTokenResult.getAccessToken(),
+			getAuthTokenResult.getRefreshToken(),
+			BEARER);
 	}
 }
