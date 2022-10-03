@@ -22,7 +22,7 @@ public class JwtProvider {
 
 	public String generateAccessToken(final Email email, final OAuthType oauthType) {
 		final Date now = new Date();
-		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
+		final Date expiration = new Date(now.getTime() + jwtProperties.getAccessTokenExpiration());
 
 		return Jwts.builder()
 			.setSubject("LinkOcean API Token")
@@ -37,8 +37,7 @@ public class JwtProvider {
 
 	public String generateRefreshToken(final Long userId) {
 		final Date now = new Date();
-		//TODO : access token과 refresh token 만료일 다르게 설정하기 (/refresh API 만들면서 진행할 것)
-		final Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
+		final Date expiration = new Date(now.getTime() + jwtProperties.getRefreshTokenExpiration());
 
 		return Jwts.builder()
 			.setSubject("LinkOcean Refresh Token")
@@ -68,6 +67,6 @@ public class JwtProvider {
 	}
 
 	public long getRefreshTokenExpiration() {
-		return jwtProperties.getExpiration();
+		return jwtProperties.getRefreshTokenExpiration();
 	}
 }
