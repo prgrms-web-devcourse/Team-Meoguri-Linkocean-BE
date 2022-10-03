@@ -62,7 +62,7 @@ public class JwtProvider {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (IllegalArgumentException e) {
-			throw new JwtException("the claimsJws string is null or empty or only whitespace");
+			throw new JwtException("the claimsJws string is null or empty or only whitespace", e);
 		}
 	}
 
