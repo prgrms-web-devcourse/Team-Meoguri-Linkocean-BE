@@ -29,7 +29,7 @@ public class RedisRefreshTokenService implements RefreshTokenService {
 		final RefreshToken token = redisRefreshTokenRepository.findById(userId)
 			.orElseThrow(() -> new JwtException("존재하지 않는 refresh token 입니다."));
 
-		token.isSameRefreshToken(refreshToken);
+		token.validateRefreshToken(refreshToken);
 	}
 
 	@Override

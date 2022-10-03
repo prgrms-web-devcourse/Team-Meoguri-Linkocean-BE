@@ -32,9 +32,9 @@ public class RefreshToken {
 		this.expiration = expiration;
 	}
 
-	public void isSameRefreshToken(final String refreshToken) {
+	public void validateRefreshToken(final String refreshToken) {
 		if (!value.equals(refreshToken)) {
-			throw new JwtException("만료된 refresh token 입니다.");
+			throw new JwtException("refresh token이 유효하지 않습니다.");
 		}
 	}
 }
