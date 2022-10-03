@@ -2,6 +2,7 @@ package com.meoguri.linkocean.internal.user.domain;
 
 import static com.meoguri.linkocean.internal.bookmark.entity.vo.Category.*;
 import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
+import static com.meoguri.linkocean.test.support.common.Assertions.*;
 import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.meoguri.linkocean.exception.LinkoceanRuntimeException;
 import com.meoguri.linkocean.internal.bookmark.entity.vo.Category;
 import com.meoguri.linkocean.internal.profile.command.persistence.ProfileRepository;
 import com.meoguri.linkocean.internal.profile.entity.FavoriteCategories;
@@ -62,7 +62,7 @@ class UserServiceImplTest extends BaseServiceTest {
 		final long invalidUserId = -1L;
 
 		//when then
-		assertThatExceptionOfType(LinkoceanRuntimeException.class)
+		assertThatLinkoceanRuntimeException()
 			.isThrownBy(() -> userService.getUser(invalidUserId));
 	}
 
