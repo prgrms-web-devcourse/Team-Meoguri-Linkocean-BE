@@ -23,7 +23,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 	private static final String ID = "id";
 	private static final String SORT_PARAMETER = "order";
 
-	private static final int MAX_PAGE_SIZE = 8;
+	private static final int MAX_PAGE_SIZE = 20;
 
 	@Override
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
