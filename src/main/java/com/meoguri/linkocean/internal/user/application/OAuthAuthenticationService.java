@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class OAuthAuthenticationService {
 
+	private static final String BEARER = "Bearer";
+
 	private final OAuthClient oAuthClient;
 	private final JwtProvider jwtProvider;
 
@@ -53,7 +55,7 @@ public class OAuthAuthenticationService {
 			jwtProvider.getRefreshTokenExpiration()
 		));
 
-		return new GetAuthTokenResult(linkoceanAccessToken, linkoceanRefreshToken);
+		return new GetAuthTokenResult(linkoceanAccessToken, linkoceanRefreshToken, BEARER);
 	}
 
 	/**
@@ -62,7 +64,10 @@ public class OAuthAuthenticationService {
 	 * 2. refresh token이 redis에 저장된 refresh token과 동일한지 검증
 	 * 3. 새로운 access token, refresh token 발급
 	 */
-	public GetAuthTokenResult refreshAccessToken(final String refreshToken) {
+	public GetAuthTokenResult refreshAccessToken(final String refreshToken, final String tokenType) {
+		if (!tokenType.equals("Bearer")) {
+			throw new JwtException("잘못된 토큰 타입 입니다.");
+		}
 
 		final Long userId = Long.valueOf(jwtProvider.getClaims(refreshToken, Claims::getId));
 
@@ -84,6 +89,6 @@ public class OAuthAuthenticationService {
 			jwtProvider.getRefreshTokenExpiration()
 		));
 
-		return new GetAuthTokenResult(newAccessToken, newRefreshToken);
+		return new GetAuthTokenResult(newAccessToken, newRefreshToken, BEARER);
 	}
 }

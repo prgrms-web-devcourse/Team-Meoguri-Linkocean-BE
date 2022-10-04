@@ -55,7 +55,8 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 
 		//when
 		final GetAuthTokenResult result = oAuthAuthenticationService.refreshAccessToken(
-			getAuthTokenResult.getRefreshToken());
+			getAuthTokenResult.getRefreshToken(),
+			"Bearer");
 
 		//then
 		assertAll(
@@ -76,6 +77,6 @@ class OAuthAuthenticationServiceTest extends BaseServiceTest {
 
 		//when then
 		assertThatExceptionOfType(JwtException.class)
-			.isThrownBy(() -> oAuthAuthenticationService.refreshAccessToken(invalidRefreshToken));
+			.isThrownBy(() -> oAuthAuthenticationService.refreshAccessToken(invalidRefreshToken, "Bearer"));
 	}
 }
