@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.controller.user.dto.AuthRequest;
 import com.meoguri.linkocean.controller.user.dto.AuthResponse;
+import com.meoguri.linkocean.controller.user.dto.RefreshAccessTokenRequest;
 import com.meoguri.linkocean.internal.user.application.OAuthAuthenticationService;
 import com.meoguri.linkocean.internal.user.application.dto.AuthUserCommand;
 import com.meoguri.linkocean.internal.user.application.dto.GetAuthTokenResult;
@@ -67,6 +68,17 @@ public class AuthController {
 		return new AuthResponse(
 			getAuthTokenResult.getAccessToken(),
 			getAuthTokenResult.getRefreshToken(),
-			"Bearer");
+			getAuthTokenResult.getTokenType());
+	}
+
+	@PostMapping("/token/refresh")
+	public AuthResponse refreshAccessToken(@RequestBody RefreshAccessTokenRequest request) {
+		final GetAuthTokenResult getAuthTokenResult = oAuthAuthenticationService.refreshAccessToken(
+			request.getRefreshToken(), request.getTokenType());
+
+		return new AuthResponse(
+			getAuthTokenResult.getAccessToken(),
+			getAuthTokenResult.getRefreshToken(),
+			getAuthTokenResult.getTokenType());
 	}
 }

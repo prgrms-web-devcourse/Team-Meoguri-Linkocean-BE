@@ -4,11 +4,15 @@ import com.meoguri.linkocean.internal.profile.entity.Profile;
 import com.meoguri.linkocean.internal.user.domain.dto.GetUserResult;
 import com.meoguri.linkocean.internal.user.domain.model.Email;
 import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.domain.model.User;
 
 public interface UserService {
 
 	/* 사용자 조회 */
 	GetUserResult getUser(Email email, OAuthType oAuthType);
+
+	/* 사용자 조회 */
+	User getUser(long userId);
 
 	/* 사용자 없으면 등록 */
 	long registerIfNotExists(Email email, OAuthType oAuthType);

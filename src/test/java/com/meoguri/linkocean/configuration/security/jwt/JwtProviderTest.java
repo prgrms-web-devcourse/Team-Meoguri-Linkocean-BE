@@ -59,7 +59,8 @@ class JwtProviderTest {
 		public JwtProperties jwtProperties() {
 			final JwtProperties properties = new JwtProperties();
 			properties.setSecretKey("test secretKey");
-			properties.setExpiration(10000L);
+			properties.setAccessTokenExpiration(10000L);
+			properties.setRefreshTokenExpiration(100000L);
 			return properties;
 		}
 
