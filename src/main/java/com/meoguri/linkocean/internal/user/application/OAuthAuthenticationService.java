@@ -70,7 +70,7 @@ public class OAuthAuthenticationService {
 			refreshTokenService.validateRefreshToken(userId, refreshToken);
 		} catch (JwtException ex) {
 			refreshTokenService.removeRefreshToken(userId);
-			throw new JwtException("인증 실패");
+			throw new JwtException("인증 실패", ex);
 		}
 
 		/* access token, refresh token 재발급 */
