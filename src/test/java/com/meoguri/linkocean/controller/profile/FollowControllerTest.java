@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;

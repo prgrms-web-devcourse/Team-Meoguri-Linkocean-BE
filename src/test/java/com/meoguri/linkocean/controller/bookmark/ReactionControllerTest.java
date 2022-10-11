@@ -1,7 +1,7 @@
 package com.meoguri.linkocean.controller.bookmark;
 
-import static com.meoguri.linkocean.domain.bookmark.entity.vo.ReactionType.*;
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.bookmark.entity.vo.ReactionType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.apache.http.HttpHeaders.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -26,7 +26,7 @@ class ReactionControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		유저_등록_로그인("haha@gmail.com", NAVER);
+		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "IT", null, "all");
 	}

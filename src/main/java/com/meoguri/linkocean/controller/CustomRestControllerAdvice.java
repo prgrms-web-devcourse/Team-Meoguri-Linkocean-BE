@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.meoguri.linkocean.exception.OAuthException;
+
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +45,16 @@ public class CustomRestControllerAdvice {
 		return ErrorResponse.of(BAD_REQUEST, "잘못된 요청입니다.", isProd, ex);
 	}
 
+	@ResponseStatus(UNAUTHORIZED)
+	@ExceptionHandler(JwtException.class)
+	public ErrorResponse handleJwtException(final JwtException ex) {
+		log.info(ex.getMessage(), ex);
+
+		return ErrorResponse.of(UNAUTHORIZED, "인증에 실패했습니다.", isProd, ex);
+	}
+
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({Exception.class, OAuthException.class})
 	public ErrorResponse handleServerException(final Exception ex) {
 		log.error(ex.getMessage(), ex);
 

@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.profile;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.apache.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -21,7 +21,7 @@ class FavoriteControllerTest extends BaseControllerTest {
 	@Test
 	void 즐겨찾기_추가_Api_성공() throws Exception {
 		//given
-		유저_등록_로그인("haha@gmail.com", NAVER);
+		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("tag1", "tag2"), "all");
 
@@ -39,7 +39,7 @@ class FavoriteControllerTest extends BaseControllerTest {
 	@Test
 	void 즐겨찾기_추가_Api_실패_두번_연속_호출() throws Exception {
 		//given
-		유저_등록_로그인("haha@gmail.com", NAVER);
+		유저_등록_로그인("haha@gmail.com", GOOGLE);
 		프로필_등록("haha", List.of("인문", "정치", "사회", "IT"));
 		final long bookmarkId = 북마크_등록(링크_메타데이터_얻기("http://www.naver.com"), "인문", List.of("tag1", "tag2"), "all");
 		북마크_즐겨찾기(bookmarkId);

@@ -7,8 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
-import com.meoguri.linkocean.domain.linkmetadata.service.GetLinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
+import com.meoguri.linkocean.internal.linkmetadata.service.GetLinkMetadata;
+import com.meoguri.linkocean.internal.linkmetadata.service.dto.GetLinkMetadataResult;
 
 @Service
 public class JsoupGetLinkMetadataService implements GetLinkMetadata {

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.domain.profile.command.service.FollowService;
+import com.meoguri.linkocean.internal.profile.command.service.FollowService;
 
 import lombok.RequiredArgsConstructor;
 

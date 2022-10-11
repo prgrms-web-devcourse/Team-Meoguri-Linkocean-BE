@@ -46,7 +46,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build --stacktrace -x jacocoTestReport -x asciidoctor
+          ./gradlew clean build --stacktrace -x asciidoctor
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -85,6 +85,12 @@ jobs:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/ndy2/b494ca906f8a3cf49eb85df89485ca5c
           file: badge.svg
+
+      ## codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./build/reports/jacoco/test/jacocoTestReport.xml
 
       ## slack notification
       - name: GitHub Actions Pull Request Notification

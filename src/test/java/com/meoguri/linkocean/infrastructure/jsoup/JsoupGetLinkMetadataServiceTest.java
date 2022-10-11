@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.meoguri.linkocean.domain.linkmetadata.service.dto.GetLinkMetadataResult;
+import com.meoguri.linkocean.internal.linkmetadata.service.dto.GetLinkMetadataResult;
 
 class JsoupGetLinkMetadataServiceTest {
 

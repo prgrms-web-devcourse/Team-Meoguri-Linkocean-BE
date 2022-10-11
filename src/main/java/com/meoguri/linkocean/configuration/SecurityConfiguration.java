@@ -10,15 +10,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.meoguri.linkocean.configuration.security.jwt.JwtAuthenticationFilter;
-import com.meoguri.linkocean.configuration.security.oauth.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-
-	private final CustomOAuth2UserService customOAuth2UserService;
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -37,9 +34,6 @@ public class SecurityConfiguration {
 			)
 			.authorizeRequests(
 				auth -> auth.anyRequest().permitAll()
-			)
-			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint().userService(customOAuth2UserService)
 			)
 			.exceptionHandling(ex -> ex
 				.authenticationEntryPoint((request, response, authException) -> response.setStatus(SC_UNAUTHORIZED))

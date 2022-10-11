@@ -6,10 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.meoguri.linkocean.support.controller.converter.StringToEnumConverterFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +22,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 	private static final String ID = "id";
 	private static final String SORT_PARAMETER = "order";
-	private static final int MAX_PAGE_SIZE = 8;
+
+	private static final int MAX_PAGE_SIZE = 20;
 
 	@Override
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
@@ -33,6 +37,11 @@ public class WebConfiguration implements WebMvcConfigurer {
 		resolver.setOneIndexedParameters(true);
 		resolver.setMaxPageSize(MAX_PAGE_SIZE);
 		resolvers.add(resolver);
+	}
+
+	@Override
+	public void addFormatters(final FormatterRegistry registry) {
+		registry.addConverterFactory(new StringToEnumConverterFactory());
 	}
 
 	/* 정적인 페이지에 대한 뷰 컨트롤러 추가 */

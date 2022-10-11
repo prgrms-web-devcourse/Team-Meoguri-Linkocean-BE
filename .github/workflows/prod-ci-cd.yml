@@ -46,6 +46,12 @@ jobs:
           chmod +x gradlew
           ./gradlew clean build
 
+      ## codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./build/reports/jacoco/test/jacocoTestReport.xml
+
       ## docker build & push to dockerhub
       - name: Docker build & push to dockerhub
         run: |
@@ -63,9 +69,9 @@ jobs:
           port: 22
           script: |
             docker image prune -f
-            sudo docker rm -f $(docker ps -qa)
+            sudo docker rm -f linkocean-spring
             sudo docker pull ${{ secrets.DOCKER_REPO }}/linkocean_prod
-            sudo docker run -d -p 8080:8080 --name linkocean-spring ${{ secrets.DOCKER_REPO }}/linkocean_prod
+            sudo docker run -d -p 8080:8080 --name linkocean-spring --network linkocean-net ${{ secrets.DOCKER_REPO }}/linkocean_prod
 
   ## slack notification
   action-slack:

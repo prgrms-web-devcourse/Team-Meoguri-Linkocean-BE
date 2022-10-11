@@ -3,7 +3,7 @@ package com.meoguri.linkocean.infrastructure.s3;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.meoguri.linkocean.domain.profile.command.service.ProfileImageUploader;
+import com.meoguri.linkocean.internal.profile.command.service.ProfileImageUploader;
 
 import lombok.RequiredArgsConstructor;
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meoguri.linkocean.configuration.security.jwt.SecurityUser;
-import com.meoguri.linkocean.domain.profile.command.service.FavoriteService;
+import com.meoguri.linkocean.internal.profile.command.service.FavoriteService;
 
 import lombok.RequiredArgsConstructor;
 

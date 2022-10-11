@@ -58,8 +58,11 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa"
     implementation 'com.querydsl:querydsl-sql'
 
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // Security
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
@@ -87,6 +90,7 @@ dependencies {
     testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
     testImplementation 'com.tngtech.archunit:archunit:0.23.1'
     testImplementation 'io.findify:s3mock_2.12:0.2.6'
+    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:0.3.5'
 }
 
 /* layer test tasks */
@@ -119,7 +123,7 @@ tasks.named('test') {
 jacocoTestReport {
     reports {
         html.enabled(true)
-        xml.enabled(false)
+        xml.enabled(true)
         csv.enabled(false)
     }
 

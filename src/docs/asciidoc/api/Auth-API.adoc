@@ -1,0 +1,13 @@
+[[Auth-API]]
+== 인증 API
+
+'''
+
+=== 사용자 인증
+
+operation::/auth-rest-docs-test/사용자_인증_api/[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
+
+
+=== access token 재발급
+
+operation::/auth-rest-docs-test/access_token_재발급_api/[snippets='http-request,request-fields,http-response,response-fields']

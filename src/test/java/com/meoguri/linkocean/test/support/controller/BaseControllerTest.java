@@ -1,6 +1,8 @@
 package com.meoguri.linkocean.test.support.controller;
 
 import static java.util.Collections.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -14,6 +16,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,13 +30,18 @@ import com.meoguri.linkocean.controller.bookmark.dto.GetDetailedBookmarkResponse
 import com.meoguri.linkocean.controller.bookmark.dto.RegisterBookmarkRequest;
 import com.meoguri.linkocean.controller.profile.dto.CreateProfileRequest;
 import com.meoguri.linkocean.controller.profile.dto.GetDetailedProfileResponse;
-import com.meoguri.linkocean.domain.linkmetadata.entity.LinkMetadata;
-import com.meoguri.linkocean.domain.linkmetadata.entity.vo.Link;
-import com.meoguri.linkocean.domain.linkmetadata.persistence.LinkMetadataRepository;
-import com.meoguri.linkocean.domain.user.entity.User;
-import com.meoguri.linkocean.domain.user.entity.vo.Email;
-import com.meoguri.linkocean.domain.user.entity.vo.OAuthType;
-import com.meoguri.linkocean.domain.user.persistence.UserRepository;
+import com.meoguri.linkocean.controller.user.dto.AuthRequest;
+import com.meoguri.linkocean.controller.user.dto.AuthResponse;
+import com.meoguri.linkocean.internal.linkmetadata.entity.LinkMetadata;
+import com.meoguri.linkocean.internal.linkmetadata.entity.vo.Link;
+import com.meoguri.linkocean.internal.linkmetadata.persistence.FindLinkMetadataRepository;
+import com.meoguri.linkocean.internal.linkmetadata.persistence.LinkMetadataRepository;
+import com.meoguri.linkocean.internal.user.application.OAuthClient;
+import com.meoguri.linkocean.internal.user.domain.UserRepository;
+import com.meoguri.linkocean.internal.user.domain.model.Email;
+import com.meoguri.linkocean.internal.user.domain.model.OAuthType;
+import com.meoguri.linkocean.internal.user.domain.model.User;
+import com.meoguri.linkocean.internal.user.infrastructure.redis.RedisRefreshTokenRepository;
 import com.meoguri.linkocean.test.support.db.DatabaseCleanup;
 
 @ControllerTest
@@ -54,7 +62,16 @@ public abstract class BaseControllerTest {
 	private UserRepository userRepository;
 
 	@Autowired
-	private LinkMetadataRepository linkMetadataRepository;
+	private FindLinkMetadataRepository findLinkMetadataRepository;
+
+	@Autowired
+	protected LinkMetadataRepository linkMetadataRepository;
+
+	@MockBean
+	protected OAuthClient oAuthClient;
+
+	@Autowired
+	private RedisRefreshTokenRepository refreshTokenRepository;
 
 	@Autowired
 	private DatabaseCleanup databaseCleanup;
@@ -62,6 +79,7 @@ public abstract class BaseControllerTest {
 	@AfterEach
 	void cleanUp() {
 		databaseCleanup.execute();
+		refreshTokenRepository.deleteAll();
 	}
 
 	protected String createJson(Object dto) throws JsonProcessingException {
@@ -76,16 +94,33 @@ public abstract class BaseControllerTest {
 			.orElseThrow(NullPointerException::new);
 	}
 
+	protected AuthResponse 로그인(
+		final OAuthType oAuthType,
+		final String code,
+		final String redirectUri
+	) throws Exception {
+		given(oAuthClient.getUserEmail(any())).willReturn(new Email("email@gmail.com"));
+
+		final MvcResult mvcResult = mockMvc.perform(post("/api/v1/auth/{oAuthType}", oAuthType)
+				.contentType(APPLICATION_JSON)
+				.content(createJson(new AuthRequest(code, redirectUri)))
+				.accept(APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
+
+		return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), AuthResponse.class);
+	}
+
 	protected void 유저_등록_로그인(final String email, final OAuthType oAuthType) {
 		final Email emailField = new Email(email);
 		userRepository.save(new User(emailField, oAuthType));
-		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generateAccessToken(emailField, oAuthType));
 	}
 
 	protected void 로그인(final String email, final OAuthType oAuthType) {
 		final Email emailField = new Email(email);
 		userRepository.findByEmailAndOAuthType(emailField, oAuthType).orElseThrow();
-		token = String.format("Bearer %s", jwtProvider.generate(emailField, oAuthType));
+		token = String.format("Bearer %s", jwtProvider.generateAccessToken(emailField, oAuthType));
 	}
 
 	protected long 프로필_등록(final String username, final List<String> categories) throws Exception {
@@ -101,10 +136,10 @@ public abstract class BaseControllerTest {
 
 	/* 테스트 속도를 위해 리포지토리로 처리 */
 	protected String 링크_메타데이터_얻기(final String link) {
-		linkMetadataRepository.findByLink(new Link(link)).ifPresentOrElse(
-			LinkMetadata::getLink, // dummy consumer
-			() -> linkMetadataRepository.save(new LinkMetadata(link, "title", "image"))
-		);
+		final LinkMetadata linkMetadata = findLinkMetadataRepository.findByLink(new Link(link));
+		if (linkMetadata == null) {
+			linkMetadataRepository.save(new LinkMetadata(link, "title", "image"));
+		}
 		return link;
 	}
 

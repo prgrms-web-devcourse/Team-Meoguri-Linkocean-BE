@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: oauth, aws
+    include: oauth, aws, redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/linkocean
@@ -22,4 +22,5 @@ spring:
 
 jwt:
   secret-key: test
-  expiration: 3600000
+  access-token-expiration: 3600000
+  refresh-token-expiration: 3600000

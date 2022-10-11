@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.test.restdocs;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -23,8 +23,8 @@ class LoginRestDocsTest extends RestDocsTestSupport {
 	@Test
 	void 로그인_api() throws Exception {
 		//given
-		final String email = "jk05018@naver.com";
-		final String oauthType = "NAVER";
+		final String email = "jk05018@gmail.com";
+		final String oauthType = "GOOGLE";
 
 		final LoginRequest loginRequest = new LoginRequest(email, oauthType);
 

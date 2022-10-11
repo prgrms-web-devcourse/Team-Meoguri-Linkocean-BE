@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.linkmetadata;
 
-import static com.meoguri.linkocean.support.controller.Default.*;
+import static com.meoguri.linkocean.support.controller.dto.Default.*;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.meoguri.linkocean.domain.linkmetadata.service.LinkMetadataService;
+import com.meoguri.linkocean.internal.linkmetadata.service.LinkMetadataService;
 
 import lombok.RequiredArgsConstructor;
 

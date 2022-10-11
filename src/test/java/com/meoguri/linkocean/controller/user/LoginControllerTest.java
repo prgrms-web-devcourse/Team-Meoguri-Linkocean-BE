@@ -1,6 +1,6 @@
 package com.meoguri.linkocean.controller.user;
 
-import static com.meoguri.linkocean.domain.user.entity.vo.OAuthType.*;
+import static com.meoguri.linkocean.internal.user.domain.model.OAuthType.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -22,8 +22,8 @@ class LoginControllerTest extends BaseControllerTest {
 	@Test
 	void 로그인_Api_성공() throws Exception {
 		//given
-		final String email = "jk05018@naver.com";
-		final String oauthType = "NAVER";
+		final String email = "jk05018@gmail.com";
+		final String oauthType = "GOOGLE";
 
 		final LoginRequest loginRequest = new LoginRequest(email, oauthType);
 
